@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1789838627552,
+      "tag": "0000_cultural_junction_core",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790065003119,
+      "tag": "0001_seed_junction_demo_places",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790238118860,
+      "tag": "0002_tighten_rls_policies",
+      "breakpoints": true
+    }
+  ]
+}

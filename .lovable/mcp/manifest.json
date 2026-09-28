@@ -1,0 +1,74 @@
+{
+  "version": 1,
+  "sdk_version": "2.1.0",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://woflebpvqiwwzhggwwxv.supabase.co/auth/v1",
+    "accepted_audiences": ["authenticated"]
+  },
+  "mcp": {
+    "server": {
+      "name": "eka",
+      "version": "0.1.0",
+      "title": "EKA"
+    },
+    "tools": [
+      {
+        "name": "my_profile",
+        "title": "My EKA profile",
+        "description": "Read the signed-in member's own EKA profile.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "my_summary",
+        "title": "My EKA summary",
+        "description": "A short overview of the signed-in member's practice: reflections, offerings, circles, practice days and the journey they are on.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "my_recent_reflections",
+        "title": "My recent reflections",
+        "description": "Read the signed-in member's most recent private journal reflections, newest first. Private to them.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "limit": {
+              "description": "How many reflections to return (1–20, default 5).",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 20
+            }
+          }
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}

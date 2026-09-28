@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.wisdom_passport_for(uuid) FROM anon, authenticated;

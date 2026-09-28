@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.sync_practitioner_rating() FROM PUBLIC, anon, authenticated;

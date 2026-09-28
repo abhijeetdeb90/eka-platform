@@ -1,0 +1,267 @@
+import { supabase } from "@/integrations/supabase/client";
+import { currentUserId } from "@/lib/api";
+
+/** One membership, two billing cadences. ₹299/month is the benchmark price. */
+export const PLANS = [
+  {
+    id: "monthly",
+    name: "Monthly",
+    priceCents: 29_900,
+    currency: "INR",
+    label: "₹299",
+    cadence: "month",
+    periodDays: 30,
+    blurb:
+      "Full access to cultural library, AI exploration, personalized learning, and community discussions.",
+  },
+  {
+    id: "annual",
+    name: "Annual",
+    priceCents: 299_000,
+    currency: "INR",
+    label: "₹2,990",
+    cadence: "year",
+    periodDays: 365,
+    blurb: "Two months on us. Full annual cycle of the twelve themes and all member benefits.",
+  },
+] as const;
+
+/**
+ * EKA Platform Commission Model:
+ * 5–10% platform commission on services, bookings, transactions, and commercial activity.
+ */
+export const PLATFORM_COMMISSION = {
+  servicesRatePercent: 5.0, // 5% platform commission on services, consultations, bookings, workshops
+  marketplaceRatePercent: 10.0, // 10% on physical items, ritual kits, and commercial transactions
+  calculatePayout: (amountCents: number, category: "services" | "marketplace" = "services") => {
+    const rate = category === "marketplace" ? 0.1 : 0.05;
+    const commissionCents = Math.round(amountCents * rate);
+    const creatorCents = amountCents - commissionCents;
+    return { rate, ratePercent: rate * 100, commissionCents, creatorCents };
+  },
+} as const;
+
+export type PlanId = (typeof PLANS)[number]["id"];
+
+export function planFor(id: string | null | undefined) {
+  return PLANS.find((p) => p.id === id) ?? PLANS[0];
+}
+
+export function formatINR(cents: number) {
+  return `₹${(cents / 100).toLocaleString("en-IN", { maximumFractionDigits: 2 })}`;
+}
+
+export type SubscriptionRow = {
+  plan: string;
+  status: string;
+  started_at: string | null;
+  expires_at: string | null;
+  cancel_at_period_end: boolean | null;
+  current_period_end: string | null;
+  canceled_at: string | null;
+  paused_until: string | null;
+  retention_offer_applied: boolean | null;
+  price_cents: number | null;
+  currency: string | null;
+};
+
+export type Entitlement = {
+  active: boolean;
+  state: "none" | "trialing" | "active" | "ending" | "paused" | "past_due" | "canceled";
+  renewsOn: Date | null;
+  daysToRenewal: number | null;
+  message: string;
+};
+
+/**
+ * Access is always derived from billing state, never stored as a separate flag,
+ * so a webhook that lands late or twice can never leave access out of sync.
+ */
+export function entitlementFor(sub: SubscriptionRow | null | undefined): Entitlement {
+  if (!sub) {
+    return {
+      active: false,
+      state: "none",
+      renewsOn: null,
+      daysToRenewal: null,
+      message: "No membership yet.",
+    };
+  }
+  const now = Date.now();
+  const periodEnd = sub.current_period_end ? new Date(sub.current_period_end) : null;
+  const pausedUntil = sub.paused_until ? new Date(sub.paused_until) : null;
+  const days = periodEnd ? Math.ceil((periodEnd.getTime() - now) / 86_400_000) : null;
+
+  if (pausedUntil && pausedUntil.getTime() > now) {
+    return {
+      active: false,
+      state: "paused",
+      renewsOn: pausedUntil,
+      daysToRenewal: Math.ceil((pausedUntil.getTime() - now) / 86_400_000),
+      message: `Paused. Everything is kept and waiting until ${pausedUntil.toLocaleDateString()}.`,
+    };
+  }
+  if (sub.status === "past_due") {
+    return {
+      active: true,
+      state: "past_due",
+      renewsOn: periodEnd,
+      daysToRenewal: days,
+      message: "A payment did not go through. Access stays on while we retry.",
+    };
+  }
+  if (sub.status === "canceled" && (!periodEnd || periodEnd.getTime() < now)) {
+    return {
+      active: false,
+      state: "canceled",
+      renewsOn: null,
+      daysToRenewal: null,
+      message: "Membership ended.",
+    };
+  }
+  if (sub.cancel_at_period_end) {
+    return {
+      active: true,
+      state: "ending",
+      renewsOn: periodEnd,
+      daysToRenewal: days,
+      message: periodEnd
+        ? `Ending on ${periodEnd.toLocaleDateString()}. Your journeys and reflections stay saved.`
+        : "Ending at the end of this period.",
+    };
+  }
+  if (sub.status === "trialing") {
+    return {
+      active: true,
+      state: "trialing",
+      renewsOn: periodEnd,
+      daysToRenewal: days,
+      message: periodEnd
+        ? `Your first renewal is ${periodEnd.toLocaleDateString()}.`
+        : "Trial in progress.",
+    };
+  }
+  if (sub.status === "active") {
+    return {
+      active: true,
+      state: "active",
+      renewsOn: periodEnd,
+      daysToRenewal: days,
+      message: periodEnd ? `Renews on ${periodEnd.toLocaleDateString()}.` : "Active.",
+    };
+  }
+  return {
+    active: false,
+    state: "none",
+    renewsOn: null,
+    daysToRenewal: null,
+    message: "No active membership.",
+  };
+}
+
+/** Stripe-style proration: unused time on the old plan credits the new one. */
+export function prorate(
+  current: { priceCents: number; periodDays: number },
+  next: { priceCents: number; periodDays: number },
+  daysLeft: number,
+) {
+  const clamped = Math.max(0, Math.min(daysLeft, current.periodDays));
+  const credit = Math.round((current.priceCents / current.periodDays) * clamped);
+  const charge = Math.max(0, next.priceCents - credit);
+  return { credit, charge, upgrade: next.priceCents > current.priceCents };
+}
+
+export async function fetchSubscription(): Promise<SubscriptionRow | null> {
+  const uid = await currentUserId();
+  if (!uid) return null;
+  const { data } = await supabase
+    .from("subscriptions")
+    .select(
+      "plan, status, started_at, expires_at, cancel_at_period_end, current_period_end, canceled_at, paused_until, retention_offer_applied, price_cents, currency",
+    )
+    .eq("user_id", uid)
+    .maybeSingle();
+  return (data as SubscriptionRow) ?? null;
+}
+
+function addDays(days: number) {
+  return new Date(Date.now() + days * 86_400_000).toISOString();
+}
+
+/**
+ * Local lifecycle write. When a billing provider is connected these same rows
+ * are written by the webhook instead; the shape stays identical either way.
+ */
+export async function setPlan(planId: PlanId) {
+  const uid = await currentUserId();
+  if (!uid) return;
+  const plan = planFor(planId);
+  await supabase.from("subscriptions").upsert(
+    {
+      user_id: uid,
+      plan: planId,
+      status: "trialing",
+      price_cents: plan.priceCents,
+      currency: plan.currency,
+      cancel_at_period_end: false,
+      canceled_at: null,
+      paused_until: null,
+      current_period_end: addDays(plan.periodDays),
+    },
+    { onConflict: "user_id,plan" },
+  );
+}
+
+export async function scheduleCancellation() {
+  const uid = await currentUserId();
+  if (!uid) return;
+  await supabase
+    .from("subscriptions")
+    .update({ cancel_at_period_end: true, canceled_at: new Date().toISOString() })
+    .eq("user_id", uid);
+}
+
+export async function resumeMembership() {
+  const uid = await currentUserId();
+  if (!uid) return;
+  await supabase
+    .from("subscriptions")
+    .update({
+      cancel_at_period_end: false,
+      canceled_at: null,
+      paused_until: null,
+      status: "active",
+    })
+    .eq("user_id", uid);
+}
+
+export async function pauseMembership(days: number) {
+  const uid = await currentUserId();
+  if (!uid) return;
+  await supabase
+    .from("subscriptions")
+    .update({
+      paused_until: addDays(days),
+      cancel_at_period_end: false,
+      canceled_at: null,
+      current_period_end: addDays(days + 30),
+      retention_offer_applied: true,
+    })
+    .eq("user_id", uid);
+}
+
+export async function applyDiscount(percent: number) {
+  const uid = await currentUserId();
+  if (!uid) return;
+  const sub = await fetchSubscription();
+  const base = sub?.price_cents ?? PLANS[0].priceCents;
+  await supabase
+    .from("subscriptions")
+    .update({
+      price_cents: Math.round(base * (1 - percent / 100)),
+      cancel_at_period_end: false,
+      canceled_at: null,
+      retention_offer_applied: true,
+    })
+    .eq("user_id", uid);
+}
