@@ -97,7 +97,7 @@ function KnowledgeDirectoryPage() {
           </div>
 
           <div className="flex items-center gap-3">
-            <Link to="/_authenticated/admin/knowledge">
+            <Link to="/admin/knowledge">
               <Button variant="outline" size="sm" className="rounded-full text-xs gap-1.5">
                 <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
                 <span className="hidden sm:inline">Admin Operations Center</span>

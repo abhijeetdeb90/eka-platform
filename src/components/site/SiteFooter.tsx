@@ -4,19 +4,25 @@ import { EkaLogo } from "@/components/brand/Logo";
 import { useSmoothScroll } from "@/components/motion/SmoothScrollProvider";
 
 const exploreLinks = [
+  { to: "/junction", label: "The Cultural Junction" },
   { to: "/stories", label: "1,000 Stories Campaign" },
-  { to: "/practice", label: "Practice Library" },
   { to: "/observe", label: "Sacred Calendar 2026" },
-  { to: "/journey", label: "Devotional Journeys" },
-  { to: "/ritual-kits", label: "Ritual Kits" },
+  { to: "/membership", label: "EKA Plus Membership" },
 ] as const;
 
 const trustLinks = [
   { to: "/standards", label: "Community Standards" },
   { to: "/give", label: "Give & Transparency" },
-  { to: "/membership", label: "EKA Plus Membership" },
-  { to: "/founder/ad", label: "Founder (AD)" },
+  { to: "/studio", label: "Creator Studio" },
   { to: "/join", label: "Join the Sanctuary" },
+] as const;
+
+const brandLinks = [
+  { to: "/brands", label: "EKA for Brands" },
+  { to: "/agent", label: "Branding Agent" },
+  { to: "/enterprise", label: "Enterprise Workspaces" },
+  { to: "/crm", label: "Engagement CRM" },
+  { to: "/system", label: "System Map" },
 ] as const;
 
 const legalLinks = [
@@ -32,7 +38,7 @@ export function SiteFooter() {
 
   return (
     <footer className="relative border-t border-border/70 bg-sand/30 py-16 lg:py-20">
-      <div className="container-eka grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr_1fr]">
+      <div className="container-eka grid gap-10 sm:grid-cols-2 lg:grid-cols-5">
         {/* Brand Column */}
         <div className="space-y-4 sm:col-span-2 lg:col-span-1">
           <EkaLogo withTagline />
@@ -49,7 +55,7 @@ export function SiteFooter() {
         {/* Explore Links */}
         <div>
           <h4 className="font-display text-sm font-semibold uppercase tracking-[0.16em] text-foreground">
-            Explore & Practice
+            Explore & Lore
           </h4>
           <ul className="mt-4 space-y-2.5 text-sm">
             {exploreLinks.map((l) => (
@@ -68,10 +74,29 @@ export function SiteFooter() {
         {/* Trust & Community */}
         <div>
           <h4 className="font-display text-sm font-semibold uppercase tracking-[0.16em] text-foreground">
-            Trust & Community
+            Community
           </h4>
           <ul className="mt-4 space-y-2.5 text-sm">
             {trustLinks.map((l) => (
+              <li key={l.to}>
+                <Link
+                  to={l.to}
+                  className="text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  {l.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Brands & Ecosystem */}
+        <div>
+          <h4 className="font-display text-sm font-semibold uppercase tracking-[0.16em] text-foreground">
+            Brands & Enterprise
+          </h4>
+          <ul className="mt-4 space-y-2.5 text-sm">
+            {brandLinks.map((l) => (
               <li key={l.to}>
                 <Link
                   to={l.to}

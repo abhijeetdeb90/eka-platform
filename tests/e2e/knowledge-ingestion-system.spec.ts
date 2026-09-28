@@ -95,7 +95,7 @@ test.describe("EKA Cultural Knowledge Ingestion & Enrichment System", () => {
   test("1. Cultural Knowledge Directory (/knowledge) renders canonical entities, metrics, and filters", async ({
     page,
   }) => {
-    await page.goto("/knowledge", { waitUntil: "domcontentloaded" });
+    await page.goto("/knowledge", { waitUntil: "networkidle" });
 
     // Assert main title and metrics
     await expect(page.locator("h1")).toContainText(/Cultural Knowledge Graph/i);
@@ -114,11 +114,14 @@ test.describe("EKA Cultural Knowledge Ingestion & Enrichment System", () => {
     // Test Search input
     const searchInput = page.locator("[data-testid='knowledge-search-input']");
     await searchInput.fill("aranmula");
+    // Wait for the grid to filter to 1 entity
+    await expect(page.locator("[data-testid='knowledge-card-grid'] > article")).toHaveCount(1);
     await expect(page.locator("[data-testid='eka-card-card-aranmula-kannadi']")).toBeVisible();
     await expect(page.locator("[data-testid='eka-card-card-diwali']")).not.toBeVisible();
 
     // Clear search and test filter buttons
     await searchInput.clear();
+    await expect(page.locator("[data-testid='knowledge-card-grid'] > article")).toHaveCount(10);
     const craftFilter = page.locator("[data-testid='filter-craft']");
     await craftFilter.click();
     await expect(page.locator("[data-testid='eka-card-card-aranmula-kannadi']")).toBeVisible();
@@ -128,7 +131,7 @@ test.describe("EKA Cultural Knowledge Ingestion & Enrichment System", () => {
   test("2. Knowledge Detail Page (/knowledge/diwali) renders 10 Cultural Dimensions and Source Passport", async ({
     page,
   }) => {
-    await page.goto("/knowledge/diwali", { waitUntil: "domcontentloaded" });
+    await page.goto("/knowledge/diwali", { waitUntil: "networkidle" });
 
     // Header & identity
     await expect(page.locator("h1")).toContainText(/Diwali \(Deepavali\)/i);
@@ -154,6 +157,7 @@ test.describe("EKA Cultural Knowledge Ingestion & Enrichment System", () => {
 
     // Close dialog with Escape key
     await page.keyboard.press("Escape");
+    await expect(dialog).not.toBeVisible();
 
     // 10 Cultural Dimensions tabs
     const dimensionsSection = page.locator("[data-testid='eka-cultural-dimensions']");
@@ -175,7 +179,7 @@ test.describe("EKA Cultural Knowledge Ingestion & Enrichment System", () => {
   test("3. Documented Variations section models plural regional and community traditions", async ({
     page,
   }) => {
-    await page.goto("/knowledge/diwali", { waitUntil: "domcontentloaded" });
+    await page.goto("/knowledge/diwali", { waitUntil: "networkidle" });
 
     const variationsSection = page.locator("[data-testid='eka-cultural-variations-section']");
     await expect(variationsSection).toBeVisible();
@@ -205,7 +209,7 @@ test.describe("EKA Cultural Knowledge Ingestion & Enrichment System", () => {
   test("4. Epistemic Taxonomy separates Documented Facts from Traditional Beliefs", async ({
     page,
   }) => {
-    await page.goto("/knowledge/diwali", { waitUntil: "domcontentloaded" });
+    await page.goto("/knowledge/diwali", { waitUntil: "networkidle" });
 
     const taxonomy = page.locator("[data-testid='eka-epistemic-taxonomy']");
     await expect(taxonomy).toBeVisible();
@@ -221,7 +225,7 @@ test.describe("EKA Cultural Knowledge Ingestion & Enrichment System", () => {
   });
 
   test("5. Knowledge Graph Visualizer renders semantic relations and links", async ({ page }) => {
-    await page.goto("/knowledge/diwali", { waitUntil: "domcontentloaded" });
+    await page.goto("/knowledge/diwali", { waitUntil: "networkidle" });
 
     const graphSection = page.locator("[data-testid='eka-knowledge-graph-section']");
     await expect(graphSection).toBeVisible();
@@ -230,7 +234,7 @@ test.describe("EKA Cultural Knowledge Ingestion & Enrichment System", () => {
   });
 
   test("6. AI Cultural Intelligence Assistant retrieves multi-part pedagogy", async ({ page }) => {
-    await page.goto("/knowledge/diwali", { waitUntil: "domcontentloaded" });
+    await page.goto("/knowledge/diwali", { waitUntil: "networkidle" });
 
     const aiBox = page.locator("[data-testid='eka-ai-retrieval-box']");
     await expect(aiBox).toBeVisible();
@@ -238,9 +242,7 @@ test.describe("EKA Cultural Knowledge Ingestion & Enrichment System", () => {
     const queryInput = page.locator("[data-testid='ai-query-input']");
     await queryInput.scrollIntoViewIfNeeded();
     await queryInput.fill("How does Diwali differ between Tamil Nadu and Jain traditions?");
-
-    const submitBtn = page.locator("[data-testid='ai-submit-btn']");
-    await submitBtn.click();
+    await page.locator("[data-testid='ai-submit-btn']").click();
 
     // Verify AI synthesis output container
     const resultBox = page.locator("[data-testid='ai-result-container']");
@@ -254,7 +256,7 @@ test.describe("EKA Cultural Knowledge Ingestion & Enrichment System", () => {
   test("7. Aranmula Kannadi (/knowledge/aranmula-kannadi) verifies metallurgy and GI registration", async ({
     page,
   }) => {
-    await page.goto("/knowledge/aranmula-kannadi", { waitUntil: "domcontentloaded" });
+    await page.goto("/knowledge/aranmula-kannadi", { waitUntil: "networkidle" });
 
     await expect(page.locator("h1")).toContainText(/Aranmula Kannadi/i);
     await expect(page.getByText(/secret copper-tin alloy/i)).toBeVisible();
@@ -267,7 +269,7 @@ test.describe("EKA Cultural Knowledge Ingestion & Enrichment System", () => {
   test("8. Bohag Bihu (/knowledge/bohag-bihu) verifies 7 days and Gamusa GI Tag #594", async ({
     page,
   }) => {
-    await page.goto("/knowledge/bohag-bihu", { waitUntil: "domcontentloaded" });
+    await page.goto("/knowledge/bohag-bihu", { waitUntil: "networkidle" });
 
     await expect(page.locator("h1")).toContainText(/Bohag Bihu \(Rongali Bihu\)/i);
     await expect(page.getByText(/Goru Bihu/i).first()).toBeVisible();
@@ -279,7 +281,7 @@ test.describe("EKA Cultural Knowledge Ingestion & Enrichment System", () => {
   test("9. Bishnoi Ecological Tradition (/knowledge/bishnoi-conservation) verifies 29 rules and Khejarli martyrdom", async ({
     page,
   }) => {
-    await page.goto("/knowledge/bishnoi-conservation", { waitUntil: "domcontentloaded" });
+    await page.goto("/knowledge/bishnoi-conservation", { waitUntil: "networkidle" });
 
     await expect(page.locator("h1")).toContainText(/Bishnoi Ecological Tradition/i);
     await expect(page.getByText(/Guru Jambheshwar/i).first()).toBeVisible();
@@ -290,7 +292,7 @@ test.describe("EKA Cultural Knowledge Ingestion & Enrichment System", () => {
     page,
   }) => {
     await setupAuthenticatedUser(page, "admin");
-    await page.goto("/admin/knowledge", { waitUntil: "domcontentloaded" });
+    await page.goto("/admin/knowledge", { waitUntil: "networkidle" });
 
     // Assert main header
     await expect(page.locator("h1")).toContainText(/Knowledge & Provenance Operations Center/i);

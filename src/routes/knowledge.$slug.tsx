@@ -247,13 +247,18 @@ function KnowledgeDetailPage() {
             <Input
               value={aiQuery}
               onChange={(e) => setAiQuery(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleAiAsk()}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleAiAsk((e.target as HTMLInputElement).value);
+                }
+              }}
               placeholder={`Ask about ${object.entity} (e.g. regional differences, authentic artisans, sacred meaning)...`}
               className="rounded-full bg-background/90 text-sm shadow-sm"
               data-testid="ai-query-input"
             />
             <Button
-              onClick={() => handleAiAsk()}
+              onClick={() => handleAiAsk(aiQuery)}
               disabled={isAiLoading}
               className="rounded-full bg-primary text-primary-foreground shrink-0 px-5"
               data-testid="ai-submit-btn"

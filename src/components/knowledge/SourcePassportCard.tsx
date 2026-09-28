@@ -6,6 +6,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -22,8 +23,6 @@ export function SourcePassportCard({
   entityName,
   className = "",
 }: SourcePassportCardProps) {
-  const [isOpen, setIsOpen] = useState(false);
-
   const getTierIcon = (type: SourcePassportItem["type"]) => {
     switch (type) {
       case "scripture":
@@ -41,86 +40,87 @@ export function SourcePassportCard({
   const isStrong = passport.evidenceStrength === "Strong";
 
   return (
-    <div
-      data-testid="eka-source-passport"
-      className={`rounded-2xl border border-primary/20 bg-card p-5 shadow-calm backdrop-blur-sm transition-all hover:border-primary/40 ${className}`}
-    >
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-            <ShieldCheck className="h-5 w-5" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h4 className="font-serif text-base font-semibold text-foreground">
-                Source Passport
-              </h4>
-              <Badge
-                variant={isStrong ? "default" : "secondary"}
-                className={`text-xs ${
-                  isStrong
-                    ? "bg-emerald-600 hover:bg-emerald-700 text-white"
-                    : "bg-amber-600 hover:bg-amber-700 text-white"
-                }`}
-              >
-                {passport.evidenceStrength} Evidence
-              </Badge>
+    <Dialog>
+      <div
+        data-testid="eka-source-passport"
+        className={`rounded-2xl border border-primary/20 bg-card p-5 shadow-calm backdrop-blur-sm transition-all hover:border-primary/40 ${className}`}
+      >
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+              <ShieldCheck className="h-5 w-5" />
             </div>
-            <p className="text-xs text-muted-foreground">
-              Corroborated across {passport.totalSources} verified sources with legal provenance
-            </p>
+            <div>
+              <div className="flex items-center gap-2">
+                <h4 className="font-serif text-base font-semibold text-foreground">
+                  Source Passport
+                </h4>
+                <Badge
+                  variant={isStrong ? "default" : "secondary"}
+                  className={`text-xs ${
+                    isStrong
+                      ? "bg-emerald-600 hover:bg-emerald-700 text-white"
+                      : "bg-amber-600 hover:bg-amber-700 text-white"
+                  }`}
+                >
+                  {passport.evidenceStrength} Evidence
+                </Badge>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Corroborated across {passport.totalSources} verified sources with legal provenance
+              </p>
+            </div>
+          </div>
+
+          <DialogTrigger asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              className="rounded-full border-primary/30 text-xs font-medium hover:bg-primary/5 cursor-pointer"
+              data-testid="view-sources-btn"
+            >
+              View Sources ({passport.totalSources})
+            </Button>
+          </DialogTrigger>
+        </div>
+
+        {/* Tier Badges Breakdown */}
+        <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
+          <div className="rounded-xl bg-sand/40 p-2.5 text-center">
+            <span className="block text-lg font-bold text-foreground">
+              {passport.breakdown.primary}
+            </span>
+            <span className="text-[11px] font-medium text-muted-foreground">
+              Primary / Archives
+            </span>
+          </div>
+          <div className="rounded-xl bg-sand/40 p-2.5 text-center">
+            <span className="block text-lg font-bold text-foreground">
+              {passport.breakdown.institutional}
+            </span>
+            <span className="text-[11px] font-medium text-muted-foreground">
+              Institutional / UNESCO
+            </span>
+          </div>
+          <div className="rounded-xl bg-sand/40 p-2.5 text-center">
+            <span className="block text-lg font-bold text-foreground">
+              {passport.breakdown.reference}
+            </span>
+            <span className="text-[11px] font-medium text-muted-foreground">
+              Open Reference (CC)
+            </span>
+          </div>
+          <div className="rounded-xl bg-sand/40 p-2.5 text-center">
+            <span className="block text-lg font-bold text-foreground">
+              {passport.breakdown.community}
+            </span>
+            <span className="text-[11px] font-medium text-muted-foreground">
+              Community Oral
+            </span>
           </div>
         </div>
 
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setIsOpen(true)}
-          className="rounded-full border-primary/30 text-xs font-medium hover:bg-primary/5"
-          data-testid="view-sources-btn"
-        >
-          View Sources ({passport.totalSources})
-        </Button>
-      </div>
-
-      {/* Tier Badges Breakdown */}
-      <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
-        <div className="rounded-xl bg-sand/40 p-2.5 text-center">
-          <span className="block text-lg font-bold text-foreground">
-            {passport.breakdown.primary}
-          </span>
-          <span className="text-[11px] font-medium text-muted-foreground">
-            Primary / Archives
-          </span>
-        </div>
-        <div className="rounded-xl bg-sand/40 p-2.5 text-center">
-          <span className="block text-lg font-bold text-foreground">
-            {passport.breakdown.institutional}
-          </span>
-          <span className="text-[11px] font-medium text-muted-foreground">
-            Institutional / UNESCO
-          </span>
-        </div>
-        <div className="rounded-xl bg-sand/40 p-2.5 text-center">
-          <span className="block text-lg font-bold text-foreground">
-            {passport.breakdown.reference}
-          </span>
-          <span className="text-[11px] font-medium text-muted-foreground">
-            Open Reference (CC)
-          </span>
-        </div>
-        <div className="rounded-xl bg-sand/40 p-2.5 text-center">
-          <span className="block text-lg font-bold text-foreground">
-            {passport.breakdown.community}
-          </span>
-          <span className="text-[11px] font-medium text-muted-foreground">
-            Community Oral
-          </span>
-        </div>
-      </div>
-
-      {/* Sources Modal */}
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        {/* Sources Modal */}
         <DialogContent className="max-h-[85vh] max-w-2xl overflow-y-auto rounded-3xl p-6 sm:p-8">
           <DialogHeader>
             <div className="flex items-center gap-2">
@@ -200,7 +200,7 @@ export function SourcePassportCard({
             </div>
           </div>
         </DialogContent>
-      </Dialog>
-    </div>
+      </div>
+    </Dialog>
   );
 }

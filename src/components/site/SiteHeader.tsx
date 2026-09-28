@@ -10,11 +10,8 @@ const navLinks = [
   { to: "/junction", label: "The Junction" },
   { to: "/stories", label: "1,000 Stories" },
   { to: "/membership", label: "Membership" },
-  { to: "/founder/ad", label: "Founder" },
-  { to: "/practice", label: "Practice" },
   { to: "/observe", label: "Observe" },
   { to: "/studio", label: "Studio" },
-  { to: "/system", label: "System Map" },
 ] as const;
 
 export function SiteHeader() {
@@ -80,7 +77,14 @@ export function SiteHeader() {
         </div>
 
         {/* Desktop Actions */}
-        <div className="hidden items-center gap-3 md:flex">
+        <div className="hidden items-center gap-3.5 md:flex">
+          <Link
+            to="/brands"
+            className="text-xs font-mono uppercase tracking-wider text-muted-foreground/70 hover:text-foreground transition-colors mr-1"
+          >
+            For Brands
+          </Link>
+          <div className="h-4 w-px bg-border/60" />
           <Link
             to="/auth"
             className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
@@ -145,7 +149,18 @@ export function SiteHeader() {
                 </motion.div>
               ))}
 
-              <div className="mt-4 flex flex-col gap-2.5 border-t border-border/60 pt-4">
+              <div className="pt-2 px-3">
+                <Link
+                  to="/brands"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex min-h-[44px] items-center justify-between rounded-xl border border-terracotta/30 bg-terracotta/5 px-3.5 py-2.5 text-sm text-terracotta transition-colors hover:bg-terracotta/10"
+                >
+                  <span className="font-medium font-serif">EKA for Brands & Enterprise</span>
+                  <ArrowRight className="size-4 opacity-70" />
+                </Link>
+              </div>
+
+              <div className="mt-3 flex flex-col gap-2.5 border-t border-border/60 pt-4">
                 <Button
                   asChild
                   className="w-full rounded-xl py-5"

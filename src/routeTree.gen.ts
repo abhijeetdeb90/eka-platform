@@ -12,11 +12,14 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AgentRouteImport } from './routes/agent'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as BrandsRouteImport } from './routes/brands'
 import { Route as CommunityRouteImport } from './routes/community'
 import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as CopyrightRouteImport } from './routes/copyright'
 import { Route as CreateRouteImport } from './routes/create'
+import { Route as CrmRouteImport } from './routes/crm'
 import { Route as EnterpriseRouteImport } from './routes/enterprise'
 import { Route as GiveRouteImport } from './routes/give'
 import { Route as HomeRouteImport } from './routes/home'
@@ -112,9 +115,19 @@ const AdminRoute = AdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AgentRoute = AgentRouteImport.update({
+  id: '/agent',
+  path: '/agent',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BrandsRoute = BrandsRouteImport.update({
+  id: '/brands',
+  path: '/brands',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CommunityRoute = CommunityRouteImport.update({
@@ -135,6 +148,11 @@ const CopyrightRoute = CopyrightRouteImport.update({
 const CreateRoute = CreateRouteImport.update({
   id: '/create',
   path: '/create',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CrmRoute = CrmRouteImport.update({
+  id: '/crm',
+  path: '/crm',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EnterpriseRoute = EnterpriseRouteImport.update({
@@ -570,11 +588,14 @@ const AuthenticatedAppMarketBookingIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/agent': typeof AgentRoute
   '/auth': typeof AuthRoute
+  '/brands': typeof BrandsRoute
   '/community': typeof CommunityRoute
   '/cookies': typeof CookiesRoute
   '/copyright': typeof CopyrightRoute
   '/create': typeof CreateRoute
+  '/crm': typeof CrmRoute
   '/enterprise': typeof EnterpriseRoute
   '/give': typeof GiveRoute
   '/home': typeof HomeRoute
@@ -659,11 +680,14 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/agent': typeof AgentRoute
   '/auth': typeof AuthRoute
+  '/brands': typeof BrandsRoute
   '/community': typeof CommunityRoute
   '/cookies': typeof CookiesRoute
   '/copyright': typeof CopyrightRoute
   '/create': typeof CreateRoute
+  '/crm': typeof CrmRoute
   '/enterprise': typeof EnterpriseRoute
   '/give': typeof GiveRoute
   '/home': typeof HomeRoute
@@ -749,11 +773,14 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/admin': typeof AdminRoute
+  '/agent': typeof AgentRoute
   '/auth': typeof AuthRoute
+  '/brands': typeof BrandsRoute
   '/community': typeof CommunityRoute
   '/cookies': typeof CookiesRoute
   '/copyright': typeof CopyrightRoute
   '/create': typeof CreateRoute
+  '/crm': typeof CrmRoute
   '/enterprise': typeof EnterpriseRoute
   '/give': typeof GiveRoute
   '/home': typeof HomeRoute
@@ -840,11 +867,14 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
+    | '/agent'
     | '/auth'
+    | '/brands'
     | '/community'
     | '/cookies'
     | '/copyright'
     | '/create'
+    | '/crm'
     | '/enterprise'
     | '/give'
     | '/home'
@@ -929,11 +959,14 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/admin'
+    | '/agent'
     | '/auth'
+    | '/brands'
     | '/community'
     | '/cookies'
     | '/copyright'
     | '/create'
+    | '/crm'
     | '/enterprise'
     | '/give'
     | '/home'
@@ -1018,11 +1051,14 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/admin'
+    | '/agent'
     | '/auth'
+    | '/brands'
     | '/community'
     | '/cookies'
     | '/copyright'
     | '/create'
+    | '/crm'
     | '/enterprise'
     | '/give'
     | '/home'
@@ -1109,11 +1145,14 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AdminRoute: typeof AdminRoute
+  AgentRoute: typeof AgentRoute
   AuthRoute: typeof AuthRoute
+  BrandsRoute: typeof BrandsRoute
   CommunityRoute: typeof CommunityRoute
   CookiesRoute: typeof CookiesRoute
   CopyrightRoute: typeof CopyrightRoute
   CreateRoute: typeof CreateRoute
+  CrmRoute: typeof CrmRoute
   EnterpriseRoute: typeof EnterpriseRoute
   GiveRoute: typeof GiveRoute
   HomeRoute: typeof HomeRoute
@@ -1166,11 +1205,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/agent': {
+      id: '/agent'
+      path: '/agent'
+      fullPath: '/agent'
+      preLoaderRoute: typeof AgentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/brands': {
+      id: '/brands'
+      path: '/brands'
+      fullPath: '/brands'
+      preLoaderRoute: typeof BrandsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/community': {
@@ -1199,6 +1252,13 @@ declare module '@tanstack/react-router' {
       path: '/create'
       fullPath: '/create'
       preLoaderRoute: typeof CreateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/crm': {
+      id: '/crm'
+      path: '/crm'
+      fullPath: '/crm'
+      preLoaderRoute: typeof CrmRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/enterprise': {
@@ -1905,11 +1965,14 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AdminRoute: AdminRoute,
+  AgentRoute: AgentRoute,
   AuthRoute: AuthRoute,
+  BrandsRoute: BrandsRoute,
   CommunityRoute: CommunityRoute,
   CookiesRoute: CookiesRoute,
   CopyrightRoute: CopyrightRoute,
   CreateRoute: CreateRoute,
+  CrmRoute: CrmRoute,
   EnterpriseRoute: EnterpriseRoute,
   GiveRoute: GiveRoute,
   HomeRoute: HomeRoute,
