@@ -17,6 +17,11 @@ export const Route = createFileRoute("/brands")({
   validateSearch: (search: Record<string, unknown>): BrandsSearch => {
     const validTabs: BrandTab[] = [
       "dashboard",
+      "radar",
+      "brain",
+      "autopilot",
+      "creators",
+      "attribution",
       "campaigns",
       "audience",
       "promote",

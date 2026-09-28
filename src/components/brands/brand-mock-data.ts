@@ -1,6 +1,16 @@
 // ==============================================================================
-// EKA GROWTH OS — BRAND INTELLIGENCE & ADVERTISING DATA ENGINE
+// EKA GROWTH OS & INTELLIGENCE LAYER — DATA ENGINE & GRAPH DEFINITION
 // ==============================================================================
+// Connecting: People × Interests × Culture × Content × Brands × Products × Intent × Outcomes
+// ==============================================================================
+
+export interface EkaScores {
+  audienceMomentum: { score: number; velocity: string; description: string };
+  culturalRelevance: { score: number; status: string; description: string };
+  audienceAffinity: { score: number; segment: string; description: string };
+  campaignMomentum: { score: number; trend: "Accelerating" | "Steady" | "Decaying"; description: string };
+  opportunityIndex: { score: number; category: string; description: string };
+}
 
 export interface BrandProfile {
   id: string;
@@ -13,6 +23,7 @@ export interface BrandProfile {
   avgEngagement: string;
   conversions: number;
   roas: string;
+  scores: EkaScores;
 }
 
 export const ACTIVE_BRANDS: BrandProfile[] = [
@@ -27,6 +38,13 @@ export const ACTIVE_BRANDS: BrandProfile[] = [
     avgEngagement: "8.4%",
     conversions: 4820,
     roas: "4.2×",
+    scores: {
+      audienceMomentum: { score: 94, velocity: "+32% MoM", description: "High velocity interest migration toward certified handloom silk & brass" },
+      culturalRelevance: { score: 96, status: "Verified Lineage", description: "Direct artisan partnerships with zero appropriation flags" },
+      audienceAffinity: { score: 89, segment: "Conscious Urban Indic", description: "Strongest resonance among 24–38 design-forward households" },
+      campaignMomentum: { score: 91, trend: "Accelerating", description: "Engagement velocity is compounding across short-form loom reels" },
+      opportunityIndex: { score: 9.4, category: "Varanasi Living Sanctuary", description: "High unfilled demand for non-chemical home sanctuary textiles" },
+    },
   },
   {
     id: "forest-essentials",
@@ -39,6 +57,13 @@ export const ACTIVE_BRANDS: BrandProfile[] = [
     avgEngagement: "9.1%",
     conversions: 7120,
     roas: "4.8×",
+    scores: {
+      audienceMomentum: { score: 96, velocity: "+41% MoM", description: "Explosive growth in cold-pressed botanical ritual formulations" },
+      culturalRelevance: { score: 98, status: "Rigvedic Rooted", description: "Deep alignment with Charaka Samhita source nodes" },
+      audienceAffinity: { score: 92, segment: "Diaspora Heritage Seekers", description: "Overwhelming demand from North America & UAE for authentic Kumkumadi" },
+      campaignMomentum: { score: 94, trend: "Accelerating", description: "Morning dinacharya routines driving 4.8× ROAS" },
+      opportunityIndex: { score: 8.9, category: "Sacred Acoustic Bath", description: "Unserved overlap between sound therapy and herbal wellness" },
+    },
   },
   {
     id: "nicobar",
@@ -51,9 +76,309 @@ export const ACTIVE_BRANDS: BrandProfile[] = [
     avgEngagement: "7.9%",
     conversions: 3240,
     roas: "3.9×",
+    scores: {
+      audienceMomentum: { score: 88, velocity: "+26% MoM", description: "Steady expansion in contemporary tropical Indic minimalism" },
+      culturalRelevance: { score: 91, status: "Modern Reinterpretation", description: "Aesthetic synthesis of island heritage and urban living" },
+      audienceAffinity: { score: 86, segment: "Gen Z Mindful Living", description: "High repeat saves for stoneware dining and relaxed linen" },
+      campaignMomentum: { score: 85, trend: "Steady", description: "Solid conversion baseline with room for creator collaborations" },
+      opportunityIndex: { score: 9.1, category: "Minimalist Tea Rituals", description: "Demand surge for Indian ceramic tea sets and slow-pour rituals" },
+    },
   },
 ];
 
+// ==============================================================================
+// 1. CULTURAL TREND RADAR SIGNALS
+// ==============================================================================
+// Culture → Emerging Interest → Audience Signal → Category Opportunity → Campaign
+export interface TrendRadarSignal {
+  id: string;
+  culturalShift: string;
+  emergingInterest: string;
+  audienceSignal: string;
+  targetDemographic: string;
+  momentumScore: number; // 0-100
+  momentumVelocity: string;
+  categoryOpportunity: string;
+  brandOpportunity: string;
+  recommendedCampaign: string;
+  suggestedBudget: string;
+  projectedRoas: string;
+  whyItResonates: string;
+}
+
+export const TREND_RADAR_SIGNALS: TrendRadarSignal[] = [
+  {
+    id: "trend-01",
+    culturalShift: "Return to Ancient Acoustics & Nada Yoga",
+    emergingInterest: "Vedic Sound Therapy & Bronze Singing Bowls",
+    audienceSignal: "Search & view time for temple acoustic resonance reels surged +310% in last 30 days.",
+    targetDemographic: "Gen Z & Young Urban Professionals (18–32)",
+    momentumScore: 98,
+    momentumVelocity: "+310% MoM",
+    categoryOpportunity: "Sound Therapy Tools & Hand-Cast Bell Metal",
+    brandOpportunity: "Position hand-hammered Kansa bronze as daily nervous system grounding instruments.",
+    recommendedCampaign: "Launch a 7-day 'Acoustic Sanctuary' reel series featuring Master Bell-casters of Kerala.",
+    suggestedBudget: "₹65,000",
+    projectedRoas: "5.1×",
+    whyItResonates: "Urban seekers experiencing screen burnout view acoustic resonance as instant non-pharmacological calm.",
+  },
+  {
+    id: "trend-02",
+    culturalShift: "Slow Living & Chemical-Free Dining Rituals",
+    emergingInterest: "Ayurvedic Kansa (Bronze) Tableware & Slow Cooking",
+    audienceSignal: "'I'd consider this' and 'Explore Maker' clicks on artisan cookware jumped 2.8× over ceramic sets.",
+    targetDemographic: "Conscious Urban Indic Households (26–42)",
+    momentumScore: 94,
+    momentumVelocity: "+180% MoM",
+    categoryOpportunity: "Pure Hand-Hammered Bell Metal Dining Sets",
+    brandOpportunity: "Introduce heirloom dining sets with certificates of non-lead metallurgical purity.",
+    recommendedCampaign: "Creator collab with holistic Ayurvedic chefs demonstrating morning thali rituals.",
+    suggestedBudget: "₹85,000",
+    projectedRoas: "4.7×",
+    whyItResonates: "Kitchens are reclaiming sacred status; eating from bronze is recognized for alkalizing food properties.",
+  },
+  {
+    id: "trend-03",
+    culturalShift: "Sacred Geography Pilgrimage & Mindful Travel",
+    emergingInterest: "Himalayan Forest Monasteries & High-Altitude Ashrams",
+    audienceSignal: "Dwell time on High Himalaya hermit field journals averages 6.8 minutes with 38% bookmark rate.",
+    targetDemographic: "Diaspora & Urban Solo Travelers (22–38)",
+    momentumScore: 91,
+    momentumVelocity: "+145% MoM",
+    categoryOpportunity: "Lightweight Ethically Sourced Travel Sanctuary Kits",
+    brandOpportunity: "Bundle organic merino wool dhyana shawls with natural cedar incense for portable meditation.",
+    recommendedCampaign: "Short-form video documentary: 'The Silent Hermitages of Spiti' with integrated travel gear.",
+    suggestedBudget: "₹50,000",
+    projectedRoas: "4.2×",
+    whyItResonates: "Rejection of commercial tourism in favor of deep quietude and spiritual self-discovery.",
+  },
+  {
+    id: "trend-04",
+    culturalShift: "Natural Dye Revival & Handloom Transparency",
+    emergingInterest: "Hardwickia & Pomegranate Peel Natural Dyed Silks",
+    audienceSignal: "82% of seekers watching natural dye extraction reels click through to source provenance passports.",
+    targetDemographic: "Conscious Luxury & Textile Aficionados (28–50)",
+    momentumScore: 93,
+    momentumVelocity: "+220% MoM",
+    categoryOpportunity: "Zero-Chemical Certified Living Heritage Apparel",
+    brandOpportunity: "Release numbered limited-edition sarees with NFC chip tracking back to specific artisan looms.",
+    recommendedCampaign: "Split-screen micro-reels showing raw pomegranate peel transforming into luminous gold silk.",
+    suggestedBudget: "₹1,10,000",
+    projectedRoas: "4.9×",
+    whyItResonates: "Disgust with synthetic fast-fashion microplastics coupled with aesthetic reverence for earth pigments.",
+  },
+];
+
+// ==============================================================================
+// 2. CREATOR + ARTISAN MARKETPLACE
+// ==============================================================================
+export interface CreatorPartner {
+  id: string;
+  name: string;
+  handle: string;
+  avatar: string;
+  tradition: string;
+  location: string;
+  followersCount: string;
+  audienceOverlap: number; // Percentage overlap with brand TG
+  engagementQuality: string;
+  epistemicTier: "Tier 1: Master Lineage" | "Tier 2: Field Scholar" | "Tier 3: Practitioner";
+  topCategories: string[];
+  historicalRoas: string;
+  collaborationsCompleted: number;
+  availableFor: ("Short Video Reels" | "Story Sponsorship" | "Product Co-Design" | "Field Workshops")[];
+}
+
+export const CREATOR_PARTNERS: CreatorPartner[] = [
+  {
+    id: "cr-01",
+    name: "Pt. Rameshwar Mishra",
+    handle: "@banaras.heritage.loom",
+    avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+    tradition: "7th Generation Master Kadhua Weaver",
+    location: "Varanasi, Uttar Pradesh",
+    followersCount: "148K",
+    audienceOverlap: 88,
+    engagementQuality: "14.8% (Exceptional)",
+    epistemicTier: "Tier 1: Master Lineage",
+    topCategories: ["Pure Mulberry Silk", "Zari Gold Thread", "Sacred Geometry"],
+    historicalRoas: "5.4×",
+    collaborationsCompleted: 18,
+    availableFor: ["Short Video Reels", "Product Co-Design", "Story Sponsorship"],
+  },
+  {
+    id: "cr-02",
+    name: "Dr. Vidya Shankar",
+    handle: "@vedic.acoustics",
+    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
+    tradition: "Sanskrit Epigraphist & Nada Yoga Practitioner",
+    location: "Mysuru, Karnataka",
+    followersCount: "210K",
+    audienceOverlap: 84,
+    engagementQuality: "12.2% (Very High)",
+    epistemicTier: "Tier 2: Field Scholar",
+    topCategories: ["Temple Acoustics", "Bronze Singing Bowls", "Mantra Science"],
+    historicalRoas: "4.9×",
+    collaborationsCompleted: 24,
+    availableFor: ["Short Video Reels", "Field Workshops", "Story Sponsorship"],
+  },
+  {
+    id: "cr-03",
+    name: "Meenakshi Sundaram",
+    handle: "@thanjavur.living.bronze",
+    avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80",
+    tradition: "Chola Lost-Wax Metal Caster",
+    location: "Swamimalai, Tamil Nadu",
+    followersCount: "94K",
+    audienceOverlap: 92,
+    engagementQuality: "16.1% (Exceptional)",
+    epistemicTier: "Tier 1: Master Lineage",
+    topCategories: ["Panchaloha Statuary", "Temple Lamps", "Sacred Alloys"],
+    historicalRoas: "5.8×",
+    collaborationsCompleted: 12,
+    availableFor: ["Product Co-Design", "Short Video Reels"],
+  },
+  {
+    id: "cr-04",
+    name: "Aarav Sen",
+    handle: "@spiti.monastery.quiet",
+    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+    tradition: "Himalayan Field Filmmaker & Sound Archivist",
+    location: "Kaza, Spiti Valley",
+    followersCount: "320K",
+    audienceOverlap: 79,
+    engagementQuality: "11.4% (High)",
+    epistemicTier: "Tier 3: Practitioner",
+    topCategories: ["Mindful Travel", "Himalayan Wool", "Soundscapes"],
+    historicalRoas: "4.1×",
+    collaborationsCompleted: 31,
+    availableFor: ["Short Video Reels", "Story Sponsorship"],
+  },
+];
+
+// ==============================================================================
+// 3. CLOSED-LOOP ATTRIBUTION PIPELINE
+// ==============================================================================
+// Discovery → Attention → Engagement → Intent → CRM → Purchase → Retention → LTV
+export interface AttributionTouchpoint {
+  stage: string;
+  volume: string;
+  conversionToNext: string;
+  keyAction: string;
+  culturalInsight: string;
+}
+
+export const CLOSED_LOOP_ATTRIBUTION: AttributionTouchpoint[] = [
+  {
+    stage: "1. Discovery",
+    volume: "1,840,000",
+    conversionToNext: "38.2%",
+    keyAction: "Organic Short-Form Reel Impression in Seeker Feed",
+    culturalInsight: "Artisan hands crafting raw silk at dawn had lowest skip rate (1.4%).",
+  },
+  {
+    stage: "2. Attention",
+    volume: "702,880",
+    conversionToNext: "65.4%",
+    keyAction: "Watched > 15s or 100% completion with sound ON",
+    culturalInsight: "Lo-Fi ambient loom shuttle sound held attention 2.4× longer than voiceovers.",
+  },
+  {
+    stage: "3. Engagement",
+    volume: "459,680",
+    conversionToNext: "31.2%",
+    keyAction: "Like, Save to Sanctuary, Share, or Tap Provenance Passport",
+    culturalInsight: "Seekers inspected the Epistemic Tier certificate before engaging with brand.",
+  },
+  {
+    stage: "4. Commercial Intent",
+    volume: "143,420",
+    conversionToNext: "61.6%",
+    keyAction: "'I'd consider this' or 'Explore Maker' tap on StoryCard",
+    culturalInsight: "High intent signaled without interrupting contemplative browsing flow.",
+  },
+  {
+    stage: "5. Brand CRM Lead",
+    volume: "88,340",
+    conversionToNext: "5.45%",
+    keyAction: "Sample kit requested, VIP waitlist joined, or email subscribed",
+    culturalInsight: "Seekers willing to wait 2–3 weeks for verified hand-hammered products.",
+  },
+  {
+    stage: "6. Purchase",
+    volume: "4,820",
+    conversionToNext: "42.8%",
+    keyAction: "Verified online order or artisan studio booking",
+    culturalInsight: "Average Order Value (AOV) was ₹6,420, 2.1× higher than non-EKA channels.",
+  },
+  {
+    stage: "7. Retention & LTV",
+    volume: "2,063 Patrons",
+    conversionToNext: "₹24,800 Avg LTV",
+    keyAction: "Re-order within 90 days or upgraded to Heritage Patron",
+    culturalInsight: "Patrons receive seasonal provenance notes directly from the weaving family.",
+  },
+];
+
+// ==============================================================================
+// 4. BRAND BRAIN PRE-STORED STRATEGIC QUERIES
+// ==============================================================================
+export interface BrandBrainQA {
+  query: string;
+  category: "diagnosis" | "strategy" | "creative" | "audience";
+  answer: string;
+  suggestedAction: string;
+  actionTab: string;
+}
+
+export const BRAND_BRAIN_KNOWLEDGE_BASE: BrandBrainQA[] = [
+  {
+    query: "Why did our last campaign underperform?",
+    category: "diagnosis",
+    answer: "Your 'Modern Festive Glaze' campaign achieved 420K impressions but only a 1.2% CTR. EKA Brand Brain analyzed the creative: 84% of seekers dropped off at second 4 because the video opened with agency studio lighting rather than the raw artisan workshop. In contrast, campaigns opening with master craftsmen at the loom achieved a 9.8% CTR. You were perceived as a generic commercial brand rather than an authentic cultural patron.",
+    suggestedAction: "Re-edit creative to open with raw artisan macro-shots (First 3 seconds).",
+    actionTab: "campaigns",
+  },
+  {
+    query: "What should we promote next month?",
+    category: "strategy",
+    answer: "EKA Trend Radar detects a +310% surge in 'Vedic Acoustic Sanctuaries' leading into Kartik Deepotsav. Hand-hammered Kansa bronze dinnerware and pure copper water vessels are seeing 4.2× commercial intent. We recommend promoting the 'Heirloom Kansa Dining Set' bundled with an authentic artisan care guide.",
+    suggestedAction: "Launch 'Sacred Dining Sanctuary' Autopilot Campaign.",
+    actionTab: "autopilot",
+  },
+  {
+    query: "Which audience should we target?",
+    category: "audience",
+    answer: "Target the 'Conscious Urban Indic' segment (24–38 yrs, Metros). They currently exhibit an Affinity Score of 94/100 for your handloom catalog, with an average cart value of ₹7,800. Their peak engagement window is 8:00–10:30 PM IST, and they convert 2.3× faster on short-form video reels than static carousel cards.",
+    suggestedAction: "Configure target audience parameters in Campaigns Manager.",
+    actionTab: "audience",
+  },
+  {
+    query: "Give me 5 campaign concepts",
+    category: "creative",
+    answer: "Here are 5 data-grounded concepts aligned with active EKA cultural signals:\n1. 'The 400-Year Loom': Macro-focus on weaver fingers knotting silk warp.\n2. 'Sacred Morning Thali': 20s ASMR of brass bell ringing and hot ghee on kansa plate.\n3. 'Spiti High Silence': Merino wool shawl used at 14,000 ft in morning meditation.\n4. 'Pomegranate to Silk': Chemical-free dye extraction in stone vats.\n5. 'Night Sanctuaries': Candlelight reflecting off hand-cast temple lamps.",
+    suggestedAction: "Select a concept to auto-generate video storyboard.",
+    actionTab: "promote",
+  },
+  {
+    query: "Turn this insight into a 15-second video",
+    category: "creative",
+    answer: "15-SECOND VIDEO STORYBOARD:\n• [0:00–0:03]: Extreme close-up of dark molten bronze poured into earthen clay mold. SFX: Hiss of steam.\n• [0:03–0:07]: Master artisan hammers bell metal rhythmically. No background music, only metallurgic resonance.\n• [0:07–0:11]: Transition to serene dining sanctuary. Evening lamp glow on finished dinnerware.\n• [0:11–0:15]: On-screen text: 'Forged by the 6th Generation. Verified Epistemic Lineage.' Subtle button: 'Explore Maker'.",
+    suggestedAction: "Push storyboard to EKA Creative Studio.",
+    actionTab: "promote",
+  },
+  {
+    query: "Which product should we push to this audience?",
+    category: "strategy",
+    answer: "For your Gen Z Mindful Living audience (18–24), push the 'Handcrafted Kansa Tea Kulhad' (₹1,250). High-priced silk sarees create price friction, but artisanal tea vessels have a 12.8% impulse conversion rate and act as the gateway lead magnet into your brand's long-term CRM pipeline.",
+    suggestedAction: "Allocate ₹30,000 Boost budget to Handcrafted Kulhads.",
+    actionTab: "promote",
+  },
+];
+
+// ==============================================================================
+// 5. EXISTING DATA (CAMPAIGNS, AUDIENCE, CONTENT, CRM) PRESERVED
+// ==============================================================================
 export interface Campaign {
   id: string;
   title: string;
@@ -152,7 +477,7 @@ export interface AudienceSegment {
   demographic: string;
   size: string;
   growth: string;
-  affinityScore: number; // 0-100
+  affinityScore: number;
   whoTheyAre: string;
   whatTheyCareAbout: string[];
   whatTheyWatch: string[];

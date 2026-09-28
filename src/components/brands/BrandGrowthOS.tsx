@@ -1,9 +1,13 @@
 // ==============================================================================
-// EKA GROWTH OS — FULL BRAND OPERATING SYSTEM COMPONENT
+// EKA GROWTH OS & INTELLIGENCE LAYER — FULL SUITE COMPONENT
 // ==============================================================================
-// Meta Ads Manager + GA4 + CRM + AI Strategy layer for heritage & lifestyle brands.
-// Mental Model: "Here is what your audience is doing, why it matters,
-// what you should do next, and then let me execute it."
+// 1. Own the consumer intelligence layer
+// 2. Cultural Trend Radar (Culture → Emerging Interest → Opportunity → Campaign)
+// 3. Brand Brain (Institutional memory & strategic querying co-pilot)
+// 4. Closed-Loop Attribution (Discovery → Attention → Intent → CRM → Purchase → LTV)
+// 5. Creator + Brand Marketplace
+// 6. Campaign Autopilot ("I want to reach 18-24 urban consumers with ₹50K...")
+// 7. Proprietary EKA Scores (Audience Momentum, Cultural Relevance, Affinity, Opportunity Index)
 // ==============================================================================
 
 import { useState } from "react";
@@ -41,6 +45,11 @@ import {
   RefreshCw,
   Search,
   ExternalLink,
+  Zap,
+  Radio,
+  Sliders,
+  ShieldCheck,
+  Check,
 } from "lucide-react";
 import {
   AreaChart,
@@ -60,6 +69,10 @@ import { EkaLogo } from "@/components/brand/Logo";
 import { toast } from "sonner";
 import {
   ACTIVE_BRANDS,
+  TREND_RADAR_SIGNALS,
+  CREATOR_PARTNERS,
+  CLOSED_LOOP_ATTRIBUTION,
+  BRAND_BRAIN_KNOWLEDGE_BASE,
   MOCK_CAMPAIGNS,
   AUDIENCE_SEGMENTS,
   PROMOTABLE_CONTENT,
@@ -67,10 +80,17 @@ import {
   type BrandProfile,
   type Campaign,
   type AudienceSegment,
+  type TrendRadarSignal,
+  type CreatorPartner,
 } from "./brand-mock-data";
 
 export type BrandTab =
   | "dashboard"
+  | "radar"
+  | "brain"
+  | "autopilot"
+  | "creators"
+  | "attribution"
   | "campaigns"
   | "audience"
   | "promote"
@@ -92,7 +112,8 @@ const ANALYTICS_TIMESERIES = [
 const FUNNEL_DATA = [
   { stage: "Impressions", count: 1840000 },
   { stage: "Engaged Views", count: 460000 },
-  { stage: "Product Clicks", count: 88400 },
+  { stage: "Intent Signals", count: 143420 },
+  { stage: "CRM Leads", count: 88340 },
   { stage: "Conversions", count: 4820 },
 ];
 
@@ -101,11 +122,25 @@ interface BrandGrowthOSProps {
 }
 
 export function BrandGrowthOS({ initialTab = "dashboard" }: BrandGrowthOSProps) {
-  const [activeTab, setActiveTab] = useState<BrandTab>(initialTab);
+  const [activeTab, setActiveTab] = useState<BrandTab>(initialTab === "agent" ? "brain" : initialTab);
   const [selectedBrand, setSelectedBrand] = useState<BrandProfile>(ACTIVE_BRANDS[0]);
   const [campaigns, setCampaigns] = useState<Campaign[]>(MOCK_CAMPAIGNS);
   const [campaignFilter, setCampaignFilter] = useState<"all" | "active" | "scheduled" | "completed">("all");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isAutopilotModalOpen, setIsAutopilotModalOpen] = useState(false);
+
+  // Autopilot Execution State
+  const [autopilotPrompt, setAutopilotPrompt] = useState(
+    "I want to reach 18–24 urban consumers interested in Sacred Acoustics with a ₹50,000 budget."
+  );
+  const [autopilotStep, setAutopilotStep] = useState<number>(0);
+  const [autopilotRunning, setAutopilotRunning] = useState(false);
+
+  // Brand Brain State
+  const [brainQuery, setBrainQuery] = useState("");
+  const [brainResponse, setBrainResponse] = useState<string | null>(null);
+  const [brainAction, setBrainAction] = useState<{ text: string; tab: string } | null>(null);
+  const [brainThinking, setBrainThinking] = useState(false);
 
   // New Campaign Form State
   const [newCampaign, setNewCampaign] = useState({
@@ -116,12 +151,64 @@ export function BrandGrowthOS({ initialTab = "dashboard" }: BrandGrowthOSProps) 
     tgSegment: "Conscious Urban Indic (24-38)",
   });
 
-  // AI Agent Interactive State
-  const [agentPrompt, setAgentPrompt] = useState(
-    "Analyze our Varanasi Handloom Silk campaign and generate a 7-day festive boost strategy."
-  );
-  const [agentAnalyzing, setAgentAnalyzing] = useState(false);
-  const [agentResult, setAgentResult] = useState<string | null>(null);
+  const handleRunBrainQuery = (queryText: string) => {
+    setBrainThinking(true);
+    setBrainQuery(queryText);
+    setBrainResponse(null);
+    setBrainAction(null);
+
+    setTimeout(() => {
+      setBrainThinking(false);
+      const match = BRAND_BRAIN_KNOWLEDGE_BASE.find(
+        (q) => q.query.toLowerCase() === queryText.toLowerCase()
+      );
+      if (match) {
+        setBrainResponse(match.answer);
+        setBrainAction({ text: match.suggestedAction, tab: match.actionTab });
+      } else {
+        setBrainResponse(
+          `EKA BRAND BRAIN SYNTHESIS:\n\nBased on your historical campaign telemetry and the live Indic Graph: We recommend shifting 35% of ad spend into artisan short-form reels showcasing the 6th-generation lost-wax bronze casting process. Gen Z intent signals ('I'd consider this') are pacing 2.8× higher on raw workshop footage than studio photography.`
+        );
+        setBrainAction({ text: "Apply Recommendation to Live Bids", tab: "campaigns" });
+      }
+      toast.success("Brand Brain generated strategic recommendation.");
+    }, 900);
+  };
+
+  const handleExecuteAutopilot = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!autopilotPrompt.trim()) return;
+    setAutopilotRunning(true);
+    setAutopilotStep(1);
+
+    setTimeout(() => setAutopilotStep(2), 700);
+    setTimeout(() => setAutopilotStep(3), 1400);
+    setTimeout(() => setAutopilotStep(4), 2100);
+    setTimeout(() => {
+      setAutopilotStep(5);
+      setAutopilotRunning(false);
+      const created: Campaign = {
+        id: `auto-${Date.now()}`,
+        title: "Autopilot: Sacred Acoustics Seeker Sprint",
+        format: "short_video_reel",
+        objective: "TG Engagement",
+        status: "active",
+        thumbnail: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&auto=format&fit=crop&q=80",
+        videoDuration: "0:24",
+        spend: 0,
+        budget: 50000,
+        reach: "Deploying...",
+        engagementRate: "Pacing 11.4%",
+        conversions: 0,
+        ctr: "—",
+        cpa: "—",
+        tgSegment: "Gen Z Mindful Living (18-24)",
+        roas: "Projected 4.8×",
+      };
+      setCampaigns([created, ...campaigns]);
+      toast.success("EKA Autopilot successfully deployed campaign into live ad network!");
+    }, 2800);
+  };
 
   const handleCreateCampaign = (e: React.FormEvent) => {
     e.preventDefault();
@@ -151,22 +238,6 @@ export function BrandGrowthOS({ initialTab = "dashboard" }: BrandGrowthOSProps) 
     setIsCreateModalOpen(false);
     toast.success("Campaign launched into EKA Ad Delivery Network!");
     setActiveTab("campaigns");
-  };
-
-  const handleRunAgent = () => {
-    setAgentAnalyzing(true);
-    setAgentResult(null);
-    setTimeout(() => {
-      setAgentAnalyzing(false);
-      setAgentResult(
-        `EKA GROWTH AGENT AUDIT REPORT\n\n` +
-        `• Cultural Alignment Index: 96/100 (Authentic Varanasi Loom Transmission)\n` +
-        `• Audience Response: Gen Z engagement is pacing 2.4× higher than older demographics.\n` +
-        `• Strategic Recommendation: Shift ₹25,000 from static banner ads into Creator Micro-Reels between 8–10 PM IST.\n` +
-        `• Projected Lift: +140,000 reach, +380 verified product conversions, estimated ROAS 4.6×.`
-      );
-      toast.success("AI Strategy generated successfully!");
-    }, 1200);
   };
 
   const toggleCampaignStatus = (id: string) => {
@@ -222,7 +293,7 @@ export function BrandGrowthOS({ initialTab = "dashboard" }: BrandGrowthOSProps) 
             </div>
           </div>
 
-          {/* Quick Real-Time Metrics Ticker */}
+          {/* Quick Metrics Ticker */}
           <div className="hidden lg:flex items-center gap-6 text-xs font-mono">
             <div>
               <span className="text-muted-foreground">Spend: </span>
@@ -236,28 +307,38 @@ export function BrandGrowthOS({ initialTab = "dashboard" }: BrandGrowthOSProps) 
               <span className="text-muted-foreground">ROAS: </span>
               <span className="font-semibold text-emerald-500">{selectedBrand.roas}</span>
             </div>
-            <div className="flex items-center gap-1 text-[11px] text-muted-foreground">
-              <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
-              Ad Network Live
+            <div className="flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full text-emerald-600 dark:text-emerald-400">
+              <Sparkles className="size-3" />
+              <span>Momentum: <strong>{selectedBrand.scores.audienceMomentum.score}/100</strong></span>
             </div>
           </div>
 
           {/* Right Header Actions */}
           <div className="flex items-center gap-2.5">
+            {/* Killer Autopilot Action Trigger */}
+            <Button
+              size="sm"
+              onClick={() => setIsAutopilotModalOpen(true)}
+              className="bg-amber-600 hover:bg-amber-500 text-white rounded-xl text-xs gap-1.5 shadow-sm font-semibold"
+            >
+              <Zap className="size-3.5 fill-current" />
+              <span className="hidden sm:inline">Campaign Autopilot</span>
+              <span className="sm:hidden">Autopilot</span>
+            </Button>
+
             <Button
               size="sm"
               onClick={() => setIsCreateModalOpen(true)}
               className="bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs gap-1.5 shadow-sm"
             >
               <Plus className="size-3.5" />
-              <span className="hidden sm:inline">Create Campaign</span>
-              <span className="sm:hidden">Create</span>
+              <span className="hidden md:inline">Manual Campaign</span>
             </Button>
 
             <Link to="/">
               <Button size="sm" variant="ghost" className="text-xs h-8 text-muted-foreground hover:text-foreground">
                 <Globe className="size-3.5 mr-1" />
-                <span className="hidden sm:inline">Consumer View</span>
+                <span className="hidden sm:inline">Consumer</span>
               </Button>
             </Link>
 
@@ -274,20 +355,24 @@ export function BrandGrowthOS({ initialTab = "dashboard" }: BrandGrowthOSProps) 
       {/* 2. MAIN GROWTH OS BODY: SIDEBAR + CONTENT AREA */}
       <div className="flex-1 flex flex-col md:flex-row">
         {/* NAV SIDEBAR */}
-        <aside className="w-full md:w-60 border-b md:border-b-0 md:border-r border-border/80 bg-card/60 p-3 flex md:flex-col gap-1 overflow-x-auto md:overflow-visible shrink-0">
-          <div className="hidden md:block px-3 py-2 text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
-            EKA Growth Suite
+        <aside className="w-full md:w-64 border-b md:border-b-0 md:border-r border-border/80 bg-card/60 p-3 flex md:flex-col gap-1 overflow-x-auto md:overflow-visible shrink-0">
+          <div className="hidden md:block px-3 py-1.5 text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
+            Intelligence & Growth
           </div>
 
           {[
-            { id: "dashboard", label: "Dashboard", icon: BarChart3, badge: null },
-            { id: "campaigns", label: "Campaigns", icon: Target, badge: `${campaigns.filter((c) => c.status === "active").length} Active` },
-            { id: "audience", label: "Audience (TG)", icon: Users, badge: "4 Segments" },
-            { id: "promote", label: "Promote", icon: Rocket, badge: null },
-            { id: "analytics", label: "Analytics", icon: TrendingUp, badge: "Meta/GA4" },
+            { id: "dashboard", label: "Growth Dashboard", icon: BarChart3, badge: null },
+            { id: "radar", label: "Cultural Trend Radar", icon: Radio, badge: "Live Signals", highlight: true },
+            { id: "brain", label: "Brand Brain AI", icon: Brain, badge: "Memory Core", glow: true },
+            { id: "autopilot", label: "Campaign Autopilot", icon: Zap, badge: "1-Click" },
+            { id: "creators", label: "Creator Marketplace", icon: Users, badge: "Verified" },
+            { id: "attribution", label: "Closed-Loop Attribution", icon: Target, badge: "LTV Funnel" },
+            { id: "campaigns", label: "Campaigns", icon: Film, badge: `${campaigns.filter((c) => c.status === "active").length} Active` },
+            { id: "audience", label: "Audience (TG)", icon: Compass, badge: "4 Segments" },
+            { id: "promote", label: "Promote Studio", icon: Rocket, badge: null },
+            { id: "analytics", label: "Analytics (Meta/GA4)", icon: TrendingUp, badge: null },
             { id: "crm", label: "Brand CRM", icon: HeartHandshake, badge: null },
-            { id: "strategy", label: "Strategy", icon: Brain, badge: null },
-            { id: "agent", label: "AI Growth Agent", icon: Bot, badge: "Gemini", glow: true },
+            { id: "strategy", label: "Indic Calendar Strategy", icon: Calendar, badge: null },
           ].map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
@@ -295,14 +380,14 @@ export function BrandGrowthOS({ initialTab = "dashboard" }: BrandGrowthOSProps) 
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id as BrandTab)}
-                className={`flex items-center justify-between rounded-xl px-3 py-2 text-xs font-medium transition-all text-left whitespace-nowrap md:whitespace-normal ${
+                className={`flex items-center justify-between rounded-xl px-3 py-2 text-xs font-medium transition-all text-left whitespace-nowrap md:whitespace-normal cursor-pointer ${
                   isActive
                     ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 font-semibold"
                     : "text-muted-foreground hover:bg-accent/60 hover:text-foreground"
                 }`}
               >
                 <div className="flex items-center gap-2.5">
-                  <Icon className={`size-4 ${isActive ? "text-emerald-500" : "text-muted-foreground"}`} />
+                  <Icon className={`size-4 ${isActive ? "text-emerald-500" : item.highlight ? "text-amber-500" : "text-muted-foreground"}`} />
                   <span>{item.label}</span>
                 </div>
                 {item.badge && (
@@ -319,11 +404,14 @@ export function BrandGrowthOS({ initialTab = "dashboard" }: BrandGrowthOSProps) 
             );
           })}
 
-          <div className="mt-auto hidden md:block pt-6 p-3 border-t border-border/60">
-            <div className="rounded-xl bg-accent/40 p-3 text-[11px] text-muted-foreground">
-              <p className="font-medium text-foreground mb-1">Growth OS Loop</p>
-              <p className="text-[10px] leading-relaxed">
-                Audience → Insights → Strategy → Campaign → Promote → CRM → AI
+          <div className="mt-auto hidden md:block pt-4 p-3 border-t border-border/60">
+            <div className="rounded-xl bg-accent/40 p-2.5 text-[10px] text-muted-foreground space-y-1">
+              <p className="font-semibold text-foreground flex items-center gap-1">
+                <Sparkles className="size-3 text-emerald-500" />
+                The Proprietary Graph
+              </p>
+              <p className="leading-tight">
+                People × Interests × Culture × Content × Brands × Intent × Outcomes
               </p>
             </div>
           </div>
@@ -331,23 +419,83 @@ export function BrandGrowthOS({ initialTab = "dashboard" }: BrandGrowthOSProps) 
 
         {/* WORKSPACE CONTENT AREA */}
         <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl">
-          {/* TAB 1: DASHBOARD */}
+          {/* TAB 1: GROWTH DASHBOARD WITH EKA PROPRIETARY SCORES */}
           {activeTab === "dashboard" && (
             <div className="space-y-8 animate-in fade-in duration-200">
-              {/* Top Greeting & Value Prop */}
+              {/* Top Greeting & Pitch */}
               <div>
                 <span className="text-[10px] font-mono uppercase tracking-widest text-emerald-600 dark:text-emerald-400 font-semibold">
-                  Run your brand's growth on EKA
+                  EKA tells you what people want, why they want it, who wants it, and what your brand should do next.
                 </span>
                 <h1 className="font-display text-2xl sm:text-3xl font-semibold tracking-tight mt-1 text-foreground">
                   Good morning, {selectedBrand.name}
                 </h1>
                 <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
-                  Your Indic audience growth, ad performance, and real-time cultural intelligence at a glance.
+                  Your brand growth, proprietary EKA intelligence scores, and real-time cultural demand signals.
                 </p>
               </div>
 
-              {/* 4 Key Performance Metrics */}
+              {/* 5 PROPRIETARY EKA SCORES CARDS */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-mono text-xs uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                    <Sparkles className="size-3.5 text-amber-500" />
+                    Proprietary EKA Intelligence Scores (Beyond Meta/Google Metrics)
+                  </h3>
+                  <span className="text-[10px] font-mono text-emerald-500">Live Graph Updated</span>
+                </div>
+
+                <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
+                  <div className="rounded-2xl border border-border/80 bg-card p-3.5 shadow-xs flex flex-col justify-between">
+                    <span className="text-[10px] text-muted-foreground font-mono">Audience Momentum</span>
+                    <div className="my-1.5 flex items-baseline gap-1.5">
+                      <span className="text-2xl font-bold font-mono text-foreground">{selectedBrand.scores.audienceMomentum.score}</span>
+                      <span className="text-xs text-emerald-500 font-mono font-semibold">{selectedBrand.scores.audienceMomentum.velocity}</span>
+                    </div>
+                    <p className="text-[10px] text-muted-foreground line-clamp-2">{selectedBrand.scores.audienceMomentum.description}</p>
+                  </div>
+
+                  <div className="rounded-2xl border border-border/80 bg-card p-3.5 shadow-xs flex flex-col justify-between">
+                    <span className="text-[10px] text-muted-foreground font-mono">Cultural Relevance</span>
+                    <div className="my-1.5 flex items-baseline gap-1.5">
+                      <span className="text-2xl font-bold font-mono text-foreground">{selectedBrand.scores.culturalRelevance.score}</span>
+                      <Badge variant="outline" className="text-[9px] font-mono border-amber-500/40 text-amber-500 py-0">
+                        {selectedBrand.scores.culturalRelevance.status}
+                      </Badge>
+                    </div>
+                    <p className="text-[10px] text-muted-foreground line-clamp-2">{selectedBrand.scores.culturalRelevance.description}</p>
+                  </div>
+
+                  <div className="rounded-2xl border border-border/80 bg-card p-3.5 shadow-xs flex flex-col justify-between">
+                    <span className="text-[10px] text-muted-foreground font-mono">Audience Affinity</span>
+                    <div className="my-1.5 flex items-baseline gap-1.5">
+                      <span className="text-2xl font-bold font-mono text-foreground">{selectedBrand.scores.audienceAffinity.score}</span>
+                      <span className="text-[10px] text-muted-foreground font-mono truncate">{selectedBrand.scores.audienceAffinity.segment}</span>
+                    </div>
+                    <p className="text-[10px] text-muted-foreground line-clamp-2">{selectedBrand.scores.audienceAffinity.description}</p>
+                  </div>
+
+                  <div className="rounded-2xl border border-border/80 bg-card p-3.5 shadow-xs flex flex-col justify-between">
+                    <span className="text-[10px] text-muted-foreground font-mono">Campaign Momentum</span>
+                    <div className="my-1.5 flex items-baseline gap-1.5">
+                      <span className="text-2xl font-bold font-mono text-foreground">{selectedBrand.scores.campaignMomentum.score}</span>
+                      <span className="text-xs text-emerald-500 font-mono font-semibold">{selectedBrand.scores.campaignMomentum.trend}</span>
+                    </div>
+                    <p className="text-[10px] text-muted-foreground line-clamp-2">{selectedBrand.scores.campaignMomentum.description}</p>
+                  </div>
+
+                  <div className="rounded-2xl border border-border/80 bg-card p-3.5 shadow-xs flex flex-col justify-between col-span-2 lg:col-span-1">
+                    <span className="text-[10px] text-muted-foreground font-mono">Opportunity Index</span>
+                    <div className="my-1.5 flex items-baseline gap-1.5">
+                      <span className="text-2xl font-bold font-mono text-amber-500">{selectedBrand.scores.opportunityIndex.score}/10</span>
+                      <span className="text-[10px] text-muted-foreground font-mono">High Whitespace</span>
+                    </div>
+                    <p className="text-[10px] text-muted-foreground line-clamp-2">{selectedBrand.scores.opportunityIndex.description}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* 4 Standard Growth Metrics */}
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="rounded-2xl border border-border/80 bg-card p-4 shadow-xs">
                   <span className="text-[11px] text-muted-foreground font-mono">₹ Campaign Spend</span>
@@ -386,18 +534,18 @@ export function BrandGrowthOS({ initialTab = "dashboard" }: BrandGrowthOSProps) 
                 </div>
               </div>
 
-              {/* "What EKA Sees" & "What EKA Recommends" Banners */}
+              {/* What EKA Sees & Recommends */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-5 relative overflow-hidden">
                   <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-mono text-xs uppercase font-semibold">
                     <Eye className="size-4" />
-                    What EKA Sees
+                    What EKA Sees (Live Consumer Signal)
                   </div>
                   <h3 className="font-display text-base font-semibold mt-2 text-foreground">
                     Your Gen Z audience is responding 2.3× more to short-form video than static product content.
                   </h3>
                   <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
-                    Watch-time on handcrafted brassware & mulberry loom reels peaked between 8:00–10:30 PM IST. Engagement depth is highest when artisans explain the philosophy.
+                    Watch-time on handcrafted brassware & mulberry loom reels peaked between 8:00–10:30 PM IST. Engagement depth is highest when master artisans speak.
                   </p>
                   <div className="mt-4">
                     <Button
@@ -412,39 +560,39 @@ export function BrandGrowthOS({ initialTab = "dashboard" }: BrandGrowthOSProps) 
                   </div>
                 </div>
 
-                <div className="rounded-2xl border border-primary/30 bg-primary/5 p-5 relative overflow-hidden">
-                  <div className="flex items-center gap-2 text-primary font-mono text-xs uppercase font-semibold">
-                    <Sparkles className="size-4" />
-                    What EKA Recommends
+                <div className="rounded-2xl border border-amber-500/30 bg-amber-500/5 p-5 relative overflow-hidden">
+                  <div className="flex items-center gap-2 text-amber-500 font-mono text-xs uppercase font-semibold">
+                    <Zap className="size-4 fill-current" />
+                    What EKA Recommends (Autopilot Ready)
                   </div>
                   <h3 className="font-display text-base font-semibold mt-2 text-foreground">
-                    Launch a 7-day creator-led campaign around Varanasi Handloom Silk.
+                    Launch a 7-day creator-led campaign around Vedic Acoustic Bronze Bowls.
                   </h3>
                   <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
-                    Shift ₹25,000 from static banner inventory into artisan short-form video reels. Projected reach is +340K at ₹0.42 per engagement with 4.6× ROAS.
+                    Demand in the Trend Radar is up +310% MoM. Suggested budget: ₹50,000 for projected reach of +340K and 4.8× ROAS.
                   </p>
                   <div className="mt-4">
                     <Button
                       size="sm"
                       onClick={() => {
-                        setActiveTab("agent");
-                        setAgentPrompt("Generate a 7-day creator-led campaign for Varanasi Handloom Silk with ₹25,000 budget.");
+                        setIsAutopilotModalOpen(true);
+                        setAutopilotPrompt("I want to launch a 7-day creator campaign for Vedic Acoustic Bronze Bowls with ₹50,000 budget.");
                       }}
-                      className="bg-primary text-primary-foreground text-xs rounded-xl shadow-xs"
+                      className="bg-amber-600 hover:bg-amber-500 text-white text-xs rounded-xl shadow-xs"
                     >
-                      Generate Strategy with AI Agent
+                      Deploy with Campaign Autopilot
                       <ArrowRight className="size-3 ml-1.5" />
                     </Button>
                   </div>
                 </div>
               </div>
 
-              {/* Your Active Campaigns Overview */}
+              {/* Active Campaigns Visual Feed */}
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h2 className="font-display text-lg font-semibold text-foreground">Your Campaigns</h2>
-                    <p className="text-xs text-muted-foreground">Active and scheduled campaigns running on EKA</p>
+                    <h2 className="font-display text-lg font-semibold text-foreground">Active Campaigns</h2>
+                    <p className="text-xs text-muted-foreground">Short video reels, story cards, and creator collaborations live on EKA</p>
                   </div>
                   <Button
                     size="sm"
@@ -537,118 +685,425 @@ export function BrandGrowthOS({ initialTab = "dashboard" }: BrandGrowthOSProps) 
                   ))}
                 </div>
               </div>
+            </div>
+          )}
 
-              {/* Audience Snapshot */}
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h2 className="font-display text-lg font-semibold text-foreground">Target Audience (TG) Pulse</h2>
-                    <p className="text-xs text-muted-foreground">Who is engaging with your brand on EKA</p>
+          {/* TAB 2: CULTURAL TREND RADAR */}
+          {activeTab === "radar" && (
+            <div className="space-y-6 animate-in fade-in duration-200">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <div className="flex items-center gap-2 text-amber-500 font-mono text-xs uppercase font-semibold">
+                    <Radio className="size-4 animate-pulse text-amber-500" />
+                    Early Cultural Intelligence Engine
                   </div>
+                  <h1 className="font-display text-2xl sm:text-3xl font-semibold text-foreground mt-1">
+                    EKA Cultural Trend Radar
+                  </h1>
+                  <p className="text-xs text-muted-foreground">
+                    CULTURE → EMERGING INTEREST → AUDIENCE SIGNAL → CATEGORY OPPORTUNITY → CAMPAIGN
+                  </p>
+                </div>
+                <Badge variant="outline" className="font-mono text-xs border-amber-500 text-amber-500 w-fit">
+                  4 Emerging Movements Tracked
+                </Badge>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {TREND_RADAR_SIGNALS.map((trend) => (
+                  <div
+                    key={trend.id}
+                    className="rounded-2xl border border-border/80 bg-card p-6 shadow-xs flex flex-col justify-between space-y-4 hover:border-amber-500/40 transition-colors"
+                  >
+                    <div>
+                      <div className="flex items-center justify-between border-b border-border/60 pb-3">
+                        <Badge className="bg-amber-500/10 text-amber-500 border-amber-500/30 text-[10px] font-mono">
+                          {trend.momentumVelocity}
+                        </Badge>
+                        <span className="text-xs font-mono text-muted-foreground">
+                          Target: <strong className="text-foreground">{trend.targetDemographic}</strong>
+                        </span>
+                      </div>
+
+                      <h3 className="font-display text-lg font-semibold mt-3 text-foreground">{trend.emergingInterest}</h3>
+                      <p className="text-xs font-mono text-amber-600 dark:text-amber-400 mt-0.5">Shift: {trend.culturalShift}</p>
+
+                      <div className="mt-3 rounded-xl bg-accent/40 p-3 text-xs space-y-2 border border-border/60">
+                        <div>
+                          <span className="font-mono text-[10px] text-muted-foreground uppercase block">Audience Signal:</span>
+                          <p className="text-foreground/90 font-medium">{trend.audienceSignal}</p>
+                        </div>
+                        <div>
+                          <span className="font-mono text-[10px] text-muted-foreground uppercase block">Why It Resonates:</span>
+                          <p className="text-muted-foreground leading-relaxed">{trend.whyItResonates}</p>
+                        </div>
+                      </div>
+
+                      <div className="mt-3 text-xs space-y-1.5">
+                        <div className="flex justify-between font-mono">
+                          <span className="text-muted-foreground">Category Opportunity:</span>
+                          <span className="font-semibold text-foreground">{trend.categoryOpportunity}</span>
+                        </div>
+                        <div className="flex justify-between font-mono">
+                          <span className="text-muted-foreground">Projected ROAS:</span>
+                          <span className="font-semibold text-emerald-500">{trend.projectedRoas}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="pt-3 border-t border-border/60">
+                      <Button
+                        size="sm"
+                        onClick={() => {
+                          setIsAutopilotModalOpen(true);
+                          setAutopilotPrompt(`Launch a ${trend.suggestedBudget} campaign for: ${trend.recommendedCampaign}`);
+                        }}
+                        className="w-full bg-amber-600 hover:bg-amber-500 text-white text-xs rounded-xl gap-1.5"
+                      >
+                        <Zap className="size-3.5 fill-current" />
+                        Convert Trend into Autopilot Campaign ({trend.suggestedBudget})
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* TAB 3: BRAND BRAIN AI */}
+          {activeTab === "brain" && (
+            <div className="space-y-6 animate-in fade-in duration-200">
+              <div>
+                <div className="flex items-center gap-2 text-emerald-500 font-mono text-xs uppercase font-semibold">
+                  <Brain className="size-4" />
+                  Institutional Memory & AI Strategic Co-Pilot
+                </div>
+                <h1 className="font-display text-2xl sm:text-3xl font-semibold text-foreground mt-1">
+                  EKA Brand Brain ({selectedBrand.name})
+                </h1>
+                <p className="text-xs text-muted-foreground">
+                  The AI layer synthesizing your brand positioning, products, historical campaigns, competitor radar, and consumer signals.
+                </p>
+              </div>
+
+              {/* Precomputed Strategic Prompts */}
+              <div className="space-y-3">
+                <span className="text-xs font-mono uppercase text-muted-foreground block">
+                  Ask Brand Brain Anything (Preloaded Strategic Questions):
+                </span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+                  {BRAND_BRAIN_KNOWLEDGE_BASE.map((qa) => (
+                    <button
+                      key={qa.query}
+                      onClick={() => handleRunBrainQuery(qa.query)}
+                      className={`text-left p-3 rounded-xl border transition-all cursor-pointer ${
+                        brainQuery === qa.query
+                          ? "border-emerald-500 bg-emerald-500/10 text-foreground font-semibold"
+                          : "border-border/80 bg-card hover:bg-accent/60 text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      <span className="text-[10px] font-mono uppercase text-emerald-500 block mb-1">
+                        Category: {qa.category}
+                      </span>
+                      <p className="text-xs font-medium">"{qa.query}"</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Interactive Query Input */}
+              <div className="rounded-2xl border border-border/80 bg-card p-5 shadow-xs space-y-4">
+                <div className="flex gap-2">
+                  <Input
+                    value={brainQuery}
+                    onChange={(e) => setBrainQuery(e.target.value)}
+                    placeholder="Ask Brand Brain: 'Why did our last campaign underperform?', 'Which product to push next?'..."
+                    className="text-xs rounded-xl"
+                  />
                   <Button
                     size="sm"
-                    variant="outline"
-                    onClick={() => setActiveTab("audience")}
-                    className="text-xs rounded-xl"
+                    disabled={brainThinking || !brainQuery.trim()}
+                    onClick={() => handleRunBrainQuery(brainQuery)}
+                    className="bg-emerald-600 hover:bg-emerald-500 text-white text-xs rounded-xl px-4"
                   >
-                    Deep Audience Explorer
-                    <ChevronRight className="size-3.5 ml-1" />
+                    {brainThinking ? (
+                      <RefreshCw className="size-3.5 animate-spin" />
+                    ) : (
+                      <>
+                        <Sparkles className="size-3.5 mr-1" /> Ask Brain
+                      </>
+                    )}
                   </Button>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {AUDIENCE_SEGMENTS.map((seg) => (
-                    <div
-                      key={seg.id}
-                      className="rounded-2xl border border-border/80 bg-card p-4 shadow-xs flex flex-col justify-between hover:border-emerald-500/40 transition-colors"
+                {brainResponse && (
+                  <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-4 text-xs font-mono whitespace-pre-wrap leading-relaxed animate-in fade-in duration-200">
+                    <div className="text-[11px] uppercase font-bold text-emerald-600 dark:text-emerald-400 mb-2 flex items-center gap-1.5">
+                      <Brain className="size-3.5" />
+                      EKA Brand Brain Diagnostic Analysis
+                    </div>
+                    {brainResponse}
+                    {brainAction && (
+                      <div className="mt-4 pt-3 border-t border-emerald-500/20 flex items-center justify-between">
+                        <span className="text-[11px] text-muted-foreground font-sans">Recommended Next Step:</span>
+                        <Button
+                          size="sm"
+                          onClick={() => {
+                            setActiveTab(brainAction.tab as BrandTab);
+                            toast.info(`Executing recommendation: ${brainAction.text}`);
+                          }}
+                          className="bg-emerald-600 hover:bg-emerald-500 text-white text-xs rounded-lg h-7"
+                        >
+                          {brainAction.text} →
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* TAB 4: CAMPAIGN AUTOPILOT */}
+          {activeTab === "autopilot" && (
+            <div className="space-y-6 animate-in fade-in duration-200">
+              <div>
+                <div className="flex items-center gap-2 text-amber-500 font-mono text-xs uppercase font-semibold">
+                  <Zap className="size-4 fill-current" />
+                  Autonomous Zero-Friction Ad Deployment
+                </div>
+                <h1 className="font-display text-2xl sm:text-3xl font-semibold text-foreground mt-1">
+                  EKA Campaign Autopilot
+                </h1>
+                <p className="text-xs text-muted-foreground">
+                  BRAND GOAL → ANALYSE AUDIENCE → GENERATE STRATEGY → GENERATE CONTENT → LAUNCH → OPTIMISE
+                </p>
+              </div>
+
+              <div className="rounded-2xl border border-amber-500/30 bg-amber-500/5 p-6 shadow-xs space-y-4">
+                <h3 className="font-display text-base font-semibold text-foreground">
+                  The Killer Interaction: Specify Your Goal in One Sentence
+                </h3>
+                <form onSubmit={handleExecuteAutopilot} className="space-y-3">
+                  <div className="relative">
+                    <Input
+                      value={autopilotPrompt}
+                      onChange={(e) => setAutopilotPrompt(e.target.value)}
+                      className="text-xs py-5 rounded-xl border-amber-500/40 pr-32 bg-background"
+                      placeholder="e.g. I want to reach 18-24 urban consumers interested in Sacred Acoustics with a ₹50,000 budget."
+                    />
+                    <Button
+                      type="submit"
+                      disabled={autopilotRunning}
+                      className="absolute right-1.5 top-1.5 bottom-1.5 bg-amber-600 hover:bg-amber-500 text-white text-xs rounded-lg px-4 font-semibold"
                     >
-                      <div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-[10px] font-mono text-emerald-500 uppercase">{seg.growth}</span>
-                          <Badge variant="outline" className="text-[9px] font-mono">
-                            Affinity {seg.affinityScore}%
-                          </Badge>
+                      {autopilotRunning ? (
+                        <>
+                          <RefreshCw className="size-3.5 animate-spin mr-1" />
+                          Running...
+                        </>
+                      ) : (
+                        <>
+                          <Zap className="size-3.5 fill-current mr-1" />
+                          Launch Autopilot
+                        </>
+                      )}
+                    </Button>
+                  </div>
+
+                  <div className="flex flex-wrap gap-2 text-[11px]">
+                    <span className="text-muted-foreground font-mono text-[10px]">Autopilot Presets:</span>
+                    {[
+                      "I want to reach 18–24 urban consumers interested in Sacred Acoustics with a ₹50,000 budget.",
+                      "Launch a 7-day Dhanteras brass diya sprint targeting diaspora buyers with ₹80,000.",
+                      "Boost Varanasi Handloom silk to conscious urban professionals with ₹40,000.",
+                    ].map((preset) => (
+                      <button
+                        type="button"
+                        key={preset}
+                        onClick={() => setAutopilotPrompt(preset)}
+                        className="rounded-lg bg-accent/60 hover:bg-accent px-2 py-0.5 text-foreground transition-colors cursor-pointer text-[10px]"
+                      >
+                        {preset}
+                      </button>
+                    ))}
+                  </div>
+                </form>
+
+                {/* Autopilot Real-time Execution Pipeline */}
+                {autopilotStep > 0 && (
+                  <div className="mt-4 pt-4 border-t border-amber-500/20 space-y-2 text-xs font-mono">
+                    <div className="flex items-center gap-2">
+                      {autopilotStep >= 1 ? <Check className="size-3.5 text-emerald-500" /> : <RefreshCw className="size-3.5 animate-spin text-amber-500" />}
+                      <span className={autopilotStep >= 1 ? "text-foreground font-medium" : "text-muted-foreground"}>
+                        1. Analyzing 840,000 Indic Seeker nodes & intent signals...
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {autopilotStep >= 2 ? <Check className="size-3.5 text-emerald-500" /> : <RefreshCw className="size-3.5 animate-spin text-amber-500" />}
+                      <span className={autopilotStep >= 2 ? "text-foreground font-medium" : "text-muted-foreground"}>
+                        2. Synthesized strategy: Peak engagement window 8:00–10:30 PM IST (Est. ROAS 4.8×).
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {autopilotStep >= 3 ? <Check className="size-3.5 text-emerald-500" /> : <RefreshCw className="size-3.5 animate-spin text-amber-500" />}
+                      <span className={autopilotStep >= 3 ? "text-foreground font-medium" : "text-muted-foreground"}>
+                        3. Auto-selected top 2 vertical reels & matched verified sound therapist (@vedic.acoustics).
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {autopilotStep >= 4 ? <Check className="size-3.5 text-emerald-500" /> : <RefreshCw className="size-3.5 animate-spin text-amber-500" />}
+                      <span className={autopilotStep >= 4 ? "text-foreground font-medium" : "text-muted-foreground"}>
+                        4. Real-time CPM bidding configured with ₹50,000 ceiling.
+                      </span>
+                    </div>
+                    {autopilotStep >= 5 && (
+                      <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-600 dark:text-emerald-400 font-semibold flex items-center justify-between">
+                        <span>✓ Campaign Live in EKA Ad Delivery Network! (Active Campaign ID: #auto-sprint)</span>
+                        <Button
+                          size="sm"
+                          onClick={() => setActiveTab("campaigns")}
+                          className="bg-emerald-600 text-white text-xs h-7 rounded-lg"
+                        >
+                          View in Campaigns Manager →
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* TAB 5: CREATOR + ARTISAN MARKETPLACE */}
+          {activeTab === "creators" && (
+            <div className="space-y-6 animate-in fade-in duration-200">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h1 className="font-display text-2xl sm:text-3xl font-semibold text-foreground">
+                    Creator & Artisan Marketplace
+                  </h1>
+                  <p className="text-xs text-muted-foreground">
+                    Direct collaboration with verified master weavers, Sanskrit scholars, and field filmmakers
+                  </p>
+                </div>
+                <Badge variant="outline" className="font-mono text-xs border-emerald-500 text-emerald-500 w-fit">
+                  {CREATOR_PARTNERS.length} Verified Master Creators
+                </Badge>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {CREATOR_PARTNERS.map((creator) => (
+                  <div
+                    key={creator.id}
+                    className="rounded-2xl border border-border/80 bg-card p-6 shadow-xs flex flex-col justify-between space-y-4"
+                  >
+                    <div>
+                      <div className="flex items-start gap-3.5">
+                        <img
+                          src={creator.avatar}
+                          alt={creator.name}
+                          className="size-12 rounded-full object-cover border border-border"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between">
+                            <h3 className="font-display text-base font-semibold text-foreground truncate">{creator.name}</h3>
+                            <Badge className="bg-amber-500/10 text-amber-500 border-amber-500/30 text-[9px] font-mono">
+                              {creator.epistemicTier}
+                            </Badge>
+                          </div>
+                          <p className="text-xs text-muted-foreground font-mono">{creator.handle} • {creator.location}</p>
+                          <p className="text-xs text-foreground/80 font-medium mt-1">{creator.tradition}</p>
                         </div>
-                        <h4 className="font-display text-sm font-semibold mt-1 text-foreground">{seg.name}</h4>
-                        <p className="text-[11px] text-muted-foreground mt-0.5">{seg.demographic}</p>
-                        <p className="text-xs text-foreground/80 mt-2 line-clamp-2">{seg.whoTheyAre}</p>
                       </div>
 
-                      <div className="mt-4 pt-3 border-t border-border/60">
-                        <span className="text-[10px] font-mono text-muted-foreground uppercase">Top Purchasing:</span>
-                        <div className="flex flex-wrap gap-1 mt-1">
-                          {seg.topProductsInterested.slice(0, 2).map((prod) => (
-                            <span
-                              key={prod}
-                              className="text-[10px] bg-accent/60 text-foreground px-1.5 py-0.5 rounded-md"
-                            >
-                              {prod}
+                      <div className="mt-4 grid grid-cols-3 gap-2 text-center font-mono text-xs border-y border-border/60 py-3">
+                        <div>
+                          <span className="text-[10px] text-muted-foreground block">Audience Overlap</span>
+                          <strong className="text-emerald-500 text-sm">{creator.audienceOverlap}%</strong>
+                        </div>
+                        <div>
+                          <span className="text-[10px] text-muted-foreground block">Engagement</span>
+                          <strong className="text-foreground text-sm">{creator.engagementQuality.split(" ")[0]}</strong>
+                        </div>
+                        <div>
+                          <span className="text-[10px] text-muted-foreground block">Past ROAS</span>
+                          <strong className="text-foreground text-sm">{creator.historicalRoas}</strong>
+                        </div>
+                      </div>
+
+                      <div className="mt-3 text-xs space-y-1.5">
+                        <span className="font-mono text-[10px] text-muted-foreground uppercase">Available For:</span>
+                        <div className="flex flex-wrap gap-1">
+                          {creator.availableFor.map((item) => (
+                            <span key={item} className="bg-accent/60 text-foreground px-2 py-0.5 rounded-md text-[10px]">
+                              {item}
                             </span>
                           ))}
                         </div>
                       </div>
                     </div>
-                  ))}
-                </div>
-              </div>
 
-              {/* Content Feed Section */}
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h2 className="font-display text-lg font-semibold text-foreground">Content Ready to Promote</h2>
-                    <p className="text-xs text-muted-foreground">High-performing reels, story cards, and artisan assets</p>
-                  </div>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => setActiveTab("promote")}
-                    className="text-xs rounded-xl"
-                  >
-                    Promote Studio
-                    <ChevronRight className="size-3.5 ml-1" />
-                  </Button>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {PROMOTABLE_CONTENT.map((item) => (
-                    <div key={item.id} className="rounded-2xl border border-border/80 bg-card overflow-hidden shadow-xs flex flex-col">
-                      <div className="relative aspect-4/3 w-full bg-muted">
-                        <img src={item.mediaUrl} alt={item.title} className="h-full w-full object-cover" />
-                        <div className="absolute top-2 left-2">
-                          <Badge className="text-[9px] uppercase font-mono bg-black/70 text-white">
-                            {item.type}
-                          </Badge>
-                        </div>
-                        <div className="absolute bottom-2 right-2 rounded bg-black/70 px-1.5 py-0.5 text-[10px] font-mono text-white">
-                          {item.organicViews} views
-                        </div>
-                      </div>
-                      <div className="p-3 flex-1 flex flex-col justify-between space-y-2">
-                        <h4 className="text-xs font-medium text-foreground line-clamp-1">{item.title}</h4>
-                        <div className="flex items-center justify-between text-[11px] text-muted-foreground font-mono">
-                          <span>Engagement: <strong className="text-emerald-500">{item.organicEngagement}</strong></span>
-                          <span>{item.conversionPotential} Potential</span>
-                        </div>
-                        <Button
-                          size="sm"
-                          onClick={() => {
-                            setActiveTab("promote");
-                            toast.info(`Configuring boost for "${item.title}"`);
-                          }}
-                          className="w-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs h-7 rounded-lg"
-                        >
-                          <Rocket className="size-3 mr-1" /> Boost with AI
-                        </Button>
-                      </div>
+                    <div className="pt-2">
+                      <Button
+                        size="sm"
+                        onClick={() => toast.success(`Initiated direct collaboration request with ${creator.name}`)}
+                        className="w-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs rounded-xl"
+                      >
+                        Initiate Brand Collaboration ({creator.followersCount} Followers)
+                      </Button>
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ))}
               </div>
             </div>
           )}
 
-          {/* TAB 2: CAMPAIGNS */}
+          {/* TAB 6: CLOSED-LOOP ATTRIBUTION PIPELINE */}
+          {activeTab === "attribution" && (
+            <div className="space-y-6 animate-in fade-in duration-200">
+              <div>
+                <h1 className="font-display text-2xl sm:text-3xl font-semibold text-foreground">
+                  Closed-Loop Attribution Pipeline
+                </h1>
+                <p className="text-xs text-muted-foreground">
+                  Connecting: Discovery → Attention → Engagement → Intent → CRM → Purchase → Retention → Lifetime Value
+                </p>
+              </div>
+
+              <div className="space-y-3">
+                {CLOSED_LOOP_ATTRIBUTION.map((touchpoint, idx) => (
+                  <div
+                    key={touchpoint.stage}
+                    className="rounded-2xl border border-border/80 bg-card p-4 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4 font-mono text-xs"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="size-8 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center font-bold text-sm shrink-0">
+                        {idx + 1}
+                      </div>
+                      <div>
+                        <h4 className="font-sans font-semibold text-sm text-foreground">{touchpoint.stage}</h4>
+                        <p className="text-[11px] text-muted-foreground font-sans mt-0.5">{touchpoint.keyAction}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-6 text-right">
+                      <div>
+                        <span className="text-[10px] text-muted-foreground uppercase block">Volume / Scale</span>
+                        <strong className="text-foreground text-sm">{touchpoint.volume}</strong>
+                      </div>
+                      <div>
+                        <span className="text-[10px] text-muted-foreground uppercase block">Conversion Rate</span>
+                        <strong className="text-emerald-500 text-sm">{touchpoint.conversionToNext}</strong>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* TAB 7: CAMPAIGNS MANAGER */}
           {activeTab === "campaigns" && (
             <div className="space-y-6 animate-in fade-in duration-200">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -662,7 +1117,7 @@ export function BrandGrowthOS({ initialTab = "dashboard" }: BrandGrowthOSProps) 
                       <button
                         key={filter}
                         onClick={() => setCampaignFilter(filter)}
-                        className={`rounded-lg px-2.5 py-1 text-xs capitalize transition-colors ${
+                        className={`rounded-lg px-2.5 py-1 text-xs capitalize transition-colors cursor-pointer ${
                           campaignFilter === filter
                             ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-medium"
                             : "text-muted-foreground hover:text-foreground"
@@ -764,7 +1219,7 @@ export function BrandGrowthOS({ initialTab = "dashboard" }: BrandGrowthOSProps) 
             </div>
           )}
 
-          {/* TAB 3: AUDIENCE (TG INTELLIGENCE) */}
+          {/* TAB 8: AUDIENCE */}
           {activeTab === "audience" && (
             <div className="space-y-6 animate-in fade-in duration-200">
               <div>
@@ -830,10 +1285,7 @@ export function BrandGrowthOS({ initialTab = "dashboard" }: BrandGrowthOSProps) 
                       size="sm"
                       onClick={() => {
                         setIsCreateModalOpen(true);
-                        setNewCampaign({
-                          ...newCampaign,
-                          tgSegment: seg.name,
-                        });
+                        setNewCampaign({ ...newCampaign, tgSegment: seg.name });
                       }}
                       className="w-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs rounded-xl"
                     >
@@ -845,7 +1297,7 @@ export function BrandGrowthOS({ initialTab = "dashboard" }: BrandGrowthOSProps) 
             </div>
           )}
 
-          {/* TAB 4: PROMOTE STUDIO */}
+          {/* TAB 9: PROMOTE */}
           {activeTab === "promote" && (
             <div className="space-y-6 animate-in fade-in duration-200">
               <div>
@@ -865,7 +1317,7 @@ export function BrandGrowthOS({ initialTab = "dashboard" }: BrandGrowthOSProps) 
                           </Badge>
                         </div>
                         <div className="absolute bottom-2 right-2 rounded bg-black/70 px-1.5 py-0.5 text-[10px] font-mono text-white">
-                          {item.organicViews}
+                          {item.organicViews} views
                         </div>
                       </div>
 
@@ -891,13 +1343,10 @@ export function BrandGrowthOS({ initialTab = "dashboard" }: BrandGrowthOSProps) 
                     <div className="p-4 pt-0">
                       <Button
                         size="sm"
-                        onClick={() => {
-                          toast.success(`Allocated ${item.recommendedBudget} AI Boost to "${item.title}"`);
-                        }}
+                        onClick={() => toast.success(`Allocated ${item.recommendedBudget} AI Boost to "${item.title}"`)}
                         className="w-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs rounded-xl"
                       >
-                        <Rocket className="size-3.5 mr-1" />
-                        Boost for {item.recommendedBudget}
+                        <Rocket className="size-3.5 mr-1" /> Boost for {item.recommendedBudget}
                       </Button>
                     </div>
                   </div>
@@ -906,7 +1355,7 @@ export function BrandGrowthOS({ initialTab = "dashboard" }: BrandGrowthOSProps) 
             </div>
           )}
 
-          {/* TAB 5: ANALYTICS (META ADS + GA4 STYLE) */}
+          {/* TAB 10: ANALYTICS */}
           {activeTab === "analytics" && (
             <div className="space-y-8 animate-in fade-in duration-200">
               <div>
@@ -914,7 +1363,6 @@ export function BrandGrowthOS({ initialTab = "dashboard" }: BrandGrowthOSProps) 
                 <p className="text-xs text-muted-foreground">Full-funnel campaign reach, engagement velocity, and conversion attribution</p>
               </div>
 
-              {/* Time Series Area Chart */}
               <div className="rounded-2xl border border-border/80 bg-card p-5 shadow-xs">
                 <div className="flex items-center justify-between mb-4">
                   <div>
@@ -944,7 +1392,6 @@ export function BrandGrowthOS({ initialTab = "dashboard" }: BrandGrowthOSProps) 
                 </div>
               </div>
 
-              {/* Funnel & Attribution */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="rounded-2xl border border-border/80 bg-card p-5 shadow-xs">
                   <h3 className="font-display text-base font-semibold text-foreground mb-1">Conversion Funnel</h3>
@@ -1007,7 +1454,7 @@ export function BrandGrowthOS({ initialTab = "dashboard" }: BrandGrowthOSProps) 
             </div>
           )}
 
-          {/* TAB 6: BRAND CRM */}
+          {/* TAB 11: CRM */}
           {activeTab === "crm" && (
             <div className="space-y-6 animate-in fade-in duration-200">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -1085,7 +1532,7 @@ export function BrandGrowthOS({ initialTab = "dashboard" }: BrandGrowthOSProps) 
             </div>
           )}
 
-          {/* TAB 7: STRATEGY & MARKET INTELLIGENCE */}
+          {/* TAB 12: STRATEGY */}
           {activeTab === "strategy" && (
             <div className="space-y-6 animate-in fade-in duration-200">
               <div>
@@ -1138,78 +1585,6 @@ export function BrandGrowthOS({ initialTab = "dashboard" }: BrandGrowthOSProps) 
               </div>
             </div>
           )}
-
-          {/* TAB 8: AI GROWTH AGENT */}
-          {activeTab === "agent" && (
-            <div className="space-y-6 animate-in fade-in duration-200">
-              <div>
-                <div className="flex items-center gap-2 text-emerald-500 font-mono text-xs uppercase font-semibold">
-                  <Bot className="size-4" />
-                  Gemini-Powered Autonomous Growth Co-Pilot
-                </div>
-                <h1 className="font-display text-2xl font-semibold text-foreground mt-1">EKA AI Growth Agent</h1>
-                <p className="text-xs text-muted-foreground">
-                  Analyse past campaigns, strategise upcoming launches, create authentic copy, and auto-optimise ad bids.
-                </p>
-              </div>
-
-              <div className="rounded-2xl border border-border/80 bg-card p-6 shadow-xs space-y-4">
-                <label className="text-xs font-mono uppercase text-muted-foreground block">
-                  Agent Instruction & Strategic Prompt
-                </label>
-                <div className="relative">
-                  <Input
-                    value={agentPrompt}
-                    onChange={(e) => setAgentPrompt(e.target.value)}
-                    placeholder="Ask the Growth Agent to analyse, strategise, or optimise your campaigns..."
-                    className="pr-28 text-xs py-5 rounded-xl border-border/80"
-                  />
-                  <Button
-                    size="sm"
-                    disabled={agentAnalyzing}
-                    onClick={handleRunAgent}
-                    className="absolute right-1.5 top-1.5 bottom-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs rounded-lg px-4"
-                  >
-                    {agentAnalyzing ? (
-                      <>
-                        <RefreshCw className="size-3.5 animate-spin mr-1" />
-                        Auditing...
-                      </>
-                    ) : (
-                      <>
-                        <Sparkles className="size-3.5 mr-1" />
-                        Execute
-                      </>
-                    )}
-                  </Button>
-                </div>
-
-                <div className="flex flex-wrap gap-2 pt-1 text-[11px]">
-                  <span className="text-muted-foreground font-mono text-[10px]">Try Quick Prompts:</span>
-                  {[
-                    "Audit Varanasi Loom video ad retention",
-                    "Suggest 3 festive reels for Dhanteras",
-                    "Optimize budget across Gen Z segment",
-                    "Check ad copy for sacred cultural respect",
-                  ].map((p) => (
-                    <button
-                      key={p}
-                      onClick={() => setAgentPrompt(p)}
-                      className="rounded-lg bg-accent/60 hover:bg-accent px-2.5 py-1 text-foreground transition-colors cursor-pointer"
-                    >
-                      {p}
-                    </button>
-                  ))}
-                </div>
-
-                {agentResult && (
-                  <div className="rounded-xl border border-emerald-500/40 bg-emerald-500/5 p-4 text-xs font-mono whitespace-pre-wrap leading-relaxed animate-in fade-in duration-300">
-                    {agentResult}
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
         </main>
       </div>
 
@@ -1224,7 +1599,7 @@ export function BrandGrowthOS({ initialTab = "dashboard" }: BrandGrowthOSProps) 
               </div>
               <button
                 onClick={() => setIsCreateModalOpen(false)}
-                className="text-muted-foreground hover:text-foreground text-sm"
+                className="text-muted-foreground hover:text-foreground text-sm cursor-pointer"
               >
                 ✕
               </button>
@@ -1298,7 +1673,7 @@ export function BrandGrowthOS({ initialTab = "dashboard" }: BrandGrowthOSProps) 
                   step="5000"
                   value={newCampaign.budget}
                   onChange={(e) => setNewCampaign({ ...newCampaign, budget: Number(e.target.value) })}
-                  className="w-full accent-emerald-500"
+                  className="w-full accent-emerald-500 cursor-pointer"
                 />
               </div>
 
@@ -1313,6 +1688,80 @@ export function BrandGrowthOS({ initialTab = "dashboard" }: BrandGrowthOSProps) 
                 </Button>
                 <Button type="submit" className="bg-emerald-600 hover:bg-emerald-500 text-white text-xs rounded-xl">
                   Deploy Campaign
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* AUTOPILOT MODAL */}
+      {isAutopilotModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="w-full max-w-xl rounded-2xl border border-amber-500/40 bg-card p-6 shadow-2xl space-y-5">
+            <div className="flex items-center justify-between border-b border-border/60 pb-3">
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 rounded-lg bg-amber-500/10 text-amber-500">
+                  <Zap className="size-4 fill-current" />
+                </div>
+                <div>
+                  <h3 className="font-display text-lg font-semibold text-foreground">EKA Campaign Autopilot</h3>
+                  <p className="text-xs text-muted-foreground">State your objective. EKA analyzes, creates, and launches.</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsAutopilotModalOpen(false)}
+                className="text-muted-foreground hover:text-foreground text-sm cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleExecuteAutopilot} className="space-y-4">
+              <div>
+                <label className="text-xs font-mono uppercase text-muted-foreground block mb-1">
+                  Goal Prompt (Natural Language):
+                </label>
+                <textarea
+                  rows={3}
+                  value={autopilotPrompt}
+                  onChange={(e) => setAutopilotPrompt(e.target.value)}
+                  className="w-full rounded-xl border border-border bg-background p-3 text-xs leading-relaxed"
+                  placeholder="e.g. I want to reach 18-24 urban consumers interested in Sacred Acoustics with a ₹50,000 budget."
+                />
+              </div>
+
+              {autopilotStep > 0 && (
+                <div className="rounded-xl bg-accent/40 p-3 space-y-2 text-xs font-mono">
+                  <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400">
+                    <RefreshCw className="size-3.5 animate-spin" />
+                    <span>Executing Autopilot Pipeline:</span>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">
+                    {autopilotStep === 1 && "Step 1: Ingesting audience demand and intent graph..."}
+                    {autopilotStep === 2 && "Step 2: Synthesizing pricing and optimal 8-10 PM delivery window..."}
+                    {autopilotStep === 3 && "Step 3: Pairing with master creator @vedic.acoustics..."}
+                    {autopilotStep === 4 && "Step 4: Locking bid ceiling and allocating budget..."}
+                    {autopilotStep === 5 && "Step 5: Deployed into live ad network!"}
+                  </p>
+                </div>
+              )}
+
+              <div className="flex justify-end gap-2 pt-2 border-t border-border/60">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => setIsAutopilotModalOpen(false)}
+                  className="text-xs rounded-xl"
+                >
+                  Close
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={autopilotRunning}
+                  className="bg-amber-600 hover:bg-amber-500 text-white text-xs rounded-xl font-semibold"
+                >
+                  {autopilotRunning ? "Deploying..." : "Launch Autopilot Now"}
                 </Button>
               </div>
             </form>

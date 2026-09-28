@@ -294,6 +294,31 @@ export function StoryCard({
             </button>
           </div>
         </div>
+
+        {/* Structured Intent Signals (Capturing intent rather than merely passive likes) */}
+        <div className="mt-3 pt-2.5 border-t border-white/10 flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+          <span className="text-[9px] font-mono uppercase tracking-wider text-amber-300/80 shrink-0 flex items-center gap-1">
+            <Sparkles className="size-2.5 text-amber-400" />
+            Intent:
+          </span>
+          {[
+            { label: "I'm into this", type: "affinity", msg: "Affinity signal recorded: Cultural Graph updated" },
+            { label: "Show me more", type: "recommend", msg: "Recommendation weights reinforced for this tradition" },
+            { label: "I'd consider this", type: "commercial", msg: "Commercial intent noted: Connecting with verified maker" },
+            { label: "Find similar craft", type: "visual", msg: "Mapping related artisan lineages across the network" },
+          ].map((signal) => (
+            <button
+              key={signal.label}
+              onClick={(e) => {
+                e.stopPropagation();
+                toast.success(signal.msg);
+              }}
+              className="rounded-full bg-white/10 hover:bg-white/20 active:bg-amber-500/20 active:text-amber-300 text-white/80 border border-white/15 px-2.5 py-0.5 text-[10px] font-sans font-medium whitespace-nowrap transition-all hover:scale-105"
+            >
+              {signal.label}
+            </button>
+          ))}
+        </div>
       </div>
     </article>
   );
