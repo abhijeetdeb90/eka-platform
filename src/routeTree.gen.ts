@@ -13,16 +13,21 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AgentRouteImport } from './routes/agent'
+import { Route as AudienceRouteImport } from './routes/audience'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as BrandsRouteImport } from './routes/brands'
+import { Route as CampaignsRouteImport } from './routes/campaigns'
 import { Route as CommunityRouteImport } from './routes/community'
+import { Route as ContentRouteImport } from './routes/content'
 import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as CopyrightRouteImport } from './routes/copyright'
 import { Route as CreateRouteImport } from './routes/create'
 import { Route as CrmRouteImport } from './routes/crm'
 import { Route as EnterpriseRouteImport } from './routes/enterprise'
+import { Route as FounderRouteImport } from './routes/founder'
 import { Route as GiveRouteImport } from './routes/give'
 import { Route as HomeRouteImport } from './routes/home'
+import { Route as InsightsRouteImport } from './routes/insights'
 import { Route as JoinRouteImport } from './routes/join'
 import { Route as JourneyRouteImport } from './routes/journey'
 import { Route as JunctionRouteImport } from './routes/junction'
@@ -30,13 +35,16 @@ import { Route as McpRouteImport } from './routes/mcp'
 import { Route as MembershipRouteImport } from './routes/membership'
 import { Route as MyEkaRouteImport } from './routes/my-eka'
 import { Route as ObserveRouteImport } from './routes/observe'
+import { Route as OpsRouteImport } from './routes/ops'
 import { Route as PracticeRouteImport } from './routes/practice'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as PromoteRouteImport } from './routes/promote'
 import { Route as RefundRouteImport } from './routes/refund'
 import { Route as RitualKitsRouteImport } from './routes/ritual-kits'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as StandardsRouteImport } from './routes/standards'
 import { Route as StoriesRouteImport } from './routes/stories'
+import { Route as StrategyRouteImport } from './routes/strategy'
 import { Route as SystemRouteImport } from './routes/system'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
@@ -120,6 +128,11 @@ const AgentRoute = AgentRouteImport.update({
   path: '/agent',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AudienceRoute = AudienceRouteImport.update({
+  id: '/audience',
+  path: '/audience',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -130,9 +143,19 @@ const BrandsRoute = BrandsRouteImport.update({
   path: '/brands',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CampaignsRoute = CampaignsRouteImport.update({
+  id: '/campaigns',
+  path: '/campaigns',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CommunityRoute = CommunityRouteImport.update({
   id: '/community',
   path: '/community',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContentRoute = ContentRouteImport.update({
+  id: '/content',
+  path: '/content',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CookiesRoute = CookiesRouteImport.update({
@@ -160,6 +183,11 @@ const EnterpriseRoute = EnterpriseRouteImport.update({
   path: '/enterprise',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FounderRoute = FounderRouteImport.update({
+  id: '/founder',
+  path: '/founder',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GiveRoute = GiveRouteImport.update({
   id: '/give',
   path: '/give',
@@ -168,6 +196,11 @@ const GiveRoute = GiveRouteImport.update({
 const HomeRoute = HomeRouteImport.update({
   id: '/home',
   path: '/home',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InsightsRoute = InsightsRouteImport.update({
+  id: '/insights',
+  path: '/insights',
   getParentRoute: () => rootRouteImport,
 } as any)
 const JoinRoute = JoinRouteImport.update({
@@ -205,6 +238,11 @@ const ObserveRoute = ObserveRouteImport.update({
   path: '/observe',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OpsRoute = OpsRouteImport.update({
+  id: '/ops',
+  path: '/ops',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PracticeRoute = PracticeRouteImport.update({
   id: '/practice',
   path: '/practice',
@@ -213,6 +251,11 @@ const PracticeRoute = PracticeRouteImport.update({
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PromoteRoute = PromoteRouteImport.update({
+  id: '/promote',
+  path: '/promote',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RefundRoute = RefundRouteImport.update({
@@ -238,6 +281,11 @@ const StandardsRoute = StandardsRouteImport.update({
 const StoriesRoute = StoriesRouteImport.update({
   id: '/stories',
   path: '/stories',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StrategyRoute = StrategyRouteImport.update({
+  id: '/strategy',
+  path: '/strategy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SystemRoute = SystemRouteImport.update({
@@ -267,9 +315,9 @@ const AuthenticatedStudioRoute = AuthenticatedStudioRouteImport.update({
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const FounderAdRoute = FounderAdRouteImport.update({
-  id: '/founder/ad',
-  path: '/founder/ad',
-  getParentRoute: () => rootRouteImport,
+  id: '/ad',
+  path: '/ad',
+  getParentRoute: () => FounderRoute,
 } as any)
 const KnowledgeIndexRoute = KnowledgeIndexRouteImport.update({
   id: '/knowledge/',
@@ -589,16 +637,21 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/agent': typeof AgentRoute
+  '/audience': typeof AudienceRoute
   '/auth': typeof AuthRoute
   '/brands': typeof BrandsRoute
+  '/campaigns': typeof CampaignsRoute
   '/community': typeof CommunityRoute
+  '/content': typeof ContentRoute
   '/cookies': typeof CookiesRoute
   '/copyright': typeof CopyrightRoute
   '/create': typeof CreateRoute
   '/crm': typeof CrmRoute
   '/enterprise': typeof EnterpriseRoute
+  '/founder': typeof FounderRouteWithChildren
   '/give': typeof GiveRoute
   '/home': typeof HomeRoute
+  '/insights': typeof InsightsRoute
   '/join': typeof JoinRoute
   '/journey': typeof JourneyRoute
   '/junction': typeof JunctionRoute
@@ -606,13 +659,16 @@ export interface FileRoutesByFullPath {
   '/membership': typeof MembershipRoute
   '/my-eka': typeof MyEkaRoute
   '/observe': typeof ObserveRoute
+  '/ops': typeof OpsRoute
   '/practice': typeof PracticeRoute
   '/privacy': typeof PrivacyRoute
+  '/promote': typeof PromoteRoute
   '/refund': typeof RefundRoute
   '/ritual-kits': typeof RitualKitsRoute
   '/search': typeof SearchRoute
   '/standards': typeof StandardsRoute
   '/stories': typeof StoriesRoute
+  '/strategy': typeof StrategyRoute
   '/system': typeof SystemRoute
   '/terms': typeof TermsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -681,16 +737,21 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/agent': typeof AgentRoute
+  '/audience': typeof AudienceRoute
   '/auth': typeof AuthRoute
   '/brands': typeof BrandsRoute
+  '/campaigns': typeof CampaignsRoute
   '/community': typeof CommunityRoute
+  '/content': typeof ContentRoute
   '/cookies': typeof CookiesRoute
   '/copyright': typeof CopyrightRoute
   '/create': typeof CreateRoute
   '/crm': typeof CrmRoute
   '/enterprise': typeof EnterpriseRoute
+  '/founder': typeof FounderRouteWithChildren
   '/give': typeof GiveRoute
   '/home': typeof HomeRoute
+  '/insights': typeof InsightsRoute
   '/join': typeof JoinRoute
   '/journey': typeof JourneyRoute
   '/junction': typeof JunctionRoute
@@ -698,13 +759,16 @@ export interface FileRoutesByTo {
   '/membership': typeof MembershipRoute
   '/my-eka': typeof MyEkaRoute
   '/observe': typeof ObserveRoute
+  '/ops': typeof OpsRoute
   '/practice': typeof PracticeRoute
   '/privacy': typeof PrivacyRoute
+  '/promote': typeof PromoteRoute
   '/refund': typeof RefundRoute
   '/ritual-kits': typeof RitualKitsRoute
   '/search': typeof SearchRoute
   '/standards': typeof StandardsRoute
   '/stories': typeof StoriesRoute
+  '/strategy': typeof StrategyRoute
   '/system': typeof SystemRoute
   '/terms': typeof TermsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -774,16 +838,21 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/admin': typeof AdminRoute
   '/agent': typeof AgentRoute
+  '/audience': typeof AudienceRoute
   '/auth': typeof AuthRoute
   '/brands': typeof BrandsRoute
+  '/campaigns': typeof CampaignsRoute
   '/community': typeof CommunityRoute
+  '/content': typeof ContentRoute
   '/cookies': typeof CookiesRoute
   '/copyright': typeof CopyrightRoute
   '/create': typeof CreateRoute
   '/crm': typeof CrmRoute
   '/enterprise': typeof EnterpriseRoute
+  '/founder': typeof FounderRouteWithChildren
   '/give': typeof GiveRoute
   '/home': typeof HomeRoute
+  '/insights': typeof InsightsRoute
   '/join': typeof JoinRoute
   '/journey': typeof JourneyRoute
   '/junction': typeof JunctionRoute
@@ -791,13 +860,16 @@ export interface FileRoutesById {
   '/membership': typeof MembershipRoute
   '/my-eka': typeof MyEkaRoute
   '/observe': typeof ObserveRoute
+  '/ops': typeof OpsRoute
   '/practice': typeof PracticeRoute
   '/privacy': typeof PrivacyRoute
+  '/promote': typeof PromoteRoute
   '/refund': typeof RefundRoute
   '/ritual-kits': typeof RitualKitsRoute
   '/search': typeof SearchRoute
   '/standards': typeof StandardsRoute
   '/stories': typeof StoriesRoute
+  '/strategy': typeof StrategyRoute
   '/system': typeof SystemRoute
   '/terms': typeof TermsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -868,16 +940,21 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/agent'
+    | '/audience'
     | '/auth'
     | '/brands'
+    | '/campaigns'
     | '/community'
+    | '/content'
     | '/cookies'
     | '/copyright'
     | '/create'
     | '/crm'
     | '/enterprise'
+    | '/founder'
     | '/give'
     | '/home'
+    | '/insights'
     | '/join'
     | '/journey'
     | '/junction'
@@ -885,13 +962,16 @@ export interface FileRouteTypes {
     | '/membership'
     | '/my-eka'
     | '/observe'
+    | '/ops'
     | '/practice'
     | '/privacy'
+    | '/promote'
     | '/refund'
     | '/ritual-kits'
     | '/search'
     | '/standards'
     | '/stories'
+    | '/strategy'
     | '/system'
     | '/terms'
     | '/.well-known/oauth-protected-resource'
@@ -960,16 +1040,21 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/agent'
+    | '/audience'
     | '/auth'
     | '/brands'
+    | '/campaigns'
     | '/community'
+    | '/content'
     | '/cookies'
     | '/copyright'
     | '/create'
     | '/crm'
     | '/enterprise'
+    | '/founder'
     | '/give'
     | '/home'
+    | '/insights'
     | '/join'
     | '/journey'
     | '/junction'
@@ -977,13 +1062,16 @@ export interface FileRouteTypes {
     | '/membership'
     | '/my-eka'
     | '/observe'
+    | '/ops'
     | '/practice'
     | '/privacy'
+    | '/promote'
     | '/refund'
     | '/ritual-kits'
     | '/search'
     | '/standards'
     | '/stories'
+    | '/strategy'
     | '/system'
     | '/terms'
     | '/.well-known/oauth-protected-resource'
@@ -1052,16 +1140,21 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/admin'
     | '/agent'
+    | '/audience'
     | '/auth'
     | '/brands'
+    | '/campaigns'
     | '/community'
+    | '/content'
     | '/cookies'
     | '/copyright'
     | '/create'
     | '/crm'
     | '/enterprise'
+    | '/founder'
     | '/give'
     | '/home'
+    | '/insights'
     | '/join'
     | '/journey'
     | '/junction'
@@ -1069,13 +1162,16 @@ export interface FileRouteTypes {
     | '/membership'
     | '/my-eka'
     | '/observe'
+    | '/ops'
     | '/practice'
     | '/privacy'
+    | '/promote'
     | '/refund'
     | '/ritual-kits'
     | '/search'
     | '/standards'
     | '/stories'
+    | '/strategy'
     | '/system'
     | '/terms'
     | '/.well-known/oauth-protected-resource'
@@ -1146,16 +1242,21 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AdminRoute: typeof AdminRoute
   AgentRoute: typeof AgentRoute
+  AudienceRoute: typeof AudienceRoute
   AuthRoute: typeof AuthRoute
   BrandsRoute: typeof BrandsRoute
+  CampaignsRoute: typeof CampaignsRoute
   CommunityRoute: typeof CommunityRoute
+  ContentRoute: typeof ContentRoute
   CookiesRoute: typeof CookiesRoute
   CopyrightRoute: typeof CopyrightRoute
   CreateRoute: typeof CreateRoute
   CrmRoute: typeof CrmRoute
   EnterpriseRoute: typeof EnterpriseRoute
+  FounderRoute: typeof FounderRouteWithChildren
   GiveRoute: typeof GiveRoute
   HomeRoute: typeof HomeRoute
+  InsightsRoute: typeof InsightsRoute
   JoinRoute: typeof JoinRoute
   JourneyRoute: typeof JourneyRoute
   JunctionRoute: typeof JunctionRoute
@@ -1163,17 +1264,19 @@ export interface RootRouteChildren {
   MembershipRoute: typeof MembershipRoute
   MyEkaRoute: typeof MyEkaRoute
   ObserveRoute: typeof ObserveRoute
+  OpsRoute: typeof OpsRoute
   PracticeRoute: typeof PracticeRoute
   PrivacyRoute: typeof PrivacyRoute
+  PromoteRoute: typeof PromoteRoute
   RefundRoute: typeof RefundRoute
   RitualKitsRoute: typeof RitualKitsRoute
   SearchRoute: typeof SearchRoute
   StandardsRoute: typeof StandardsRoute
   StoriesRoute: typeof StoriesRoute
+  StrategyRoute: typeof StrategyRoute
   SystemRoute: typeof SystemRoute
   TermsRoute: typeof TermsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
-  FounderAdRoute: typeof FounderAdRoute
   KnowledgeSlugRoute: typeof KnowledgeSlugRoute
   PassportSlugRoute: typeof PassportSlugRoute
   PeopleUsernameRoute: typeof PeopleUsernameRoute
@@ -1212,6 +1315,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgentRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/audience': {
+      id: '/audience'
+      path: '/audience'
+      fullPath: '/audience'
+      preLoaderRoute: typeof AudienceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -1226,11 +1336,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BrandsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/campaigns': {
+      id: '/campaigns'
+      path: '/campaigns'
+      fullPath: '/campaigns'
+      preLoaderRoute: typeof CampaignsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/community': {
       id: '/community'
       path: '/community'
       fullPath: '/community'
       preLoaderRoute: typeof CommunityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/content': {
+      id: '/content'
+      path: '/content'
+      fullPath: '/content'
+      preLoaderRoute: typeof ContentRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cookies': {
@@ -1268,6 +1392,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EnterpriseRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/founder': {
+      id: '/founder'
+      path: '/founder'
+      fullPath: '/founder'
+      preLoaderRoute: typeof FounderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/give': {
       id: '/give'
       path: '/give'
@@ -1280,6 +1411,13 @@ declare module '@tanstack/react-router' {
       path: '/home'
       fullPath: '/home'
       preLoaderRoute: typeof HomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/insights': {
+      id: '/insights'
+      path: '/insights'
+      fullPath: '/insights'
+      preLoaderRoute: typeof InsightsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/join': {
@@ -1331,6 +1469,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ObserveRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ops': {
+      id: '/ops'
+      path: '/ops'
+      fullPath: '/ops'
+      preLoaderRoute: typeof OpsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/practice': {
       id: '/practice'
       path: '/practice'
@@ -1343,6 +1488,13 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/promote': {
+      id: '/promote'
+      path: '/promote'
+      fullPath: '/promote'
+      preLoaderRoute: typeof PromoteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/refund': {
@@ -1378,6 +1530,13 @@ declare module '@tanstack/react-router' {
       path: '/stories'
       fullPath: '/stories'
       preLoaderRoute: typeof StoriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/strategy': {
+      id: '/strategy'
+      path: '/strategy'
+      fullPath: '/strategy'
+      preLoaderRoute: typeof StrategyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/system': {
@@ -1417,10 +1576,10 @@ declare module '@tanstack/react-router' {
     }
     '/founder/ad': {
       id: '/founder/ad'
-      path: '/founder/ad'
+      path: '/ad'
       fullPath: '/founder/ad'
       preLoaderRoute: typeof FounderAdRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof FounderRoute
     }
     '/knowledge/': {
       id: '/knowledge/'
@@ -1961,21 +2120,37 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface FounderRouteChildren {
+  FounderAdRoute: typeof FounderAdRoute
+}
+
+const FounderRouteChildren: FounderRouteChildren = {
+  FounderAdRoute: FounderAdRoute,
+}
+
+const FounderRouteWithChildren =
+  FounderRoute._addFileChildren(FounderRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AdminRoute: AdminRoute,
   AgentRoute: AgentRoute,
+  AudienceRoute: AudienceRoute,
   AuthRoute: AuthRoute,
   BrandsRoute: BrandsRoute,
+  CampaignsRoute: CampaignsRoute,
   CommunityRoute: CommunityRoute,
+  ContentRoute: ContentRoute,
   CookiesRoute: CookiesRoute,
   CopyrightRoute: CopyrightRoute,
   CreateRoute: CreateRoute,
   CrmRoute: CrmRoute,
   EnterpriseRoute: EnterpriseRoute,
+  FounderRoute: FounderRouteWithChildren,
   GiveRoute: GiveRoute,
   HomeRoute: HomeRoute,
+  InsightsRoute: InsightsRoute,
   JoinRoute: JoinRoute,
   JourneyRoute: JourneyRoute,
   JunctionRoute: JunctionRoute,
@@ -1983,18 +2158,20 @@ const rootRouteChildren: RootRouteChildren = {
   MembershipRoute: MembershipRoute,
   MyEkaRoute: MyEkaRoute,
   ObserveRoute: ObserveRoute,
+  OpsRoute: OpsRoute,
   PracticeRoute: PracticeRoute,
   PrivacyRoute: PrivacyRoute,
+  PromoteRoute: PromoteRoute,
   RefundRoute: RefundRoute,
   RitualKitsRoute: RitualKitsRoute,
   SearchRoute: SearchRoute,
   StandardsRoute: StandardsRoute,
   StoriesRoute: StoriesRoute,
+  StrategyRoute: StrategyRoute,
   SystemRoute: SystemRoute,
   TermsRoute: TermsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
-  FounderAdRoute: FounderAdRoute,
   KnowledgeSlugRoute: KnowledgeSlugRoute,
   PassportSlugRoute: PassportSlugRoute,
   PeopleUsernameRoute: PeopleUsernameRoute,

@@ -18,11 +18,11 @@ const trustLinks = [
 ] as const;
 
 const brandLinks = [
-  { to: "/brands", label: "EKA for Brands" },
-  { to: "/agent", label: "Branding Agent" },
-  { to: "/enterprise", label: "Enterprise Workspaces" },
-  { to: "/crm", label: "Engagement CRM" },
-  { to: "/system", label: "System Map" },
+  { to: "/brands", label: "EKA Growth OS (Brands)" },
+  { to: "/campaigns", label: "Campaigns & Promotion" },
+  { to: "/audience", label: "Audience Intelligence" },
+  { to: "/agent", label: "AI Growth Agent" },
+  { to: "/ops", label: "Founder & Ops OS (Private)" },
 ] as const;
 
 const legalLinks = [

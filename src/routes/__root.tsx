@@ -14,6 +14,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
 import { SmoothScrollProvider } from "@/components/motion/SmoothScrollProvider";
 import { CookieConsentBanner } from "@/components/common/CookieConsentBanner";
+import { RealmSwitcher } from "@/components/common/RealmSwitcher";
 
 function NotFoundComponent() {
   return (
@@ -153,6 +154,7 @@ function RootComponent() {
         <Outlet />
         <Toaster position="top-center" />
         <CookieConsentBanner />
+        <RealmSwitcher />
       </SmoothScrollProvider>
     </QueryClientProvider>
   );
