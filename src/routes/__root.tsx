@@ -15,6 +15,8 @@ import { Toaster } from "@/components/ui/sonner";
 import { SmoothScrollProvider } from "@/components/motion/SmoothScrollProvider";
 import { CookieConsentBanner } from "@/components/common/CookieConsentBanner";
 import { RealmSwitcher } from "@/components/common/RealmSwitcher";
+import { SafeNavigationProvider } from "@/components/security/SafeNavigationProvider";
+import { MobileBottomNav } from "@/components/navigation/MobileBottomNav";
 
 function NotFoundComponent() {
   return (
@@ -151,10 +153,13 @@ function RootComponent() {
         </a>
 
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-        <Outlet />
-        <Toaster position="top-center" />
-        <CookieConsentBanner />
-        <RealmSwitcher />
+        <SafeNavigationProvider>
+          <Outlet />
+          <MobileBottomNav />
+          <Toaster position="top-center" />
+          <CookieConsentBanner />
+          <RealmSwitcher />
+        </SafeNavigationProvider>
       </SmoothScrollProvider>
     </QueryClientProvider>
   );

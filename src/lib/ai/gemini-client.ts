@@ -1,15 +1,18 @@
 /**
- * EKA × Google Gemini Native Client
+ * EKA × Google Gemini Native Client with Enterprise AI Agent Security
  *
  * Implements a resilient, zero-dependency client for Google's Gemini models
- * (gemini-2.5-flash, gemini-2.5-pro, gemini-1.5-flash).
- *
- * Architecture:
- * 1. Primary: Direct Google Gemini REST API via `GEMINI_API_KEY`
- * 2. Fallback: Lovable AI Gateway proxy via `LOVABLE_API_KEY`
- * 3. Epistemic Safeguards: Enforces EKA 5-Tier Epistemic rules (no hallucinations,
- *    strict attribution, reverent non-doctrinal tone).
+ * (gemini-2.5-flash, gemini-2.5-pro, gemini-1.5-flash) with built-in:
+ * 1. Direct prompt injection & jailbreak detection
+ * 2. Indirect prompt injection untrusted document isolation
+ * 3. Model output secret & system prompt leak redaction
+ * 4. Epistemic safeguards (5-tier clarity, non-hallucinatory grounding)
  */
+
+import {
+  inspectPromptForInjection,
+  validateAndSanitizeAgentOutput,
+} from "@/lib/security";
 
 export interface GeminiMessage {
   role: "user" | "model" | "system";
@@ -23,6 +26,7 @@ export interface GeminiGenerateOptions {
   maxOutputTokens?: number;
   responseMimeType?: "text/plain" | "application/json";
   responseSchema?: Record<string, unknown>;
+  userId?: string;
 }
 
 export interface GeminiResponse {
@@ -51,7 +55,8 @@ Rules you must strictly follow:
 5. Miracle claims: Never guarantee material, medical, or supernatural outcomes from rituals or practices.`;
 
 /**
- * Generate content using Google's direct Gemini REST API or Lovable Gateway fallback.
+ * Generate content using Google's direct Gemini REST API or Lovable Gateway fallback
+ * with platform-wide AI security inspection.
  */
 export async function generateGeminiContent(
   prompt: string,
@@ -62,12 +67,26 @@ export async function generateGeminiContent(
     ? `${EKA_SYSTEM_GROUNDING}\n\nSpecific Guidance:\n${options.systemInstruction}`
     : EKA_SYSTEM_GROUNDING;
 
-  const directApiKey =
-    process.env["GEMINI_API_KEY"] ||
-    (typeof import.meta !== "undefined" &&
-      (import.meta as unknown as { env?: Record<string, string> }).env?.["VITE_GEMINI_API_KEY"]);
+  // 1. AI AGENT SECURITY: Direct Prompt Injection & Jailbreak Defense
+  const injectionInspection = await inspectPromptForInjection({
+    prompt,
+    userId: options.userId,
+    agentRole: "cultural_intelligence_companion",
+  });
 
-  // 1. Direct Google Gemini REST API Call
+  if (!injectionInspection.isSafe) {
+    return {
+      text: injectionInspection.sanitizedPrompt,
+      model,
+      provider: "cached-mock",
+      error: "Prompt violated EKA AI agent safety policies.",
+    };
+  }
+
+  // Server-side secret retrieval (never exposed to client bundle)
+  const directApiKey = process.env["GEMINI_API_KEY"];
+
+  // 2. Direct Google Gemini REST API Call
   if (directApiKey && directApiKey !== "your-gemini-api-key") {
     try {
       const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${directApiKey}`;
@@ -75,7 +94,7 @@ export async function generateGeminiContent(
       const bodyPayload: Record<string, unknown> = {
         contents: [
           {
-            parts: [{ text: prompt }],
+            parts: [{ text: injectionInspection.sanitizedPrompt }],
           },
         ],
         generationConfig: {
@@ -117,9 +136,17 @@ export async function generateGeminiContent(
           };
         };
 
-        const text = json.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ?? "";
+        const rawText = json.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ?? "";
+
+        // 3. AI AGENT SECURITY: Sanitize output for secret/prompt leaks
+        const sanitized = await validateAndSanitizeAgentOutput({
+          output: rawText,
+          systemPromptReference: systemInstruction,
+          userId: options.userId,
+        });
+
         return {
-          text,
+          text: sanitized.sanitizedOutput,
           model,
           provider: "google-direct",
           finishReason: json.candidates?.[0]?.finishReason,
@@ -138,7 +165,7 @@ export async function generateGeminiContent(
     }
   }
 
-  // 2. Fallback to Lovable AI Gateway
+  // 4. Fallback to Lovable AI Gateway
   const gatewayKey = process.env["LOVABLE_API_KEY"];
   if (gatewayKey) {
     try {
@@ -152,7 +179,7 @@ export async function generateGeminiContent(
           model: `google/${model}`,
           messages: [
             { role: "system", content: systemInstruction },
-            { role: "user", content: prompt },
+            { role: "user", content: injectionInspection.sanitizedPrompt },
           ],
           temperature: options.temperature ?? 0.2,
           max_tokens: options.maxOutputTokens ?? 2048,
@@ -164,9 +191,17 @@ export async function generateGeminiContent(
           choices?: Array<{ message?: { content?: string } }>;
           usage?: { prompt_tokens?: number; completion_tokens?: number; total_tokens?: number };
         };
-        const text = json.choices?.[0]?.message?.content?.trim() ?? "";
+        const rawText = json.choices?.[0]?.message?.content?.trim() ?? "";
+
+        // 5. AI AGENT SECURITY: Sanitize output for secret/prompt leaks
+        const sanitized = await validateAndSanitizeAgentOutput({
+          output: rawText,
+          systemPromptReference: systemInstruction,
+          userId: options.userId,
+        });
+
         return {
-          text,
+          text: sanitized.sanitizedOutput,
           model: `google/${model}`,
           provider: "lovable-gateway",
           usage: json.usage

@@ -13,6 +13,7 @@ import { TONES } from "@/lib/ai.functions";
 import { useProfile } from "@/hooks/useProfile";
 import { AGE_BRACKETS, LANGUAGES, PATHS, PREFER_NOT_TO_SAY } from "@/lib/join";
 import { cn } from "@/lib/utils";
+import { SecuritySettingsTab } from "@/components/app/settings/SecuritySettingsTab";
 
 export const Route = createFileRoute("/_authenticated/app/settings")({
   component: Settings,
@@ -327,6 +328,16 @@ function Settings() {
             ? ` · agreed ${new Date(profile.standards_accepted_at).toLocaleDateString()}`
             : ""}
         </p>
+      </section>
+
+      <section className="space-y-4 rounded-2xl border border-border bg-card p-6 shadow-calm">
+        <div>
+          <h2 className="font-display text-lg font-semibold text-foreground">Sanctuary Security & Privacy (DPDP 2023)</h2>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Manage your account protection, two-factor authentication, active devices, and statutory privacy controls.
+          </p>
+        </div>
+        <SecuritySettingsTab />
       </section>
 
       <Button variant="outline" onClick={signOut}>

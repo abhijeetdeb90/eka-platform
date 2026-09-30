@@ -90,6 +90,10 @@ import { Route as AuthenticatedAppThemesRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAppWalletRouteImport } from './routes/_authenticated/app.wallet'
 import { Route as AuthenticatedAppWelcomeRouteImport } from './routes/_authenticated/app.welcome'
 import { Route as AuthenticatedAppWisdomRouteImport } from './routes/_authenticated/app.wisdom'
+import { Route as ApiSecurityDataExportRouteImport } from './routes/api/security.data-export'
+import { Route as ApiSecurityEventsRouteImport } from './routes/api/security.events'
+import { Route as ApiSecurityIncidentResponseRouteImport } from './routes/api/security.incident-response'
+import { Route as ApiSecuritySessionsRouteImport } from './routes/api/security.sessions'
 import { Route as AuthenticatedAppCreatorDashboardRouteImport } from './routes/_authenticated/app.creator.dashboard'
 import { Route as AuthenticatedAppDiscoverIndexRouteImport } from './routes/_authenticated/app.discover.index'
 import { Route as AuthenticatedAppDiscoverSlugRouteImport } from './routes/_authenticated/app.discover.$slug'
@@ -107,6 +111,8 @@ import { Route as AuthenticatedAppSanghasIndexRouteImport } from './routes/_auth
 import { Route as AuthenticatedAppSanghasSlugRouteImport } from './routes/_authenticated/app.sanghas.$slug'
 import { Route as AuthenticatedAppUUsernameRouteImport } from './routes/_authenticated/app.u.$username'
 import { Route as ApiPublicBillingWebhookRouteImport } from './routes/api/public/billing.webhook'
+import { Route as ApiPublicSecurityReportAbuseRouteImport } from './routes/api/public/security.report-abuse'
+import { Route as ApiPublicSecurityVerifyUrlRouteImport } from './routes/api/public/security.verify-url'
 import { Route as AuthenticatedAppMarketBookingIdRouteImport } from './routes/_authenticated/app.market.booking.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -526,6 +532,27 @@ const AuthenticatedAppWisdomRoute = AuthenticatedAppWisdomRouteImport.update({
   path: '/wisdom',
   getParentRoute: () => AuthenticatedAppRoute,
 } as any)
+const ApiSecurityDataExportRoute = ApiSecurityDataExportRouteImport.update({
+  id: '/api/security/data-export',
+  path: '/api/security/data-export',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSecurityEventsRoute = ApiSecurityEventsRouteImport.update({
+  id: '/api/security/events',
+  path: '/api/security/events',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSecurityIncidentResponseRoute =
+  ApiSecurityIncidentResponseRouteImport.update({
+    id: '/api/security/incident-response',
+    path: '/api/security/incident-response',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiSecuritySessionsRoute = ApiSecuritySessionsRouteImport.update({
+  id: '/api/security/sessions',
+  path: '/api/security/sessions',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAppCreatorDashboardRoute =
   AuthenticatedAppCreatorDashboardRouteImport.update({
     id: '/dashboard',
@@ -626,6 +653,18 @@ const ApiPublicBillingWebhookRoute = ApiPublicBillingWebhookRouteImport.update({
   path: '/api/public/billing/webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicSecurityReportAbuseRoute =
+  ApiPublicSecurityReportAbuseRouteImport.update({
+    id: '/api/public/security/report-abuse',
+    path: '/api/public/security/report-abuse',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicSecurityVerifyUrlRoute =
+  ApiPublicSecurityVerifyUrlRouteImport.update({
+    id: '/api/public/security/verify-url',
+    path: '/api/public/security/verify-url',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedAppMarketBookingIdRoute =
   AuthenticatedAppMarketBookingIdRouteImport.update({
     id: '/market/booking/$id',
@@ -713,6 +752,10 @@ export interface FileRoutesByFullPath {
   '/app/wallet': typeof AuthenticatedAppWalletRoute
   '/app/welcome': typeof AuthenticatedAppWelcomeRoute
   '/app/wisdom': typeof AuthenticatedAppWisdomRoute
+  '/api/security/data-export': typeof ApiSecurityDataExportRoute
+  '/api/security/events': typeof ApiSecurityEventsRoute
+  '/api/security/incident-response': typeof ApiSecurityIncidentResponseRoute
+  '/api/security/sessions': typeof ApiSecuritySessionsRoute
   '/app/': typeof AuthenticatedAppIndexRoute
   '/app/creator/dashboard': typeof AuthenticatedAppCreatorDashboardRoute
   '/app/discover/$slug': typeof AuthenticatedAppDiscoverSlugRoute
@@ -725,6 +768,8 @@ export interface FileRoutesByFullPath {
   '/app/sanghas/$slug': typeof AuthenticatedAppSanghasSlugRoute
   '/app/u/$username': typeof AuthenticatedAppUUsernameRoute
   '/api/public/billing/webhook': typeof ApiPublicBillingWebhookRoute
+  '/api/public/security/report-abuse': typeof ApiPublicSecurityReportAbuseRoute
+  '/api/public/security/verify-url': typeof ApiPublicSecurityVerifyUrlRoute
   '/app/discover/': typeof AuthenticatedAppDiscoverIndexRoute
   '/app/episodes/': typeof AuthenticatedAppEpisodesIndexRoute
   '/app/journeys/': typeof AuthenticatedAppJourneysIndexRoute
@@ -812,6 +857,10 @@ export interface FileRoutesByTo {
   '/app/wallet': typeof AuthenticatedAppWalletRoute
   '/app/welcome': typeof AuthenticatedAppWelcomeRoute
   '/app/wisdom': typeof AuthenticatedAppWisdomRoute
+  '/api/security/data-export': typeof ApiSecurityDataExportRoute
+  '/api/security/events': typeof ApiSecurityEventsRoute
+  '/api/security/incident-response': typeof ApiSecurityIncidentResponseRoute
+  '/api/security/sessions': typeof ApiSecuritySessionsRoute
   '/app': typeof AuthenticatedAppIndexRoute
   '/app/creator/dashboard': typeof AuthenticatedAppCreatorDashboardRoute
   '/app/discover/$slug': typeof AuthenticatedAppDiscoverSlugRoute
@@ -824,6 +873,8 @@ export interface FileRoutesByTo {
   '/app/sanghas/$slug': typeof AuthenticatedAppSanghasSlugRoute
   '/app/u/$username': typeof AuthenticatedAppUUsernameRoute
   '/api/public/billing/webhook': typeof ApiPublicBillingWebhookRoute
+  '/api/public/security/report-abuse': typeof ApiPublicSecurityReportAbuseRoute
+  '/api/public/security/verify-url': typeof ApiPublicSecurityVerifyUrlRoute
   '/app/discover': typeof AuthenticatedAppDiscoverIndexRoute
   '/app/episodes': typeof AuthenticatedAppEpisodesIndexRoute
   '/app/journeys': typeof AuthenticatedAppJourneysIndexRoute
@@ -914,6 +965,10 @@ export interface FileRoutesById {
   '/_authenticated/app/wallet': typeof AuthenticatedAppWalletRoute
   '/_authenticated/app/welcome': typeof AuthenticatedAppWelcomeRoute
   '/_authenticated/app/wisdom': typeof AuthenticatedAppWisdomRoute
+  '/api/security/data-export': typeof ApiSecurityDataExportRoute
+  '/api/security/events': typeof ApiSecurityEventsRoute
+  '/api/security/incident-response': typeof ApiSecurityIncidentResponseRoute
+  '/api/security/sessions': typeof ApiSecuritySessionsRoute
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
   '/_authenticated/app/creator/dashboard': typeof AuthenticatedAppCreatorDashboardRoute
   '/_authenticated/app/discover/$slug': typeof AuthenticatedAppDiscoverSlugRoute
@@ -926,6 +981,8 @@ export interface FileRoutesById {
   '/_authenticated/app/sanghas/$slug': typeof AuthenticatedAppSanghasSlugRoute
   '/_authenticated/app/u/$username': typeof AuthenticatedAppUUsernameRoute
   '/api/public/billing/webhook': typeof ApiPublicBillingWebhookRoute
+  '/api/public/security/report-abuse': typeof ApiPublicSecurityReportAbuseRoute
+  '/api/public/security/verify-url': typeof ApiPublicSecurityVerifyUrlRoute
   '/_authenticated/app/discover/': typeof AuthenticatedAppDiscoverIndexRoute
   '/_authenticated/app/episodes/': typeof AuthenticatedAppEpisodesIndexRoute
   '/_authenticated/app/journeys/': typeof AuthenticatedAppJourneysIndexRoute
@@ -1016,6 +1073,10 @@ export interface FileRouteTypes {
     | '/app/wallet'
     | '/app/welcome'
     | '/app/wisdom'
+    | '/api/security/data-export'
+    | '/api/security/events'
+    | '/api/security/incident-response'
+    | '/api/security/sessions'
     | '/app/'
     | '/app/creator/dashboard'
     | '/app/discover/$slug'
@@ -1028,6 +1089,8 @@ export interface FileRouteTypes {
     | '/app/sanghas/$slug'
     | '/app/u/$username'
     | '/api/public/billing/webhook'
+    | '/api/public/security/report-abuse'
+    | '/api/public/security/verify-url'
     | '/app/discover/'
     | '/app/episodes/'
     | '/app/journeys/'
@@ -1115,6 +1178,10 @@ export interface FileRouteTypes {
     | '/app/wallet'
     | '/app/welcome'
     | '/app/wisdom'
+    | '/api/security/data-export'
+    | '/api/security/events'
+    | '/api/security/incident-response'
+    | '/api/security/sessions'
     | '/app'
     | '/app/creator/dashboard'
     | '/app/discover/$slug'
@@ -1127,6 +1194,8 @@ export interface FileRouteTypes {
     | '/app/sanghas/$slug'
     | '/app/u/$username'
     | '/api/public/billing/webhook'
+    | '/api/public/security/report-abuse'
+    | '/api/public/security/verify-url'
     | '/app/discover'
     | '/app/episodes'
     | '/app/journeys'
@@ -1216,6 +1285,10 @@ export interface FileRouteTypes {
     | '/_authenticated/app/wallet'
     | '/_authenticated/app/welcome'
     | '/_authenticated/app/wisdom'
+    | '/api/security/data-export'
+    | '/api/security/events'
+    | '/api/security/incident-response'
+    | '/api/security/sessions'
     | '/_authenticated/app/'
     | '/_authenticated/app/creator/dashboard'
     | '/_authenticated/app/discover/$slug'
@@ -1228,6 +1301,8 @@ export interface FileRouteTypes {
     | '/_authenticated/app/sanghas/$slug'
     | '/_authenticated/app/u/$username'
     | '/api/public/billing/webhook'
+    | '/api/public/security/report-abuse'
+    | '/api/public/security/verify-url'
     | '/_authenticated/app/discover/'
     | '/_authenticated/app/episodes/'
     | '/_authenticated/app/journeys/'
@@ -1282,7 +1357,13 @@ export interface RootRouteChildren {
   PeopleUsernameRoute: typeof PeopleUsernameRoute
   KnowledgeIndexRoute: typeof KnowledgeIndexRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
+  ApiSecurityDataExportRoute: typeof ApiSecurityDataExportRoute
+  ApiSecurityEventsRoute: typeof ApiSecurityEventsRoute
+  ApiSecurityIncidentResponseRoute: typeof ApiSecurityIncidentResponseRoute
+  ApiSecuritySessionsRoute: typeof ApiSecuritySessionsRoute
   ApiPublicBillingWebhookRoute: typeof ApiPublicBillingWebhookRoute
+  ApiPublicSecurityReportAbuseRoute: typeof ApiPublicSecurityReportAbuseRoute
+  ApiPublicSecurityVerifyUrlRoute: typeof ApiPublicSecurityVerifyUrlRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1854,6 +1935,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppWisdomRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
+    '/api/security/data-export': {
+      id: '/api/security/data-export'
+      path: '/api/security/data-export'
+      fullPath: '/api/security/data-export'
+      preLoaderRoute: typeof ApiSecurityDataExportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/security/events': {
+      id: '/api/security/events'
+      path: '/api/security/events'
+      fullPath: '/api/security/events'
+      preLoaderRoute: typeof ApiSecurityEventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/security/incident-response': {
+      id: '/api/security/incident-response'
+      path: '/api/security/incident-response'
+      fullPath: '/api/security/incident-response'
+      preLoaderRoute: typeof ApiSecurityIncidentResponseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/security/sessions': {
+      id: '/api/security/sessions'
+      path: '/api/security/sessions'
+      fullPath: '/api/security/sessions'
+      preLoaderRoute: typeof ApiSecuritySessionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/app/creator/dashboard': {
       id: '/_authenticated/app/creator/dashboard'
       path: '/dashboard'
@@ -1971,6 +2080,20 @@ declare module '@tanstack/react-router' {
       path: '/api/public/billing/webhook'
       fullPath: '/api/public/billing/webhook'
       preLoaderRoute: typeof ApiPublicBillingWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/security/report-abuse': {
+      id: '/api/public/security/report-abuse'
+      path: '/api/public/security/report-abuse'
+      fullPath: '/api/public/security/report-abuse'
+      preLoaderRoute: typeof ApiPublicSecurityReportAbuseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/security/verify-url': {
+      id: '/api/public/security/verify-url'
+      path: '/api/public/security/verify-url'
+      fullPath: '/api/public/security/verify-url'
+      preLoaderRoute: typeof ApiPublicSecurityVerifyUrlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/app/market/booking/$id': {
@@ -2177,7 +2300,13 @@ const rootRouteChildren: RootRouteChildren = {
   PeopleUsernameRoute: PeopleUsernameRoute,
   KnowledgeIndexRoute: KnowledgeIndexRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
+  ApiSecurityDataExportRoute: ApiSecurityDataExportRoute,
+  ApiSecurityEventsRoute: ApiSecurityEventsRoute,
+  ApiSecurityIncidentResponseRoute: ApiSecurityIncidentResponseRoute,
+  ApiSecuritySessionsRoute: ApiSecuritySessionsRoute,
   ApiPublicBillingWebhookRoute: ApiPublicBillingWebhookRoute,
+  ApiPublicSecurityReportAbuseRoute: ApiPublicSecurityReportAbuseRoute,
+  ApiPublicSecurityVerifyUrlRoute: ApiPublicSecurityVerifyUrlRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
