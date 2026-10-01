@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Scale, BookCheck, ShieldAlert, Sparkles, AlertTriangle, FileText } from "lucide-react";
+import { Scale, BookCheck, ShieldAlert, Sparkles, AlertTriangle, FileText, UserCheck } from "lucide-react";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
 
@@ -147,6 +147,50 @@ function TermsPage() {
               </li>
               <li>Coordinated manipulation, astroturfing, fake reviews, or commercial spam.</li>
               <li>Harassment, stalking, or dox-targeting of members or tradition keepers.</li>
+            </ul>
+          </section>
+
+          {/* 3.1 Human Authenticity & Zero-Bot Rule */}
+          <section className="rounded-2xl border border-primary/30 bg-sand/20 p-6 sm:p-8">
+            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.24em] text-terracotta">
+              <UserCheck className="size-4" />
+              <span>Human Authenticity Standard</span>
+            </div>
+            <h2 className="mt-2 font-display text-2xl text-foreground">
+              3.1 Human-First Community Rule & Prohibition of Synthetic Personas
+            </h2>
+            <p className="mt-3">
+              EKA is founded on an explicit architectural standard:{" "}
+              <strong>The intelligence is artificial. The community isn't.</strong> All members and
+              creators contractually agree to the following terms:
+            </p>
+            <ul className="mt-4 list-disc pl-5 space-y-2 text-xs text-muted-foreground">
+              <li>
+                <strong>Mandatory Human Personhood:</strong> Every public account, profile, and community
+                persona must represent an actual living human being or an authorized, verified cultural
+                or academic institution. Creating automated bot accounts or autonomous AI personas
+                pretending to be people is strictly prohibited and grounds for immediate termination.
+              </li>
+              <li>
+                <strong>Zero Synthetic Engagement:</strong> Manufacturing artificial activity—including
+                automated comment generation, simulated discussions, engagement pod upvoting, or synthetic
+                follow networks—constitutes fraud and results in immediate, permanent account termination.
+              </li>
+              <li>
+                <strong>Permitted AI Assistance:</strong> Members and creators may use AI tools privately
+                to assist with research, translation, formatting, or draft refinement. However, the final
+                contribution must be human-reviewed, human-approved, and published by a real person.
+              </li>
+              <li>
+                <strong>No Covert AI Participation:</strong> AI models may never participate covertly in
+                sangha circles, discourses, or direct communications without prominent, platform-sanctioned
+                disclosure.
+              </li>
+              <li>
+                <strong>Economic Forfeiture:</strong> Any practitioner or creator who uses bot accounts or
+                synthetic engagement to inflate marketplace standings or reviews forfeits all platform
+                earnings and access to creator payouts.
+              </li>
             </ul>
           </section>
 

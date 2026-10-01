@@ -1,0 +1,56 @@
+name: EKA Vercel Staging & Preview Deployment
+
+on:
+  push:
+    branches:
+      - staging
+      - develop
+  pull_request:
+    branches:
+      - main
+      - staging
+  workflow_dispatch:
+
+concurrency:
+  group: vercel_staging_${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  staging-preview-deploy:
+    name: Build & Deploy Preview to Vercel
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "npm"
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: TypeScript Quality Gate
+        run: npx tsc --noEmit
+
+      - name: Build Staging Preview
+        run: npm run build
+        env:
+          NODE_ENV: production
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || 'https://placeholder.supabase.co' }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY || 'placeholder-anon-key' }}
+
+      - name: Deploy Preview to Vercel
+        if: env.VERCEL_TOKEN != ''
+        run: |
+          npx vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+          npx vercel build --token=${{ secrets.VERCEL_TOKEN }}
+          npx vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}

@@ -60,7 +60,7 @@ export async function generateUserDataExport(userId: string): Promise<Record<str
       const [profileRes, postsRes, commentsRes] = await Promise.all([
         supabaseAdmin.from("profiles").select("*").eq("id", userId).maybeSingle(),
         supabaseAdmin.from("posts").select("id, content, created_at").eq("author_id", userId),
-        supabaseAdmin.from("post_comments").select("id, content, created_at").eq("author_id", userId),
+        supabaseAdmin.from("post_comments").select("id, content, created_at").eq("user_id", userId),
       ]);
 
       profileData = profileRes.data;

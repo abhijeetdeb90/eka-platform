@@ -157,11 +157,20 @@ export async function saveAIAgent(
   actorRole: StudioRole = "Super Admin",
 ): Promise<AIAgentConfig> {
   const idx = liveAIAgents.findIndex((a) => a.id === agent.id);
-  if (idx < 0) throw new Error("Agent not found");
+  const existing = liveAIAgents[idx];
+  if (!existing || idx < 0) throw new Error("Agent not found");
 
   const updated: AIAgentConfig = {
-    ...liveAIAgents[idx],
+    ...existing,
     ...agent,
+    id: existing.id,
+    name: agent.name ?? existing.name,
+    role: agent.role ?? existing.role,
+    model: agent.model ?? existing.model,
+    system_prompt: agent.system_prompt ?? existing.system_prompt,
+    temperature: agent.temperature ?? existing.temperature,
+    source_policies: agent.source_policies ?? existing.source_policies,
+    is_active: agent.is_active ?? existing.is_active,
     updated_at: new Date().toISOString(),
   };
   liveAIAgents[idx] = updated;

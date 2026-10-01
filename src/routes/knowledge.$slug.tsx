@@ -90,7 +90,7 @@ function KnowledgeDetailPage() {
   };
 
   const primaryImage =
-    object.images[0]?.url ||
+    object.images[0]?.imageUrl ||
     "https://images.unsplash.com/photo-1544717305-2782549b5136?q=80&w=1200&auto=format&fit=crop";
 
   return (
@@ -206,7 +206,7 @@ function KnowledgeDetailPage() {
                     {object.images[0]?.title || object.entity}
                   </p>
                   <p className="mt-0.5 text-[10px] text-white/70 font-mono">
-                    Licence: {object.images[0]?.license || "CC BY-SA 4.0"} · Author: {object.images[0]?.author || "EKA Archive"}
+                    Licence: {object.images[0]?.license || "CC BY-SA 4.0"} · Creator: {object.images[0]?.creator || "EKA Archive"}
                   </p>
                 </div>
               </div>

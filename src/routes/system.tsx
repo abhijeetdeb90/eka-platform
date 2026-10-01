@@ -325,7 +325,7 @@ export function SystemMapPage() {
     },
   ];
 
-  const selected = MODULES.find((m) => m.id === selectedModuleId) || MODULES[0];
+  const selected = (MODULES.find((m) => m.id === selectedModuleId) ?? MODULES[0])!;
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">

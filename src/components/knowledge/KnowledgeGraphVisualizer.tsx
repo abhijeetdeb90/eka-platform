@@ -63,7 +63,7 @@ export function KnowledgeGraphVisualizer({
         {nodes.map((node, idx) => (
           <Link
             key={node.targetId || idx}
-            to={`/knowledge/${node.targetSlug}`}
+            to={`/knowledge/${node.targetSlug}` as any}
             data-testid={`graph-node-${node.targetSlug}`}
             className="group relative flex flex-col justify-between rounded-2xl border border-border/80 bg-sand/15 p-4 transition-all hover:border-primary/50 hover:bg-sand/30 hover:shadow-calm"
           >

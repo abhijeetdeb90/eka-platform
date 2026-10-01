@@ -39,7 +39,7 @@ export const Route = createFileRoute("/api/security/events")({
           const userId = claimsData.user.id;
 
           // Check role in studio_user_roles
-          const { data: roleData, error: roleErr } = await supabaseAdmin
+          const { data: roleData, error: roleErr } = await (supabaseAdmin as any)
             .from("studio_user_roles")
             .select("role")
             .eq("user_id", userId)

@@ -42,6 +42,17 @@ jobs:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           POSTHOG_KEY: ${{ secrets.POSTHOG_KEY }}
 
+      - name: Deploy Production to Vercel
+        if: env.VERCEL_TOKEN != ''
+        run: |
+          npx vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+          npx vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+          npx vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
       - name: Deploy to Cloudflare Workers / Nitro
         run: npx nitro deploy --prebuilt || echo "Edge deployment completed"
         env:

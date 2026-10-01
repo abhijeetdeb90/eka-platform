@@ -133,6 +133,7 @@ export function StudioKnowledgeManager({ currentRole, selectedId }: StudioKnowle
   };
 
   const handleExecuteVerification = async () => {
+    if (!activeObj) return;
     if (!verNotes.trim()) {
       toast.error("Auditable decision notes are mandatory.");
       return;
@@ -152,6 +153,7 @@ export function StudioKnowledgeManager({ currentRole, selectedId }: StudioKnowle
   };
 
   const handleRestore = async (versionNumber: number) => {
+    if (!activeObj) return;
     await restoreObjectVersion(activeObj.id, versionNumber, currentRole);
     await refreshList();
     const v = await fetchObjectVersions(activeObj.id);

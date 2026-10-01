@@ -42,32 +42,32 @@ export interface SecurityEvent {
   severity: SecuritySeverity;
   category: SecurityEventCategory;
   eventType: string;
-  actorId?: string | null;
-  actorRole?: string | null;
-  ipAddress?: string | null;
-  userAgent?: string | null;
-  resource?: string | null;
-  tenantId?: string | null;
+  actorId?: string | null | undefined;
+  actorRole?: string | null | undefined;
+  ipAddress?: string | null | undefined;
+  userAgent?: string | null | undefined;
+  resource?: string | null | undefined;
+  tenantId?: string | null | undefined;
   status: "detected" | "blocked" | "quarantined" | "mitigated" | "investigating" | "resolved";
   details: Record<string, unknown>;
-  metadata?: Record<string, unknown>;
+  metadata?: Record<string, unknown> | undefined;
 }
 
 export interface SecurityAuditRecord {
   id: string;
   timestamp: string;
-  actorId?: string | null;
-  actorRole?: string | null;
+  actorId?: string | null | undefined;
+  actorRole?: string | null | undefined;
   action: string;
   resourceType: string;
-  resourceId?: string | null;
-  tenantId?: string | null;
+  resourceId?: string | null | undefined;
+  tenantId?: string | null | undefined;
   result: "success" | "failure" | "denied" | "blocked";
   hash: string;
   prevHash: string;
-  ipAddress?: string | null;
-  userAgent?: string | null;
-  requestId?: string | null;
+  ipAddress?: string | null | undefined;
+  userAgent?: string | null | undefined;
+  requestId?: string | null | undefined;
   details: Record<string, unknown>;
 }
 

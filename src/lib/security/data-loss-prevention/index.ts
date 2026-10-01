@@ -29,7 +29,10 @@ export async function evaluateExfiltrationRisk(params: {
   baseline: { average: number; currentDayTotal: number };
 }> {
   const now = new Date();
-  const today = now.getUTCFullYear() * 1000 + now.getUTCDayOfYear?.() || now.getDate();
+  const startOfYear = Date.UTC(now.getUTCFullYear(), 0, 0);
+  const diff = now.getTime() - startOfYear;
+  const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const today = now.getUTCFullYear() * 1000 + dayOfYear;
 
   let baseline = userBaselines.get(params.userId);
   if (!baseline) {
@@ -66,7 +69,7 @@ export async function evaluateExfiltrationRisk(params: {
       category: "data_exfiltration_alert",
       eventType: "abnormal_record_volume_detected",
       actorId: params.userId,
-      ipAddress: params.ipAddress,
+      ipAddress: params.ipAddress || null,
       resource: params.resourceType,
       details: {
         requestedCount: params.requestedRecordCount,

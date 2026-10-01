@@ -30,10 +30,25 @@ export interface CommonsCandidateImage {
   modificationsAllowed: boolean;
 }
 
-export interface IngestedEkaImageNode extends ImageRightsRecord {
+export interface IngestedEkaImageNode extends Partial<ImageRightsRecord> {
+  id?: string;
+  imageId?: string;
+  commonsFileName?: string;
+  url?: string;
+  thumbUrl?: string;
+  title?: string;
+  author?: string;
+  creator?: string;
+  license?: LicenseType;
+  licenseUrl?: string;
+  attribution?: string;
+  attributionString?: string;
+  culturalTags?: string[];
+  depicts?: string[];
   cultureSlug?: string;
   traditionSlug?: string;
   placeSlug?: string;
+  [key: string]: any;
 }
 
 /**

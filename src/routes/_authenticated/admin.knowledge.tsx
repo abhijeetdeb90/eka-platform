@@ -157,7 +157,7 @@ function AdminKnowledgePage() {
 
   const handleAuditImage = () => {
     const res = validateImageRights({
-      license: testLicense,
+      license: testLicense as any,
       author: testAuthor,
       sourceUrl: testImageUrl,
     });

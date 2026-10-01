@@ -12,6 +12,7 @@ import {
   History,
   CheckCircle2,
   AlertTriangle,
+  UserCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,7 +27,7 @@ interface StudioAIManagementProps {
 
 export function StudioAIManagement({ currentRole }: StudioAIManagementProps) {
   const [agents, setAgents] = useState<AIAgentConfig[]>(SEED_AI_AGENTS);
-  const [selectedAgent, setSelectedAgent] = useState<AIAgentConfig>(agents[0]);
+  const [selectedAgent, setSelectedAgent] = useState<AIAgentConfig>(agents[0]!);
 
   const handleSave = async () => {
     const updated = await saveAIAgent(selectedAgent, currentRole);
@@ -92,6 +93,16 @@ export function StudioAIManagement({ currentRole }: StudioAIManagementProps) {
             <p className="text-xs text-muted-foreground leading-relaxed">
               When answering consumer theological or historical inquiries, agents must strictly retrieve from
               verified Canonical Knowledge Objects. Fabricated citations trigger automated execution aborts.
+            </p>
+          </div>
+
+          {/* Human-First Community Rule Guardrail */}
+          <div className="rounded-2xl border border-terracotta/20 bg-sand/30 p-4 space-y-2">
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-terracotta">
+              <UserCheck className="size-4" /> Human-First Community Rule
+            </div>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              <strong>"The intelligence is artificial. The community isn't."</strong> Agents are strictly barred from masquerading as human members, posting synthetic comments, or covertly participating in community sanghas.
             </p>
           </div>
         </div>

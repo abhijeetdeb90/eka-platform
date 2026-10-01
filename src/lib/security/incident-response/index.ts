@@ -16,9 +16,9 @@ export async function createIncident(params: {
   title: string;
   severity: SecuritySeverity;
   category: SecurityEventCategory;
-  targetUser?: string;
-  targetIp?: string;
-  notes?: string;
+  targetUser?: string | undefined;
+  targetIp?: string | undefined;
+  notes?: string | undefined;
   actor: string;
 }): Promise<IncidentState> {
   const id = `inc_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
@@ -39,7 +39,7 @@ export async function createIncident(params: {
         phase: "DETECT",
         actionTaken: "Incident detected and logged.",
         actor: params.actor,
-        notes: params.notes,
+        ...(params.notes ? { notes: params.notes } : {}),
       },
     ],
     automatedActionsTaken: [],
@@ -58,8 +58,8 @@ export async function createIncident(params: {
     severity: params.severity,
     category: params.category,
     eventType: "security_incident_declared",
-    actorId: params.targetUser,
-    ipAddress: params.targetIp,
+    actorId: params.targetUser || null,
+    ipAddress: params.targetIp || null,
     details: { incidentId: id, title: params.title },
   });
 
@@ -118,7 +118,7 @@ export async function advanceIncidentPhase(params: {
   nextPhase: IncidentState["phase"];
   actionTaken: string;
   actor: string;
-  notes?: string;
+  notes?: string | undefined;
 }): Promise<IncidentState | null> {
   const inc = activeIncidents.find((i) => i.id === params.incidentId);
   if (!inc) return null;
@@ -135,7 +135,7 @@ export async function advanceIncidentPhase(params: {
     phase: params.nextPhase,
     actionTaken: params.actionTaken,
     actor: params.actor,
-    notes: params.notes,
+    ...(params.notes ? { notes: params.notes } : {}),
   });
 
   await recordSecurityAudit({

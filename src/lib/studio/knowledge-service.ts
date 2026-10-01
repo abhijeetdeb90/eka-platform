@@ -440,7 +440,7 @@ export async function fetchKnowledgeObjects(filter?: {
   query?: string;
 }): Promise<CanonicalKnowledgeObject[]> {
   try {
-    let q = supabase.from("knowledge_objects").select("*").eq("is_archived", false);
+    let q = (supabase as any).from("knowledge_objects").select("*").eq("is_archived", false);
     if (filter?.type && filter.type !== "all") q = q.eq("type", filter.type);
     if (filter?.tradition && filter.tradition !== "all") q = q.eq("tradition", filter.tradition);
     if (filter?.verification_status && filter.verification_status !== "all")
@@ -596,7 +596,7 @@ export async function updateVerificationStatus(
     previous_status: obj.verification_status,
     new_status: newStatus,
     notes,
-    evidence,
+    ...(evidence ? { evidence } : {}),
   };
 
   obj.verification_records = [record, ...obj.verification_records];

@@ -185,7 +185,7 @@ export async function fetchRelationships(filter?: {
   query?: string;
 }): Promise<KnowledgeRelationship[]> {
   try {
-    let q = supabase.from("knowledge_relationships").select("*");
+    let q = (supabase as any).from("knowledge_relationships").select("*");
     if (filter?.predicate && filter.predicate !== "all") q = q.eq("predicate", filter.predicate);
     if (filter?.from_type && filter.from_type !== "all") q = q.eq("from_type", filter.from_type);
     if (filter?.to_type && filter.to_type !== "all") q = q.eq("to_type", filter.to_type);

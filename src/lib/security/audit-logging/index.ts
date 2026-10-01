@@ -78,7 +78,7 @@ export async function recordSecurityAudit(params: {
   try {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     if (supabaseAdmin) {
-      await supabaseAdmin.from("security_audit_logs").insert({
+      await (supabaseAdmin as any).from("security_audit_logs").insert({
         id: record.id,
         actor_id: record.actorId,
         actor_role: record.actorRole,
@@ -169,7 +169,7 @@ export async function getRecentAuditLogs(limit = 100): Promise<SecurityAuditReco
   try {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     if (supabaseAdmin) {
-      const { data, error } = await supabaseAdmin
+      const { data, error } = await (supabaseAdmin as any)
         .from("security_audit_logs")
         .select("*")
         .order("created_at", { ascending: false })

@@ -44,7 +44,7 @@ export function knowledgeObjectToCard(obj: EkaKnowledgeObject): EkaDiscoveryCard
   const primaryRegion = obj.culturalDimensions.identity.regions[0] || "Global";
   const primaryCommunity = obj.culturalDimensions.identity.communities[0];
   const primaryImage =
-    obj.images[0]?.url ||
+    obj.images[0]?.imageUrl ||
     "https://images.unsplash.com/photo-1544717305-2782549b5136?q=80&w=1200&auto=format&fit=crop";
 
   const topSources = obj.sourcePassport.sourcesList.map((s) => s.title).slice(0, 2);
@@ -102,7 +102,7 @@ export function generateVariationCards(obj: EkaKnowledgeObject): EkaDiscoveryCar
       oneLiner: v.distinctPractice,
       fullExplanation: `${v.significance} Observed in ${v.regionOrGroup}. Documented in ${v.sources.join(", ")}. Associated with: ${v.associatedFoodOrObjects.join(", ")}.`,
       image:
-        obj.images[0]?.thumbUrl ||
+        obj.images[0]?.thumbnailUrl ||
         "https://images.unsplash.com/photo-1576761428284-5f96307e5932?q=80&w=600&auto=format&fit=crop",
       location: v.regionOrGroup,
       verified: true,

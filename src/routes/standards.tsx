@@ -1,10 +1,25 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ShieldCheck, Scale, MessageSquareWarning, Undo2 } from "lucide-react";
+import {
+  ShieldCheck,
+  Scale,
+  MessageSquareWarning,
+  Undo2,
+  UserCheck,
+  CheckCircle2,
+  XCircle,
+  Sparkles,
+} from "lucide-react";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { Button } from "@/components/ui/button";
 import { EkaLogo } from "@/components/brand/Logo";
 import { STANDARDS_VERSION } from "@/lib/join";
-import { AGREEMENT_TEXT, LADDER, NOT_REMOVED, REMOVED } from "@/lib/standards";
+import {
+  AGREEMENT_TEXT,
+  HUMAN_FIRST_RULE,
+  LADDER,
+  NOT_REMOVED,
+  REMOVED,
+} from "@/lib/standards";
 
 export const Route = createFileRoute("/standards")({
   head: () => ({
@@ -13,7 +28,7 @@ export const Route = createFileRoute("/standards")({
       {
         name: "description",
         content:
-          "How EKA keeps conversation across beliefs safe: what we remove, the enforcement ladder from warning to ban, and how to appeal any decision.",
+          "How EKA keeps conversation across beliefs safe: the Human-First Community Rule, what we remove, the enforcement ladder from warning to ban, and how to appeal any decision.",
       },
       { property: "og:title", content: "EKA Community Standards" },
       {
@@ -55,6 +70,64 @@ function StandardsPage() {
             Everyone who joins EKA accepts this once, before creating an account. It is an
             agreement, not an oath — we care what you do here, not what you profess.
           </p>
+        </section>
+
+        {/* The Human-First Community Rule */}
+        <section className="mt-8 rounded-2xl border border-primary/40 bg-sand/20 p-6 sm:p-8 shadow-calm">
+          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.24em] text-terracotta">
+            <UserCheck className="size-4" />
+            <span>Foundational Sanctuary Standard</span>
+          </div>
+          <h2 className="mt-2 font-display text-2xl text-foreground">
+            The Human-First Community Rule
+          </h2>
+          <p className="mt-1 text-base font-medium text-primary">
+            "{HUMAN_FIRST_RULE.motto}"
+          </p>
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+            {HUMAN_FIRST_RULE.summary}
+          </p>
+
+          {/* Distinction Table: Allowed vs Not Allowed */}
+          <div className="mt-6 overflow-hidden rounded-xl border border-border bg-card">
+            <div className="grid grid-cols-1 sm:grid-cols-2 border-b border-border bg-muted/40 p-3 text-xs font-semibold uppercase tracking-wider">
+              <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
+                <CheckCircle2 className="size-3.5" /> Allowed: AI Behind the Scenes
+              </div>
+              <div className="flex items-center gap-1.5 text-destructive mt-2 sm:mt-0">
+                <XCircle className="size-3.5" /> Prohibited: Synthetic Community
+              </div>
+            </div>
+            <div className="divide-y divide-border text-xs">
+              {HUMAN_FIRST_RULE.distinctions.map((item, idx) => (
+                <div
+                  key={idx}
+                  className="grid grid-cols-1 sm:grid-cols-2 p-3 gap-2 sm:gap-4 hover:bg-muted/10 transition-colors"
+                >
+                  <div className="text-foreground/90 font-medium">
+                    {item.allowed}
+                  </div>
+                  <div className="text-muted-foreground">
+                    {item.notAllowed}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-5 rounded-xl border border-border bg-card p-4 text-xs text-muted-foreground space-y-2">
+            <p className="font-semibold text-foreground flex items-center gap-1.5">
+              <Sparkles className="size-3.5 text-primary" /> Behind-the-scenes AI capabilities that empower EKA:
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 pt-1">
+              {HUMAN_FIRST_RULE.behindTheScenesAI.map((cap, i) => (
+                <div key={i} className="flex items-center gap-1.5">
+                  <span className="size-1.5 rounded-full bg-primary" />
+                  <span>{cap}</span>
+                </div>
+              ))}
+            </div>
+          </div>
         </section>
 
         <section className="mt-8 grid gap-4 sm:grid-cols-2">

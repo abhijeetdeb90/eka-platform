@@ -110,6 +110,15 @@ function Sanghas() {
         </Dialog>
       }
     >
+      <div className="mb-4 flex items-center justify-between rounded-xl border border-primary/20 bg-primary/5 px-4 py-2.5 text-xs shadow-calm">
+        <span className="text-muted-foreground">
+          <strong className="text-foreground">Human-First Sanctuary:</strong> The intelligence is artificial. The community isn't.
+        </span>
+        <Link to="/standards" className="text-primary hover:underline font-medium">
+          Standards & Rules →
+        </Link>
+      </div>
+
       {data?.communities.map((c) => {
         const joined = data.joined.has(c.id);
         return (

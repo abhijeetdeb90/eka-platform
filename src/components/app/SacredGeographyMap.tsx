@@ -20,6 +20,22 @@ import { trackSacredPlaceVisited } from "@/lib/analytics/ga4";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
+declare global {
+  interface Window {
+    google?: any;
+  }
+  namespace google {
+    namespace maps {
+      type Map = any;
+      type Marker = any;
+      type InfoWindow = any;
+      type MapTypeStyle = any;
+      type Point = any;
+      type LatLngBounds = any;
+    }
+  }
+}
+
 interface SacredGeographyMapProps {
   initialTradition?: string;
   className?: string;

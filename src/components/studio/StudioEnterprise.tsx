@@ -42,6 +42,7 @@ export function StudioEnterprise({ currentRole }: StudioEnterpriseProps) {
   const orgKeys = apiKeys.filter((k) => k.org_id === activeOrg?.id);
 
   const handleCreateKey = async () => {
+    if (!activeOrg) return;
     if (!newKeyName.trim()) {
       toast.error("Please enter a name for the API key.");
       return;
@@ -147,7 +148,7 @@ export function StudioEnterprise({ currentRole }: StudioEnterpriseProps) {
       {/* Organizations Grid */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         {orgs.map((org) => {
-          const isSelected = org.id === activeOrg.id;
+          const isSelected = org.id === activeOrg?.id;
 
           return (
             <div
@@ -180,7 +181,7 @@ export function StudioEnterprise({ currentRole }: StudioEnterpriseProps) {
         <div className="flex items-center justify-between">
           <div>
             <h3 className="font-display text-lg font-medium">
-              API Keys for {activeOrg.name}
+              API Keys for {activeOrg?.name || "Organization"}
             </h3>
             <p className="text-xs text-muted-foreground">
               Rate Limit Quota: 1,200 requests/minute · 99.9% Uptime SLA

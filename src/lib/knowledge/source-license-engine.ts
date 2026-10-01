@@ -43,7 +43,16 @@ export type LicenseType =
   | "Europeana-NoRe-Use"
   | "Community-Consent-Open"
   | "Community-Sacred-Restricted"
-  | "Proprietary-Citation-Only";
+  | "Proprietary-Citation-Only"
+  | "CC0"
+  | "CC BY-SA 4.0"
+  | "Public Domain"
+  | "UNESCO Open Access"
+  | "OGL-India"
+  | "Government Open Data"
+  | "Scholarly Citation"
+  | "Custom Free"
+  | (string & {});
 
 export type ContentLegalClassification =
   | "FACTUAL_DATA" // CC0 facts, dates, coordinates, taxonomic attributes

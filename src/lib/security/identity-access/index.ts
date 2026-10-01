@@ -158,8 +158,8 @@ export async function recordFailedLogin(params: {
     category: "auth_failure",
     eventType: lockedOut ? "account_lockout_triggered" : "login_failed",
     actorId: params.identifier,
-    ipAddress: params.ipAddress,
-    userAgent: params.userAgent,
+    ipAddress: params.ipAddress || null,
+    userAgent: params.userAgent || null,
     details: {
       attempts: tracker.attempts,
       lockedOut,

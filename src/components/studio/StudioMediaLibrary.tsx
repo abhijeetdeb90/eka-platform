@@ -71,7 +71,7 @@ export function StudioMediaLibrary({ currentRole }: StudioMediaLibraryProps) {
         url: url.trim(),
         creator: creator.trim() || "EKA Archive",
         license,
-        copyrightStatus,
+        copyright_status: copyrightStatus,
         alt_text: altText.trim() || title.trim(),
         caption: caption.trim(),
         usage_rights: usageRights.trim(),

@@ -37,6 +37,7 @@ import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { CulturalIntelligenceExplorer } from "@/components/discovery/CulturalIntelligenceExplorer";
 
 // EKA Motion Primitives
 import {
@@ -449,21 +450,20 @@ export function EkaProMaxConsumerPlatform() {
                   ONE WITHIN. ONE WITH ALL.
                 </span>
                 <span className="opacity-40">•</span>
-                <span>Living Heritage Sanctuary</span>
+                <span>Cultural Intelligence Engine</span>
               </div>
             </FadeIn>
 
             <FadeIn direction="up" delay={0.1}>
               <h1 className="font-display font-serif text-4xl sm:text-6xl lg:text-7xl font-normal leading-[1.08] text-white tracking-tight drop-shadow-md">
-                The world through <br className="hidden sm:inline" />
-                its sacred keepers.
+                Don't just scroll the world. <br className="hidden sm:inline" />
+                Understand it.
               </h1>
             </FadeIn>
 
             <FadeIn direction="up" delay={0.2}>
               <p className="max-w-2xl text-base sm:text-lg font-light text-white/85 leading-relaxed drop-shadow-sm">
-                Watch short cultural moments. Unfold deep contemplative commentary. Trace sacred
-                geography across unbroken traditions preserving the inner life of humankind.
+                Discover and understand cultures, living traditions, sacred places, and artisan communities through trustworthy, contextualized knowledge. The anti-noise sanctuary for human cultural memory.
               </p>
             </FadeIn>
 
@@ -592,6 +592,11 @@ export function EkaProMaxConsumerPlatform() {
         {/* ==================================================================== */}
         {experienceMode === "magazine" && (
           <>
+            {/* 1.5 CULTURAL INTELLIGENCE ENGINE & PROVOCATIVE INQUIRIES */}
+            <section id="cultural-intelligence" className="container-eka space-y-6">
+              <CulturalIntelligenceExplorer />
+            </section>
+
             {/* 2. REEL STRIP: VERTICAL GLIMPSES OF LIVING FAITH */}
             <section className="container-eka space-y-6">
               <ScrollReveal>

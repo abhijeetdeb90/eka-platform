@@ -32,7 +32,7 @@ export const Route = createFileRoute("/api/security/incident-response")({
           }
 
           const userId = claimsData.user.id;
-          const { data: roleData } = await supabaseAdmin
+          const { data: roleData } = await (supabaseAdmin as any)
             .from("studio_user_roles")
             .select("role")
             .eq("user_id", userId)
@@ -71,7 +71,7 @@ export const Route = createFileRoute("/api/security/incident-response")({
           }
 
           const userId = claimsData.user.id;
-          const { data: roleData } = await supabaseAdmin
+          const { data: roleData } = await (supabaseAdmin as any)
             .from("studio_user_roles")
             .select("role")
             .eq("user_id", userId)

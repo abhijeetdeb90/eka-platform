@@ -187,7 +187,7 @@ export function buildTaxonomyTree(flatNodes: TaxonomyNode[]): TaxonomyNode[] {
 
 export async function fetchTaxonomyTree(): Promise<TaxonomyNode[]> {
   try {
-    const { data, error } = await supabase.from("taxonomy_nodes").select("*").order("sort_order");
+    const { data, error } = await (supabase as any).from("taxonomy_nodes").select("*").order("sort_order");
     if (!error && data && data.length > 0) {
       return buildTaxonomyTree(data as unknown as TaxonomyNode[]);
     }

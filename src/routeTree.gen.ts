@@ -50,6 +50,15 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as AuthenticatedAppRouteImport } from './routes/_authenticated/app'
 import { Route as AuthenticatedStudioRouteImport } from './routes/_authenticated/studio'
+import { Route as ApiAuditRouteImport } from './routes/api/audit'
+import { Route as ApiCreatorEarningsRouteImport } from './routes/api/creator-earnings'
+import { Route as ApiFinanceRouteImport } from './routes/api/finance'
+import { Route as ApiPaymentsRouteImport } from './routes/api/payments'
+import { Route as ApiPayoutsRouteImport } from './routes/api/payouts'
+import { Route as ApiReconciliationRouteImport } from './routes/api/reconciliation'
+import { Route as ApiRefundsRouteImport } from './routes/api/refunds'
+import { Route as ApiSubscriptionsRouteImport } from './routes/api/subscriptions'
+import { Route as ApiWebhooksRouteImport } from './routes/api/webhooks'
 import { Route as FounderAdRouteImport } from './routes/founder.ad'
 import { Route as KnowledgeIndexRouteImport } from './routes/knowledge.index'
 import { Route as KnowledgeSlugRouteImport } from './routes/knowledge.$slug'
@@ -58,6 +67,7 @@ import { Route as PeopleUsernameRouteImport } from './routes/people.$username'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as AuthenticatedAdminCreatorRiskRouteImport } from './routes/_authenticated/admin.creator-risk'
 import { Route as AuthenticatedAdminEconomicsRouteImport } from './routes/_authenticated/admin.economics'
+import { Route as AuthenticatedAdminFinanceRouteImport } from './routes/_authenticated/admin.finance'
 import { Route as AuthenticatedAdminKnowledgeRouteImport } from './routes/_authenticated/admin.knowledge'
 import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app.index'
 import { Route as AuthenticatedAppAdminRouteImport } from './routes/_authenticated/app.admin'
@@ -94,7 +104,10 @@ import { Route as ApiSecurityDataExportRouteImport } from './routes/api/security
 import { Route as ApiSecurityEventsRouteImport } from './routes/api/security.events'
 import { Route as ApiSecurityIncidentResponseRouteImport } from './routes/api/security.incident-response'
 import { Route as ApiSecuritySessionsRouteImport } from './routes/api/security.sessions'
+import { Route as ApiWebhooksRazorpayRouteImport } from './routes/api/webhooks.razorpay'
+import { Route as AuthenticatedAppBrandFinanceRouteImport } from './routes/_authenticated/app.brand.finance'
 import { Route as AuthenticatedAppCreatorDashboardRouteImport } from './routes/_authenticated/app.creator.dashboard'
+import { Route as AuthenticatedAppCreatorEarningsRouteImport } from './routes/_authenticated/app.creator.earnings'
 import { Route as AuthenticatedAppDiscoverIndexRouteImport } from './routes/_authenticated/app.discover.index'
 import { Route as AuthenticatedAppDiscoverSlugRouteImport } from './routes/_authenticated/app.discover.$slug'
 import { Route as AuthenticatedAppEpisodesIndexRouteImport } from './routes/_authenticated/app.episodes.index'
@@ -320,6 +333,51 @@ const AuthenticatedStudioRoute = AuthenticatedStudioRouteImport.update({
   path: '/studio',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiAuditRoute = ApiAuditRouteImport.update({
+  id: '/api/audit',
+  path: '/api/audit',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCreatorEarningsRoute = ApiCreatorEarningsRouteImport.update({
+  id: '/api/creator-earnings',
+  path: '/api/creator-earnings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiFinanceRoute = ApiFinanceRouteImport.update({
+  id: '/api/finance',
+  path: '/api/finance',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPaymentsRoute = ApiPaymentsRouteImport.update({
+  id: '/api/payments',
+  path: '/api/payments',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPayoutsRoute = ApiPayoutsRouteImport.update({
+  id: '/api/payouts',
+  path: '/api/payouts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiReconciliationRoute = ApiReconciliationRouteImport.update({
+  id: '/api/reconciliation',
+  path: '/api/reconciliation',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiRefundsRoute = ApiRefundsRouteImport.update({
+  id: '/api/refunds',
+  path: '/api/refunds',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSubscriptionsRoute = ApiSubscriptionsRouteImport.update({
+  id: '/api/subscriptions',
+  path: '/api/subscriptions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiWebhooksRoute = ApiWebhooksRouteImport.update({
+  id: '/api/webhooks',
+  path: '/api/webhooks',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FounderAdRoute = FounderAdRouteImport.update({
   id: '/ad',
   path: '/ad',
@@ -360,6 +418,12 @@ const AuthenticatedAdminEconomicsRoute =
   AuthenticatedAdminEconomicsRouteImport.update({
     id: '/admin/economics',
     path: '/admin/economics',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminFinanceRoute =
+  AuthenticatedAdminFinanceRouteImport.update({
+    id: '/admin/finance',
+    path: '/admin/finance',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedAdminKnowledgeRoute =
@@ -553,10 +617,27 @@ const ApiSecuritySessionsRoute = ApiSecuritySessionsRouteImport.update({
   path: '/api/security/sessions',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiWebhooksRazorpayRoute = ApiWebhooksRazorpayRouteImport.update({
+  id: '/razorpay',
+  path: '/razorpay',
+  getParentRoute: () => ApiWebhooksRoute,
+} as any)
+const AuthenticatedAppBrandFinanceRoute =
+  AuthenticatedAppBrandFinanceRouteImport.update({
+    id: '/brand/finance',
+    path: '/brand/finance',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
 const AuthenticatedAppCreatorDashboardRoute =
   AuthenticatedAppCreatorDashboardRouteImport.update({
     id: '/dashboard',
     path: '/dashboard',
+    getParentRoute: () => AuthenticatedAppCreatorRoute,
+  } as any)
+const AuthenticatedAppCreatorEarningsRoute =
+  AuthenticatedAppCreatorEarningsRouteImport.update({
+    id: '/earnings',
+    path: '/earnings',
     getParentRoute: () => AuthenticatedAppCreatorRoute,
   } as any)
 const AuthenticatedAppDiscoverIndexRoute =
@@ -713,6 +794,15 @@ export interface FileRoutesByFullPath {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/app': typeof AuthenticatedAppRouteWithChildren
   '/studio': typeof AuthenticatedStudioRoute
+  '/api/audit': typeof ApiAuditRoute
+  '/api/creator-earnings': typeof ApiCreatorEarningsRoute
+  '/api/finance': typeof ApiFinanceRoute
+  '/api/payments': typeof ApiPaymentsRoute
+  '/api/payouts': typeof ApiPayoutsRoute
+  '/api/reconciliation': typeof ApiReconciliationRoute
+  '/api/refunds': typeof ApiRefundsRoute
+  '/api/subscriptions': typeof ApiSubscriptionsRoute
+  '/api/webhooks': typeof ApiWebhooksRouteWithChildren
   '/founder/ad': typeof FounderAdRoute
   '/knowledge/$slug': typeof KnowledgeSlugRoute
   '/passport/$slug': typeof PassportSlugRoute
@@ -721,6 +811,7 @@ export interface FileRoutesByFullPath {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/admin/creator-risk': typeof AuthenticatedAdminCreatorRiskRoute
   '/admin/economics': typeof AuthenticatedAdminEconomicsRoute
+  '/admin/finance': typeof AuthenticatedAdminFinanceRoute
   '/admin/knowledge': typeof AuthenticatedAdminKnowledgeRoute
   '/app/admin': typeof AuthenticatedAppAdminRoute
   '/app/appeal': typeof AuthenticatedAppAppealRoute
@@ -756,8 +847,11 @@ export interface FileRoutesByFullPath {
   '/api/security/events': typeof ApiSecurityEventsRoute
   '/api/security/incident-response': typeof ApiSecurityIncidentResponseRoute
   '/api/security/sessions': typeof ApiSecuritySessionsRoute
+  '/api/webhooks/razorpay': typeof ApiWebhooksRazorpayRoute
   '/app/': typeof AuthenticatedAppIndexRoute
+  '/app/brand/finance': typeof AuthenticatedAppBrandFinanceRoute
   '/app/creator/dashboard': typeof AuthenticatedAppCreatorDashboardRoute
+  '/app/creator/earnings': typeof AuthenticatedAppCreatorEarningsRoute
   '/app/discover/$slug': typeof AuthenticatedAppDiscoverSlugRoute
   '/app/episodes/$id': typeof AuthenticatedAppEpisodesIdRoute
   '/app/journeys/$slug': typeof AuthenticatedAppJourneysSlugRoute
@@ -818,6 +912,15 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/studio': typeof AuthenticatedStudioRoute
+  '/api/audit': typeof ApiAuditRoute
+  '/api/creator-earnings': typeof ApiCreatorEarningsRoute
+  '/api/finance': typeof ApiFinanceRoute
+  '/api/payments': typeof ApiPaymentsRoute
+  '/api/payouts': typeof ApiPayoutsRoute
+  '/api/reconciliation': typeof ApiReconciliationRoute
+  '/api/refunds': typeof ApiRefundsRoute
+  '/api/subscriptions': typeof ApiSubscriptionsRoute
+  '/api/webhooks': typeof ApiWebhooksRouteWithChildren
   '/founder/ad': typeof FounderAdRoute
   '/knowledge/$slug': typeof KnowledgeSlugRoute
   '/passport/$slug': typeof PassportSlugRoute
@@ -826,6 +929,7 @@ export interface FileRoutesByTo {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/admin/creator-risk': typeof AuthenticatedAdminCreatorRiskRoute
   '/admin/economics': typeof AuthenticatedAdminEconomicsRoute
+  '/admin/finance': typeof AuthenticatedAdminFinanceRoute
   '/admin/knowledge': typeof AuthenticatedAdminKnowledgeRoute
   '/app/admin': typeof AuthenticatedAppAdminRoute
   '/app/appeal': typeof AuthenticatedAppAppealRoute
@@ -861,8 +965,11 @@ export interface FileRoutesByTo {
   '/api/security/events': typeof ApiSecurityEventsRoute
   '/api/security/incident-response': typeof ApiSecurityIncidentResponseRoute
   '/api/security/sessions': typeof ApiSecuritySessionsRoute
+  '/api/webhooks/razorpay': typeof ApiWebhooksRazorpayRoute
   '/app': typeof AuthenticatedAppIndexRoute
+  '/app/brand/finance': typeof AuthenticatedAppBrandFinanceRoute
   '/app/creator/dashboard': typeof AuthenticatedAppCreatorDashboardRoute
+  '/app/creator/earnings': typeof AuthenticatedAppCreatorEarningsRoute
   '/app/discover/$slug': typeof AuthenticatedAppDiscoverSlugRoute
   '/app/episodes/$id': typeof AuthenticatedAppEpisodesIdRoute
   '/app/journeys/$slug': typeof AuthenticatedAppJourneysSlugRoute
@@ -926,6 +1033,15 @@ export interface FileRoutesById {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/app': typeof AuthenticatedAppRouteWithChildren
   '/_authenticated/studio': typeof AuthenticatedStudioRoute
+  '/api/audit': typeof ApiAuditRoute
+  '/api/creator-earnings': typeof ApiCreatorEarningsRoute
+  '/api/finance': typeof ApiFinanceRoute
+  '/api/payments': typeof ApiPaymentsRoute
+  '/api/payouts': typeof ApiPayoutsRoute
+  '/api/reconciliation': typeof ApiReconciliationRoute
+  '/api/refunds': typeof ApiRefundsRoute
+  '/api/subscriptions': typeof ApiSubscriptionsRoute
+  '/api/webhooks': typeof ApiWebhooksRouteWithChildren
   '/founder/ad': typeof FounderAdRoute
   '/knowledge/$slug': typeof KnowledgeSlugRoute
   '/passport/$slug': typeof PassportSlugRoute
@@ -934,6 +1050,7 @@ export interface FileRoutesById {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/_authenticated/admin/creator-risk': typeof AuthenticatedAdminCreatorRiskRoute
   '/_authenticated/admin/economics': typeof AuthenticatedAdminEconomicsRoute
+  '/_authenticated/admin/finance': typeof AuthenticatedAdminFinanceRoute
   '/_authenticated/admin/knowledge': typeof AuthenticatedAdminKnowledgeRoute
   '/_authenticated/app/admin': typeof AuthenticatedAppAdminRoute
   '/_authenticated/app/appeal': typeof AuthenticatedAppAppealRoute
@@ -969,8 +1086,11 @@ export interface FileRoutesById {
   '/api/security/events': typeof ApiSecurityEventsRoute
   '/api/security/incident-response': typeof ApiSecurityIncidentResponseRoute
   '/api/security/sessions': typeof ApiSecuritySessionsRoute
+  '/api/webhooks/razorpay': typeof ApiWebhooksRazorpayRoute
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
+  '/_authenticated/app/brand/finance': typeof AuthenticatedAppBrandFinanceRoute
   '/_authenticated/app/creator/dashboard': typeof AuthenticatedAppCreatorDashboardRoute
+  '/_authenticated/app/creator/earnings': typeof AuthenticatedAppCreatorEarningsRoute
   '/_authenticated/app/discover/$slug': typeof AuthenticatedAppDiscoverSlugRoute
   '/_authenticated/app/episodes/$id': typeof AuthenticatedAppEpisodesIdRoute
   '/_authenticated/app/journeys/$slug': typeof AuthenticatedAppJourneysSlugRoute
@@ -1034,6 +1154,15 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/app'
     | '/studio'
+    | '/api/audit'
+    | '/api/creator-earnings'
+    | '/api/finance'
+    | '/api/payments'
+    | '/api/payouts'
+    | '/api/reconciliation'
+    | '/api/refunds'
+    | '/api/subscriptions'
+    | '/api/webhooks'
     | '/founder/ad'
     | '/knowledge/$slug'
     | '/passport/$slug'
@@ -1042,6 +1171,7 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/admin/creator-risk'
     | '/admin/economics'
+    | '/admin/finance'
     | '/admin/knowledge'
     | '/app/admin'
     | '/app/appeal'
@@ -1077,8 +1207,11 @@ export interface FileRouteTypes {
     | '/api/security/events'
     | '/api/security/incident-response'
     | '/api/security/sessions'
+    | '/api/webhooks/razorpay'
     | '/app/'
+    | '/app/brand/finance'
     | '/app/creator/dashboard'
+    | '/app/creator/earnings'
     | '/app/discover/$slug'
     | '/app/episodes/$id'
     | '/app/journeys/$slug'
@@ -1139,6 +1272,15 @@ export interface FileRouteTypes {
     | '/terms'
     | '/.well-known/oauth-protected-resource'
     | '/studio'
+    | '/api/audit'
+    | '/api/creator-earnings'
+    | '/api/finance'
+    | '/api/payments'
+    | '/api/payouts'
+    | '/api/reconciliation'
+    | '/api/refunds'
+    | '/api/subscriptions'
+    | '/api/webhooks'
     | '/founder/ad'
     | '/knowledge/$slug'
     | '/passport/$slug'
@@ -1147,6 +1289,7 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/admin/creator-risk'
     | '/admin/economics'
+    | '/admin/finance'
     | '/admin/knowledge'
     | '/app/admin'
     | '/app/appeal'
@@ -1182,8 +1325,11 @@ export interface FileRouteTypes {
     | '/api/security/events'
     | '/api/security/incident-response'
     | '/api/security/sessions'
+    | '/api/webhooks/razorpay'
     | '/app'
+    | '/app/brand/finance'
     | '/app/creator/dashboard'
+    | '/app/creator/earnings'
     | '/app/discover/$slug'
     | '/app/episodes/$id'
     | '/app/journeys/$slug'
@@ -1246,6 +1392,15 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/_authenticated/app'
     | '/_authenticated/studio'
+    | '/api/audit'
+    | '/api/creator-earnings'
+    | '/api/finance'
+    | '/api/payments'
+    | '/api/payouts'
+    | '/api/reconciliation'
+    | '/api/refunds'
+    | '/api/subscriptions'
+    | '/api/webhooks'
     | '/founder/ad'
     | '/knowledge/$slug'
     | '/passport/$slug'
@@ -1254,6 +1409,7 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/_authenticated/admin/creator-risk'
     | '/_authenticated/admin/economics'
+    | '/_authenticated/admin/finance'
     | '/_authenticated/admin/knowledge'
     | '/_authenticated/app/admin'
     | '/_authenticated/app/appeal'
@@ -1289,8 +1445,11 @@ export interface FileRouteTypes {
     | '/api/security/events'
     | '/api/security/incident-response'
     | '/api/security/sessions'
+    | '/api/webhooks/razorpay'
     | '/_authenticated/app/'
+    | '/_authenticated/app/brand/finance'
     | '/_authenticated/app/creator/dashboard'
+    | '/_authenticated/app/creator/earnings'
     | '/_authenticated/app/discover/$slug'
     | '/_authenticated/app/episodes/$id'
     | '/_authenticated/app/journeys/$slug'
@@ -1352,6 +1511,15 @@ export interface RootRouteChildren {
   SystemRoute: typeof SystemRoute
   TermsRoute: typeof TermsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  ApiAuditRoute: typeof ApiAuditRoute
+  ApiCreatorEarningsRoute: typeof ApiCreatorEarningsRoute
+  ApiFinanceRoute: typeof ApiFinanceRoute
+  ApiPaymentsRoute: typeof ApiPaymentsRoute
+  ApiPayoutsRoute: typeof ApiPayoutsRoute
+  ApiReconciliationRoute: typeof ApiReconciliationRoute
+  ApiRefundsRoute: typeof ApiRefundsRoute
+  ApiSubscriptionsRoute: typeof ApiSubscriptionsRoute
+  ApiWebhooksRoute: typeof ApiWebhooksRouteWithChildren
   KnowledgeSlugRoute: typeof KnowledgeSlugRoute
   PassportSlugRoute: typeof PassportSlugRoute
   PeopleUsernameRoute: typeof PeopleUsernameRoute
@@ -1655,6 +1823,69 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedStudioRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/audit': {
+      id: '/api/audit'
+      path: '/api/audit'
+      fullPath: '/api/audit'
+      preLoaderRoute: typeof ApiAuditRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/creator-earnings': {
+      id: '/api/creator-earnings'
+      path: '/api/creator-earnings'
+      fullPath: '/api/creator-earnings'
+      preLoaderRoute: typeof ApiCreatorEarningsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/finance': {
+      id: '/api/finance'
+      path: '/api/finance'
+      fullPath: '/api/finance'
+      preLoaderRoute: typeof ApiFinanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/payments': {
+      id: '/api/payments'
+      path: '/api/payments'
+      fullPath: '/api/payments'
+      preLoaderRoute: typeof ApiPaymentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/payouts': {
+      id: '/api/payouts'
+      path: '/api/payouts'
+      fullPath: '/api/payouts'
+      preLoaderRoute: typeof ApiPayoutsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/reconciliation': {
+      id: '/api/reconciliation'
+      path: '/api/reconciliation'
+      fullPath: '/api/reconciliation'
+      preLoaderRoute: typeof ApiReconciliationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/refunds': {
+      id: '/api/refunds'
+      path: '/api/refunds'
+      fullPath: '/api/refunds'
+      preLoaderRoute: typeof ApiRefundsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/subscriptions': {
+      id: '/api/subscriptions'
+      path: '/api/subscriptions'
+      fullPath: '/api/subscriptions'
+      preLoaderRoute: typeof ApiSubscriptionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/webhooks': {
+      id: '/api/webhooks'
+      path: '/api/webhooks'
+      fullPath: '/api/webhooks'
+      preLoaderRoute: typeof ApiWebhooksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/founder/ad': {
       id: '/founder/ad'
       path: '/ad'
@@ -1709,6 +1940,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/economics'
       fullPath: '/admin/economics'
       preLoaderRoute: typeof AuthenticatedAdminEconomicsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/finance': {
+      id: '/_authenticated/admin/finance'
+      path: '/admin/finance'
+      fullPath: '/admin/finance'
+      preLoaderRoute: typeof AuthenticatedAdminFinanceRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/admin/knowledge': {
@@ -1963,11 +2201,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSecuritySessionsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/webhooks/razorpay': {
+      id: '/api/webhooks/razorpay'
+      path: '/razorpay'
+      fullPath: '/api/webhooks/razorpay'
+      preLoaderRoute: typeof ApiWebhooksRazorpayRouteImport
+      parentRoute: typeof ApiWebhooksRoute
+    }
+    '/_authenticated/app/brand/finance': {
+      id: '/_authenticated/app/brand/finance'
+      path: '/brand/finance'
+      fullPath: '/app/brand/finance'
+      preLoaderRoute: typeof AuthenticatedAppBrandFinanceRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
     '/_authenticated/app/creator/dashboard': {
       id: '/_authenticated/app/creator/dashboard'
       path: '/dashboard'
       fullPath: '/app/creator/dashboard'
       preLoaderRoute: typeof AuthenticatedAppCreatorDashboardRouteImport
+      parentRoute: typeof AuthenticatedAppCreatorRoute
+    }
+    '/_authenticated/app/creator/earnings': {
+      id: '/_authenticated/app/creator/earnings'
+      path: '/earnings'
+      fullPath: '/app/creator/earnings'
+      preLoaderRoute: typeof AuthenticatedAppCreatorEarningsRouteImport
       parentRoute: typeof AuthenticatedAppCreatorRoute
     }
     '/_authenticated/app/discover/': {
@@ -2108,12 +2367,14 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAppCreatorRouteChildren {
   AuthenticatedAppCreatorDashboardRoute: typeof AuthenticatedAppCreatorDashboardRoute
+  AuthenticatedAppCreatorEarningsRoute: typeof AuthenticatedAppCreatorEarningsRoute
 }
 
 const AuthenticatedAppCreatorRouteChildren: AuthenticatedAppCreatorRouteChildren =
   {
     AuthenticatedAppCreatorDashboardRoute:
       AuthenticatedAppCreatorDashboardRoute,
+    AuthenticatedAppCreatorEarningsRoute: AuthenticatedAppCreatorEarningsRoute,
   }
 
 const AuthenticatedAppCreatorRouteWithChildren =
@@ -2153,6 +2414,7 @@ interface AuthenticatedAppRouteChildren {
   AuthenticatedAppWelcomeRoute: typeof AuthenticatedAppWelcomeRoute
   AuthenticatedAppWisdomRoute: typeof AuthenticatedAppWisdomRoute
   AuthenticatedAppIndexRoute: typeof AuthenticatedAppIndexRoute
+  AuthenticatedAppBrandFinanceRoute: typeof AuthenticatedAppBrandFinanceRoute
   AuthenticatedAppDiscoverSlugRoute: typeof AuthenticatedAppDiscoverSlugRoute
   AuthenticatedAppEpisodesIdRoute: typeof AuthenticatedAppEpisodesIdRoute
   AuthenticatedAppJourneysSlugRoute: typeof AuthenticatedAppJourneysSlugRoute
@@ -2203,6 +2465,7 @@ const AuthenticatedAppRouteChildren: AuthenticatedAppRouteChildren = {
   AuthenticatedAppWelcomeRoute: AuthenticatedAppWelcomeRoute,
   AuthenticatedAppWisdomRoute: AuthenticatedAppWisdomRoute,
   AuthenticatedAppIndexRoute: AuthenticatedAppIndexRoute,
+  AuthenticatedAppBrandFinanceRoute: AuthenticatedAppBrandFinanceRoute,
   AuthenticatedAppDiscoverSlugRoute: AuthenticatedAppDiscoverSlugRoute,
   AuthenticatedAppEpisodesIdRoute: AuthenticatedAppEpisodesIdRoute,
   AuthenticatedAppJourneysSlugRoute: AuthenticatedAppJourneysSlugRoute,
@@ -2229,6 +2492,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedStudioRoute: typeof AuthenticatedStudioRoute
   AuthenticatedAdminCreatorRiskRoute: typeof AuthenticatedAdminCreatorRiskRoute
   AuthenticatedAdminEconomicsRoute: typeof AuthenticatedAdminEconomicsRoute
+  AuthenticatedAdminFinanceRoute: typeof AuthenticatedAdminFinanceRoute
   AuthenticatedAdminKnowledgeRoute: typeof AuthenticatedAdminKnowledgeRoute
 }
 
@@ -2237,6 +2501,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedStudioRoute: AuthenticatedStudioRoute,
   AuthenticatedAdminCreatorRiskRoute: AuthenticatedAdminCreatorRiskRoute,
   AuthenticatedAdminEconomicsRoute: AuthenticatedAdminEconomicsRoute,
+  AuthenticatedAdminFinanceRoute: AuthenticatedAdminFinanceRoute,
   AuthenticatedAdminKnowledgeRoute: AuthenticatedAdminKnowledgeRoute,
 }
 
@@ -2253,6 +2518,18 @@ const FounderRouteChildren: FounderRouteChildren = {
 
 const FounderRouteWithChildren =
   FounderRoute._addFileChildren(FounderRouteChildren)
+
+interface ApiWebhooksRouteChildren {
+  ApiWebhooksRazorpayRoute: typeof ApiWebhooksRazorpayRoute
+}
+
+const ApiWebhooksRouteChildren: ApiWebhooksRouteChildren = {
+  ApiWebhooksRazorpayRoute: ApiWebhooksRazorpayRoute,
+}
+
+const ApiWebhooksRouteWithChildren = ApiWebhooksRoute._addFileChildren(
+  ApiWebhooksRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -2295,6 +2572,15 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
+  ApiAuditRoute: ApiAuditRoute,
+  ApiCreatorEarningsRoute: ApiCreatorEarningsRoute,
+  ApiFinanceRoute: ApiFinanceRoute,
+  ApiPaymentsRoute: ApiPaymentsRoute,
+  ApiPayoutsRoute: ApiPayoutsRoute,
+  ApiReconciliationRoute: ApiReconciliationRoute,
+  ApiRefundsRoute: ApiRefundsRoute,
+  ApiSubscriptionsRoute: ApiSubscriptionsRoute,
+  ApiWebhooksRoute: ApiWebhooksRouteWithChildren,
   KnowledgeSlugRoute: KnowledgeSlugRoute,
   PassportSlugRoute: PassportSlugRoute,
   PeopleUsernameRoute: PeopleUsernameRoute,

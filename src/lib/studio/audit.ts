@@ -66,13 +66,13 @@ export async function logStudioAction(params: {
 }): Promise<StudioAuditLog> {
   const entry: StudioAuditLog = {
     id: `audit_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
-    actor_id: params.actor_id,
+    ...(params.actor_id ? { actor_id: params.actor_id } : {}),
     actor_name: params.actor_name || "Admin Operator",
     actor_role: params.actor_role,
     action: params.action,
     target_type: params.target_type,
-    target_id: params.target_id,
-    target_title: params.target_title,
+    ...(params.target_id ? { target_id: params.target_id } : {}),
+    ...(params.target_title ? { target_title: params.target_title } : {}),
     details: params.details || {},
     ip_address: params.ip_address || "internal-api",
     created_at: new Date().toISOString(),
@@ -84,7 +84,7 @@ export async function logStudioAction(params: {
 
   // Non-blocking persistent write to Supabase if table is created
   try {
-    await supabase.from("studio_audit_logs").insert({
+    await (supabase as any).from("studio_audit_logs").insert({
       id: entry.id,
       actor_id: entry.actor_id,
       actor_role: entry.actor_role,
@@ -111,7 +111,7 @@ export async function fetchAuditLogs(filter?: {
   query?: string;
 }): Promise<StudioAuditLog[]> {
   try {
-    let q = supabase
+    let q = (supabase as any)
       .from("studio_audit_logs")
       .select("*")
       .order("created_at", { ascending: false })

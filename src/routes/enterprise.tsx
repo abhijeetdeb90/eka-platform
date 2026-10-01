@@ -28,7 +28,7 @@ function EnterprisePage() {
             and organizational governance.
           </p>
         </div>
-        <StudioEnterprise />
+        <StudioEnterprise currentRole="Founder" />
       </div>
     </div>
   );

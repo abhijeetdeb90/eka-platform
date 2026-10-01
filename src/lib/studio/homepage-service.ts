@@ -168,7 +168,7 @@ let liveHomepageSections = [...SEED_HOMEPAGE_SECTIONS];
 
 export async function fetchHomepageSections(): Promise<HomepageSection[]> {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from("homepage_sections")
       .select("*")
       .order("sort_order", { ascending: true });
@@ -270,10 +270,10 @@ export async function duplicateHomepageSection(
   const orig = liveHomepageSections.find((s) => s.id === id);
   if (!orig) throw new Error("Section not found");
 
+  const { id: _, ...rest } = orig;
   const duplicated = await saveHomepageSection(
     {
-      ...orig,
-      id: undefined,
+      ...rest,
       title: `${orig.title} (Copy)`,
       sort_order: orig.sort_order + 1,
       is_visible: false,

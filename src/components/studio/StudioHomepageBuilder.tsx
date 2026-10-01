@@ -63,6 +63,7 @@ export function StudioHomepageBuilder({ currentRole }: StudioHomepageBuilderProp
 
     const newSections = [...sections];
     const [moved] = newSections.splice(index, 1);
+    if (!moved) return;
     newSections.splice(targetIndex, 0, moved);
 
     const reorderedIds = newSections.map((s) => s.id);
@@ -344,10 +345,10 @@ export function StudioHomepageBuilder({ currentRole }: StudioHomepageBuilderProp
                     <label className="text-xs font-medium text-muted-foreground">Section Title</label>
                     <Input
                       value={activeSection.title}
-                      onChange={(e) =>
-                        setActiveSectionId(activeSection.id) ||
-                        handleSaveActive({ ...activeSection, title: e.target.value })
-                      }
+                      onChange={(e) => {
+                        setActiveSectionId(activeSection.id);
+                        handleSaveActive({ ...activeSection, title: e.target.value });
+                      }}
                       className="mt-1"
                     />
                   </div>

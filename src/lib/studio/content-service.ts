@@ -110,7 +110,7 @@ export async function fetchContentItems(filter?: {
   query?: string;
 }): Promise<ContentItem[]> {
   try {
-    let q = supabase.from("content_items").select("*");
+    let q = (supabase as any).from("content_items").select("*");
     if (filter?.type && filter.type !== "all") q = q.eq("type", filter.type);
     if (filter?.status && filter.status !== "all") q = q.eq("status", filter.status);
     if (filter?.visibility && filter.visibility !== "all") q = q.eq("visibility", filter.visibility);
@@ -161,7 +161,7 @@ export async function saveContentItem(
     description: item.description || "",
     body: item.body || "",
     media: item.media || [],
-    author_id: item.author_id,
+    ...(item.author_id ? { author_id: item.author_id } : {}),
     creator_name: item.creator_name || "EKA Editorial",
     category: item.category || "General",
     tags: item.tags || [],
@@ -173,7 +173,7 @@ export async function saveContentItem(
     related_objects: item.related_objects || [],
     seo_metadata: item.seo_metadata || {
       meta_title: item.title,
-      meta_description: item.description,
+      ...(item.description ? { meta_description: item.description } : {}),
     },
     visibility: item.visibility || "public",
     status: item.status || "draft",
@@ -208,10 +208,10 @@ export async function duplicateContentItem(
   const orig = await getContentItemById(id);
   if (!orig) throw new Error("Content item not found");
 
+  const { id: _, ...rest } = orig;
   const duplicated = await saveContentItem(
     {
-      ...orig,
-      id: undefined,
+      ...rest,
       title: `${orig.title} (Copy)`,
       slug: `${orig.slug}-copy-${Date.now().toString(36)}`,
       status: "draft",

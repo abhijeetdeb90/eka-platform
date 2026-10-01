@@ -70,7 +70,7 @@ export async function trackSecurityEvent(params: {
   try {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     if (supabaseAdmin) {
-      await supabaseAdmin.from("security_events").insert({
+      await (supabaseAdmin as any).from("security_events").insert({
         id: event.id,
         severity: event.severity,
         category: event.category,
@@ -154,13 +154,13 @@ export function isEntityQuarantined(params: { ipAddress?: string; userId?: strin
   if (params.ipAddress) {
     const ipProf = ipThreatProfiles.get(params.ipAddress);
     if (ipProf?.isQuarantined) {
-      return { quarantined: true, reason: ipProf.quarantineReason };
+      return { quarantined: true, ...(ipProf.quarantineReason ? { reason: ipProf.quarantineReason } : {}) };
     }
   }
   if (params.userId) {
     const userProf = userThreatProfiles.get(params.userId);
     if (userProf?.isQuarantined) {
-      return { quarantined: true, reason: userProf.quarantineReason };
+      return { quarantined: true, ...(userProf.quarantineReason ? { reason: userProf.quarantineReason } : {}) };
     }
   }
   return { quarantined: false };
@@ -183,7 +183,7 @@ export async function getSecurityMonitoringMetrics(): Promise<{
   try {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     if (supabaseAdmin) {
-      const { data, error } = await supabaseAdmin
+      const { data, error } = await (supabaseAdmin as any)
         .from("security_events")
         .select("*")
         .order("created_at", { ascending: false })

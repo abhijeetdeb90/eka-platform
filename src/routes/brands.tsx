@@ -30,7 +30,7 @@ export const Route = createFileRoute("/brands")({
       "strategy",
       "agent",
     ];
-    const requested = search.tab as BrandTab;
+    const requested = search["tab"] as BrandTab;
     return {
       tab: validTabs.includes(requested) ? requested : "dashboard",
     };

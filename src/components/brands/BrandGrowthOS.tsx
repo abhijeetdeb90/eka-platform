@@ -123,7 +123,7 @@ interface BrandGrowthOSProps {
 
 export function BrandGrowthOS({ initialTab = "dashboard" }: BrandGrowthOSProps) {
   const [activeTab, setActiveTab] = useState<BrandTab>(initialTab === "agent" ? "brain" : initialTab);
-  const [selectedBrand, setSelectedBrand] = useState<BrandProfile>(ACTIVE_BRANDS[0]);
+  const [selectedBrand, setSelectedBrand] = useState<BrandProfile>(ACTIVE_BRANDS[0]!);
   const [campaigns, setCampaigns] = useState<Campaign[]>(MOCK_CAMPAIGNS);
   const [campaignFilter, setCampaignFilter] = useState<"all" | "active" | "scheduled" | "completed">("all");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);

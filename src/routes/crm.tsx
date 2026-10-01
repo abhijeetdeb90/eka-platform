@@ -72,7 +72,7 @@ function CRMPage() {
         </div>
 
         <div className="rounded-2xl border border-border bg-card p-6 shadow-calm">
-          <StudioEngagementCCRM />
+          <StudioEngagementCCRM currentRole="Founder" />
         </div>
       </main>
     </div>

@@ -109,13 +109,13 @@ async function logThreat(
     severity: "CRITICAL",
     category,
     eventType,
-    actorId,
-    ipAddress,
+    actorId: actorId || null,
+    ipAddress: ipAddress || null,
     details: { pattern, source },
   });
 
   await recordSecurityAudit({
-    actorId,
+    actorId: actorId || null,
     action: "attack_payload_blocked",
     resourceType: source,
     result: "blocked",

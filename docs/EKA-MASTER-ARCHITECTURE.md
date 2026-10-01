@@ -53,17 +53,19 @@ EKA UNIFIED ARCHITECTURE
 │   └── External Connectors (UNESCO, Europeana, Wikidata, Wikipedia, Wikimedia Commons)
 │
 ├── 4. Community & Social Layer
+│   ├── Human-First Community Rule ("The intelligence is artificial. The community isn't.")
 │   ├── Feed & Discourses (`public.posts`, `public.post_comments`, `public.post_likes`, `public.post_saves`)
 │   ├── Circles & Sanghas (`public.communities`, `public.community_members`)
 │   ├── Audio Discourses & Episodes (`public.episodes`, `public.episode_chapters`)
 │   └── Community Standards & Code of Reverence (`/standards`, `/join`)
 │
 ├── 5. AI & Agentic Layer
+│   ├── Behind-the-Scenes AI Infrastructure (Verification, translation, moderation triage, search)
 │   ├── Google Gemini 2.5 Native Client (`gemini-2.5-flash`, `gemini-2.5-pro`)
 │   ├── LangGraph Epistemic Pipeline (Scripture Parser, Provenance Checker, Epistemic Tier Assigner)
 │   ├── Model Context Protocol (MCP) Server (`/mcp` endpoint with OAuth 2.1 authentication)
 │   ├── AI Cultural Intelligence Companion ("Ask EKA AI" with zero hallucination enforcement)
-│   └── AI Governance & Safe Retrieval Controls
+│   └── AI Governance & Safe Retrieval Controls (Zero bot accounts, zero covert participation)
 │
 ├── 6. Experience & Discovery Layer
 │   ├── The Junction (`/junction`, `/app/junction`)
@@ -87,9 +89,12 @@ EKA UNIFIED ARCHITECTURE
 │   ├── Advertising & Monetization (`/founder/ad`, pricing models, sponsorship governance)
 │   └── Platform Economics (Double-entry ledger `public.ledger_entries`, monthly financial closing, reserve policies)
 │
-├── 9. Governance, Trust & Privacy Layer
-│   ├── Source Registry & Verification Dispute Workflow (`public.verification_disputes`)
-│   ├── Content Moderation & Appeals (`public.content_reports`, `public.content_appeals`)
+├── 9. Governance, Trust & Privacy Layer (5-Pillar EKA Trust Architecture)
+│   ├── 1. Human Authenticity (Zero bot accounts, zero synthetic engagement, Sybil velocity radar)
+│   ├── 2. Epistemic Verification (Explainable L0–L5 ladder, academic/lineage review)
+│   ├── 3. Source Provenance (Source passports, digital archive URIs, custody chains)
+│   ├── 4. Content Authenticity (5-tier taxonomy, anti-miracle guarantee, anti-noise policy)
+│   ├── 5. Community Governance (Living keepers, hermeneutic dispute resolution, appeals ladder)
 │   ├── Append-Only Studio Audit Logging (`public.studio_audit_log`)
 │   └── DPDP Compliance (Explicit consent, cookie banners, statutory terms, privacy disclosures)
 │

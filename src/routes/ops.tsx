@@ -88,7 +88,7 @@ export const Route = createFileRoute("/ops")({
       "agents",
       "crm",
     ];
-    const requested = search.tab as OpsTab;
+    const requested = search["tab"] as OpsTab;
     return {
       tab: validTabs.includes(requested) ? requested : "founder",
     };
@@ -164,7 +164,7 @@ export function OpsRouteComponent() {
     setLiveDbStatus("checking");
     const start = performance.now();
     try {
-      const { error } = await supabase.from("knowledge_nodes").select("count", { count: "exact", head: true });
+      const { error } = await (supabase as any).from("knowledge_nodes").select("count", { count: "exact", head: true });
       const latency = Math.round(performance.now() - start);
       setDbLatency(latency);
       if (!error) {

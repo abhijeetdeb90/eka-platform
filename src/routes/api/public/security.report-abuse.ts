@@ -74,7 +74,7 @@ export const Route = createFileRoute("/api/public/security/report-abuse")({
           await recordSecurityAudit({
             action: "abuse_report_recorded",
             resourceType: "report",
-            resourceId: body.targetUrl,
+            resourceId: body.targetUrl || null,
             result: "success",
             ipAddress: clientIp,
             requestId,

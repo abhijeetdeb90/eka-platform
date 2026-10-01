@@ -12,13 +12,13 @@ export interface UnifiedSearchResult {
   title: string;
   subtitle: string;
   entity_type: "knowledge_object" | "content" | "media" | "taxonomy" | "place" | "community";
-  tradition?: string;
-  community?: string;
-  geography?: string;
-  language?: string;
-  verification_status?: string;
+  tradition?: string | undefined;
+  community?: string | undefined;
+  geography?: string | undefined;
+  language?: string | undefined;
+  verification_status?: string | undefined;
   match_score: number;
-  snippet?: string;
+  snippet?: string | undefined;
   href: string;
 }
 

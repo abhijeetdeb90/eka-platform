@@ -1,5 +1,5 @@
 // ==============================================================================
-// EKA STUDIO — TRUST, PROVENANCE & DISPUTES CENTER
+// EKA STUDIO — TRUST, PROVENANCE, HUMAN AUTHENTICITY & DISPUTES CENTER
 // ==============================================================================
 
 import { useState } from "react";
@@ -14,6 +14,12 @@ import {
   Plus,
   Scale,
   Search,
+  UserCheck,
+  Bot,
+  Sparkles,
+  Activity,
+  CheckCircle2,
+  ShieldAlert,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,6 +29,21 @@ import type { KnowledgeDispute, StudioRole } from "@/lib/studio/types";
 
 interface StudioTrustCenterProps {
   currentRole: StudioRole;
+}
+
+interface HumanAuthenticityIncident {
+  id: string;
+  account_handle: string;
+  profile_name: string;
+  detected_vector:
+    | "Synthetic Comment Farm"
+    | "Automated Velocity Anomaly"
+    | "LLM Hallucinated Identity"
+    | "Engagement Pod Sybil";
+  synthetic_confidence: number;
+  sample_content: string;
+  timestamp: string;
+  status: "quarantined" | "banned" | "cleared_human";
 }
 
 const SEED_SOURCES = [
@@ -74,10 +95,51 @@ const SEED_DISPUTES: KnowledgeDispute[] = [
   },
 ];
 
+const SEED_AUTHENTICITY_INCIDENTS: HumanAuthenticityIncident[] = [
+  {
+    id: "bot_det_101",
+    account_handle: "@mystic_soul_8829",
+    profile_name: "Aura Seeker AI",
+    detected_vector: "Synthetic Comment Farm",
+    synthetic_confidence: 98.4,
+    sample_content:
+      "Great deep spiritual vibes! Blessed wisdom. Check my bio for guaranteed divine horoscope secrets!",
+    timestamp: "12 mins ago",
+    status: "quarantined",
+  },
+  {
+    id: "bot_det_102",
+    account_handle: "@vedic_scholar_rapid",
+    profile_name: "Pandit Automated",
+    detected_vector: "Automated Velocity Anomaly",
+    synthetic_confidence: 94.7,
+    sample_content:
+      "Posted 42 comments across 18 lineage discourses in 14 seconds with zero contemplation interval.",
+    timestamp: "1 hour ago",
+    status: "quarantined",
+  },
+  {
+    id: "bot_det_103",
+    account_handle: "@zen_harmonizer_bot",
+    profile_name: "Zen Master Synthetic",
+    detected_vector: "LLM Hallucinated Identity",
+    synthetic_confidence: 99.1,
+    sample_content:
+      "As an ordained monk of the Tibetan Golden Lotus Monastery (non-existent lineage), I advise...",
+    timestamp: "3 hours ago",
+    status: "banned",
+  },
+];
+
 export function StudioTrustCenter({ currentRole }: StudioTrustCenterProps) {
-  const [activeTab, setActiveTab] = useState<"sources" | "disputes" | "levels">("sources");
+  const [activeTab, setActiveTab] = useState<
+    "human_authenticity" | "sources" | "disputes" | "levels"
+  >("human_authenticity");
   const [sources, setSources] = useState(SEED_SOURCES);
   const [disputes, setDisputes] = useState<KnowledgeDispute[]>(SEED_DISPUTES);
+  const [authenticityIncidents, setAuthenticityIncidents] = useState<
+    HumanAuthenticityIncident[]
+  >(SEED_AUTHENTICITY_INCIDENTS);
 
   // New source form
   const [isAddingSource, setIsAddingSource] = useState(false);
@@ -104,7 +166,7 @@ export function StudioTrustCenter({ currentRole }: StudioTrustCenterProps) {
       publisher: "Registered in Studio",
       reliability: newSourceReliability,
       tradition: "Universal",
-      url: newSourceUrl.trim() || null,
+      url: newSourceUrl.trim() || "",
       notes: "Directly catalogued in EKA Trust Center",
     };
     setSources([created, ...sources]);
@@ -137,17 +199,53 @@ export function StudioTrustCenter({ currentRole }: StudioTrustCenterProps) {
     toast.success(`Dispute marked as ${status}.`);
   };
 
+  const handleBanBot = (id: string, handle: string) => {
+    setAuthenticityIncidents(
+      authenticityIncidents.map((inc) =>
+        inc.id === id ? { ...inc, status: "banned" } : inc,
+      ),
+    );
+    toast.error(`Bot account ${handle} permanently banned. Synthetic engagement expunged.`);
+  };
+
+  const handleClearHuman = (id: string, handle: string) => {
+    setAuthenticityIncidents(
+      authenticityIncidents.map((inc) =>
+        inc.id === id ? { ...inc, status: "cleared_human" } : inc,
+      ),
+    );
+    toast.success(`Account ${handle} verified as authentic human. Quarantine lifted.`);
+  };
+
+  const quarantinedCount = authenticityIncidents.filter(
+    (i) => i.status === "quarantined",
+  ).length;
+
   return (
     <div className="space-y-6">
       {/* Top Header */}
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div>
-          <h2 className="font-display text-2xl font-normal tracking-tight">Trust & Provenance Center</h2>
+          <h2 className="font-display text-2xl font-normal tracking-tight">
+            Trust & Authenticity Command Center
+          </h2>
           <p className="text-xs text-muted-foreground">
-            Canonical source registries, multi-source provenance audits, and adjudication of disputes.
+            Enforcing the 5-Pillar EKA Trust Architecture: Human Authenticity, Epistemic Verification, Provenance, Content Standards, and Governance.
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <Button
+            size="sm"
+            variant={activeTab === "human_authenticity" ? "default" : "outline"}
+            onClick={() => setActiveTab("human_authenticity")}
+          >
+            <UserCheck className="mr-1.5 size-3.5" /> Human Authenticity & Bot Radar{" "}
+            {quarantinedCount > 0 && (
+              <span className="ml-1.5 rounded-full bg-amber-500/20 px-1.5 py-0.2 text-[10px] font-bold text-amber-600 dark:text-amber-400">
+                {quarantinedCount}
+              </span>
+            )}
+          </Button>
           <Button
             size="sm"
             variant={activeTab === "sources" ? "default" : "outline"}
@@ -160,7 +258,8 @@ export function StudioTrustCenter({ currentRole }: StudioTrustCenterProps) {
             variant={activeTab === "disputes" ? "default" : "outline"}
             onClick={() => setActiveTab("disputes")}
           >
-            <Scale className="mr-1.5 size-3.5" /> Disputes ({disputes.filter((d) => d.status === "open").length})
+            <Scale className="mr-1.5 size-3.5" /> Disputes (
+            {disputes.filter((d) => d.status === "open").length})
           </Button>
           <Button
             size="sm"
@@ -172,6 +271,211 @@ export function StudioTrustCenter({ currentRole }: StudioTrustCenterProps) {
         </div>
       </div>
 
+      {/* Tab: Human Authenticity & Bot Radar */}
+      {activeTab === "human_authenticity" && (
+        <div className="space-y-6">
+          {/* Positioning Banner */}
+          <div className="rounded-2xl border border-primary/30 bg-primary/5 p-6 shadow-calm">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
+                  <UserCheck className="size-3.5" /> Human-First Community Rule
+                </span>
+                <h3 className="mt-2 font-display text-xl font-medium">
+                  "The intelligence is artificial. The community isn't."
+                </h3>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  AI powers knowledge behind the scenes (verification, translation, moderation, discovery). The visible community layer stays strictly human.
+                </p>
+              </div>
+              <div className="flex sm:flex-col items-end gap-2 text-right">
+                <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                  <Activity className="size-3.5 animate-pulse" /> 99.8% Human Purity
+                </span>
+                <span className="text-[11px] text-muted-foreground">Zero-Bot Policy: Enforced</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Real-time Telemetry Metrics */}
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+            <div className="rounded-2xl border border-border bg-card p-4">
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                Monitored Ingress
+              </span>
+              <p className="mt-1 font-display text-2xl font-medium">28,490</p>
+              <p className="text-[10px] text-emerald-600 dark:text-emerald-400 mt-0.5">
+                100% human-verified sessions
+              </p>
+            </div>
+            <div className="rounded-2xl border border-border bg-card p-4">
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                Quarantined Anomalies
+              </span>
+              <p className="mt-1 font-display text-2xl font-medium text-amber-500">
+                {quarantinedCount}
+              </p>
+              <p className="text-[10px] text-muted-foreground mt-0.5">Awaiting moderator review</p>
+            </div>
+            <div className="rounded-2xl border border-border bg-card p-4">
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                Bots Neutralized
+              </span>
+              <p className="mt-1 font-display text-2xl font-medium text-destructive">42</p>
+              <p className="text-[10px] text-muted-foreground mt-0.5">Expunged from graph</p>
+            </div>
+            <div className="rounded-2xl border border-border bg-card p-4">
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                Synthetic Engagement
+              </span>
+              <p className="mt-1 font-display text-2xl font-medium text-emerald-600 dark:text-emerald-400">
+                0.00%
+              </p>
+              <p className="text-[10px] text-muted-foreground mt-0.5">Zero manufactured pod activity</p>
+            </div>
+          </div>
+
+          {/* The 5 Pillars of EKA Trust Architecture */}
+          <div className="rounded-2xl border border-border bg-card p-6 shadow-calm space-y-4">
+            <h3 className="font-display text-base font-medium">
+              The 5 First-Class Layers of EKA Trust Architecture
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-5 gap-3 pt-1">
+              <div className="rounded-xl border border-primary/30 bg-primary/5 p-3.5 space-y-1.5">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-primary">
+                  1. Human Authenticity
+                </span>
+                <p className="text-xs font-semibold">Zero Bot Accounts</p>
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                  Strictly human community; zero synthetic personas or manufactured engagement.
+                </p>
+              </div>
+              <div className="rounded-xl border border-border bg-accent/20 p-3.5 space-y-1.5">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                  2. Verification
+                </span>
+                <p className="text-xs font-semibold">Explainable L0–L5</p>
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                  Transparent provenance ladder from unverified to archival benchmark.
+                </p>
+              </div>
+              <div className="rounded-xl border border-border bg-accent/20 p-3.5 space-y-1.5">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                  3. Source Provenance
+                </span>
+                <p className="text-xs font-semibold">Immutable Passports</p>
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                  Primary manuscripts, lineage records, and digital archive citations.
+                </p>
+              </div>
+              <div className="rounded-xl border border-border bg-accent/20 p-3.5 space-y-1.5">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                  4. Content Authenticity
+                </span>
+                <p className="text-xs font-semibold">5-Tier Taxonomy</p>
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                  Separating tradition from interpretation; zero miracle guarantees; anti-noise filter.
+                </p>
+              </div>
+              <div className="rounded-xl border border-border bg-accent/20 p-3.5 space-y-1.5">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                  5. Community Governance
+                </span>
+                <p className="text-xs font-semibold">Living Custodians</p>
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                  Living tradition keepers, dispute arbitration, and human appeals ladder.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Interactive Bot & Synthetic Anomaly Quarantine Queue */}
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <div>
+                <h3 className="font-display text-base font-medium">
+                  Synthetic Ingress & Bot Quarantine Radar
+                </h3>
+                <p className="text-xs text-muted-foreground">
+                  Autonomous heuristic alarms triggered by velocity spikes, LLM stylistic patterns, or synthetic engagement pods.
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              {authenticityIncidents.map((incident) => (
+                <div
+                  key={incident.id}
+                  className="rounded-2xl border border-border bg-card p-5 space-y-3 shadow-calm"
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      {incident.status === "banned" ? (
+                        <ShieldAlert className="size-4 text-destructive" />
+                      ) : (
+                        <Bot className="size-4 text-amber-500" />
+                      )}
+                      <span className="font-display text-sm font-medium">
+                        {incident.profile_name}
+                      </span>
+                      <span className="text-xs font-mono text-muted-foreground">
+                        {incident.account_handle}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="rounded-full bg-accent px-2 py-0.5 text-[10px] text-muted-foreground">
+                        Vector: {incident.detected_vector}
+                      </span>
+                      <span
+                        className={`rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase ${
+                          incident.status === "quarantined"
+                            ? "bg-amber-500/10 text-amber-600 dark:text-amber-400"
+                            : incident.status === "banned"
+                              ? "bg-destructive/10 text-destructive"
+                              : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                        }`}
+                      >
+                        {incident.status.replace("_", " ")}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="rounded-xl border border-border bg-accent/20 p-3 text-xs text-muted-foreground space-y-1">
+                    <div className="flex justify-between text-[11px] font-semibold text-foreground">
+                      <span>Heuristic Confidence: {incident.synthetic_confidence}% Synthetic</span>
+                      <span>Detected: {incident.timestamp}</span>
+                    </div>
+                    <p className="italic">"{incident.sample_content}"</p>
+                  </div>
+
+                  {incident.status === "quarantined" && (
+                    <div className="flex gap-2 pt-1">
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => handleBanBot(incident.id, incident.account_handle)}
+                      >
+                        <XCircle className="mr-1.5 size-3.5" /> Terminate Bot Account
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() =>
+                          handleClearHuman(incident.id, incident.account_handle)
+                        }
+                      >
+                        <CheckCircle2 className="mr-1.5 size-3.5" /> Clear as Verified Human
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Tab: Sources Registry */}
       {activeTab === "sources" && (
         <div className="space-y-4">
           <div className="flex justify-between items-center">
@@ -184,7 +488,9 @@ export function StudioTrustCenter({ currentRole }: StudioTrustCenterProps) {
           {isAddingSource && (
             <div className="rounded-2xl border border-primary/30 bg-card p-5 shadow-calm space-y-4">
               <div className="flex justify-between items-center border-b border-border pb-2">
-                <span className="text-xs font-semibold text-primary uppercase">Register New Primary Source</span>
+                <span className="text-xs font-semibold text-primary uppercase">
+                  Register New Primary Source
+                </span>
                 <Button size="sm" variant="ghost" onClick={() => setIsAddingSource(false)}>
                   Cancel
                 </Button>
@@ -253,7 +559,10 @@ export function StudioTrustCenter({ currentRole }: StudioTrustCenterProps) {
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {sources.map((s) => (
-              <div key={s.id} className="rounded-2xl border border-border bg-card p-5 space-y-3 shadow-calm">
+              <div
+                key={s.id}
+                className="rounded-2xl border border-border bg-card p-5 space-y-3 shadow-calm"
+              >
                 <div className="flex items-center justify-between text-xs">
                   <span className="font-semibold text-primary uppercase text-[10px]">{s.kind}</span>
                   <span className="rounded-full bg-accent px-2 py-0.5 text-[10px] text-muted-foreground">
@@ -279,16 +588,22 @@ export function StudioTrustCenter({ currentRole }: StudioTrustCenterProps) {
         </div>
       )}
 
+      {/* Tab: Disputes */}
       {activeTab === "disputes" && (
         <div className="space-y-4">
-          <h3 className="font-display text-base font-medium">Hermeneutic Conflicts & Disputes Queue</h3>
+          <h3 className="font-display text-base font-medium">
+            Hermeneutic Conflicts & Disputes Queue
+          </h3>
           <p className="text-xs text-muted-foreground">
             Community and expert challenges filed against claims, dates, or regional attributions.
           </p>
 
           <div className="space-y-3">
             {disputes.map((d) => (
-              <div key={d.id} className="rounded-2xl border border-border bg-card p-5 space-y-3 shadow-calm">
+              <div
+                key={d.id}
+                className="rounded-2xl border border-border bg-card p-5 space-y-3 shadow-calm"
+              >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <AlertTriangle className="size-4 text-amber-500" />
@@ -348,6 +663,7 @@ export function StudioTrustCenter({ currentRole }: StudioTrustCenterProps) {
         </div>
       )}
 
+      {/* Tab: Trust Ladder */}
       {activeTab === "levels" && (
         <div className="rounded-2xl border border-border bg-card p-6 shadow-calm space-y-4">
           <h3 className="font-display text-lg font-medium">The 6-Level Epistemic Verification Ladder</h3>

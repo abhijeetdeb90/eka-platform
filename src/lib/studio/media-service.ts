@@ -91,7 +91,7 @@ export async function fetchMediaAssets(filter?: {
   query?: string;
 }): Promise<MediaAsset[]> {
   try {
-    let q = supabase.from("media_assets").select("*");
+    let q = (supabase as any).from("media_assets").select("*");
     if (filter?.file_type && filter.file_type !== "all") q = q.eq("file_type", filter.file_type);
     if (filter?.copyright_status && filter.copyright_status !== "all")
       q = q.eq("copyright_status", filter.copyright_status);
