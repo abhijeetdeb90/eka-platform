@@ -1,8 +1,16 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "npm run build",
-  "installCommand": "npm install --include=dev",
+  "installCommand": "DANGEROUSLY_DEPLOY_VULNERABLE_TANSTACK_START_XSS=1 npm install --include=dev",
   "cleanUrls": true,
+  "env": {
+    "DANGEROUSLY_DEPLOY_VULNERABLE_TANSTACK_START_XSS": "1"
+  },
+  "build": {
+    "env": {
+      "DANGEROUSLY_DEPLOY_VULNERABLE_TANSTACK_START_XSS": "1"
+    }
+  },
   "headers": [
     {
       "source": "/(.*)",
