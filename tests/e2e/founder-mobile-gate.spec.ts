@@ -91,7 +91,7 @@ test.describe("EKA Founder Profile — Mobile Acceptance & Gateway Specification
     await page.waitForTimeout(600); // Allow drawer animation
 
     // Drawer should show navigation links
-    await expect(page.getByRole("link", { name: "1,000 Stories" }).last()).toBeVisible();
+    await expect(page.getByRole("link", { name: "Stories" }).last()).toBeVisible();
     await expect(page.getByRole("link", { name: "Founder", exact: true }).last()).toBeVisible();
     await expect(page.getByRole("link", { name: "Membership", exact: true }).last()).toBeVisible();
     await expect(page.getByRole("link", { name: "Join EKA" }).last()).toBeVisible();

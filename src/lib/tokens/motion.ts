@@ -233,7 +233,7 @@ export const pillSelect = {
   },
 };
 
-export const deepstashAccordion: Variants = {
+export const progressiveAccordion: Variants = {
   collapsed: {
     height: 0,
     opacity: 0,
@@ -253,3 +253,5 @@ export const deepstashAccordion: Variants = {
     },
   },
 };
+
+export const deepstashAccordion: Variants = progressiveAccordion;

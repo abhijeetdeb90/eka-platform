@@ -124,11 +124,11 @@ export const FOUNDER_PROFILE: FounderProfile = {
   },
   initiatives: [
     {
-      title: "1,000 Stories Cultural Preservation Drive",
+      title: "1 Billion Stories Global Preservation Initiative",
       description:
-        "Documenting endangered oral histories, sacred crafts, and vernacular rituals across 28 states.",
-      status: "Active Public Campaign",
-      metric: "340+ Recorded",
+        "Documenting oral histories, sacred traditions, languages, crafts, and vernacular rituals worldwide.",
+      status: "Global Cultural Movement",
+      metric: "1B Archive Target",
     },
     {
       title: "Multi-Faith Sacred Calendar 2026",

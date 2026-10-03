@@ -46,7 +46,7 @@ export function SanctuaryEmptyState({ className }: SanctuaryEmptyStateProps) {
         <Link to="/stories">
           <Pressable className="px-5 py-2.5 rounded-full bg-accent hover:bg-accent/80 text-foreground font-mono text-xs uppercase tracking-wider border border-border/60 flex items-center gap-2">
             <Sparkles className="size-3.5 text-saffron" />
-            1,000 Stories
+            1 Billion Stories
           </Pressable>
         </Link>
       </div>

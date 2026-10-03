@@ -4,25 +4,24 @@ import { EkaLogo } from "@/components/brand/Logo";
 import { useSmoothScroll } from "@/components/motion/SmoothScrollProvider";
 
 const exploreLinks = [
-  { to: "/junction", label: "The Cultural Junction" },
-  { to: "/stories", label: "1,000 Stories Campaign" },
-  { to: "/observe", label: "Sacred Calendar 2026" },
-  { to: "/membership", label: "EKA Plus Membership" },
+  { to: "/discover", label: "Discover Traditions" },
+  { to: "/stories", label: "1 Billion Stories" },
+  { to: "/learn", label: "Knowledge Codex" },
+  { to: "/observe", label: "Sacred Calendar" },
 ] as const;
 
 const trustLinks = [
   { to: "/standards", label: "Community Standards" },
   { to: "/give", label: "Give & Transparency" },
-  { to: "/studio", label: "Creator Studio" },
-  { to: "/join", label: "Join the Sanctuary" },
+  { to: "/create", label: "Creator Studio" },
+  { to: "/membership", label: "Sanctuary Membership" },
 ] as const;
 
 const brandLinks = [
-  { to: "/brands", label: "EKA Growth OS (Brands)" },
+  { to: "/brands", label: "Brand Workspace" },
   { to: "/campaigns", label: "Campaigns & Promotion" },
   { to: "/audience", label: "Audience Intelligence" },
-  { to: "/agent", label: "AI Growth Agent" },
-  { to: "/ops", label: "Founder & Ops OS (Private)" },
+  { to: "/enterprise", label: "Enterprise Solutions" },
 ] as const;
 
 const legalLinks = [

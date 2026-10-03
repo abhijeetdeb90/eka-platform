@@ -23,6 +23,7 @@ import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as CopyrightRouteImport } from './routes/copyright'
 import { Route as CreateRouteImport } from './routes/create'
 import { Route as CrmRouteImport } from './routes/crm'
+import { Route as DiscoverRouteImport } from './routes/discover'
 import { Route as EnterpriseRouteImport } from './routes/enterprise'
 import { Route as FounderRouteImport } from './routes/founder'
 import { Route as GiveRouteImport } from './routes/give'
@@ -31,6 +32,7 @@ import { Route as InsightsRouteImport } from './routes/insights'
 import { Route as JoinRouteImport } from './routes/join'
 import { Route as JourneyRouteImport } from './routes/journey'
 import { Route as JunctionRouteImport } from './routes/junction'
+import { Route as LearnRouteImport } from './routes/learn'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as MembershipRouteImport } from './routes/membership'
 import { Route as MyEkaRouteImport } from './routes/my-eka'
@@ -197,6 +199,11 @@ const CrmRoute = CrmRouteImport.update({
   path: '/crm',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DiscoverRoute = DiscoverRouteImport.update({
+  id: '/discover',
+  path: '/discover',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EnterpriseRoute = EnterpriseRouteImport.update({
   id: '/enterprise',
   path: '/enterprise',
@@ -235,6 +242,11 @@ const JourneyRoute = JourneyRouteImport.update({
 const JunctionRoute = JunctionRouteImport.update({
   id: '/junction',
   path: '/junction',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LearnRoute = LearnRouteImport.update({
+  id: '/learn',
+  path: '/learn',
   getParentRoute: () => rootRouteImport,
 } as any)
 const McpRoute = McpRouteImport.update({
@@ -767,6 +779,7 @@ export interface FileRoutesByFullPath {
   '/copyright': typeof CopyrightRoute
   '/create': typeof CreateRoute
   '/crm': typeof CrmRoute
+  '/discover': typeof DiscoverRoute
   '/enterprise': typeof EnterpriseRoute
   '/founder': typeof FounderRouteWithChildren
   '/give': typeof GiveRoute
@@ -775,6 +788,7 @@ export interface FileRoutesByFullPath {
   '/join': typeof JoinRoute
   '/journey': typeof JourneyRoute
   '/junction': typeof JunctionRoute
+  '/learn': typeof LearnRoute
   '/mcp': typeof McpRoute
   '/membership': typeof MembershipRoute
   '/my-eka': typeof MyEkaRoute
@@ -886,6 +900,7 @@ export interface FileRoutesByTo {
   '/copyright': typeof CopyrightRoute
   '/create': typeof CreateRoute
   '/crm': typeof CrmRoute
+  '/discover': typeof DiscoverRoute
   '/enterprise': typeof EnterpriseRoute
   '/founder': typeof FounderRouteWithChildren
   '/give': typeof GiveRoute
@@ -894,6 +909,7 @@ export interface FileRoutesByTo {
   '/join': typeof JoinRoute
   '/journey': typeof JourneyRoute
   '/junction': typeof JunctionRoute
+  '/learn': typeof LearnRoute
   '/mcp': typeof McpRoute
   '/membership': typeof MembershipRoute
   '/my-eka': typeof MyEkaRoute
@@ -1006,6 +1022,7 @@ export interface FileRoutesById {
   '/copyright': typeof CopyrightRoute
   '/create': typeof CreateRoute
   '/crm': typeof CrmRoute
+  '/discover': typeof DiscoverRoute
   '/enterprise': typeof EnterpriseRoute
   '/founder': typeof FounderRouteWithChildren
   '/give': typeof GiveRoute
@@ -1014,6 +1031,7 @@ export interface FileRoutesById {
   '/join': typeof JoinRoute
   '/journey': typeof JourneyRoute
   '/junction': typeof JunctionRoute
+  '/learn': typeof LearnRoute
   '/mcp': typeof McpRoute
   '/membership': typeof MembershipRoute
   '/my-eka': typeof MyEkaRoute
@@ -1127,6 +1145,7 @@ export interface FileRouteTypes {
     | '/copyright'
     | '/create'
     | '/crm'
+    | '/discover'
     | '/enterprise'
     | '/founder'
     | '/give'
@@ -1135,6 +1154,7 @@ export interface FileRouteTypes {
     | '/join'
     | '/journey'
     | '/junction'
+    | '/learn'
     | '/mcp'
     | '/membership'
     | '/my-eka'
@@ -1246,6 +1266,7 @@ export interface FileRouteTypes {
     | '/copyright'
     | '/create'
     | '/crm'
+    | '/discover'
     | '/enterprise'
     | '/founder'
     | '/give'
@@ -1254,6 +1275,7 @@ export interface FileRouteTypes {
     | '/join'
     | '/journey'
     | '/junction'
+    | '/learn'
     | '/mcp'
     | '/membership'
     | '/my-eka'
@@ -1365,6 +1387,7 @@ export interface FileRouteTypes {
     | '/copyright'
     | '/create'
     | '/crm'
+    | '/discover'
     | '/enterprise'
     | '/founder'
     | '/give'
@@ -1373,6 +1396,7 @@ export interface FileRouteTypes {
     | '/join'
     | '/journey'
     | '/junction'
+    | '/learn'
     | '/mcp'
     | '/membership'
     | '/my-eka'
@@ -1486,6 +1510,7 @@ export interface RootRouteChildren {
   CopyrightRoute: typeof CopyrightRoute
   CreateRoute: typeof CreateRoute
   CrmRoute: typeof CrmRoute
+  DiscoverRoute: typeof DiscoverRoute
   EnterpriseRoute: typeof EnterpriseRoute
   FounderRoute: typeof FounderRouteWithChildren
   GiveRoute: typeof GiveRoute
@@ -1494,6 +1519,7 @@ export interface RootRouteChildren {
   JoinRoute: typeof JoinRoute
   JourneyRoute: typeof JourneyRoute
   JunctionRoute: typeof JunctionRoute
+  LearnRoute: typeof LearnRoute
   McpRoute: typeof McpRoute
   MembershipRoute: typeof MembershipRoute
   MyEkaRoute: typeof MyEkaRoute
@@ -1634,6 +1660,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CrmRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/discover': {
+      id: '/discover'
+      path: '/discover'
+      fullPath: '/discover'
+      preLoaderRoute: typeof DiscoverRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/enterprise': {
       id: '/enterprise'
       path: '/enterprise'
@@ -1688,6 +1721,13 @@ declare module '@tanstack/react-router' {
       path: '/junction'
       fullPath: '/junction'
       preLoaderRoute: typeof JunctionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/learn': {
+      id: '/learn'
+      path: '/learn'
+      fullPath: '/learn'
+      preLoaderRoute: typeof LearnRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mcp': {
@@ -2546,6 +2586,7 @@ const rootRouteChildren: RootRouteChildren = {
   CopyrightRoute: CopyrightRoute,
   CreateRoute: CreateRoute,
   CrmRoute: CrmRoute,
+  DiscoverRoute: DiscoverRoute,
   EnterpriseRoute: EnterpriseRoute,
   FounderRoute: FounderRouteWithChildren,
   GiveRoute: GiveRoute,
@@ -2554,6 +2595,7 @@ const rootRouteChildren: RootRouteChildren = {
   JoinRoute: JoinRoute,
   JourneyRoute: JourneyRoute,
   JunctionRoute: JunctionRoute,
+  LearnRoute: LearnRoute,
   McpRoute: McpRoute,
   MembershipRoute: MembershipRoute,
   MyEkaRoute: MyEkaRoute,

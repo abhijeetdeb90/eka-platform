@@ -1,9 +1,9 @@
 // ==============================================================================
-// EKA MOBILE NAVIGATION: MobileBottomNav (Snapchat-style tactile bottom bar)
+// EKA MOBILE NAVIGATION: MobileBottomNav (Tactile Bottom Bar)
 // ==============================================================================
 import { Link, useRouterState } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "motion/react";
-import { Home, Compass, Film, Sparkles, User, Plus } from "lucide-react";
+import { Compass, Film, BookOpen, User, Plus } from "lucide-react";
 import { Pressable } from "@/components/motion/Pressable";
 import { easings } from "@/lib/tokens/motion";
 import { cn } from "@/lib/utils";
@@ -17,16 +17,21 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { id: "home", label: "Home", to: "/", icon: Home },
-  { id: "discover", label: "Observe", to: "/observe", icon: Compass },
-  { id: "studio", label: "Studio", to: "/studio", icon: Plus, isAction: true },
+  { id: "discover", label: "Discover", to: "/discover", icon: Compass },
   { id: "stories", label: "Stories", to: "/stories", icon: Film },
-  { id: "membership", label: "Sanctuary", to: "/membership", icon: User },
+  { id: "create", label: "Create", to: "/create", icon: Plus, isAction: true },
+  { id: "learn", label: "Learn", to: "/learn", icon: BookOpen },
+  { id: "profile", label: "Account", to: "/membership", icon: User },
 ];
 
 export function MobileBottomNav() {
   const routerState = useRouterState();
   const currentPath = routerState.location.pathname;
+
+  // Do not show consumer mobile nav in private brand workspace or admin console
+  if (currentPath.startsWith("/brands") || currentPath.startsWith("/ops") || currentPath.startsWith("/admin")) {
+    return null;
+  }
 
   const triggerHaptic = () => {
     if (typeof navigator !== "undefined" && "vibrate" in navigator) {

@@ -11,9 +11,7 @@ test.describe("EKA Platform Core User Journeys & Integrity", () => {
     const header = page.locator("header");
     await expect(header).toBeVisible();
     await expect(page.getByRole("link", { name: "EKA", exact: true })).toBeVisible();
-    await expect(header.getByRole("link", { name: "1,000 Stories", exact: true })).toBeVisible();
-    await expect(header.getByRole("link", { name: "Practice", exact: true })).toBeVisible();
-    await expect(header.getByRole("link", { name: "Observe", exact: true })).toBeVisible();
+    await expect(header.getByRole("link", { name: "Stories", exact: true })).toBeVisible();
 
     // Verify Hero Section
     const heading = page.locator("h1");

@@ -1,9 +1,8 @@
 // ==============================================================================
-// EKA CONSUMER PLATFORM — PRO MAX UI/UX SYSTEM
+// EKA CONSUMER PLATFORM — LIVING CULTURAL ARCHIVE
 // ==============================================================================
-// Combines:
-// 1. Deepstash-style Progressive Knowledge Unfolding (Source → Context → Meaning → Practice)
-// 2. Snapchat-like Visual Navigation & Vertical Snap Reel Experience
+// 1. Progressive Knowledge Unfolding (Source → Context → Meaning → Practice)
+// 2. Visual Storytelling & Short-Form Cultural Moments
 // 3. Calm Indic Editorial Visual Identity ("ONE WITHIN. ONE WITH ALL.")
 // 4. 11 Unified Content Card Primitives & Structured Intent Triggers
 // 5. Motion for React Choreography & Accessibility
@@ -82,7 +81,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "A category-defining consumer platform merging Deepstash-style knowledge discovery with Snapchat-like visual storytelling, rooted in Indic cultural heritage.",
+          "Stories worth discovering. Living cultural stories, sacred geography, and contemplative wisdom rooted in human cultural heritage.",
       },
       { property: "og:title", content: "EKA — ONE WITHIN. ONE WITH ALL." },
       {
@@ -397,7 +396,6 @@ const MARKETPLACE_CRAFTS = [
 // ==============================================================================
 
 export function EkaProMaxConsumerPlatform() {
-  const [experienceMode, setExperienceMode] = useState<"magazine" | "knowledge" | "reels">("magazine");
   const [selectedTag, setSelectedTag] = useState<string>("All");
   const [activeReelIndex, setActiveReelIndex] = useState(0);
 
@@ -467,144 +465,57 @@ export function EkaProMaxConsumerPlatform() {
               </p>
             </FadeIn>
 
-            {/* Experience Mode Toggle Switcher */}
+            {/* Hero Action Buttons */}
             <FadeIn direction="up" delay={0.3}>
               <div className="pt-2 flex flex-wrap items-center gap-3">
-                <div className="p-1 rounded-2xl bg-black/60 backdrop-blur-md border border-white/20 flex items-center gap-1">
-                  <button
-                    onClick={() => setExperienceMode("magazine")}
-                    className={`px-3.5 py-2 rounded-xl text-xs font-mono transition-all flex items-center gap-1.5 ${
-                      experienceMode === "magazine"
-                        ? "bg-terracotta text-white font-medium shadow-xs"
-                        : "text-white/70 hover:text-white"
-                    }`}
-                  >
-                    <Layers className="size-3.5" />
-                    <span>Curated Magazine</span>
-                  </button>
-
-                  <button
-                    onClick={() => setExperienceMode("knowledge")}
-                    className={`px-3.5 py-2 rounded-xl text-xs font-mono transition-all flex items-center gap-1.5 ${
-                      experienceMode === "knowledge"
-                        ? "bg-terracotta text-white font-medium shadow-xs"
-                        : "text-white/70 hover:text-white"
-                    }`}
-                  >
-                    <BookOpen className="size-3.5" />
-                    <span>Deepstash Wisdom</span>
-                  </button>
-
-                  <button
-                    onClick={() => setExperienceMode("reels")}
-                    className={`px-3.5 py-2 rounded-xl text-xs font-mono transition-all flex items-center gap-1.5 ${
-                      experienceMode === "reels"
-                        ? "bg-terracotta text-white font-medium shadow-xs"
-                        : "text-white/70 hover:text-white"
-                    }`}
-                  >
-                    <Film className="size-3.5 text-saffron" />
-                    <span>Snapchat Reel Feed</span>
-                  </button>
-                </div>
-
-                <Link to="/junction">
+                <a href="#stories-rail">
                   <Button
-                    variant="outline"
-                    className="rounded-2xl px-5 py-5 border-white/30 bg-black/40 backdrop-blur-md text-white hover:bg-white/20 font-medium text-xs font-mono gap-1.5"
+                    size="lg"
+                    className="rounded-2xl px-6 py-5 bg-terracotta hover:bg-terracotta/90 text-white font-medium text-xs font-mono gap-2 shadow-calm"
                   >
-                    <Compass className="size-3.5 text-cyan-300" />
-                    <span>Sacred Map</span>
+                    <Film className="size-4" />
+                    <span>Explore Stories</span>
+                  </Button>
+                </a>
+
+                <Link to="/discover">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="rounded-2xl px-6 py-5 border-white/30 bg-black/40 backdrop-blur-md text-white hover:bg-white/20 font-medium text-xs font-mono gap-2"
+                  >
+                    <Compass className="size-4 text-cyan-300" />
+                    <span>Discover Traditions</span>
+                  </Button>
+                </Link>
+
+                <Link to="/learn">
+                  <Button
+                    size="lg"
+                    variant="ghost"
+                    className="rounded-2xl px-5 py-5 text-white/80 hover:text-white hover:bg-white/10 font-medium text-xs font-mono gap-1.5"
+                  >
+                    <BookOpen className="size-4 text-amber-300" />
+                    <span>Knowledge Codex</span>
                   </Button>
                 </Link>
               </div>
             </FadeIn>
           </div>
         </section>
-
-        {/* ==================================================================== */}
-        {/* CONDITIONAL MODE 1: SNAPCHAT-STYLE FULL REEL EXPERIENCE */}
-        {/* ==================================================================== */}
-        {experienceMode === "reels" && (
-          <section className="container-eka max-w-lg mx-auto space-y-6">
-            <div className="flex items-center justify-between border-b border-border/60 pb-3">
-              <div>
-                <span className="text-[10px] font-mono uppercase tracking-widest text-terracotta font-semibold">
-                  Snap Reel Feed
-                </span>
-                <h2 className="font-serif text-2xl font-normal">Living Moments</h2>
-              </div>
-              <button
-                onClick={() => setExperienceMode("magazine")}
-                className="text-xs font-mono text-muted-foreground hover:text-foreground"
-              >
-                Exit to Magazine
-              </button>
-            </div>
-
-            {/* Vertical Snap Reel Cards */}
-            <div className="space-y-8">
-              {filteredReels.map((story) => (
-                <div key={story.id} className="w-full">
-                  <StoryCard {...story} aspectRatio="vertical" />
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* ==================================================================== */}
-        {/* CONDITIONAL MODE 2: DEEPSTASH WISDOM STREAM */}
-        {/* ==================================================================== */}
-        {experienceMode === "knowledge" && (
-          <section className="container-eka max-w-3xl mx-auto space-y-8">
-            <div className="flex items-center justify-between border-b border-border/60 pb-3">
-              <div>
-                <span className="text-[10px] font-mono uppercase tracking-widest text-terracotta font-semibold">
-                  Knowledge Unfolder
-                </span>
-                <h2 className="font-serif text-3xl font-normal">Progressive Wisdom</h2>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Bite-sized sparks that expand into manuscript context, commentary, and daily practice.
-                </p>
-              </div>
-              <button
-                onClick={() => setExperienceMode("magazine")}
-                className="text-xs font-mono text-muted-foreground hover:text-foreground"
-              >
-                Exit to Magazine
-              </button>
-            </div>
-
-            {/* Deepstash Progressive Accordion Unfolder */}
-            <KnowledgeUnfold data={DAILY_WISDOM_UNFOLD} initiallyExpanded={true} />
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 pt-4">
-              {FEATURED_KNOWLEDGE.map((k) => (
-                <KnowledgeCard key={k.id} {...k} />
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* ==================================================================== */}
-        {/* DEFAULT MODE: CURATED EDITORIAL MAGAZINE RAILS */}
-        {/* ==================================================================== */}
-        {experienceMode === "magazine" && (
-          <>
             {/* 1.5 CULTURAL INTELLIGENCE ENGINE & PROVOCATIVE INQUIRIES */}
             <section id="cultural-intelligence" className="container-eka space-y-6">
               <CulturalIntelligenceExplorer />
             </section>
 
-            {/* 2. REEL STRIP: VERTICAL GLIMPSES OF LIVING FAITH */}
-            <section className="container-eka space-y-6">
+            {/* 2. VISUAL STORIES: LIVING MOMENTS OF FAITH & HERITAGE */}
+            <section id="stories-rail" className="container-eka space-y-6 pt-2">
               <ScrollReveal>
                 <div className="flex items-end justify-between border-b border-border/60 pb-4">
                   <div>
                     <span className="text-[11px] font-mono uppercase tracking-[0.25em] text-terracotta font-semibold flex items-center gap-1.5">
                       <Film className="size-3.5 text-saffron" />
-                      Visual Storytelling Rail
+                      Visual Stories
                     </span>
                     <h2 className="font-display font-serif text-2xl sm:text-3xl font-normal mt-1">
                       Glimpses of Living Faith
@@ -614,13 +525,13 @@ export function EkaProMaxConsumerPlatform() {
                     to="/stories"
                     className="text-xs font-mono text-muted-foreground hover:text-foreground flex items-center gap-1"
                   >
-                    <span>Watch 1,000 Stories</span>
+                    <span>Explore 1 Billion Stories</span>
                     <ArrowRight className="size-3.5" />
                   </Link>
                 </div>
               </ScrollReveal>
 
-              {/* Horizontal Snap Rail with Vertical Reel Cards */}
+              {/* Horizontal Rail with Vertical Story Cards */}
               <div className="flex gap-5 overflow-x-auto pb-6 pt-2 snap-x snap-mandatory scrollbar-none">
                 {REEL_STORIES.map((story) => (
                   <div
@@ -633,14 +544,14 @@ export function EkaProMaxConsumerPlatform() {
               </div>
             </section>
 
-            {/* 3. TODAY'S KNOWLEDGE UNFOLD (DEEPSTASH-STYLE WISDOM) */}
+            {/* 3. TODAY'S LIVING INSIGHT: PROGRESSIVE KNOWLEDGE UNFOLD */}
             <section className="container-eka space-y-6">
               <ScrollReveal>
                 <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-border/60 pb-4">
                   <div>
                     <span className="text-[11px] font-mono uppercase tracking-[0.25em] text-terracotta font-semibold flex items-center gap-1.5">
                       <BookOpen className="size-3.5 text-terracotta" />
-                      Contemplative Deepstash
+                      Living Wisdom
                     </span>
                     <h2 className="font-display font-serif text-2xl sm:text-3xl font-normal mt-1">
                       Today's Living Insight
@@ -651,10 +562,10 @@ export function EkaProMaxConsumerPlatform() {
                   </div>
 
                   <Link
-                    to="/observe"
+                    to="/learn"
                     className="text-xs font-mono text-terracotta hover:underline flex items-center gap-1 self-start sm:self-auto"
                   >
-                    <span>Browse Knowledge Codex</span>
+                    <span>Open Knowledge Codex</span>
                     <ArrowRight className="size-3.5" />
                   </Link>
                 </div>
@@ -832,8 +743,6 @@ export function EkaProMaxConsumerPlatform() {
                 </div>
               </ScrollReveal>
             </section>
-          </>
-        )}
       </main>
 
       <SiteFooter />

@@ -68,3 +68,6 @@ Thumbs.db
 
 .vercel
 .env*
+.agents/
+skills-lock.json
+set-vercel-envs.ps1

@@ -3,7 +3,7 @@
 // ==============================================================================
 import React from "react";
 import { motion, AnimatePresence, useReducedMotion } from "motion/react";
-import { deepstashAccordion } from "@/lib/tokens/motion";
+import { progressiveAccordion } from "@/lib/tokens/motion";
 import { cn } from "@/lib/utils";
 
 interface ExpandableProps {
@@ -36,7 +36,7 @@ export function Expandable({
         <motion.div
           id={id}
           key="expandable-content"
-          variants={deepstashAccordion}
+          variants={progressiveAccordion}
           initial="collapsed"
           animate="expanded"
           exit="collapsed"

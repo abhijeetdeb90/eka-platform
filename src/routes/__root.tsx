@@ -15,7 +15,6 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
 import { SmoothScrollProvider } from "@/components/motion/SmoothScrollProvider";
 import { CookieConsentBanner } from "@/components/common/CookieConsentBanner";
-import { RealmSwitcher } from "@/components/common/RealmSwitcher";
 import { SafeNavigationProvider } from "@/components/security/SafeNavigationProvider";
 import { MobileBottomNav } from "@/components/navigation/MobileBottomNav";
 
@@ -115,8 +114,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=Karla:wght@300;400;500;600&display=swap",
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
       { rel: "icon", href: "/brand/eka-logo.png", type: "image/png" },
+      { rel: "shortcut icon", href: "/brand/eka-logo.png", type: "image/png" },
       { rel: "apple-touch-icon", href: "/brand/eka-logo.png" },
     ],
   }),
@@ -161,7 +160,6 @@ function RootComponent() {
           <MobileBottomNav />
           <Toaster position="top-center" />
           <CookieConsentBanner />
-          <RealmSwitcher />
         </SafeNavigationProvider>
       </SmoothScrollProvider>
     </QueryClientProvider>

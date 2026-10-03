@@ -1,5 +1,5 @@
 // ==============================================================================
-// EKA MOTION COMPONENT: KnowledgeUnfold (Deepstash-Style Idea Unpacker)
+// EKA MOTION COMPONENT: KnowledgeUnfold (Progressive Cultural Idea Unpacker)
 // ==============================================================================
 // Progressive disclosure of wisdom:
 // 1. Core Insight / Idea Spark
@@ -150,7 +150,7 @@ export function KnowledgeUnfold({
           </div>
         )}
 
-        {/* Deepstash Unfold Trigger Indicator */}
+        {/* Progressive Unfold Trigger Indicator */}
         <div className="mt-4 flex items-center justify-between pt-3 border-t border-border/30 text-xs">
           <span className="text-terracotta font-medium flex items-center gap-1.5 group-hover:underline">
             <BookOpen className="size-3.5" />
@@ -167,7 +167,7 @@ export function KnowledgeUnfold({
         </div>
       </div>
 
-      {/* Deepstash Progressive Disclosure Layers */}
+      {/* Progressive Disclosure Layers */}
       <Expandable isExpanded={isExpanded}>
         <div className="px-5 pb-5 pt-1 border-t border-border/40 bg-sand/30 dark:bg-stone-900/40">
           {/* Tab Navigation for Progressive Layers */}

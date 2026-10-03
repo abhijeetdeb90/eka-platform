@@ -60,7 +60,7 @@ test.describe("EKA Founder Profile & Pre-Generated Pictorial Content", () => {
     ).toBeVisible();
 
     // 4. Featured Initiatives
-    await expect(page.getByText("1,000 Stories Cultural Preservation Drive")).toBeVisible();
+    await expect(page.getByText("1 Billion Stories Global Preservation Initiative")).toBeVisible();
     await expect(page.getByText("Multi-Faith Sacred Calendar 2026")).toBeVisible();
     await expect(page.getByText("Living Lineage Endorsement Protocol")).toBeVisible();
     await expect(page.getByText("Open Cultural Context Protocol (CCP)")).toBeVisible();

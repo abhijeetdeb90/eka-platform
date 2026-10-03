@@ -1,15 +1,15 @@
 // ==============================================================================
-// EKA OPERATING SYSTEM — PRIVATE FOUNDER & INTERNAL OPS OS (/ops)
+// EKA INTERNAL CONSOLE — PRIVATE FOUNDER & OPERATIONS (/ops)
 // ==============================================================================
 // FOUNDER & EKA INTERNAL TEAM ONLY.
-// Operates BOTH the Consumer Realm and the Brands Realm behind the scenes.
+// Central operations console for the unified EKA platform.
 //
 // Subsystems:
 // 1. Founder Command Cockpit (Mission, Platform Economics, Founder Dispatches)
 // 2. System Topology & Diagnostics (12 Subsystem Architecture Map & Live Telemetry)
-// 3. Consumer Operations (Content Ingestion, Epistemic Tiering, Sangha Moderation)
+// 3. Platform Operations (Content Ingestion, Epistemic Tiering, Sangha Moderation)
 // 4. Brand Operations (Campaign Approval Radar, KYB Verification, CPM Controls)
-// 5. Global Platform Telemetry (Cross-Realm MAU, API Latency, Supabase DB Health)
+// 5. Global Platform Telemetry (Platform MAU, API Latency, Supabase DB Health)
 // 6. Agent Management (Prompt Versioning, Temperature, Sensitivity Guardrails)
 // 7. Ops CRM & Permissions (Enterprise Contracts, Creator Grants, Role-Based Access)
 // ==============================================================================
@@ -223,23 +223,23 @@ export function OpsRouteComponent() {
               <strong className="text-neutral-200">37 SYNCED</strong>
             </div>
             <div>
-              <span>REALMS ONLINE: </span>
-              <strong className="text-amber-400">CONSUMER + BRANDS</strong>
+              <span>SURFACES ONLINE: </span>
+              <strong className="text-amber-400">UNIFIED PLATFORM</strong>
             </div>
           </div>
 
-          {/* Quick Cross-Realm Testing Links */}
+          {/* Quick Navigation Links */}
           <div className="flex items-center gap-2">
             <Link to="/">
               <Button size="sm" variant="ghost" className="h-7 text-neutral-300 hover:text-white hover:bg-neutral-800 text-[11px]">
                 <Globe className="size-3 mr-1 text-terracotta" />
-                Consumer (/)
+                Return to EKA
               </Button>
             </Link>
             <Link to="/brands">
               <Button size="sm" variant="ghost" className="h-7 text-neutral-300 hover:text-white hover:bg-neutral-800 text-[11px]">
                 <TrendingUp className="size-3 mr-1 text-emerald-400" />
-                Brands (/brands)
+                Brand Workspace
               </Button>
             </Link>
           </div>
@@ -324,7 +324,7 @@ export function OpsRouteComponent() {
                 <div className="rounded-2xl border border-neutral-800 bg-[#121217] p-5 shadow-xs">
                   <span className="text-[10px] text-neutral-400 uppercase">Gross Platform Volume (GPV)</span>
                   <div className="mt-2 text-2xl font-bold text-white">₹64,80,000</div>
-                  <div className="mt-1 text-[11px] text-emerald-400">+34% MoM cross-realm growth</div>
+                  <div className="mt-1 text-[11px] text-emerald-400">+34% MoM platform growth</div>
                 </div>
 
                 <div className="rounded-2xl border border-neutral-800 bg-[#121217] p-5 shadow-xs">
@@ -537,7 +537,7 @@ export function OpsRouteComponent() {
 
               <div className="rounded-2xl border border-neutral-800 bg-[#121217] p-5">
                 <h3 className="font-display text-base font-semibold text-white mb-1">Seeker & Brand Growth Velocity</h3>
-                <p className="text-xs text-neutral-400 mb-4 font-mono">Cross-Realm Active Users (MAU) vs Brand Ad Revenue</p>
+                <p className="text-xs text-neutral-400 mb-4 font-mono">Platform Active Seekers (MAU) vs Brand Ad Revenue</p>
                 <div className="h-64 w-full">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={CROSS_REALM_GROWTH}>

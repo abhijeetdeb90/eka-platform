@@ -12,7 +12,7 @@ import { BookOpen, MapPin, Users } from "lucide-react";
 interface CommunityVariationModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  parentTopic: string;
+  parentTopic?: string;
   parentPostId?: string;
   onSuccess?: () => void;
 }
@@ -20,7 +20,7 @@ interface CommunityVariationModalProps {
 export function CommunityVariationModal({
   open,
   onOpenChange,
-  parentTopic,
+  parentTopic = "EKA: 1 Billion Stories Initiative",
   parentPostId,
   onSuccess,
 }: CommunityVariationModalProps) {
@@ -32,7 +32,7 @@ export function CommunityVariationModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!community.trim() || !details.trim()) {
-      toast.error("Please specify your community and how this tradition is practiced.");
+      toast.error("Please specify your community/culture and the story or tradition details.");
       return;
     }
 
@@ -40,11 +40,11 @@ export function CommunityVariationModal({
     try {
       const { data: auth } = await supabase.auth.getUser();
       if (!auth.user) {
-        toast.error("Please sign in to document your community's tradition.");
+        toast.error("Please sign in to document your story for the global archive.");
         return;
       }
 
-      const formattedContent = `[Community Variation: ${community.trim()}]\n\n${details.trim()}${
+      const formattedContent = `[Living Story: ${community.trim()}]\n\n${details.trim()}${
         source.trim() ? `\n\nAttributed to: ${source.trim()}` : ""
       }`;
 
@@ -57,8 +57,8 @@ export function CommunityVariationModal({
 
       if (error) throw error;
 
-      toast.success("Thank you! Your community's tradition has been added to the living archive.");
-      track("post_create", { type: "community_variation", topic: parentTopic });
+      toast.success("Thank you! Your story has been preserved in the living EKA archive.");
+      track("post_create", { type: "cultural_story", topic: parentTopic });
       setCommunity("");
       setSource("");
       setDetails("");
@@ -77,27 +77,27 @@ export function CommunityVariationModal({
         <DialogHeader>
           <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-terracotta">
             <Users className="size-4" />
-            <span>Multi-Vocal Knowledge Graph</span>
+            <span>Living Cultural Memory</span>
           </div>
           <DialogTitle className="mt-1 font-display text-2xl text-foreground">
-            Add Your Community's Version
+            Document a Living Story
           </DialogTitle>
           <p className="text-xs leading-relaxed text-muted-foreground">
-            In India, every sacred practice changes every hundred miles. Document how{" "}
+            Across communities and landscapes, cultural traditions, rituals, family customs, and oral histories carry unique nuance. Document how{" "}
             <strong className="text-foreground">{parentTopic || "this tradition"}</strong> is
-            practiced in your village, family, or lineage before it is lost.
+            lived in your community or family before it is forgotten.
           </p>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="mt-4 space-y-4">
           <div className="space-y-1.5">
-            <Label htmlFor="community-name">Your Community or Region</Label>
+            <Label htmlFor="community-name">Your Community, Culture, or Region</Label>
             <div className="relative">
               <MapPin className="absolute left-3 top-3 size-4 text-muted-foreground" />
               <Input
                 id="community-name"
                 required
-                placeholder="e.g. Mithila / Maithil, Garhwal, Kongu Nadu, Konkani, Kashmiri Pandit..."
+                placeholder="e.g. Kyoto, Oaxaca, Mithila, Yoruba, Brittany, Andes, Māori, Garhwal..."
                 value={community}
                 onChange={(e) => setCommunity(e.target.value)}
                 className="pl-9 rounded-xl"
@@ -106,12 +106,12 @@ export function CommunityVariationModal({
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="lineage-source">Lineage or Source (Optional)</Label>
+            <Label htmlFor="lineage-source">Lineage, Family, or Source (Optional)</Label>
             <div className="relative">
               <BookOpen className="absolute left-3 top-3 size-4 text-muted-foreground" />
               <Input
                 id="lineage-source"
-                placeholder="e.g. Grandmother's oral tradition, village priest, family custom..."
+                placeholder="e.g. Grandparent's oral memory, village elder, seasonal ritual practice..."
                 value={source}
                 onChange={(e) => setSource(e.target.value)}
                 className="pl-9 rounded-xl"
@@ -121,7 +121,7 @@ export function CommunityVariationModal({
 
           <div className="space-y-1.5">
             <Label htmlFor="variation-details">
-              How is it practiced differently in your community?
+              Describe the tradition, ritual, language nuance, or lived story
             </Label>
             <Textarea
               id="variation-details"
@@ -144,7 +144,7 @@ export function CommunityVariationModal({
               Cancel
             </Button>
             <Button type="submit" disabled={busy} className="rounded-xl shadow-xs">
-              {busy ? "Preserving..." : "Add to Archive"}
+              {busy ? "Preserving..." : "Add to Living Archive"}
             </Button>
           </div>
         </form>

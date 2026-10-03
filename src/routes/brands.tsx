@@ -1,5 +1,5 @@
 // ==============================================================================
-// EKA GROWTH OS — BRANDS REALM (/brands)
+// EKA BRAND WORKSPACE (/brands)
 // ==============================================================================
 // Meta Ads Manager + GA4 + CRM + AI Strategy Layer for Brands on EKA
 // Mental Model: "Here is what your audience is doing, why it matters,
@@ -37,11 +37,11 @@ export const Route = createFileRoute("/brands")({
   },
   head: () => ({
     meta: [
-      { title: "EKA Growth OS for Brands — Meta Ads + GA4 + CRM + AI Strategy" },
+      { title: "EKA Brand Workspace — Audience Intelligence, Campaigns & Analytics" },
       {
         name: "description",
         content:
-          "Run your brand's growth on EKA. Audience intelligence, short-video campaign delivery, Indic market insights, CRM, and Gemini AI strategy optimization.",
+          "Authorized workspace for brands on EKA. Audience intelligence, campaign delivery, CRM, and AI strategy optimization.",
       },
     ],
   }),

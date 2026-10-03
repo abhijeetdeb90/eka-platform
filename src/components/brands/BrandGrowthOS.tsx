@@ -50,6 +50,7 @@ import {
   Sliders,
   ShieldCheck,
   Check,
+  ArrowLeft,
 } from "lucide-react";
 import {
   AreaChart,
@@ -272,7 +273,7 @@ export function BrandGrowthOS({ initialTab = "dashboard" }: BrandGrowthOSProps) 
             <div className="flex items-center gap-2">
               <span className="text-[11px] font-mono uppercase tracking-wider text-emerald-500 font-semibold flex items-center gap-1">
                 <TrendingUp className="size-3.5" />
-                Growth OS
+                Brand Workspace
               </span>
               <div className="hidden sm:flex items-center gap-1.5 ml-2">
                 <select
@@ -336,16 +337,9 @@ export function BrandGrowthOS({ initialTab = "dashboard" }: BrandGrowthOSProps) 
             </Button>
 
             <Link to="/">
-              <Button size="sm" variant="ghost" className="text-xs h-8 text-muted-foreground hover:text-foreground">
-                <Globe className="size-3.5 mr-1" />
-                <span className="hidden sm:inline">Consumer</span>
-              </Button>
-            </Link>
-
-            <Link to="/ops">
-              <Button size="sm" variant="outline" className="text-xs h-8 border-border/80 text-muted-foreground hover:text-amber-500">
-                <Layers className="size-3.5 mr-1" />
-                <span className="hidden sm:inline">Ops OS</span>
+              <Button size="sm" variant="ghost" className="text-xs h-8 text-muted-foreground hover:text-foreground gap-1">
+                <ArrowLeft className="size-3.5" />
+                <span>Back to EKA</span>
               </Button>
             </Link>
           </div>
