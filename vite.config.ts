@@ -17,6 +17,11 @@ export default defineConfig({
     preset: process.env["NITRO_PRESET"] || (process.env["VERCEL"] ? "vercel" : "vercel"),
   },
   vite: {
+    server: {
+      watch: {
+        ignored: ["**/.vercel/**", "**/screenshots/**", "**/.system_generated/**"],
+      },
+    },
     plugins: [mcpPlugin()],
   },
 });

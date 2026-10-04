@@ -7,26 +7,29 @@ import { Compass, Film, BookOpen, User, Plus } from "lucide-react";
 import { Pressable } from "@/components/motion/Pressable";
 import { easings } from "@/lib/tokens/motion";
 import { cn } from "@/lib/utils";
+import { useLocalization } from "@/lib/i18n";
 
 interface NavItem {
   id: string;
-  label: string;
+  translationKey: string;
+  defaultLabel: string;
   to: string;
   icon: React.ComponentType<{ className?: string }>;
   isAction?: boolean;
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { id: "discover", label: "Discover", to: "/discover", icon: Compass },
-  { id: "stories", label: "Stories", to: "/stories", icon: Film },
-  { id: "create", label: "Create", to: "/create", icon: Plus, isAction: true },
-  { id: "learn", label: "Learn", to: "/learn", icon: BookOpen },
-  { id: "profile", label: "Account", to: "/membership", icon: User },
+  { id: "discover", translationKey: "nav.discover", defaultLabel: "Discover", to: "/discover", icon: Compass },
+  { id: "stories", translationKey: "nav.stories", defaultLabel: "Stories", to: "/stories", icon: Film },
+  { id: "create", translationKey: "nav.create", defaultLabel: "Create", to: "/create", icon: Plus, isAction: true },
+  { id: "learn", translationKey: "nav.learn", defaultLabel: "Learn", to: "/learn", icon: BookOpen },
+  { id: "profile", translationKey: "nav.profile", defaultLabel: "Account", to: "/membership", icon: User },
 ];
 
 export function MobileBottomNav() {
   const routerState = useRouterState();
   const currentPath = routerState.location.pathname;
+  const { t } = useLocalization();
 
   // Do not show consumer mobile nav in private brand workspace or admin console
   if (currentPath.startsWith("/brands") || currentPath.startsWith("/ops") || currentPath.startsWith("/admin")) {
@@ -52,6 +55,8 @@ export function MobileBottomNav() {
             item.to === "/" ? currentPath === "/" : currentPath.startsWith(item.to);
           const Icon = item.icon;
 
+          const displayLabel = t(item.translationKey, item.defaultLabel);
+
           if (item.isAction) {
             return (
               <div key={item.id} className="relative -top-2 flex flex-col items-center">
@@ -59,12 +64,12 @@ export function MobileBottomNav() {
                   to={item.to}
                   onClick={triggerHaptic}
                   className="size-11 rounded-full bg-gradient-to-tr from-terracotta to-saffron text-white flex items-center justify-center shadow-lift border-2 border-background hover:scale-105 active:scale-95 transition-transform"
-                  aria-label={item.label}
+                  aria-label={displayLabel}
                 >
                   <Plus className="size-5 stroke-[2.5]" />
                 </Link>
                 <span className="text-[10px] font-mono font-medium text-foreground/80 mt-0.5">
-                  {item.label}
+                  {displayLabel}
                 </span>
               </div>
             );
@@ -91,7 +96,7 @@ export function MobileBottomNav() {
 
               <div className="relative z-10 flex flex-col items-center gap-0.5">
                 <Icon className={cn("size-5", isActive ? "stroke-[2.2]" : "stroke-[1.7]")} />
-                <span className="text-[10px] font-mono tracking-tight">{item.label}</span>
+                <span className="text-[10px] font-mono tracking-tight">{displayLabel}</span>
               </div>
 
               {/* Active Dot Indicator */}

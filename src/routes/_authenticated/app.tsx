@@ -13,7 +13,6 @@ import {
   Search,
   Clock,
   Sparkles,
-  Shield,
   Flame,
   CalendarDays,
   NotebookPen,
@@ -36,7 +35,6 @@ import { useRealtimeNotifications } from "@/hooks/useRealtime";
 import { EkaLogo } from "@/components/brand/Logo";
 import { Button } from "@/components/ui/button";
 import { useProfile } from "@/hooks/useProfile";
-import { useIsModerator } from "@/hooks/useRole";
 import { fetchMyRestriction } from "@/lib/moderation";
 import { registerOfflineShell } from "@/lib/offline-shell";
 import { applyJoinAnswers } from "@/lib/join";
@@ -78,7 +76,12 @@ const navGroups = [
       { to: "/app/observe", label: "Observe", icon: CalendarDays, exact: false },
       { to: "/app/dashboard", label: "My EKA", icon: LayoutDashboard, exact: false },
       { to: "/app/passport", label: "Wisdom Passport", icon: BookMarked, exact: false },
-      { to: "/app/creator", label: "Creator studio", icon: TrendingUp, exact: false },
+    ],
+  },
+  {
+    label: "Workspace (Paid)",
+    links: [
+      { to: "/app/creator", label: "Creator Studio 🔒", icon: TrendingUp, exact: false },
     ],
   },
   {
@@ -117,7 +120,6 @@ function AppLayout() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { data: profile } = useProfile();
-  const { data: isMod } = useIsModerator();
 
   useRealtimeNotifications();
 
@@ -282,32 +284,6 @@ function AppLayout() {
                 <span className="truncate">{l.label}</span>
               </Link>
             ))}
-            {isMod && (
-              <>
-                <Link
-                  to="/app/admin"
-                  activeProps={{
-                    className: "bg-accent/80 text-foreground",
-                    "aria-current": "page",
-                  }}
-                  className={navItemClass}
-                >
-                  <Shield aria-hidden="true" className="size-4 shrink-0" strokeWidth={1.5} />
-                  <span>Admin</span>
-                </Link>
-                <Link
-                  to="/admin/economics"
-                  activeProps={{
-                    className: "bg-accent/80 text-foreground",
-                    "aria-current": "page",
-                  }}
-                  className={navItemClass}
-                >
-                  <Shield aria-hidden="true" className="size-4 shrink-0" strokeWidth={1.5} />
-                  <span>Economics</span>
-                </Link>
-              </>
-            )}
 
             {/* Profile Pill */}
             {profile && (

@@ -84,7 +84,10 @@ export async function generateGeminiContent(
   }
 
   // Server-side secret retrieval (never exposed to client bundle)
-  const directApiKey = process.env["GEMINI_API_KEY"];
+  const directApiKey =
+    typeof process !== "undefined" && process?.env
+      ? process.env["GEMINI_API_KEY"]
+      : undefined;
 
   // 2. Direct Google Gemini REST API Call
   if (directApiKey && directApiKey !== "your-gemini-api-key") {
@@ -166,7 +169,10 @@ export async function generateGeminiContent(
   }
 
   // 4. Fallback to Lovable AI Gateway
-  const gatewayKey = process.env["LOVABLE_API_KEY"];
+  const gatewayKey =
+    typeof process !== "undefined" && process?.env
+      ? process.env["LOVABLE_API_KEY"]
+      : undefined;
   if (gatewayKey) {
     try {
       const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {

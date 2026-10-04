@@ -1,13 +1,23 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { financeService } from "@/lib/payments/finance.service";
+import { assertServerRole } from "@/lib/auth/access-control";
 
 /**
  * EKA Finance Telemetry API: Admin, Creator, and Brand Financial Aggregates
+ * Protected by strict server-side RBAC token verification.
  */
 export const Route = createFileRoute("/api/finance")({
   server: {
     handlers: {
-      GET: async () => {
+      GET: async ({ request }) => {
+        const auth = await assertServerRole(request, ["admin", "super_admin", "founder"]);
+        if (!auth.ok) {
+          return new Response(JSON.stringify({ error: auth.error ?? "Unauthorized" }), {
+            status: auth.status,
+            headers: { "Content-Type": "application/json" },
+          });
+        }
+
         const summary = await financeService.getAdminFinanceSummary();
         return new Response(JSON.stringify({ success: true, summary }), {
           status: 200,
@@ -22,6 +32,14 @@ export const Route = createFileRoute("/api/finance")({
 
           switch (view) {
             case "admin": {
+              const auth = await assertServerRole(request, ["admin", "super_admin", "founder"]);
+              if (!auth.ok) {
+                return new Response(JSON.stringify({ error: auth.error ?? "Unauthorized" }), {
+                  status: auth.status,
+                  headers: { "Content-Type": "application/json" },
+                });
+              }
+
               const summary = await financeService.getAdminFinanceSummary();
               return new Response(JSON.stringify({ success: true, summary }), {
                 status: 200,
@@ -30,7 +48,15 @@ export const Route = createFileRoute("/api/finance")({
             }
 
             case "creator": {
-              const creatorId = body["creator_id"] as string;
+              const auth = await assertServerRole(request, ["creator", "admin", "super_admin", "founder"]);
+              if (!auth.ok) {
+                return new Response(JSON.stringify({ error: auth.error ?? "Unauthorized" }), {
+                  status: auth.status,
+                  headers: { "Content-Type": "application/json" },
+                });
+              }
+
+              const creatorId = (body["creator_id"] as string) || auth.userId;
               if (!creatorId) {
                 return new Response(JSON.stringify({ error: "Missing creator_id" }), {
                   status: 400,
@@ -46,6 +72,14 @@ export const Route = createFileRoute("/api/finance")({
             }
 
             case "brand": {
+              const auth = await assertServerRole(request, ["brand", "enterprise", "admin", "super_admin", "founder"]);
+              if (!auth.ok) {
+                return new Response(JSON.stringify({ error: auth.error ?? "Unauthorized" }), {
+                  status: auth.status,
+                  headers: { "Content-Type": "application/json" },
+                });
+              }
+
               const brandId = body["brand_id"] as string;
               if (!brandId) {
                 return new Response(JSON.stringify({ error: "Missing brand_id" }), {

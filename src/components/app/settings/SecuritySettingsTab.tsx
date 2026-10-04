@@ -22,8 +22,8 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   validatePasswordStrength,
   generateBackupCodes,
-  type UserSession,
-} from "@/lib/security";
+} from "@/lib/security/identity-access";
+import type { UserSession } from "@/lib/security/types";
 
 export function SecuritySettingsTab() {
   const [sessionUser, setSessionUser] = useState<any>(null);

@@ -35,6 +35,15 @@ function DiscoverIndex() {
         is, where it came from, how it is actually kept, and how that differs from place to place.
       </p>
 
+      <div className="flex items-center gap-2">
+        <Link
+          to="/discover"
+          className="inline-flex items-center gap-1.5 rounded-full border border-primary/40 bg-primary/10 px-3.5 py-1.5 text-xs font-medium text-primary hover:bg-primary/20 transition-colors"
+        >
+          <span>🌍 Explore the World's Cultural Intelligence Map</span>
+        </Link>
+      </div>
+
       <div className="flex flex-wrap gap-2">
         {["All", ...TRADITIONS].map((t) => (
           <button

@@ -14,9 +14,10 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
 import { SmoothScrollProvider } from "@/components/motion/SmoothScrollProvider";
-import { CookieConsentBanner } from "@/components/common/CookieConsentBanner";
 import { SafeNavigationProvider } from "@/components/security/SafeNavigationProvider";
+import { CookieConsentBanner } from "@/components/common/CookieConsentBanner";
 import { MobileBottomNav } from "@/components/navigation/MobileBottomNav";
+import { LocalizationProvider } from "@/lib/i18n";
 
 function NotFoundComponent() {
   return (
@@ -145,23 +146,25 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <SmoothScrollProvider>
-        {/* Keyboard accessibility: Skip link for screen reader and keyboard-only navigation */}
-        <a
-          href="#main-content"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-xl focus:bg-primary focus:px-4 focus:py-2.5 focus:text-sm focus:font-medium focus:text-primary-foreground focus:shadow-lift focus:outline-hidden"
-        >
-          Skip to main content
-        </a>
+      <LocalizationProvider>
+        <SmoothScrollProvider>
+          {/* Keyboard accessibility: Skip link for screen reader and keyboard-only navigation */}
+          <a
+            href="#main-content"
+            className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-xl focus:bg-primary focus:px-4 focus:py-2.5 focus:text-sm focus:font-medium focus:text-primary-foreground focus:shadow-lift focus:outline-hidden"
+          >
+            Skip to main content
+          </a>
 
-        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-        <SafeNavigationProvider>
-          <Outlet />
-          <MobileBottomNav />
-          <Toaster position="top-center" />
-          <CookieConsentBanner />
-        </SafeNavigationProvider>
-      </SmoothScrollProvider>
+          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+          <SafeNavigationProvider>
+            <Outlet />
+            <MobileBottomNav />
+            <Toaster position="top-center" />
+            <CookieConsentBanner />
+          </SafeNavigationProvider>
+        </SmoothScrollProvider>
+      </LocalizationProvider>
     </QueryClientProvider>
   );
 }

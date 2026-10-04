@@ -2,7 +2,8 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/content")({
   beforeLoad: () => {
-    throw redirect({ to: "/brands", search: { tab: "promote" } });
+    // Redirect to public stories archive instead of brands
+    throw redirect({ to: "/stories" });
   },
   component: () => null,
 });

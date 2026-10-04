@@ -1,13 +1,23 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { auditService } from "@/lib/payments/audit.service";
+import { assertServerRole } from "@/lib/auth/access-control";
 
 /**
  * EKA Audit API: Query immutable transaction and security audit logs
+ * Strictly restricted to Founder / Admin roles only.
  */
 export const Route = createFileRoute("/api/audit")({
   server: {
     handlers: {
-      GET: async () => {
+      GET: async ({ request }) => {
+        const auth = await assertServerRole(request, ["admin", "super_admin", "founder"]);
+        if (!auth.ok) {
+          return new Response(JSON.stringify({ error: auth.error ?? "Unauthorized" }), {
+            status: auth.status,
+            headers: { "Content-Type": "application/json" },
+          });
+        }
+
         const logs = await auditService.queryLogs({ limit: 100 });
         return new Response(JSON.stringify({ success: true, logs }), {
           status: 200,
@@ -16,6 +26,14 @@ export const Route = createFileRoute("/api/audit")({
       },
 
       POST: async ({ request }) => {
+        const auth = await assertServerRole(request, ["admin", "super_admin", "founder"]);
+        if (!auth.ok) {
+          return new Response(JSON.stringify({ error: auth.error ?? "Unauthorized" }), {
+            status: auth.status,
+            headers: { "Content-Type": "application/json" },
+          });
+        }
+
         try {
           const body = (await request.json()) as Record<string, unknown>;
           const entityId = body["entity_id"] as string | undefined;

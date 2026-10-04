@@ -35,17 +35,20 @@ export const MembershipBannerSection: React.FC = () => {
             <div className="lg:col-span-7">
               <div className="inline-flex items-center gap-2 rounded-full border border-forest/30 bg-forest/10 px-3.5 py-1 text-xs font-semibold text-forest uppercase tracking-wider">
                 <HeartHandshake className="size-3.5" />
-                <span>Knowledge & Trust Economy</span>
+                <span>EKA Access Model · Knowledge is Free</span>
               </div>
               <h2
                 id="membership-section-title"
                 className="mt-4 font-display text-3xl font-medium sm:text-4xl lg:text-5xl text-foreground tracking-tight leading-tight"
               >
-                Join the EKA Knowledge Fellowship.
+                Go beyond the story.
               </h2>
+              <p className="mt-2 text-xl font-serif text-primary font-normal">
+                Ask questions. Compare cultures. Explore deeper. Create with EKA.
+              </p>
               <p className="mt-4 text-base sm:text-lg text-muted-foreground font-light leading-relaxed">
-                Support the living preservation of cultures, communities, and authentic local
-                lineages — without advertising incentives or algorithmic manipulation.
+                Knowledge should be free. Intelligence should be paid. Creation should be paid.
+                Explore the open cultural library freely, or upgrade to EKA+ for AI, comparisons, and deep research.
               </p>
 
               <div className="mt-8 grid gap-3 sm:grid-cols-2">
@@ -78,7 +81,7 @@ export const MembershipBannerSection: React.FC = () => {
               <div className="rounded-2xl border border-primary/30 bg-sand/40 p-6 sm:p-8 backdrop-blur-xs shadow-calm text-center lg:text-left flex flex-col justify-between h-full">
                 <div>
                   <div className="inline-flex rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold text-primary uppercase tracking-wider">
-                    EKA Creator / Membership
+                    EKA+ Intelligence Membership
                   </div>
                   <div className="mt-4 flex items-baseline justify-center lg:justify-start gap-1">
                     <span className="font-display text-4xl sm:text-5xl font-semibold text-foreground">

@@ -18,11 +18,21 @@ import {
   Layers,
   ChevronRight,
   Eye,
+  Globe,
+  Languages,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import {
+  getContent,
+  CULTURAL_TRANSLATIONS_MAP,
+  type LocalizedCulturalRepresentation,
+  type TranslationStatus,
+} from "@/lib/knowledge/multilingual-content";
+import { SUPPORTED_LOCALES, type SupportedLocale } from "@/lib/i18n/types";
 import {
   archiveKnowledgeObject,
   fetchKnowledgeObjects,
@@ -49,13 +59,19 @@ export function StudioKnowledgeManager({ currentRole, selectedId }: StudioKnowle
   const [objects, setObjects] = useState<CanonicalKnowledgeObject[]>(SEED_KNOWLEDGE_OBJECTS);
   const [activeObjectId, setActiveObjectId] = useState<string>(selectedId || objects[0]?.id || "");
   const [activeTab, setActiveTab] = useState<
-    "metadata" | "provenance" | "verification" | "interpretations" | "versions"
+    "metadata" | "provenance" | "verification" | "interpretations" | "versions" | "translations"
   >("metadata");
+  const [selectedTranslationLang, setSelectedTranslationLang] = useState<string>("as");
 
   const [versions, setVersions] = useState<KnowledgeObjectVersion[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
+
+  // Translation local state initialized from CULTURAL_TRANSLATIONS_MAP
+  const [translationsState, setTranslationsState] = useState<
+    Record<string, Partial<Record<string, LocalizedCulturalRepresentation>>>
+  >(CULTURAL_TRANSLATIONS_MAP);
 
   // Verification transition form
   const [nextVerStatus, setNextVerStatus] = useState<VerificationStatus>("Expert Verified");
@@ -286,6 +302,7 @@ export function StudioKnowledgeManager({ currentRole, selectedId }: StudioKnowle
                     { id: "provenance", label: "Sources & Provenance" },
                     { id: "verification", label: "8-State Verification" },
                     { id: "interpretations", label: "Schools & Interpretations" },
+                    { id: "translations", label: "Multilingual Localizations" },
                     { id: "versions", label: "Version History & Diff" },
                   ].map((tab) => (
                     <Button
@@ -609,6 +626,333 @@ export function StudioKnowledgeManager({ currentRole, selectedId }: StudioKnowle
                     ))}
                   </div>
                 )}
+
+                {activeTab === "translations" && (() => {
+                  const currentEntityTranslations =
+                    translationsState[activeObj.slug] || translationsState[activeObj.id] || {};
+                  const activeTranslation: LocalizedCulturalRepresentation =
+                    currentEntityTranslations[selectedTranslationLang] || {
+                      canonicalSlug: activeObj.slug,
+                      languageCode: selectedTranslationLang,
+                      localizedName: `${activeObj.title} (${SUPPORTED_LOCALES[selectedTranslationLang as SupportedLocale]?.nativeName || selectedTranslationLang})`,
+                      localizedTitle: `${activeObj.title} — ${SUPPORTED_LOCALES[selectedTranslationLang as SupportedLocale]?.name || "Localized"} Cultural Entity`,
+                      localizedOneLiner: activeObj.summary,
+                      localizedSummary: activeObj.description || activeObj.summary,
+                      regionLabel: activeObj.region || "Canonical Region",
+                      categoryLabel: activeObj.category || "Living Culture",
+                      traditions: [activeObj.tradition],
+                      places: [],
+                      keyTerminology: [],
+                      translationStatus: "draft" as TranslationStatus,
+                      verificationStatus: "review_needed" as const,
+                      reviewedBy: "Pending Linguistic Board Review",
+                      lastQaDate: new Date().toISOString().split("T")[0],
+                    };
+
+                  const handleUpdateTranslation = (
+                    updates: Partial<LocalizedCulturalRepresentation>
+                  ) => {
+                    const updatedItem: LocalizedCulturalRepresentation = {
+                      ...activeTranslation,
+                      ...updates,
+                    };
+                    setTranslationsState((prev) => ({
+                      ...prev,
+                      [activeObj.slug]: {
+                        ...(prev[activeObj.slug] || {}),
+                        [selectedTranslationLang]: updatedItem,
+                      },
+                    }));
+                    toast.success(
+                      `Updated ${SUPPORTED_LOCALES[selectedTranslationLang as SupportedLocale]?.name || selectedTranslationLang} representation`
+                    );
+                  };
+
+                  return (
+                    <div className="space-y-6">
+                      {/* Canonical Safeguard Banner */}
+                      <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 space-y-1">
+                        <div className="flex items-center gap-2 text-xs font-semibold text-amber-700 dark:text-amber-400">
+                          <ShieldCheck className="size-4" />
+                          CANONICAL INTEGRITY SAFEGUARD — ONE ENTITY, MULTIPLE REPRESENTATIONS
+                        </div>
+                        <p className="text-xs text-muted-foreground leading-relaxed">
+                          Translations reflect localized linguistic expressions of canonical entity{" "}
+                          <code className="text-foreground font-mono bg-muted/60 px-1 py-0.5 rounded">
+                            {activeObj.slug || activeObj.id}
+                          </code>
+                          . AI assistance is strictly confined to preliminary drafting and vocabulary lookup;
+                          canonical facts, living rituals, and indigenous sacred terminology cannot be overwritten
+                          without verified editorial board approval.
+                        </p>
+                      </div>
+
+                      {/* Language Selection Chips */}
+                      <div>
+                        <div className="flex items-center justify-between mb-2">
+                          <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                            <Languages className="size-3.5" /> Select Language Representation (12 Supported)
+                          </label>
+                          <span className="text-[11px] text-muted-foreground">
+                            Active: {SUPPORTED_LOCALES[selectedTranslationLang as SupportedLocale]?.nativeName} (
+                            {SUPPORTED_LOCALES[selectedTranslationLang as SupportedLocale]?.name})
+                          </span>
+                        </div>
+                        <div className="flex flex-wrap gap-1.5 p-2 rounded-xl border border-border bg-muted/20">
+                          {(Object.keys(SUPPORTED_LOCALES) as SupportedLocale[]).map((locKey) => {
+                            const loc = SUPPORTED_LOCALES[locKey];
+                            const hasExisting = Boolean(currentEntityTranslations[locKey]);
+                            const isSelected = selectedTranslationLang === locKey;
+
+                            return (
+                              <button
+                                key={locKey}
+                                onClick={() => setSelectedTranslationLang(locKey)}
+                                type="button"
+                                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
+                                  isSelected
+                                    ? "bg-primary text-primary-foreground shadow-sm"
+                                    : "bg-background border border-border text-foreground hover:bg-muted"
+                                }`}
+                              >
+                                <span>{loc.nativeName}</span>
+                                <span
+                                  className={`text-[10px] uppercase font-mono ${
+                                    isSelected ? "text-primary-foreground/80" : "text-muted-foreground"
+                                  }`}
+                                >
+                                  {loc.code}
+                                </span>
+                                {hasExisting && (
+                                  <span
+                                    className={`size-1.5 rounded-full ${
+                                      isSelected ? "bg-primary-foreground" : "bg-emerald-500"
+                                    }`}
+                                  />
+                                )}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      {/* Representation Status & Review Meta */}
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3 rounded-xl border border-border bg-card">
+                        <div>
+                          <span className="text-[10px] uppercase font-semibold text-muted-foreground block">
+                            Translation Status
+                          </span>
+                          <div className="mt-1 flex items-center gap-1.5">
+                            <Badge
+                              variant={
+                                activeTranslation.translationStatus === "published" ||
+                                activeTranslation.translationStatus === "verified"
+                                  ? "default"
+                                  : "secondary"
+                              }
+                              className="text-xs capitalize"
+                            >
+                              {activeTranslation.translationStatus.replace("_", " ")}
+                            </Badge>
+                          </div>
+                        </div>
+
+                        <div>
+                          <span className="text-[10px] uppercase font-semibold text-muted-foreground block">
+                            Verification Review
+                          </span>
+                          <div className="mt-1 flex items-center gap-1.5">
+                            <Badge
+                              variant={
+                                activeTranslation.verificationStatus === "verified"
+                                  ? "outline"
+                                  : "destructive"
+                              }
+                              className="text-xs capitalize"
+                            >
+                              {activeTranslation.verificationStatus.replace("_", " ")}
+                            </Badge>
+                          </div>
+                        </div>
+
+                        <div>
+                          <span className="text-[10px] uppercase font-semibold text-muted-foreground block">
+                            Linguistic Reviewer / Last QA
+                          </span>
+                          <div
+                            className="mt-1 text-xs text-foreground truncate"
+                            title={activeTranslation.reviewedBy}
+                          >
+                            {activeTranslation.reviewedBy}
+                            <div className="text-[10px] text-muted-foreground">
+                              {activeTranslation.lastQaDate}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Form Fields for Localized Representation */}
+                      <div className="space-y-4">
+                        <div>
+                          <label className="text-xs font-medium text-muted-foreground">
+                            Localized Title ({SUPPORTED_LOCALES[selectedTranslationLang as SupportedLocale]?.nativeName})
+                          </label>
+                          <Input
+                            value={activeTranslation.localizedTitle}
+                            onChange={(e) =>
+                              handleUpdateTranslation({ localizedTitle: e.target.value })
+                            }
+                            className="mt-1 font-medium"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="text-xs font-medium text-muted-foreground">
+                            Localized One-Liner / Hook
+                          </label>
+                          <Textarea
+                            value={activeTranslation.localizedOneLiner}
+                            onChange={(e) =>
+                              handleUpdateTranslation({ localizedOneLiner: e.target.value })
+                            }
+                            rows={2}
+                            className="mt-1 text-xs"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="text-xs font-medium text-muted-foreground">
+                            Localized Cultural Summary & Context
+                          </label>
+                          <Textarea
+                            value={activeTranslation.localizedSummary}
+                            onChange={(e) =>
+                              handleUpdateTranslation({ localizedSummary: e.target.value })
+                            }
+                            rows={4}
+                            className="mt-1 text-xs leading-relaxed"
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <label className="text-xs font-medium text-muted-foreground">
+                              Regional Label
+                            </label>
+                            <Input
+                              value={activeTranslation.regionLabel}
+                              onChange={(e) =>
+                                handleUpdateTranslation({ regionLabel: e.target.value })
+                              }
+                              className="mt-1 text-xs"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-xs font-medium text-muted-foreground">
+                              Category Label
+                            </label>
+                            <Input
+                              value={activeTranslation.categoryLabel}
+                              onChange={(e) =>
+                                handleUpdateTranslation({ categoryLabel: e.target.value })
+                              }
+                              className="mt-1 text-xs"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Sacred / Key Terminology */}
+                        <div>
+                          <div className="flex items-center justify-between mb-2">
+                            <label className="text-xs font-medium text-muted-foreground">
+                              Sacred Terminology Preserved Untranslated ({activeTranslation.keyTerminology.length})
+                            </label>
+                          </div>
+                          {activeTranslation.keyTerminology.length === 0 ? (
+                            <p className="text-xs text-muted-foreground italic border border-dashed border-border rounded-xl p-3">
+                              No terminology overrides specified yet. Untranslated cultural terms (e.g. গামোচা, பொங்கல், आरती) preserve cultural authenticity across dialects.
+                            </p>
+                          ) : (
+                            <div className="space-y-2">
+                              {activeTranslation.keyTerminology.map((termItem, idx) => (
+                                <div
+                                  key={idx}
+                                  className="flex items-center justify-between rounded-xl border border-border p-2.5 text-xs bg-muted/10"
+                                >
+                                  <div>
+                                    <span className="font-semibold text-primary">{termItem.term}</span>
+                                    <span className="text-[10px] text-muted-foreground ml-2">
+                                      ({termItem.language})
+                                    </span>
+                                    <p className="text-muted-foreground mt-0.5">{termItem.meaning}</p>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Workflow Action Bar */}
+                        <div className="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-border">
+                          <div className="flex items-center gap-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="text-xs"
+                              onClick={() => {
+                                handleUpdateTranslation({
+                                  translationStatus: "ai_translated",
+                                  verificationStatus: "review_needed",
+                                  reviewedBy: "EKA Cultural AI Assist (Pending Human QA)",
+                                  lastQaDate: new Date().toISOString().split("T")[0],
+                                });
+                                toast.info("Generated AI-assisted draft. Marked for Human Linguistic QA.");
+                              }}
+                            >
+                              <Sparkles className="mr-1.5 size-3.5 text-amber-500" />
+                              AI Draft Assistance
+                            </Button>
+
+                            <Button
+                              size="sm"
+                              variant="secondary"
+                              className="text-xs"
+                              onClick={() => {
+                                handleUpdateTranslation({
+                                  translationStatus: "human_reviewed",
+                                  verificationStatus: "review_needed",
+                                  reviewedBy: `Verified by ${currentRole} (${new Date().toLocaleDateString()})`,
+                                  lastQaDate: new Date().toISOString().split("T")[0],
+                                });
+                                toast.success("Marked as Human Reviewed by Editor.");
+                              }}
+                            >
+                              <FileCheck2 className="mr-1.5 size-3.5 text-blue-500" />
+                              Sign-off Human Review
+                            </Button>
+                          </div>
+
+                          <Button
+                            size="sm"
+                            className="text-xs"
+                            onClick={() => {
+                              handleUpdateTranslation({
+                                translationStatus: "published",
+                                verificationStatus: "verified",
+                                reviewedBy: `EKA Editorial Board & ${currentRole}`,
+                                lastQaDate: new Date().toISOString().split("T")[0],
+                              });
+                              toast.success("Published & Certified representation in Knowledge Graph!");
+                            }}
+                          >
+                            <ShieldCheck className="mr-1.5 size-3.5 text-emerald-400" />
+                            Verify & Publish
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
 
                 {activeTab === "versions" && (
                   <div className="space-y-4">

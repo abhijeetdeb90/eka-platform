@@ -9,6 +9,7 @@ import {
   Compass,
   ArrowRight,
   BookOpen,
+  Globe,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -20,6 +21,11 @@ import {
 import { knowledgeObjectToCard } from "@/lib/knowledge/card-generator";
 import { EkaBaseCard } from "@/components/discovery/EkaBaseCard";
 import type { EkaDiscoveryCard } from "@/lib/homepage-data";
+import { GlobalCulturalMap } from "@/components/discovery/GlobalCulturalMap";
+import {
+  ContextualAskEkaModal,
+  type ContextualAskEkaTarget,
+} from "@/components/discovery/ContextualAskEkaModal";
 import {
   Dialog,
   DialogContent,
@@ -27,6 +33,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { EkaLogo } from "@/components/brand/Logo";
+import { LanguageSelector } from "@/components/i18n/LanguageSelector";
+import { useLocalization } from "@/lib/i18n";
+import { multilingualSearch } from "@/lib/knowledge/multilingual-search";
 
 export const Route = createFileRoute("/knowledge/")({
   component: KnowledgeDirectoryPage,
@@ -44,9 +54,17 @@ const TYPE_FILTERS = [
 
 function KnowledgeDirectoryPage() {
   const navigate = useNavigate();
+  const { locale, t } = useLocalization();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedType, setSelectedType] = useState("all");
   const [inspectedCard, setInspectedCard] = useState<EkaDiscoveryCard | null>(null);
+  const [askModalOpen, setAskModalOpen] = useState(false);
+  const [askModalTarget, setAskModalTarget] = useState<ContextualAskEkaTarget | null>(null);
+
+  const handleOpenAskEka = (target?: ContextualAskEkaTarget) => {
+    setAskModalTarget(target ?? null);
+    setAskModalOpen(true);
+  };
 
   const allObjects = useMemo(() => getAllKnowledgeObjects(), []);
 
@@ -54,7 +72,14 @@ function KnowledgeDirectoryPage() {
     let list = allObjects;
 
     if (searchQuery.trim()) {
-      list = searchKnowledgeGraph(searchQuery);
+      // 1. Multilingual Semantic Search across native scripts
+      const multiResults = multilingualSearch(searchQuery, locale);
+      if (multiResults.length > 0) {
+        const matchedSlugs = new Set(multiResults.map((r) => r.canonicalSlug));
+        list = allObjects.filter((item) => matchedSlugs.has(item.slug));
+      } else {
+        list = searchKnowledgeGraph(searchQuery);
+      }
     }
 
     if (selectedType !== "all") {
@@ -62,7 +87,7 @@ function KnowledgeDirectoryPage() {
     }
 
     return list;
-  }, [allObjects, searchQuery, selectedType]);
+  }, [allObjects, searchQuery, selectedType, locale]);
 
   const cards = useMemo(() => {
     return filteredObjects.map(knowledgeObjectToCard);
@@ -81,79 +106,61 @@ function KnowledgeDirectoryPage() {
       data-testid="eka-knowledge-directory-page"
       className="min-h-screen bg-background text-foreground"
     >
-      {/* Top Bar */}
+      {/* Top Bar with EKA Logo & Language Selector */}
       <header className="border-b border-border/80 bg-background/90 backdrop-blur-md sticky top-0 z-30">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3.5 sm:px-6">
           <div className="flex items-center gap-3">
-            <Link to="/" className="flex items-center gap-2">
-              <span className="font-serif text-2xl font-bold tracking-tight text-primary">
-                EKA
-              </span>
+            <Link to="/" className="flex items-center transition-opacity hover:opacity-90">
+              <EkaLogo size="sm" />
             </Link>
-            <span className="text-muted-foreground">/</span>
-            <span className="text-xs font-semibold uppercase tracking-wider text-foreground">
-              Cultural Knowledge Graph
+            <span className="text-muted-foreground/60 hidden sm:inline">/</span>
+            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground hidden sm:inline">
+              {t("section.knowledgeGraph")}
             </span>
           </div>
 
           <div className="flex items-center gap-3">
-            <Link to="/admin/knowledge">
+            <LanguageSelector variant="header" />
+
+            <Link to="/stories">
               <Button variant="outline" size="sm" className="rounded-full text-xs gap-1.5">
-                <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
-                <span className="hidden sm:inline">Admin Operations Center</span>
-                <span className="sm:hidden">Admin</span>
+                <BookOpen className="h-3.5 w-3.5 text-primary" />
+                <span className="hidden sm:inline">{t("nav.stories")}</span>
+                <span className="sm:hidden">{t("nav.stories")}</span>
               </Button>
             </Link>
           </div>
         </div>
       </header>
 
-      {/* Directory Hero */}
-      <section className="border-b border-border/60 bg-sand/15 py-12 sm:py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-          <Badge
-            variant="outline"
-            className="border-primary/40 text-primary text-xs font-mono uppercase tracking-wider mb-3"
-          >
-            The Trusted Intelligence Layer
-          </Badge>
+      {/* Simplified Human Header & Interactive Global Cultural Map */}
+      <section className="border-b border-border/60 bg-sand/15 py-10 sm:py-14">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-8">
+          <div className="text-center space-y-3 max-w-3xl mx-auto">
+            <Badge
+              variant="outline"
+              className="border-primary/40 text-primary text-xs font-mono uppercase tracking-wider mb-1"
+            >
+              <Globe className="size-3 mr-1.5 inline" />
+              The World's Cultural Intelligence Map
+            </Badge>
 
-          <h1 className="font-serif text-3xl sm:text-5xl font-bold tracking-tight text-foreground">
-            Cultural Knowledge Graph
-          </h1>
+            <h1 className="font-serif text-3xl sm:text-5xl font-bold tracking-tight text-foreground">
+              Understand the World Through Its Stories
+            </h1>
 
-          <p className="mx-auto mt-4 max-w-2xl text-sm sm:text-base text-muted-foreground leading-relaxed">
-            Discover living traditions, master crafts, and sacred places structured across 10 cultural
-            dimensions, documented variations, and verified legal provenance.
-          </p>
+            <p className="font-serif text-base sm:text-lg text-muted-foreground leading-relaxed">
+              Learn how people live, celebrate, create and connect.
+            </p>
 
-          {/* Quick Metrics Bar */}
-          <div className="mx-auto mt-8 grid max-w-3xl grid-cols-2 gap-3 sm:grid-cols-4">
-            <div className="rounded-2xl border border-border/60 bg-card p-3.5 shadow-sm">
-              <span className="block text-2xl font-bold text-foreground">
-                {allObjects.length}
-              </span>
-              <span className="text-xs text-muted-foreground">Canonical Entities</span>
-            </div>
-            <div className="rounded-2xl border border-border/60 bg-card p-3.5 shadow-sm">
-              <span className="block text-2xl font-bold text-foreground">
-                {totalVariationsCount}
-              </span>
-              <span className="text-xs text-muted-foreground">Documented Variations</span>
-            </div>
-            <div className="rounded-2xl border border-border/60 bg-card p-3.5 shadow-sm">
-              <span className="block text-2xl font-bold text-foreground">
-                {totalSourcesCount}
-              </span>
-              <span className="text-xs text-muted-foreground">Verified Sources</span>
-            </div>
-            <div className="rounded-2xl border border-border/60 bg-card p-3.5 shadow-sm">
-              <span className="block text-2xl font-bold text-emerald-600">
-                100%
-              </span>
-              <span className="text-xs text-muted-foreground">CC & Open Provenance</span>
-            </div>
+            <p className="text-xs sm:text-sm text-muted-foreground max-w-2xl mx-auto">
+              Every place has a story. Every story connects to another. Explore cultures, traditions,
+              languages, rituals, places, food, crafts and the people who keep them alive.
+            </p>
           </div>
+
+          {/* Interactive World Map replacing the old abstract numbers */}
+          <GlobalCulturalMap onAskEka={handleOpenAskEka} />
         </div>
       </section>
 
@@ -289,6 +296,13 @@ function KnowledgeDirectoryPage() {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Contextual Ask EKA Modal */}
+      <ContextualAskEkaModal
+        isOpen={askModalOpen}
+        onClose={() => setAskModalOpen(false)}
+        target={askModalTarget}
+      />
     </div>
   );
 }

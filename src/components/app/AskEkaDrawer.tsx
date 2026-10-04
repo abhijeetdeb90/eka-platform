@@ -14,6 +14,7 @@ import {
   ChevronRight,
   ExternalLink,
   Layers,
+  Lock,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -27,6 +28,7 @@ import {
   type RegionalVariation,
 } from "@/lib/ai-knowledge";
 import { track } from "@/lib/analytics";
+import { useMonetizationTier, CORE_PHILOSOPHY } from "@/lib/monetization";
 
 interface AskEkaDrawerProps {
   initialQuery?: string;
@@ -39,6 +41,7 @@ export function AskEkaDrawer({
   onClose,
   inline = false,
 }: AskEkaDrawerProps) {
+  const { canUseIntelligence, setTier } = useMonetizationTier();
   const [query, setQuery] = useState(initialQuery);
   const [selectedInquiry, setSelectedInquiry] = useState<string>("what_is");
   const [loading, setLoading] = useState(false);
@@ -92,11 +95,17 @@ export function AskEkaDrawer({
                 <Sparkles className="size-4" aria-hidden />
               </span>
               <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
-                Ask EKA
+                Ask EKA {!canUseIntelligence && <Lock className="inline size-3.5 text-saffron ml-1" />}
               </span>
-              <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-[11px] font-medium text-primary">
-                Interactive Knowledge Layer
-              </span>
+              {!canUseIntelligence ? (
+                <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-[11px] font-medium text-terracotta">
+                  EKA+ Intelligence
+                </span>
+              ) : (
+                <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-[11px] font-medium text-primary">
+                  Interactive Knowledge Layer
+                </span>
+              )}
             </div>
             <h2 className="font-display text-2xl">
               Contextual Living Wisdom & Cross-Cultural Graph
@@ -105,6 +114,11 @@ export function AskEkaDrawer({
               Source → Context → AI Explanation → Related Knowledge. Grounded in verified primary
               lineages.
             </p>
+            {!canUseIntelligence && (
+              <p className="text-xs font-serif text-primary italic pt-0.5">
+                "{CORE_PHILOSOPHY.subscriptionHook}"
+              </p>
+            )}
           </div>
 
           {!inline && onClose && (

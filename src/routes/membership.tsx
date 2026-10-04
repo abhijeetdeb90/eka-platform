@@ -1,31 +1,52 @@
+import React from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ShowcaseLayout, ShowcaseSplit } from "@/components/site/Showcase";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  Lock,
+  Sparkles,
+  Check,
+  Globe,
+  BookOpen,
+  Palette,
+  TrendingUp,
+  ShieldCheck,
+  ArrowRight,
+  HeartHandshake,
+  Compass,
+} from "lucide-react";
+import {
+  EKA_ACCESS_FEATURES,
+  PRODUCT_TIERS,
+  CORE_PHILOSOPHY,
+  useMonetizationTier,
+  type MonetizationTier,
+} from "@/lib/monetization";
 import { MEMBERSHIP, MONTHLY_THEMES } from "@/lib/membership";
 import circleCommunion from "@/assets/brand/eka-circle-communion.jpg";
-import practiceImage from "@/assets/practice.jpg";
 import journeyImage from "@/assets/journey.jpg";
 import giveImage from "@/assets/give.jpg";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/membership")({
   head: () => ({
     meta: [
-      { title: "EKA Membership — ₹299/month for Cultural Knowledge & Spiritual Living" },
+      { title: "EKA Access Model & Membership — Free Knowledge, Paid Intelligence" },
       {
         name: "description",
         content:
-          "Access EKA's structured cultural and spiritual library, AI-powered interactive exploration, personalized learning, and community discussions. ₹299/month + applicable taxes.",
+          "Knowledge is free. Intelligence is paid. Creation is paid. Explore the global map and read all cultural stories for free. Subscribe to EKA+ for AI, comparisons, and deep research.",
       },
-      { property: "og:title", content: "EKA Membership — ₹299/month" },
+      { property: "og:title", content: "Go beyond the story with EKA" },
       {
         property: "og:description",
         content:
-          "A structured cultural library, AI-powered contextual exploration, and an authentic community.",
+          "Ask questions. Compare cultures. Explore deeper. Create with EKA.",
       },
       { property: "og:type", content: "website" },
       { property: "og:image", content: "/brand/eka-circle-communion.jpg" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:image", content: "/brand/eka-circle-communion.jpg" },
     ],
   }),
   component: MembershipPage,
@@ -34,158 +55,395 @@ export const Route = createFileRoute("/membership")({
 const loops = [
   {
     cadence: "Daily",
-    trigger: "A morning nudge tied to today's journey day",
-    reward: "Three to ten minutes that leave you steadier",
+    trigger: "A morning nudge tied to today's contemplative inquiry",
+    reward: "Three to ten minutes of living cultural understanding",
   },
   {
     cadence: "Weekly",
-    trigger: "A milestone closes and your circle gathers",
-    reward: "A week reviewed, and people who noticed you were there",
+    trigger: "A cross-cultural milestone closes and community circles gather",
+    reward: "A week of comparative perspectives and shared human questions",
   },
   {
     cadence: "Monthly",
-    trigger: "A new theme opens with its own rituals",
-    reward: "A fresh experience and a summary of what changed",
+    trigger: "A new seasonal theme opens with regional rituals",
+    reward: "Deep exploration of traditions across civilizations",
   },
   {
-    cadence: "Seasonal",
-    trigger: "A limited drop or gathering tied to a journey you finished",
-    reward: "Something physical that marks what you did",
+    cadence: "Annual",
+    trigger: "A completed passport of living traditions and verified lineages",
+    reward: "Personal archive of living wisdom and lineage contributions",
   },
 ] as const;
 
 function MembershipPage() {
+  const { tier, setTier } = useMonetizationTier();
+
+  const handleSimulate = (t: MonetizationTier) => {
+    setTier(t);
+    toast.success(`Switched active preview to: ${PRODUCT_TIERS[t].name}`);
+  };
+
   return (
     <ShowcaseLayout
-      eyebrow="One membership · ₹299/month + applicable taxes"
-      title="An accessible entry to living wisdom & community."
-      lede={MEMBERSHIP.promise}
+      eyebrow="EKA Access Model · Free Knowledge · Paid Intelligence & Creation"
+      title="Go beyond the story."
+      lede={CORE_PHILOSOPHY.subscriptionHook}
       image={circleCommunion}
-      imageAlt="Diverse seekers and practitioners standing in circular communion around the sacred EKA mandala"
+      imageAlt="Diverse seekers, researchers and practitioners standing in circular communion around the sacred EKA mandala"
     >
-      {/* What Members Get */}
-      <section className="py-20">
+      {/* 1. The Important Distinction Section */}
+      <section className="py-20 border-b border-border/60 bg-sand/15">
         <div className="container-eka">
-          <div className="mx-auto max-w-2xl text-center">
-            <p className="text-xs uppercase tracking-[0.2em] text-primary">Member Benefits</p>
-            <h2 className="mt-2 font-display text-3xl">What members get</h2>
-            <p className="mt-3 text-muted-foreground">
-              Everything needed to learn, reflect, question, and connect across authentic
-              traditions.
-            </p>
-          </div>
-
-          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {MEMBERSHIP.benefits.map((b, idx) => (
-              <div
-                key={idx}
-                className="flex items-start gap-3 rounded-2xl border border-border bg-card p-6 shadow-calm transition-all hover:border-primary/40"
-              >
-                <div className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
-                  {idx + 1}
-                </div>
-                <p className="text-sm leading-relaxed text-foreground/90">{b}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* AI Interactive Layer Feature */}
-      <section className="border-y border-border bg-card/40 py-20">
-        <div className="container-eka grid gap-10 lg:grid-cols-2 lg:items-center">
-          <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-primary">Intelligence Layer</p>
-            <h2 className="mt-2 font-display text-3xl">
-              Not just a static library. An interactive intelligence interface.
+          <div className="mx-auto max-w-3xl text-center space-y-3">
+            <Badge
+              variant="outline"
+              className="border-primary/40 text-primary text-xs font-mono uppercase tracking-wider"
+            >
+              The Important Distinction
+            </Badge>
+            <h2 className="font-serif text-3xl sm:text-4xl text-foreground font-normal">
+              Knowledge should be free. Intelligence should be paid. Creation should be paid.
             </h2>
-            <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-              Ask EKA transforms static texts into contextual living knowledge. Explore primary
-              sources, lineages, cultural contexts, and cross-regional variations without sectarian
-              bias.
+            <p className="text-sm sm:text-base text-muted-foreground font-serif leading-relaxed font-light">
+              That is a much stronger proposition than putting cultural stories behind a paywall.
+              The free product becomes EKA's global cultural library, while subscriptions convert
+              users who want to understand more, use AI, create, research and build.
             </p>
-            <ul className="mt-6 space-y-3 text-sm text-muted-foreground">
-              <li className="flex items-center gap-2.5">
-                <span className="size-2 rounded-full bg-primary" />
-                <span>
-                  <strong>Ask EKA:</strong> "What is this tradition?", "Where did it originate?",
-                  "How is it practiced differently?"
-                </span>
-              </li>
-              <li className="flex items-center gap-2.5">
-                <span className="size-2 rounded-full bg-primary" />
-                <span>
-                  <strong>Structured Response:</strong> Source → Context → AI Explanation → Related
-                  Knowledge
-                </span>
-              </li>
-              <li className="flex items-center gap-2.5">
-                <span className="size-2 rounded-full bg-primary" />
-                <span>
-                  <strong>Cross-Cultural Discovery:</strong> Tradition ↔ Region ↔ Community ↔ Ritual
-                  ↔ Place
-                </span>
-              </li>
-            </ul>
           </div>
-          <div className="rounded-2xl border border-border bg-card p-6 shadow-calm">
-            <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 text-xs font-mono text-muted-foreground">
-              <p className="font-semibold text-foreground">
-                Query: "How does the spring harvest ritual differ across regions?"
+
+          <div className="mt-14 grid gap-6 md:grid-cols-3">
+            {/* Free: Knowledge */}
+            <div className="rounded-3xl border border-border/80 bg-card p-6 sm:p-8 space-y-4 shadow-calm">
+              <div className="size-12 rounded-2xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
+                <BookOpen className="size-6" />
+              </div>
+              <div>
+                <span className="font-mono text-xs uppercase tracking-wider text-emerald-600 font-bold">
+                  FREE · Global Library
+                </span>
+                <h3 className="font-serif text-xl sm:text-2xl font-normal text-foreground mt-1">
+                  Knowledge is Free
+                </h3>
+              </div>
+              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                EKA's cultural database and global map are completely open. Anyone can explore the
+                interactive map, read all cultural stories, view sacred places, and learn about
+                communities without a paywall.
               </p>
-              <div className="mt-3 space-y-2 border-t border-border/60 pt-2">
-                <p className="text-primary font-sans font-medium">1. Primary Sources & Lineage</p>
-                <p className="text-muted-foreground font-sans">
-                  Rigveda Book 10, Sangam literature (Purananuru), Asomiya Buranjis
-                </p>
-                <p className="text-primary font-sans font-medium">2. Cultural Context</p>
-                <p className="text-muted-foreground font-sans">
-                  Agricultural equinox celebration; thanking the earth, ancestors, and livestock
-                </p>
-                <p className="text-primary font-sans font-medium">3. Cross-Regional Connections</p>
-                <p className="text-muted-foreground font-sans">
-                  Baisakhi (Punjab) ↔ Vishu (Kerala) ↔ Rongali Bihu (Assam) ↔ Poila Baisakh (Bengal)
-                </p>
+              <div className="pt-2 text-xs font-mono text-emerald-700 font-medium">
+                Discover → Read → Explore → Follow
+              </div>
+            </div>
+
+            {/* Paid: Intelligence (EKA+) */}
+            <div className="rounded-3xl border border-primary/50 bg-primary/5 p-6 sm:p-8 space-y-4 shadow-lift relative">
+              <div className="absolute top-4 right-4">
+                <Badge className="bg-primary text-primary-foreground text-[10px]">
+                  ₹299/month
+                </Badge>
+              </div>
+              <div className="size-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
+                <Sparkles className="size-6 text-saffron" />
+              </div>
+              <div>
+                <span className="font-mono text-xs uppercase tracking-wider text-primary font-bold">
+                  EKA+ · Intelligence Layer
+                </span>
+                <h3 className="font-serif text-xl sm:text-2xl font-normal text-foreground mt-1">
+                  Intelligence is Paid
+                </h3>
+              </div>
+              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                For curious seekers who want to go deeper. Ask questions with EKA AI, compare
+                spiritual parallels across civilizations, personalized daily wisdom, and deep
+                primary source manuscripts.
+              </p>
+              <div className="pt-2 text-xs font-mono text-primary font-medium">
+                Ask → Understand → Compare → Research
+              </div>
+            </div>
+
+            {/* Paid: Creation (Creator Studio) */}
+            <div className="rounded-3xl border border-border/80 bg-card p-6 sm:p-8 space-y-4 shadow-calm">
+              <div className="size-12 rounded-2xl bg-terracotta/10 text-terracotta flex items-center justify-center">
+                <Palette className="size-6" />
+              </div>
+              <div>
+                <span className="font-mono text-xs uppercase tracking-wider text-terracotta font-bold">
+                  CREATOR · Paid Workspace
+                </span>
+                <h3 className="font-serif text-xl sm:text-2xl font-normal text-foreground mt-1">
+                  Creation is Paid
+                </h3>
+              </div>
+              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                Creator Studio is clearly positioned as a paid workspace rather than a free social
+                feed. Full publishing engine, real-time creator analytics, Qualified Contribution
+                Score (QCS), and 85% subscription pool share.
+              </p>
+              <div className="pt-2 text-xs font-mono text-terracotta font-medium">
+                Create → Publish → Analyse → Grow
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Creator & Commercial Platform Commission */}
+      {/* 2. Canonical EKA Access Model Feature Matrix */}
       <section className="py-20">
-        <div className="container-eka rounded-2xl border border-border bg-sand/30 p-8 md:p-12">
+        <div className="container-eka">
+          <div className="mx-auto max-w-2xl text-center space-y-2">
+            <p className="text-xs font-mono uppercase tracking-[0.2em] text-primary font-semibold">
+              EKA Access Model
+            </p>
+            <h2 className="font-serif text-3xl sm:text-4xl">Free vs. Paid Feature Matrix</h2>
+            <p className="text-sm text-muted-foreground">
+              Clear distinction between open cultural knowledge, paid intelligence, and creator
+              workspaces.
+            </p>
+          </div>
+
+          <div className="mt-12 overflow-hidden rounded-3xl border border-border/80 bg-card shadow-calm">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="border-b border-border bg-sand/30 font-mono text-xs text-muted-foreground">
+                    <th className="py-4 px-6 font-semibold">Feature</th>
+                    <th className="py-4 px-6 text-center font-semibold w-32 sm:w-40">Free</th>
+                    <th className="py-4 px-6 text-center font-semibold w-32 sm:w-40 text-primary">Paid (EKA+ / Creator)</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border/60 text-xs sm:text-sm">
+                  {EKA_ACCESS_FEATURES.map((f) => (
+                    <tr
+                      key={f.id}
+                      className={`hover:bg-sand/15 transition-colors ${
+                        f.category.includes("Intelligence") ? "bg-primary/[0.02]" : ""
+                      }`}
+                    >
+                      <td className="py-3.5 px-6">
+                        <div className="font-medium text-foreground">{f.name}</div>
+                        <div className="text-[11px] text-muted-foreground">{f.description}</div>
+                      </td>
+                      <td className="py-3.5 px-6 text-center">
+                        {f.free ? (
+                          <span className="inline-flex items-center justify-center size-6 rounded-full bg-emerald-500/10 text-emerald-600 font-bold">
+                            ✓
+                          </span>
+                        ) : (
+                          <span className="text-muted-foreground/60 font-mono text-base">—</span>
+                        )}
+                      </td>
+                      <td className="py-3.5 px-6 text-center">
+                        <span className="inline-flex items-center justify-center size-6 rounded-full bg-primary/10 text-primary font-bold">
+                          ✓
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. Product Architecture 3 Tiers Side-by-Side */}
+      <section className="py-20 border-y border-border/60 bg-sand/20">
+        <div className="container-eka">
+          <div className="mx-auto max-w-2xl text-center space-y-2">
+            <p className="text-xs font-mono uppercase tracking-[0.2em] text-primary font-semibold">
+              Product Architecture
+            </p>
+            <h2 className="font-serif text-3xl sm:text-4xl">Choose Your Relationship With EKA</h2>
+            <p className="text-sm text-muted-foreground">
+              From open global exploration to deep contextual intelligence and cultural stewardship.
+            </p>
+          </div>
+
+          <div className="mt-12 grid gap-8 lg:grid-cols-3">
+            {/* 1. FREE */}
+            <div className="flex flex-col justify-between rounded-3xl border border-border/80 bg-card p-8 shadow-calm">
+              <div className="space-y-4">
+                <Badge variant="outline" className="text-xs font-mono uppercase">
+                  {PRODUCT_TIERS.free.badge}
+                </Badge>
+                <div>
+                  <h3 className="font-serif text-2xl font-normal text-foreground">
+                    {PRODUCT_TIERS.free.name}
+                  </h3>
+                  <p className="font-mono text-xs text-emerald-600 font-semibold mt-0.5">
+                    {PRODUCT_TIERS.free.tagline}
+                  </p>
+                </div>
+                <div className="pt-2">
+                  <span className="font-display text-4xl text-foreground font-semibold">
+                    {PRODUCT_TIERS.free.price}
+                  </span>
+                  <span className="text-xs text-muted-foreground ml-1.5 font-mono">
+                    /{PRODUCT_TIERS.free.period}
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  {PRODUCT_TIERS.free.description}
+                </p>
+                <div className="border-t border-border/60 pt-4 space-y-2.5">
+                  {PRODUCT_TIERS.free.highlights.map((h, i) => (
+                    <div key={i} className="flex items-start gap-2 text-xs">
+                      <Check className="size-3.5 text-emerald-600 mt-0.5 shrink-0" />
+                      <span className="text-foreground/90">{h}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="pt-8">
+                <Button asChild variant="outline" className="w-full rounded-full">
+                  <Link to="/discover">{PRODUCT_TIERS.free.ctaLabel}</Link>
+                </Button>
+              </div>
+            </div>
+
+            {/* 2. EKA+ (Intelligence) */}
+            <div className="flex flex-col justify-between rounded-3xl border-2 border-primary bg-card p-8 shadow-lift relative">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                <Badge className="bg-primary text-primary-foreground font-mono text-[10px] px-3">
+                  MOST POPULAR
+                </Badge>
+              </div>
+              <div className="space-y-4">
+                <Badge variant="outline" className="border-primary/40 text-primary text-xs font-mono uppercase">
+                  {PRODUCT_TIERS.plus.badge}
+                </Badge>
+                <div>
+                  <h3 className="font-serif text-2xl font-normal text-foreground">
+                    {PRODUCT_TIERS.plus.name}
+                  </h3>
+                  <p className="font-mono text-xs text-primary font-semibold mt-0.5">
+                    {PRODUCT_TIERS.plus.tagline}
+                  </p>
+                </div>
+                <div className="pt-2">
+                  <span className="font-display text-4xl text-primary font-semibold">
+                    {PRODUCT_TIERS.plus.price}
+                  </span>
+                  <span className="text-xs text-muted-foreground ml-1.5 font-mono">
+                    /{PRODUCT_TIERS.plus.period}
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  {PRODUCT_TIERS.plus.description}
+                </p>
+                <div className="border-t border-border/60 pt-4 space-y-2.5">
+                  {PRODUCT_TIERS.plus.highlights.map((h, i) => (
+                    <div key={i} className="flex items-start gap-2 text-xs">
+                      <Sparkles className="size-3.5 text-saffron mt-0.5 shrink-0" />
+                      <span className="text-foreground/90 font-medium">{h}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="pt-8 space-y-2">
+                <Button asChild className="w-full rounded-full bg-primary text-primary-foreground hover:bg-primary/90">
+                  <Link to="/auth">{PRODUCT_TIERS.plus.ctaLabel}</Link>
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleSimulate("plus")}
+                  className="w-full text-xs text-muted-foreground"
+                >
+                  Simulate EKA+ Active Preview
+                </Button>
+              </div>
+            </div>
+
+            {/* 3. CREATOR (Paid Workspace) */}
+            <div className="flex flex-col justify-between rounded-3xl border border-border/80 bg-card p-8 shadow-calm">
+              <div className="space-y-4">
+                <Badge variant="outline" className="border-terracotta/40 text-terracotta text-xs font-mono uppercase">
+                  {PRODUCT_TIERS.creator.badge}
+                </Badge>
+                <div>
+                  <h3 className="font-serif text-2xl font-normal text-foreground">
+                    {PRODUCT_TIERS.creator.name}
+                  </h3>
+                  <p className="font-mono text-xs text-terracotta font-semibold mt-0.5">
+                    {PRODUCT_TIERS.creator.tagline}
+                  </p>
+                </div>
+                <div className="pt-2">
+                  <span className="font-display text-4xl text-foreground font-semibold">
+                    {PRODUCT_TIERS.creator.price}
+                  </span>
+                  <span className="text-xs text-muted-foreground ml-1.5 font-mono">
+                    /{PRODUCT_TIERS.creator.period}
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  {PRODUCT_TIERS.creator.description}
+                </p>
+                <div className="border-t border-border/60 pt-4 space-y-2.5">
+                  {PRODUCT_TIERS.creator.highlights.map((h, i) => (
+                    <div key={i} className="flex items-start gap-2 text-xs">
+                      <Palette className="size-3.5 text-terracotta mt-0.5 shrink-0" />
+                      <span className="text-foreground/90">{h}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="pt-8 space-y-2">
+                <Button asChild variant="outline" className="w-full rounded-full border-terracotta/40 text-terracotta hover:bg-terracotta/5">
+                  <Link to="/app/creator">{PRODUCT_TIERS.creator.ctaLabel}</Link>
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleSimulate("creator")}
+                  className="w-full text-xs text-muted-foreground"
+                >
+                  Simulate Creator Studio Preview
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. Creator Platform Economics & 85% Pool */}
+      <section className="py-20">
+        <div className="container-eka rounded-3xl border border-border bg-sand/30 p-8 md:p-12">
           <div className="max-w-2xl">
-            <p className="text-xs uppercase tracking-[0.2em] text-primary">
+            <p className="text-xs uppercase tracking-[0.2em] text-primary font-mono font-semibold">
               Creator & Contributor Economy
             </p>
-            <h2 className="mt-2 font-display text-2xl md:text-3xl">
+            <h2 className="mt-2 font-serif text-2xl md:text-3xl text-foreground">
               Fair, transparent platform economics.
             </h2>
             <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
               EKA charges an industry-low <strong>5–10% platform commission</strong> on marketplace
-              services, bookings, workshops, and ritual kits. In addition,{" "}
-              <strong>85% of monthly membership subscription pools</strong> are allocated directly
-              to qualified creators, lineage sources, verifiers, and community stewards.
+              services and workshops. In addition,{" "}
+              <strong>85% of monthly subscription pools</strong> are allocated directly to qualified
+              creators, lineage custodians, verifiers, and translators.
             </p>
             <div className="mt-6 flex flex-wrap gap-6 text-xs text-muted-foreground">
               <div>
                 <span className="font-semibold text-foreground text-sm">5% Commission</span>
-                <p>On practitioner services, consultations, and bookings</p>
+                <p>On practitioner services, consultations & bookings</p>
               </div>
               <div>
                 <span className="font-semibold text-foreground text-sm">10% Commission</span>
-                <p>On physical ritual kits and commercial marketplace items</p>
+                <p>On physical ritual kits and commercial items</p>
               </div>
               <div>
                 <span className="font-semibold text-foreground text-sm">85% Pool Share</span>
-                <p>To knowledge creators, sources, verifiers, and translators</p>
+                <p>To verified creators, custodians, and sources</p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
+      {/* 5. Showcase Journeys & Monthly Themes */}
       <ShowcaseSplit
         image={journeyImage}
         imageAlt="A pilgrim walking a stone path through misty hills at dawn"
@@ -199,16 +457,16 @@ function MembershipPage() {
         ]}
       />
 
-      <section className="py-20">
+      <section className="py-20 border-t border-border/60">
         <div className="container-eka">
-          <h2 className="text-3xl leading-snug">The year, as twelve experiences.</h2>
+          <h2 className="text-3xl font-serif leading-snug">The year, as twelve experiences.</h2>
           <div className="mt-10 grid gap-px overflow-hidden rounded-2xl border border-border bg-border sm:grid-cols-2 lg:grid-cols-3">
             {MONTHLY_THEMES.map((m) => (
               <div key={m.name} className="bg-card p-6">
-                <p className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
+                <p className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground font-mono">
                   Month {m.month}
                 </p>
-                <h3 className="mt-1.5 font-display text-lg">{m.name}</h3>
+                <h3 className="mt-1.5 font-serif text-lg text-foreground">{m.name}</h3>
                 <p className="mt-2 text-sm text-muted-foreground">{m.line}</p>
               </div>
             ))}
@@ -224,20 +482,29 @@ function MembershipPage() {
         points={loops.map((l) => `${l.cadence}: ${l.trigger} → ${l.reward}`)}
       />
 
+      {/* 6. Closing Subscription Block */}
       <section className="py-24">
-        <div className="container-eka rounded-2xl border border-border bg-card p-10 text-center shadow-calm">
-          <p className="font-display text-4xl">
-            ₹299<span className="text-base text-muted-foreground">/month</span>
+        <div className="container-eka rounded-3xl border border-border bg-card p-10 text-center shadow-calm space-y-4">
+          <Badge variant="outline" className="border-primary/40 text-primary text-xs font-mono uppercase">
+            EKA Access Model
+          </Badge>
+          <h2 className="font-serif text-3xl sm:text-4xl text-foreground font-normal">
+            Knowledge is free. Intelligence is paid. Creation is paid.
+          </h2>
+          <p className="mx-auto max-w-lg text-sm text-muted-foreground leading-relaxed">
+            Go beyond the story. Ask questions. Compare cultures. Explore deeper. Create with EKA.
           </p>
-          <p className="mt-1 text-xs text-muted-foreground">
-            + applicable taxes · Localised worldwide
-          </p>
-          <p className="mx-auto mt-4 max-w-lg text-sm text-muted-foreground">
-            A transparent monthly membership for your quiet daily practice, structured cultural
-            library, AI-powered interactive exploration, and community circles. Cancel anytime with
-            zero exit fees or questions asked.
-          </p>
-          <div className="mt-4 flex flex-wrap justify-center gap-4 text-xs text-muted-foreground">
+
+          <div className="pt-4 flex flex-wrap justify-center gap-4">
+            <Button asChild size="lg" className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90">
+              <Link to="/auth">Get EKA+ Intelligence (₹299/mo)</Link>
+            </Button>
+            <Button asChild size="lg" variant="outline" className="rounded-full">
+              <Link to="/discover">Explore Free Cultural Library</Link>
+            </Button>
+          </div>
+
+          <div className="mt-6 flex flex-wrap justify-center gap-4 text-xs text-muted-foreground">
             <span>Cancel anytime</span>
             <span>·</span>
             <Link to="/refund" className="underline underline-offset-4 hover:text-foreground">
@@ -248,9 +515,6 @@ function MembershipPage() {
               Terms & Conditions
             </Link>
           </div>
-          <Button asChild size="lg" className="mt-8">
-            <Link to="/auth">Begin your first journey</Link>
-          </Button>
         </div>
       </section>
     </ShowcaseLayout>

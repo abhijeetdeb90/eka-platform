@@ -24,8 +24,11 @@ import {
 import { SourcePassportCard } from "@/components/knowledge/SourcePassportCard";
 import { CulturalDimensionsView } from "@/components/knowledge/CulturalDimensionsView";
 import { CulturalVariationSection } from "@/components/knowledge/CulturalVariationSection";
-import { EpistemicClaimsTable } from "@/components/knowledge/EpistemicClaimsTable";
 import { KnowledgeGraphVisualizer } from "@/components/knowledge/KnowledgeGraphVisualizer";
+import { EkaLogo } from "@/components/brand/Logo";
+import { LanguageSelector } from "@/components/i18n/LanguageSelector";
+import { useLocalization } from "@/lib/i18n";
+import { getContent } from "@/lib/knowledge/multilingual-content";
 
 export const Route = createFileRoute("/knowledge/$slug")({
   component: KnowledgeDetailPage,
@@ -34,11 +37,14 @@ export const Route = createFileRoute("/knowledge/$slug")({
 function KnowledgeDetailPage() {
   const { slug } = useParams({ from: "/knowledge/$slug" });
   const object = getKnowledgeObjectBySlug(slug);
+  const { locale, t } = useLocalization();
 
   const [aiQuery, setAiQuery] = useState("");
   const [aiResult, setAiResult] = useState<EkaAiRetrievalResult | null>(null);
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+
+  const localizedData = getContent({ entity: slug, language: locale });
 
   if (!object) {
     return (
@@ -101,15 +107,23 @@ function KnowledgeDetailPage() {
       {/* Top Breadcrumb & Actions Bar */}
       <header className="sticky top-0 z-40 border-b border-border/80 bg-background/90 backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
-          <Link
-            to="/knowledge"
-            className="flex items-center gap-2 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            <span>Back to Knowledge Graph</span>
-          </Link>
+          <div className="flex items-center gap-3 sm:gap-4">
+            <Link to="/" className="flex items-center transition-opacity hover:opacity-90">
+              <EkaLogo size="sm" />
+            </Link>
+            <span className="text-muted-foreground/60 hidden sm:inline">/</span>
+            <Link
+              to="/knowledge"
+              className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" />
+              <span>{t("nav.knowledge", "Knowledge Graph")}</span>
+            </Link>
+          </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 sm:gap-2.5">
+            <LanguageSelector variant="compact" />
+
             <Button
               variant="ghost"
               size="sm"
@@ -119,7 +133,7 @@ function KnowledgeDetailPage() {
               <Bookmark
                 className={`h-4 w-4 ${isSaved ? "fill-primary text-primary" : ""}`}
               />
-              <span className="hidden sm:inline">{isSaved ? "Saved" : "Save"}</span>
+              <span className="hidden sm:inline">{isSaved ? t("action.saved") : t("action.save")}</span>
             </Button>
             <Button
               variant="outline"
@@ -128,7 +142,7 @@ function KnowledgeDetailPage() {
               className="gap-1.5 text-xs"
             >
               <Share2 className="h-3.5 w-3.5" />
-              <span>Share</span>
+              <span>{t("action.share")}</span>
             </Button>
           </div>
         </div>
@@ -145,28 +159,35 @@ function KnowledgeDetailPage() {
                   variant="outline"
                   className="border-primary/40 text-primary text-xs font-mono uppercase tracking-wider"
                 >
-                  {object.type}
+                  {localizedData.category || object.type}
                 </Badge>
                 <Badge variant="secondary" className="text-xs flex items-center gap-1">
                   <MapPin className="h-3 w-3 text-primary" />
-                  {object.culturalDimensions.identity.regions[0]}
+                  {localizedData.region || object.culturalDimensions.identity.regions[0]}
                 </Badge>
                 <Badge className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs flex items-center gap-1">
                   <ShieldCheck className="h-3 w-3" />
-                  Verified Provenance
+                  {localizedData.verificationStatus === "verified"
+                    ? t("epistemic.verified")
+                    : t("epistemic.reviewNeeded")}
                 </Badge>
+                {localizedData.isFallback && (
+                  <Badge variant="outline" className="text-[10px] text-muted-foreground font-mono">
+                    English Canonical
+                  </Badge>
+                )}
               </div>
 
               <h1 className="mt-4 font-serif text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-foreground">
-                {object.entity}
+                {localizedData.localizedTitle || object.entity}
               </h1>
 
               <p className="mt-3 font-serif text-lg sm:text-xl text-primary font-medium leading-relaxed">
-                "{object.oneLiner}"
+                "{localizedData.localizedOneLiner || object.oneLiner}"
               </p>
 
               <p className="mt-4 text-sm sm:text-base leading-relaxed text-muted-foreground">
-                {object.summary}
+                {localizedData.localizedSummary || object.summary}
               </p>
 
               <div className="mt-6 flex flex-wrap items-center gap-3">

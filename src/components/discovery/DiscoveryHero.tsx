@@ -150,8 +150,8 @@ export function DiscoveryHero({ onInspectCard }: DiscoveryHeroProps) {
                 size="lg"
                 className="min-h-[48px] rounded-xl border-border/80 bg-card/80 px-5 text-sm"
               >
-                <Link to="/founder/ad">
-                  <span>Read the Founder Vision</span>
+                <Link to="/discover">
+                  <span>Discover Traditions</span>
                   <ArrowRight className="ml-1.5 size-4" />
                 </Link>
               </Button>

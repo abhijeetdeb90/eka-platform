@@ -13,6 +13,8 @@ import {
   ArrowUpRight,
   Info,
   Users,
+  Lock,
+  Palette,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,12 +22,14 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
 import { calculateQCS } from "@/lib/economy/contribution-score";
+import { useMonetizationTier } from "@/lib/monetization";
 
 export const Route = createFileRoute("/_authenticated/app/creator/dashboard")({
   component: CreatorDashboardPage,
 });
 
 export function CreatorDashboardPage() {
+  const { canUseCreatorStudio, setTier } = useMonetizationTier();
   const [requestingPayout, setRequestingPayout] = useState(false);
 
   // Sample verified signals for the active creator
@@ -62,6 +66,99 @@ export function CreatorDashboardPage() {
       toast.success("Payout request of ₹12,220 submitted for compliance & bank review.");
     }, 900);
   };
+
+  if (!canUseCreatorStudio) {
+    return (
+      <div className="container-eka mx-auto max-w-4xl space-y-8 px-4 py-12" data-testid="creator-workspace-gate">
+        <div className="rounded-3xl border border-border/80 bg-card p-8 sm:p-12 shadow-calm space-y-6 text-center">
+          <Badge variant="outline" className="border-terracotta/40 text-terracotta text-xs font-mono uppercase gap-1.5">
+            <Lock className="size-3" /> Paid Workspace · Creator Tier
+          </Badge>
+
+          <div className="space-y-2 max-w-2xl mx-auto">
+            <h1 className="font-serif text-3xl sm:text-4xl text-foreground font-normal">
+              Creator Studio — Professional Workspace
+            </h1>
+            <p className="font-mono text-xs sm:text-sm text-terracotta font-semibold">
+              Create → Publish → Analyse → Grow
+            </p>
+            <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed pt-2">
+              Knowledge is free on EKA. Cultural stories, traditions, and the global map are open to all.
+              Creator Studio is clearly positioned as a paid workspace for cultural storytellers, researchers, and community custodians.
+            </p>
+          </div>
+
+          {/* 4 Pillars of Creator Workspace */}
+          <div className="grid gap-4 sm:grid-cols-2 text-left pt-4">
+            <div className="rounded-2xl border border-border/70 bg-sand/15 p-5 space-y-2">
+              <div className="flex items-center gap-2 text-foreground font-medium text-sm">
+                <Palette className="size-4 text-terracotta" />
+                <span>Create & Publish Cultural Stories</span>
+              </div>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Rich storytelling tools, primary source tagging, multi-lingual scripts, and verified lineage attribution.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-border/70 bg-sand/15 p-5 space-y-2">
+              <div className="flex items-center gap-2 text-foreground font-medium text-sm">
+                <TrendingUp className="size-4 text-terracotta" />
+                <span>Creator Analytics & QCS Telemetry</span>
+              </div>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Track qualified reads, saves, meaningful discourse, and your real-time Qualified Contribution Score.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-border/70 bg-sand/15 p-5 space-y-2">
+              <div className="flex items-center gap-2 text-foreground font-medium text-sm">
+                <DollarSign className="size-4 text-emerald-600" />
+                <span>85% Subscription Pool Share</span>
+              </div>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Direct revenue allocation from monthly member subscription pools directly to qualified creators.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-border/70 bg-sand/15 p-5 space-y-2">
+              <div className="flex items-center gap-2 text-foreground font-medium text-sm">
+                <ShieldCheck className="size-4 text-primary" />
+                <span>Advanced Lineage & Verification Rights</span>
+              </div>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Multi-contributor split contracts, peer verifications, and verified custodian badges.
+              </p>
+            </div>
+          </div>
+
+          <div className="pt-6 border-t border-border/60 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <Button asChild size="lg" className="w-full sm:w-auto rounded-full bg-primary text-primary-foreground hover:bg-primary/90">
+              <Link to="/membership">
+                <span>Unlock Creator Studio (₹799/month)</span>
+                <ArrowUpRight className="size-4 ml-1.5" />
+              </Link>
+            </Button>
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={() => {
+                setTier("creator");
+                toast.success("Creator Studio preview mode activated!");
+              }}
+              className="w-full sm:w-auto rounded-full border-terracotta/40 text-terracotta hover:bg-terracotta/5"
+            >
+              <span>Instant Workspace Demo Preview</span>
+            </Button>
+            <Button asChild variant="ghost" size="lg" className="w-full sm:w-auto rounded-full text-muted-foreground">
+              <Link to="/discover">
+                <span>Return to Free Cultural Library</span>
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container-eka mx-auto max-w-6xl space-y-8 px-4 py-8">

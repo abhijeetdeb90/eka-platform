@@ -97,7 +97,7 @@ export const EXPLORE_ICONS: ExploreIconItem[] = [
     id: "creators",
     label: "Creators",
     iconName: "Feather",
-    to: "/founder/ad",
+    to: "/stories",
     description: "Scholars, elders & masters",
   },
   {
@@ -105,7 +105,7 @@ export const EXPLORE_ICONS: ExploreIconItem[] = [
     label: "Local",
     iconName: "ShoppingBag",
     to: "/ritual-kits",
-    description: "Ancestral crafts & living brands",
+    description: "Ancestral crafts & artisanal living",
   },
   {
     id: "ai",
@@ -498,22 +498,22 @@ export const TRADITIONS_LIST: EkaDiscoveryCard[] = [
 
 export const CREATORS_LIST: EkaDiscoveryCard[] = [
   {
-    id: "creator-1-ad",
+    id: "creator-1-craftsman",
     type: "creator",
-    categoryBadge: "FOUNDER · ARCHITECTURE",
-    title: "AD — Founder of EKA",
+    categoryBadge: "MASTER · TEMPLE ARCHITECTURE",
+    title: "Shilpi Ramanathan — Temple Sthapati",
     oneLiner:
-      "Building the trusted intelligence layer for cultures, communities and local knowledge.",
+      "Preserving canonical Vastu and sacred geometry stone carving lineages.",
     fullExplanation:
-      "Technologist, systems architect, and cultural preservationist dedicated to anchoring artificial intelligence to genuine human lineage heritage rather than synthetic hallucinations.",
+      "Master craftsman and architectural preservationist transmitting sacred stone carving traditions and mathematical proportions across South Indian temple heritage.",
     image: "/brand/ad-founder.jpg",
-    location: "Bengaluru & Varanasi",
-    community: "EKA Foundational Guild",
-    tradition: "Civilizational Knowledge Systems",
+    location: "Thanjavur, Tamil Nadu",
+    community: "Sthapati Guild Heritage",
+    tradition: "Sacred Stone Architecture",
     verified: true,
-    sourceCitation: "EKA Epistemic Stewardship Charter (2026).",
-    knowledgeTags: ["Knowledge Graph", "Cultural AI", "Epistemology", "Architecture"],
-    linkTo: "/founder/ad",
+    sourceCitation: "Tamil Nadu Heritage Crafts Council (2025).",
+    knowledgeTags: ["Vastu Shastra", "Sacred Geometry", "Temple Carving", "Lineage"],
+    linkTo: "/stories",
     stats: { saves: 1420, discussions: 312 },
     featured: true,
   },

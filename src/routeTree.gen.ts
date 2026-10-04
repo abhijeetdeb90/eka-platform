@@ -16,6 +16,7 @@ import { Route as AgentRouteImport } from './routes/agent'
 import { Route as AudienceRouteImport } from './routes/audience'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as BrandsRouteImport } from './routes/brands'
+import { Route as BrandsEnterpriseRouteImport } from './routes/brands-enterprise'
 import { Route as CampaignsRouteImport } from './routes/campaigns'
 import { Route as CommunityRouteImport } from './routes/community'
 import { Route as ContentRouteImport } from './routes/content'
@@ -26,6 +27,7 @@ import { Route as CrmRouteImport } from './routes/crm'
 import { Route as DiscoverRouteImport } from './routes/discover'
 import { Route as EnterpriseRouteImport } from './routes/enterprise'
 import { Route as FounderRouteImport } from './routes/founder'
+import { Route as FounderAdminRouteImport } from './routes/founder-admin'
 import { Route as GiveRouteImport } from './routes/give'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as InsightsRouteImport } from './routes/insights'
@@ -61,6 +63,21 @@ import { Route as ApiReconciliationRouteImport } from './routes/api/reconciliati
 import { Route as ApiRefundsRouteImport } from './routes/api/refunds'
 import { Route as ApiSubscriptionsRouteImport } from './routes/api/subscriptions'
 import { Route as ApiWebhooksRouteImport } from './routes/api/webhooks'
+import { Route as BrandsEnterpriseIndexRouteImport } from './routes/brands-enterprise.index'
+import { Route as BrandsEnterpriseAgentRouteImport } from './routes/brands-enterprise.agent'
+import { Route as BrandsEnterpriseAudienceRouteImport } from './routes/brands-enterprise.audience'
+import { Route as BrandsEnterpriseCampaignsRouteImport } from './routes/brands-enterprise.campaigns'
+import { Route as BrandsEnterpriseEnterpriseRouteImport } from './routes/brands-enterprise.enterprise'
+import { Route as BrandsEnterpriseFinanceRouteImport } from './routes/brands-enterprise.finance'
+import { Route as FounderAdminIndexRouteImport } from './routes/founder-admin.index'
+import { Route as FounderAdminCrmRouteImport } from './routes/founder-admin.crm'
+import { Route as FounderAdminEconomicsRouteImport } from './routes/founder-admin.economics'
+import { Route as FounderAdminFinanceRouteImport } from './routes/founder-admin.finance'
+import { Route as FounderAdminKnowledgeRouteImport } from './routes/founder-admin.knowledge'
+import { Route as FounderAdminOpsRouteImport } from './routes/founder-admin.ops'
+import { Route as FounderAdminRiskRouteImport } from './routes/founder-admin.risk'
+import { Route as FounderAdminStudioRouteImport } from './routes/founder-admin.studio'
+import { Route as FounderAdminSystemRouteImport } from './routes/founder-admin.system'
 import { Route as FounderAdRouteImport } from './routes/founder.ad'
 import { Route as KnowledgeIndexRouteImport } from './routes/knowledge.index'
 import { Route as KnowledgeSlugRouteImport } from './routes/knowledge.$slug'
@@ -164,6 +181,11 @@ const BrandsRoute = BrandsRouteImport.update({
   path: '/brands',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BrandsEnterpriseRoute = BrandsEnterpriseRouteImport.update({
+  id: '/brands-enterprise',
+  path: '/brands-enterprise',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CampaignsRoute = CampaignsRouteImport.update({
   id: '/campaigns',
   path: '/campaigns',
@@ -212,6 +234,11 @@ const EnterpriseRoute = EnterpriseRouteImport.update({
 const FounderRoute = FounderRouteImport.update({
   id: '/founder',
   path: '/founder',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FounderAdminRoute = FounderAdminRouteImport.update({
+  id: '/founder-admin',
+  path: '/founder-admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GiveRoute = GiveRouteImport.update({
@@ -389,6 +416,84 @@ const ApiWebhooksRoute = ApiWebhooksRouteImport.update({
   id: '/api/webhooks',
   path: '/api/webhooks',
   getParentRoute: () => rootRouteImport,
+} as any)
+const BrandsEnterpriseIndexRoute = BrandsEnterpriseIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => BrandsEnterpriseRoute,
+} as any)
+const BrandsEnterpriseAgentRoute = BrandsEnterpriseAgentRouteImport.update({
+  id: '/agent',
+  path: '/agent',
+  getParentRoute: () => BrandsEnterpriseRoute,
+} as any)
+const BrandsEnterpriseAudienceRoute =
+  BrandsEnterpriseAudienceRouteImport.update({
+    id: '/audience',
+    path: '/audience',
+    getParentRoute: () => BrandsEnterpriseRoute,
+  } as any)
+const BrandsEnterpriseCampaignsRoute =
+  BrandsEnterpriseCampaignsRouteImport.update({
+    id: '/campaigns',
+    path: '/campaigns',
+    getParentRoute: () => BrandsEnterpriseRoute,
+  } as any)
+const BrandsEnterpriseEnterpriseRoute =
+  BrandsEnterpriseEnterpriseRouteImport.update({
+    id: '/enterprise',
+    path: '/enterprise',
+    getParentRoute: () => BrandsEnterpriseRoute,
+  } as any)
+const BrandsEnterpriseFinanceRoute = BrandsEnterpriseFinanceRouteImport.update({
+  id: '/finance',
+  path: '/finance',
+  getParentRoute: () => BrandsEnterpriseRoute,
+} as any)
+const FounderAdminIndexRoute = FounderAdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => FounderAdminRoute,
+} as any)
+const FounderAdminCrmRoute = FounderAdminCrmRouteImport.update({
+  id: '/crm',
+  path: '/crm',
+  getParentRoute: () => FounderAdminRoute,
+} as any)
+const FounderAdminEconomicsRoute = FounderAdminEconomicsRouteImport.update({
+  id: '/economics',
+  path: '/economics',
+  getParentRoute: () => FounderAdminRoute,
+} as any)
+const FounderAdminFinanceRoute = FounderAdminFinanceRouteImport.update({
+  id: '/finance',
+  path: '/finance',
+  getParentRoute: () => FounderAdminRoute,
+} as any)
+const FounderAdminKnowledgeRoute = FounderAdminKnowledgeRouteImport.update({
+  id: '/knowledge',
+  path: '/knowledge',
+  getParentRoute: () => FounderAdminRoute,
+} as any)
+const FounderAdminOpsRoute = FounderAdminOpsRouteImport.update({
+  id: '/ops',
+  path: '/ops',
+  getParentRoute: () => FounderAdminRoute,
+} as any)
+const FounderAdminRiskRoute = FounderAdminRiskRouteImport.update({
+  id: '/risk',
+  path: '/risk',
+  getParentRoute: () => FounderAdminRoute,
+} as any)
+const FounderAdminStudioRoute = FounderAdminStudioRouteImport.update({
+  id: '/studio',
+  path: '/studio',
+  getParentRoute: () => FounderAdminRoute,
+} as any)
+const FounderAdminSystemRoute = FounderAdminSystemRouteImport.update({
+  id: '/system',
+  path: '/system',
+  getParentRoute: () => FounderAdminRoute,
 } as any)
 const FounderAdRoute = FounderAdRouteImport.update({
   id: '/ad',
@@ -772,6 +877,7 @@ export interface FileRoutesByFullPath {
   '/audience': typeof AudienceRoute
   '/auth': typeof AuthRoute
   '/brands': typeof BrandsRoute
+  '/brands-enterprise': typeof BrandsEnterpriseRouteWithChildren
   '/campaigns': typeof CampaignsRoute
   '/community': typeof CommunityRoute
   '/content': typeof ContentRoute
@@ -782,6 +888,7 @@ export interface FileRoutesByFullPath {
   '/discover': typeof DiscoverRoute
   '/enterprise': typeof EnterpriseRoute
   '/founder': typeof FounderRouteWithChildren
+  '/founder-admin': typeof FounderAdminRouteWithChildren
   '/give': typeof GiveRoute
   '/home': typeof HomeRoute
   '/insights': typeof InsightsRoute
@@ -817,10 +924,25 @@ export interface FileRoutesByFullPath {
   '/api/refunds': typeof ApiRefundsRoute
   '/api/subscriptions': typeof ApiSubscriptionsRoute
   '/api/webhooks': typeof ApiWebhooksRouteWithChildren
+  '/brands-enterprise/agent': typeof BrandsEnterpriseAgentRoute
+  '/brands-enterprise/audience': typeof BrandsEnterpriseAudienceRoute
+  '/brands-enterprise/campaigns': typeof BrandsEnterpriseCampaignsRoute
+  '/brands-enterprise/enterprise': typeof BrandsEnterpriseEnterpriseRoute
+  '/brands-enterprise/finance': typeof BrandsEnterpriseFinanceRoute
+  '/founder-admin/crm': typeof FounderAdminCrmRoute
+  '/founder-admin/economics': typeof FounderAdminEconomicsRoute
+  '/founder-admin/finance': typeof FounderAdminFinanceRoute
+  '/founder-admin/knowledge': typeof FounderAdminKnowledgeRoute
+  '/founder-admin/ops': typeof FounderAdminOpsRoute
+  '/founder-admin/risk': typeof FounderAdminRiskRoute
+  '/founder-admin/studio': typeof FounderAdminStudioRoute
+  '/founder-admin/system': typeof FounderAdminSystemRoute
   '/founder/ad': typeof FounderAdRoute
   '/knowledge/$slug': typeof KnowledgeSlugRoute
   '/passport/$slug': typeof PassportSlugRoute
   '/people/$username': typeof PeopleUsernameRoute
+  '/brands-enterprise/': typeof BrandsEnterpriseIndexRoute
+  '/founder-admin/': typeof FounderAdminIndexRoute
   '/knowledge/': typeof KnowledgeIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/admin/creator-risk': typeof AuthenticatedAdminCreatorRiskRoute
@@ -937,10 +1059,25 @@ export interface FileRoutesByTo {
   '/api/refunds': typeof ApiRefundsRoute
   '/api/subscriptions': typeof ApiSubscriptionsRoute
   '/api/webhooks': typeof ApiWebhooksRouteWithChildren
+  '/brands-enterprise/agent': typeof BrandsEnterpriseAgentRoute
+  '/brands-enterprise/audience': typeof BrandsEnterpriseAudienceRoute
+  '/brands-enterprise/campaigns': typeof BrandsEnterpriseCampaignsRoute
+  '/brands-enterprise/enterprise': typeof BrandsEnterpriseEnterpriseRoute
+  '/brands-enterprise/finance': typeof BrandsEnterpriseFinanceRoute
+  '/founder-admin/crm': typeof FounderAdminCrmRoute
+  '/founder-admin/economics': typeof FounderAdminEconomicsRoute
+  '/founder-admin/finance': typeof FounderAdminFinanceRoute
+  '/founder-admin/knowledge': typeof FounderAdminKnowledgeRoute
+  '/founder-admin/ops': typeof FounderAdminOpsRoute
+  '/founder-admin/risk': typeof FounderAdminRiskRoute
+  '/founder-admin/studio': typeof FounderAdminStudioRoute
+  '/founder-admin/system': typeof FounderAdminSystemRoute
   '/founder/ad': typeof FounderAdRoute
   '/knowledge/$slug': typeof KnowledgeSlugRoute
   '/passport/$slug': typeof PassportSlugRoute
   '/people/$username': typeof PeopleUsernameRoute
+  '/brands-enterprise': typeof BrandsEnterpriseIndexRoute
+  '/founder-admin': typeof FounderAdminIndexRoute
   '/knowledge': typeof KnowledgeIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/admin/creator-risk': typeof AuthenticatedAdminCreatorRiskRoute
@@ -1015,6 +1152,7 @@ export interface FileRoutesById {
   '/audience': typeof AudienceRoute
   '/auth': typeof AuthRoute
   '/brands': typeof BrandsRoute
+  '/brands-enterprise': typeof BrandsEnterpriseRouteWithChildren
   '/campaigns': typeof CampaignsRoute
   '/community': typeof CommunityRoute
   '/content': typeof ContentRoute
@@ -1025,6 +1163,7 @@ export interface FileRoutesById {
   '/discover': typeof DiscoverRoute
   '/enterprise': typeof EnterpriseRoute
   '/founder': typeof FounderRouteWithChildren
+  '/founder-admin': typeof FounderAdminRouteWithChildren
   '/give': typeof GiveRoute
   '/home': typeof HomeRoute
   '/insights': typeof InsightsRoute
@@ -1060,10 +1199,25 @@ export interface FileRoutesById {
   '/api/refunds': typeof ApiRefundsRoute
   '/api/subscriptions': typeof ApiSubscriptionsRoute
   '/api/webhooks': typeof ApiWebhooksRouteWithChildren
+  '/brands-enterprise/agent': typeof BrandsEnterpriseAgentRoute
+  '/brands-enterprise/audience': typeof BrandsEnterpriseAudienceRoute
+  '/brands-enterprise/campaigns': typeof BrandsEnterpriseCampaignsRoute
+  '/brands-enterprise/enterprise': typeof BrandsEnterpriseEnterpriseRoute
+  '/brands-enterprise/finance': typeof BrandsEnterpriseFinanceRoute
+  '/founder-admin/crm': typeof FounderAdminCrmRoute
+  '/founder-admin/economics': typeof FounderAdminEconomicsRoute
+  '/founder-admin/finance': typeof FounderAdminFinanceRoute
+  '/founder-admin/knowledge': typeof FounderAdminKnowledgeRoute
+  '/founder-admin/ops': typeof FounderAdminOpsRoute
+  '/founder-admin/risk': typeof FounderAdminRiskRoute
+  '/founder-admin/studio': typeof FounderAdminStudioRoute
+  '/founder-admin/system': typeof FounderAdminSystemRoute
   '/founder/ad': typeof FounderAdRoute
   '/knowledge/$slug': typeof KnowledgeSlugRoute
   '/passport/$slug': typeof PassportSlugRoute
   '/people/$username': typeof PeopleUsernameRoute
+  '/brands-enterprise/': typeof BrandsEnterpriseIndexRoute
+  '/founder-admin/': typeof FounderAdminIndexRoute
   '/knowledge/': typeof KnowledgeIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/_authenticated/admin/creator-risk': typeof AuthenticatedAdminCreatorRiskRoute
@@ -1138,6 +1292,7 @@ export interface FileRouteTypes {
     | '/audience'
     | '/auth'
     | '/brands'
+    | '/brands-enterprise'
     | '/campaigns'
     | '/community'
     | '/content'
@@ -1148,6 +1303,7 @@ export interface FileRouteTypes {
     | '/discover'
     | '/enterprise'
     | '/founder'
+    | '/founder-admin'
     | '/give'
     | '/home'
     | '/insights'
@@ -1183,10 +1339,25 @@ export interface FileRouteTypes {
     | '/api/refunds'
     | '/api/subscriptions'
     | '/api/webhooks'
+    | '/brands-enterprise/agent'
+    | '/brands-enterprise/audience'
+    | '/brands-enterprise/campaigns'
+    | '/brands-enterprise/enterprise'
+    | '/brands-enterprise/finance'
+    | '/founder-admin/crm'
+    | '/founder-admin/economics'
+    | '/founder-admin/finance'
+    | '/founder-admin/knowledge'
+    | '/founder-admin/ops'
+    | '/founder-admin/risk'
+    | '/founder-admin/studio'
+    | '/founder-admin/system'
     | '/founder/ad'
     | '/knowledge/$slug'
     | '/passport/$slug'
     | '/people/$username'
+    | '/brands-enterprise/'
+    | '/founder-admin/'
     | '/knowledge/'
     | '/.lovable/oauth/consent'
     | '/admin/creator-risk'
@@ -1303,10 +1474,25 @@ export interface FileRouteTypes {
     | '/api/refunds'
     | '/api/subscriptions'
     | '/api/webhooks'
+    | '/brands-enterprise/agent'
+    | '/brands-enterprise/audience'
+    | '/brands-enterprise/campaigns'
+    | '/brands-enterprise/enterprise'
+    | '/brands-enterprise/finance'
+    | '/founder-admin/crm'
+    | '/founder-admin/economics'
+    | '/founder-admin/finance'
+    | '/founder-admin/knowledge'
+    | '/founder-admin/ops'
+    | '/founder-admin/risk'
+    | '/founder-admin/studio'
+    | '/founder-admin/system'
     | '/founder/ad'
     | '/knowledge/$slug'
     | '/passport/$slug'
     | '/people/$username'
+    | '/brands-enterprise'
+    | '/founder-admin'
     | '/knowledge'
     | '/.lovable/oauth/consent'
     | '/admin/creator-risk'
@@ -1380,6 +1566,7 @@ export interface FileRouteTypes {
     | '/audience'
     | '/auth'
     | '/brands'
+    | '/brands-enterprise'
     | '/campaigns'
     | '/community'
     | '/content'
@@ -1390,6 +1577,7 @@ export interface FileRouteTypes {
     | '/discover'
     | '/enterprise'
     | '/founder'
+    | '/founder-admin'
     | '/give'
     | '/home'
     | '/insights'
@@ -1425,10 +1613,25 @@ export interface FileRouteTypes {
     | '/api/refunds'
     | '/api/subscriptions'
     | '/api/webhooks'
+    | '/brands-enterprise/agent'
+    | '/brands-enterprise/audience'
+    | '/brands-enterprise/campaigns'
+    | '/brands-enterprise/enterprise'
+    | '/brands-enterprise/finance'
+    | '/founder-admin/crm'
+    | '/founder-admin/economics'
+    | '/founder-admin/finance'
+    | '/founder-admin/knowledge'
+    | '/founder-admin/ops'
+    | '/founder-admin/risk'
+    | '/founder-admin/studio'
+    | '/founder-admin/system'
     | '/founder/ad'
     | '/knowledge/$slug'
     | '/passport/$slug'
     | '/people/$username'
+    | '/brands-enterprise/'
+    | '/founder-admin/'
     | '/knowledge/'
     | '/.lovable/oauth/consent'
     | '/_authenticated/admin/creator-risk'
@@ -1503,6 +1706,7 @@ export interface RootRouteChildren {
   AudienceRoute: typeof AudienceRoute
   AuthRoute: typeof AuthRoute
   BrandsRoute: typeof BrandsRoute
+  BrandsEnterpriseRoute: typeof BrandsEnterpriseRouteWithChildren
   CampaignsRoute: typeof CampaignsRoute
   CommunityRoute: typeof CommunityRoute
   ContentRoute: typeof ContentRoute
@@ -1513,6 +1717,7 @@ export interface RootRouteChildren {
   DiscoverRoute: typeof DiscoverRoute
   EnterpriseRoute: typeof EnterpriseRoute
   FounderRoute: typeof FounderRouteWithChildren
+  FounderAdminRoute: typeof FounderAdminRouteWithChildren
   GiveRoute: typeof GiveRoute
   HomeRoute: typeof HomeRoute
   InsightsRoute: typeof InsightsRoute
@@ -1611,6 +1816,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BrandsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/brands-enterprise': {
+      id: '/brands-enterprise'
+      path: '/brands-enterprise'
+      fullPath: '/brands-enterprise'
+      preLoaderRoute: typeof BrandsEnterpriseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/campaigns': {
       id: '/campaigns'
       path: '/campaigns'
@@ -1679,6 +1891,13 @@ declare module '@tanstack/react-router' {
       path: '/founder'
       fullPath: '/founder'
       preLoaderRoute: typeof FounderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/founder-admin': {
+      id: '/founder-admin'
+      path: '/founder-admin'
+      fullPath: '/founder-admin'
+      preLoaderRoute: typeof FounderAdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/give': {
@@ -1925,6 +2144,111 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/webhooks'
       preLoaderRoute: typeof ApiWebhooksRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/brands-enterprise/': {
+      id: '/brands-enterprise/'
+      path: '/'
+      fullPath: '/brands-enterprise/'
+      preLoaderRoute: typeof BrandsEnterpriseIndexRouteImport
+      parentRoute: typeof BrandsEnterpriseRoute
+    }
+    '/brands-enterprise/agent': {
+      id: '/brands-enterprise/agent'
+      path: '/agent'
+      fullPath: '/brands-enterprise/agent'
+      preLoaderRoute: typeof BrandsEnterpriseAgentRouteImport
+      parentRoute: typeof BrandsEnterpriseRoute
+    }
+    '/brands-enterprise/audience': {
+      id: '/brands-enterprise/audience'
+      path: '/audience'
+      fullPath: '/brands-enterprise/audience'
+      preLoaderRoute: typeof BrandsEnterpriseAudienceRouteImport
+      parentRoute: typeof BrandsEnterpriseRoute
+    }
+    '/brands-enterprise/campaigns': {
+      id: '/brands-enterprise/campaigns'
+      path: '/campaigns'
+      fullPath: '/brands-enterprise/campaigns'
+      preLoaderRoute: typeof BrandsEnterpriseCampaignsRouteImport
+      parentRoute: typeof BrandsEnterpriseRoute
+    }
+    '/brands-enterprise/enterprise': {
+      id: '/brands-enterprise/enterprise'
+      path: '/enterprise'
+      fullPath: '/brands-enterprise/enterprise'
+      preLoaderRoute: typeof BrandsEnterpriseEnterpriseRouteImport
+      parentRoute: typeof BrandsEnterpriseRoute
+    }
+    '/brands-enterprise/finance': {
+      id: '/brands-enterprise/finance'
+      path: '/finance'
+      fullPath: '/brands-enterprise/finance'
+      preLoaderRoute: typeof BrandsEnterpriseFinanceRouteImport
+      parentRoute: typeof BrandsEnterpriseRoute
+    }
+    '/founder-admin/': {
+      id: '/founder-admin/'
+      path: '/'
+      fullPath: '/founder-admin/'
+      preLoaderRoute: typeof FounderAdminIndexRouteImport
+      parentRoute: typeof FounderAdminRoute
+    }
+    '/founder-admin/crm': {
+      id: '/founder-admin/crm'
+      path: '/crm'
+      fullPath: '/founder-admin/crm'
+      preLoaderRoute: typeof FounderAdminCrmRouteImport
+      parentRoute: typeof FounderAdminRoute
+    }
+    '/founder-admin/economics': {
+      id: '/founder-admin/economics'
+      path: '/economics'
+      fullPath: '/founder-admin/economics'
+      preLoaderRoute: typeof FounderAdminEconomicsRouteImport
+      parentRoute: typeof FounderAdminRoute
+    }
+    '/founder-admin/finance': {
+      id: '/founder-admin/finance'
+      path: '/finance'
+      fullPath: '/founder-admin/finance'
+      preLoaderRoute: typeof FounderAdminFinanceRouteImport
+      parentRoute: typeof FounderAdminRoute
+    }
+    '/founder-admin/knowledge': {
+      id: '/founder-admin/knowledge'
+      path: '/knowledge'
+      fullPath: '/founder-admin/knowledge'
+      preLoaderRoute: typeof FounderAdminKnowledgeRouteImport
+      parentRoute: typeof FounderAdminRoute
+    }
+    '/founder-admin/ops': {
+      id: '/founder-admin/ops'
+      path: '/ops'
+      fullPath: '/founder-admin/ops'
+      preLoaderRoute: typeof FounderAdminOpsRouteImport
+      parentRoute: typeof FounderAdminRoute
+    }
+    '/founder-admin/risk': {
+      id: '/founder-admin/risk'
+      path: '/risk'
+      fullPath: '/founder-admin/risk'
+      preLoaderRoute: typeof FounderAdminRiskRouteImport
+      parentRoute: typeof FounderAdminRoute
+    }
+    '/founder-admin/studio': {
+      id: '/founder-admin/studio'
+      path: '/studio'
+      fullPath: '/founder-admin/studio'
+      preLoaderRoute: typeof FounderAdminStudioRouteImport
+      parentRoute: typeof FounderAdminRoute
+    }
+    '/founder-admin/system': {
+      id: '/founder-admin/system'
+      path: '/system'
+      fullPath: '/founder-admin/system'
+      preLoaderRoute: typeof FounderAdminSystemRouteImport
+      parentRoute: typeof FounderAdminRoute
     }
     '/founder/ad': {
       id: '/founder/ad'
@@ -2548,6 +2872,27 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface BrandsEnterpriseRouteChildren {
+  BrandsEnterpriseAgentRoute: typeof BrandsEnterpriseAgentRoute
+  BrandsEnterpriseAudienceRoute: typeof BrandsEnterpriseAudienceRoute
+  BrandsEnterpriseCampaignsRoute: typeof BrandsEnterpriseCampaignsRoute
+  BrandsEnterpriseEnterpriseRoute: typeof BrandsEnterpriseEnterpriseRoute
+  BrandsEnterpriseFinanceRoute: typeof BrandsEnterpriseFinanceRoute
+  BrandsEnterpriseIndexRoute: typeof BrandsEnterpriseIndexRoute
+}
+
+const BrandsEnterpriseRouteChildren: BrandsEnterpriseRouteChildren = {
+  BrandsEnterpriseAgentRoute: BrandsEnterpriseAgentRoute,
+  BrandsEnterpriseAudienceRoute: BrandsEnterpriseAudienceRoute,
+  BrandsEnterpriseCampaignsRoute: BrandsEnterpriseCampaignsRoute,
+  BrandsEnterpriseEnterpriseRoute: BrandsEnterpriseEnterpriseRoute,
+  BrandsEnterpriseFinanceRoute: BrandsEnterpriseFinanceRoute,
+  BrandsEnterpriseIndexRoute: BrandsEnterpriseIndexRoute,
+}
+
+const BrandsEnterpriseRouteWithChildren =
+  BrandsEnterpriseRoute._addFileChildren(BrandsEnterpriseRouteChildren)
+
 interface FounderRouteChildren {
   FounderAdRoute: typeof FounderAdRoute
 }
@@ -2558,6 +2903,34 @@ const FounderRouteChildren: FounderRouteChildren = {
 
 const FounderRouteWithChildren =
   FounderRoute._addFileChildren(FounderRouteChildren)
+
+interface FounderAdminRouteChildren {
+  FounderAdminCrmRoute: typeof FounderAdminCrmRoute
+  FounderAdminEconomicsRoute: typeof FounderAdminEconomicsRoute
+  FounderAdminFinanceRoute: typeof FounderAdminFinanceRoute
+  FounderAdminKnowledgeRoute: typeof FounderAdminKnowledgeRoute
+  FounderAdminOpsRoute: typeof FounderAdminOpsRoute
+  FounderAdminRiskRoute: typeof FounderAdminRiskRoute
+  FounderAdminStudioRoute: typeof FounderAdminStudioRoute
+  FounderAdminSystemRoute: typeof FounderAdminSystemRoute
+  FounderAdminIndexRoute: typeof FounderAdminIndexRoute
+}
+
+const FounderAdminRouteChildren: FounderAdminRouteChildren = {
+  FounderAdminCrmRoute: FounderAdminCrmRoute,
+  FounderAdminEconomicsRoute: FounderAdminEconomicsRoute,
+  FounderAdminFinanceRoute: FounderAdminFinanceRoute,
+  FounderAdminKnowledgeRoute: FounderAdminKnowledgeRoute,
+  FounderAdminOpsRoute: FounderAdminOpsRoute,
+  FounderAdminRiskRoute: FounderAdminRiskRoute,
+  FounderAdminStudioRoute: FounderAdminStudioRoute,
+  FounderAdminSystemRoute: FounderAdminSystemRoute,
+  FounderAdminIndexRoute: FounderAdminIndexRoute,
+}
+
+const FounderAdminRouteWithChildren = FounderAdminRoute._addFileChildren(
+  FounderAdminRouteChildren,
+)
 
 interface ApiWebhooksRouteChildren {
   ApiWebhooksRazorpayRoute: typeof ApiWebhooksRazorpayRoute
@@ -2579,6 +2952,7 @@ const rootRouteChildren: RootRouteChildren = {
   AudienceRoute: AudienceRoute,
   AuthRoute: AuthRoute,
   BrandsRoute: BrandsRoute,
+  BrandsEnterpriseRoute: BrandsEnterpriseRouteWithChildren,
   CampaignsRoute: CampaignsRoute,
   CommunityRoute: CommunityRoute,
   ContentRoute: ContentRoute,
@@ -2589,6 +2963,7 @@ const rootRouteChildren: RootRouteChildren = {
   DiscoverRoute: DiscoverRoute,
   EnterpriseRoute: EnterpriseRoute,
   FounderRoute: FounderRouteWithChildren,
+  FounderAdminRoute: FounderAdminRouteWithChildren,
   GiveRoute: GiveRoute,
   HomeRoute: HomeRoute,
   InsightsRoute: InsightsRoute,

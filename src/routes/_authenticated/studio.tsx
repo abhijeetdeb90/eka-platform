@@ -1,10 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { StudioLayout } from "@/components/studio/StudioLayout";
+import { createFileRoute, redirect } from "@tanstack/react-router";
+import { verifyFounderAdminAccess } from "@/lib/auth/access-control";
 
 export const Route = createFileRoute("/_authenticated/studio")({
-  component: StudioRoute,
+  beforeLoad: async () => {
+    await verifyFounderAdminAccess("/app");
+    throw redirect({ to: "/founder-admin/studio" });
+  },
+  component: () => null,
 });
-
-function StudioRoute() {
-  return <StudioLayout />;
-}

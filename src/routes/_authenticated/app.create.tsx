@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { AppScreen } from "@/components/app/AppScreen";
 import { Composer } from "@/components/app/Composer";
 import { KnowledgeComposer } from "@/components/app/KnowledgeComposer";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/app/create")({
@@ -15,6 +16,13 @@ function CreatePage() {
 
   return (
     <AppScreen eyebrow="Create" title="What is on your mind?">
+      {/* Creator Studio Workspace Reference */}
+      <div className="rounded-2xl border border-primary/25 bg-sand/20 p-3.5 flex flex-col sm:flex-row items-center justify-between gap-2.5 text-xs text-muted-foreground">
+        <span>Story publishing, creator analytics & 85% revenue pools are in the paid workspace.</span>
+        <Button variant="link" size="sm" asChild className="h-auto p-0 text-xs text-primary font-semibold shrink-0">
+          <Link to="/app/creator">Open Creator Studio 🔒 (Create → Publish → Analyse → Grow) →</Link>
+        </Button>
+      </div>
       <div role="tablist" aria-label="What to create" className="flex gap-1.5">
         {(
           [

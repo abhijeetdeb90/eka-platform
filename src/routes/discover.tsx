@@ -1,23 +1,44 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { CulturalIntelligenceExplorer } from "@/components/discovery/CulturalIntelligenceExplorer";
+import React, { useState, useEffect } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
-import { Compass, ArrowRight } from "lucide-react";
-import { Link } from "@tanstack/react-router";
+import {
+  Compass,
+  ArrowRight,
+  Sparkles,
+  Globe,
+  BookOpen,
+  MapPin,
+  Calendar,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { AskEkaHero } from "@/components/discovery/AskEkaHero";
+import {
+  DiscoverArchitectureNav,
+  type DiscoverNavSelection,
+} from "@/components/discovery/DiscoverArchitectureNav";
+import { GlobalCulturalMap } from "@/components/discovery/GlobalCulturalMap";
+import { VisualDiscoverFeed } from "@/components/discovery/VisualDiscoverFeed";
+import { CompareCulturesSection } from "@/components/discovery/CompareCulturesSection";
+import {
+  ContextualAskEkaModal,
+  type ContextualAskEkaTarget,
+} from "@/components/discovery/ContextualAskEkaModal";
 
 export const Route = createFileRoute("/discover")({
   head: () => ({
     meta: [
-      { title: "Discover — Living Cultural Heritage & Sacred Geography on EKA" },
+      { title: "Discover — Global Culture Intelligence on EKA" },
       {
         name: "description",
         content:
-          "Explore living traditions, sacred places, and cultural intelligence across unbroken lineages on EKA.",
+          "Explore living traditions, sacred places, and global cultural intelligence across unbroken lineages on EKA. Don't just scroll the world. Understand it.",
       },
-      { property: "og:title", content: "Discover on EKA" },
+      { property: "og:title", content: "Discover on EKA — Global Culture Intelligence" },
       {
         property: "og:description",
-        content: "Living cultural heritage, sacred geography, and community traditions.",
+        content:
+          "See → Wonder → Ask → Understand. Explore the world's cultures, communities, and sacred stories.",
       },
     ],
   }),
@@ -25,80 +46,117 @@ export const Route = createFileRoute("/discover")({
 });
 
 function DiscoverPage() {
+  const [activePillar, setActivePillar] = useState<string>("world");
+  const [activeSubcategory, setActiveSubcategory] = useState<string>("India");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalTarget, setModalTarget] = useState<ContextualAskEkaTarget | null>(null);
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
+
+  const handleOpenAskEka = (target?: ContextualAskEkaTarget) => {
+    setModalTarget(target ?? null);
+    setModalOpen(true);
+  };
+
+  const handleNavSelect = (sel: DiscoverNavSelection) => {
+    setActivePillar(sel.pillar);
+    if (sel.subCategory) {
+      setActiveSubcategory(sel.subCategory);
+    }
+    if (sel.pillar === "ai") {
+      handleOpenAskEka({
+        title: "Global Culture",
+        initialQuestion: "What are you curious about?",
+      });
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
+    <div
+      data-testid="eka-discover-page"
+      data-hydrated={isHydrated ? "true" : "false"}
+      className="min-h-screen bg-background text-foreground flex flex-col font-sans"
+    >
       <SiteHeader />
-      <main id="main-content" className="flex-1 container-eka py-10 sm:py-16 space-y-12">
-        <div className="max-w-3xl space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-border/80 bg-accent/30 text-xs font-mono text-terracotta">
-            <Compass className="size-3.5" />
-            <span className="uppercase tracking-wider">Living Discovery</span>
-          </div>
-          <h1 className="font-display font-serif text-3xl sm:text-5xl font-normal tracking-tight">
-            Discover Cultures, Places & Living Wisdom
-          </h1>
-          <p className="text-muted-foreground text-sm sm:text-base font-light leading-relaxed">
-            Inquire into sacred geography, lineage memory, and cultural intelligence curated without noise.
+
+      <main id="main-content" className="flex-1 container-eka py-8 sm:py-14 space-y-12 sm:space-y-16">
+        {/* 1. Hero: Ask EKA Entry Point (Not a chatbot clone; cultural guide) */}
+        <AskEkaHero onAskEka={handleOpenAskEka} />
+
+        {/* 2. Discover Architecture Navigation (5 Pillars & Categories) */}
+        <DiscoverArchitectureNav
+          activePillar={activePillar}
+          activeSubcategory={activeSubcategory}
+          onSelect={handleNavSelect}
+        />
+
+        {/* 3. Global Cultural Intelligence Map (Interactive MVP) */}
+        <section id="cultural-map" className="space-y-4">
+          <GlobalCulturalMap onAskEka={handleOpenAskEka} />
+        </section>
+
+        {/* 4. Visual Discover Feed (Pinterest x NatGeo x Cultural Feed) */}
+        <section id="visual-feed" className="space-y-6">
+          <VisualDiscoverFeed onAskEka={handleOpenAskEka} />
+        </section>
+
+        {/* 5. Compare Cultures Viral Feature ("ONE WITH ALL") */}
+        <section id="compare-cultures" className="space-y-6">
+          <CompareCulturesSection onAskEka={handleOpenAskEka} />
+        </section>
+
+        {/* 6. Strategic Loop & EKA Consumer Promise Callout */}
+        <section className="rounded-3xl border border-terracotta/20 bg-sand/15 p-8 sm:p-12 text-center space-y-4">
+          <span className="text-[11px] font-mono uppercase tracking-[0.25em] text-terracotta font-semibold">
+            The EKA Consumer Promise
+          </span>
+          <h3 className="font-serif text-2xl sm:text-4xl font-normal text-foreground">
+            Don't just scroll the world. Understand it.
+          </h3>
+          <p className="font-serif text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            See → Wonder → Ask → Understand → Discover → Connect → Contribute → Preserve.
           </p>
+          <div className="pt-2 flex flex-wrap justify-center gap-3">
+            <Link to="/stories">
+              <Button variant="outline" className="rounded-full text-xs gap-1.5">
+                <BookOpen className="size-3.5 text-terracotta" />
+                <span>Explore Stories Archive</span>
+                <ArrowRight className="size-3" />
+              </Button>
+            </Link>
+            <Link to="/learn">
+              <Button className="rounded-full text-xs gap-1.5 bg-primary text-primary-foreground hover:bg-primary/90">
+                <Globe className="size-3.5" />
+                <span>Learn with the Cultural Map</span>
+                <ArrowRight className="size-3" />
+              </Button>
+            </Link>
+          </div>
+        </section>
+
+        {/* Contextual Ask EKA Modal */}
+        <ContextualAskEkaModal
+          open={modalOpen}
+          onOpenChange={setModalOpen}
+          target={modalTarget}
+        />
+
+        {/* 7. Persistent Floating "Ask EKA" Button */}
+        <div className="fixed bottom-6 right-6 z-40">
+          <Button
+            onClick={() => handleOpenAskEka()}
+            className="rounded-full shadow-lift gap-2 bg-foreground text-background hover:bg-foreground/90 font-medium px-5 py-2.5 text-xs border border-border"
+            data-testid="floating-ask-eka-btn"
+          >
+            <Sparkles className="size-3.5 text-saffron" />
+            <span>Ask EKA</span>
+          </Button>
         </div>
-
-        <section className="space-y-6">
-          <CulturalIntelligenceExplorer />
-        </section>
-
-        <section className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 pt-6">
-          <Link
-            to="/stories"
-            className="group block p-6 rounded-2xl border border-border/70 bg-card/60 hover:bg-card hover:border-terracotta/40 transition-all shadow-xs"
-          >
-            <span className="text-xs font-mono uppercase tracking-wider text-terracotta font-semibold">1,000 Stories</span>
-            <h3 className="font-serif text-xl font-normal mt-2 group-hover:text-terracotta transition-colors">
-              Community Cultural Archive
-            </h3>
-            <p className="text-xs text-muted-foreground mt-2 leading-relaxed font-light">
-              Voices, rituals, and visual oral histories documented across living communities.
-            </p>
-            <div className="mt-4 flex items-center text-xs font-medium text-terracotta gap-1">
-              <span>Explore stories</span>
-              <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-1" />
-            </div>
-          </Link>
-
-          <Link
-            to="/learn"
-            className="group block p-6 rounded-2xl border border-border/70 bg-card/60 hover:bg-card hover:border-terracotta/40 transition-all shadow-xs"
-          >
-            <span className="text-xs font-mono uppercase tracking-wider text-terracotta font-semibold">Knowledge Codex</span>
-            <h3 className="font-serif text-xl font-normal mt-2 group-hover:text-terracotta transition-colors">
-              Living Traditions & Manuscripts
-            </h3>
-            <p className="text-xs text-muted-foreground mt-2 leading-relaxed font-light">
-              Progressive knowledge unfolding: manuscripts, commentaries, and contemplative practices.
-            </p>
-            <div className="mt-4 flex items-center text-xs font-medium text-terracotta gap-1">
-              <span>Open codex</span>
-              <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-1" />
-            </div>
-          </Link>
-
-          <Link
-            to="/observe"
-            className="group block p-6 rounded-2xl border border-border/70 bg-card/60 hover:bg-card hover:border-terracotta/40 transition-all shadow-xs"
-          >
-            <span className="text-xs font-mono uppercase tracking-wider text-terracotta font-semibold">Multi-Faith Calendar</span>
-            <h3 className="font-serif text-xl font-normal mt-2 group-hover:text-terracotta transition-colors">
-              Sacred Calendar 2026
-            </h3>
-            <p className="text-xs text-muted-foreground mt-2 leading-relaxed font-light">
-              26 observances across 6 living traditions with private fasting tracking.
-            </p>
-            <div className="mt-4 flex items-center text-xs font-medium text-terracotta gap-1">
-              <span>View calendar</span>
-              <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-1" />
-            </div>
-          </Link>
-        </section>
       </main>
+
       <SiteFooter />
     </div>
   );
