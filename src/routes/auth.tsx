@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link, useNavigate, Outlet, useChildMatches } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { MailCheck } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { MailCheck, AlertTriangle, ExternalLink, X } from "lucide-react";
+import { supabase, isGoogleAuthEnabled } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -71,6 +71,7 @@ function AuthPage() {
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
   const [pendingConfirmationEmail, setPendingConfirmationEmail] = useState<string | null>(null);
+  const [googleNoticeOpen, setGoogleNoticeOpen] = useState(false);
 
   // Synchronize previously gathered join questionnaire answers
   useEffect(() => {
@@ -170,6 +171,15 @@ function AuthPage() {
   const google = async () => {
     setBusy(true);
     try {
+      // 1. Verify if Google provider is actively enabled in Supabase
+      const isEnabled = await isGoogleAuthEnabled();
+      if (!isEnabled) {
+        setGoogleNoticeOpen(true);
+        toast.error("Google authentication is not yet enabled in the Supabase Dashboard.");
+        setBusy(false);
+        return;
+      }
+
       const redirectTo = `${window.location.origin}/auth/callback${next ? `?next=${encodeURIComponent(next)}` : ""}`;
 
       const { data, error } = await supabase.auth.signInWithOAuth({
@@ -180,6 +190,7 @@ function AuthPage() {
             access_type: "offline",
             prompt: "select_account",
           },
+          skipBrowserRedirect: true,
         },
       });
 
@@ -189,8 +200,9 @@ function AuthPage() {
           error.message.includes("validation_failed") ||
           error.message.includes("Unsupported provider")
         ) {
+          setGoogleNoticeOpen(true);
           toast.error(
-            "Google Login is pending configuration in the Supabase Dashboard (Authentication → Providers → Google). Please use email sign-in or enable Google OAuth.",
+            "Google Login is pending configuration in the Supabase Dashboard (Authentication → Providers → Google).",
           );
           return;
         }
@@ -200,8 +212,7 @@ function AuthPage() {
       if (data?.url) {
         track(mode === "signup" ? "signup" : "login");
         void applyJoinAnswers();
-        // Browser redirects to Google OAuth
-        window.location.href = data.url;
+        window.location.assign(data.url);
       }
     } catch (error) {
       console.error("[Google OAuth] Error:", error);
@@ -326,6 +337,36 @@ function AuthPage() {
         <Button variant="outline" className="mt-3 w-full" onClick={google} disabled={busy}>
           Continue with Google
         </Button>
+
+        {googleNoticeOpen && (
+          <div className="mt-3 rounded-xl border border-amber-500/30 bg-amber-500/10 p-3.5 text-left text-xs animate-rise">
+            <div className="flex items-start justify-between gap-2">
+              <div className="font-semibold text-amber-200 flex items-center gap-1.5">
+                <AlertTriangle className="size-4 shrink-0 text-amber-400" />
+                Google Provider Disabled in Supabase
+              </div>
+              <button
+                type="button"
+                onClick={() => setGoogleNoticeOpen(false)}
+                className="text-muted-foreground hover:text-foreground p-0.5"
+                aria-label="Dismiss notice"
+              >
+                <X className="size-3.5" />
+              </button>
+            </div>
+            <p className="mt-1.5 text-muted-foreground leading-relaxed">
+              Supabase project <code className="bg-black/30 px-1 py-0.5 rounded font-mono text-foreground">kbiutqzhcbyuseygcspe</code> requires Google OAuth to be enabled in the dashboard before users can sign in with Google.
+            </p>
+            <div className="mt-2.5 space-y-1.5 text-[11px] text-muted-foreground">
+              <div>1. Open <strong className="text-foreground">Supabase Dashboard → Authentication → Providers → Google</strong>.</div>
+              <div>2. Toggle to <strong className="text-foreground">Enabled</strong> and enter your Google Client ID & Secret.</div>
+              <div>3. In Google Cloud Console, set Authorized Redirect URI to:</div>
+              <code className="block bg-black/40 p-1.5 rounded text-[10px] select-all font-mono text-foreground break-all">
+                https://kbiutqzhcbyuseygcspe.supabase.co/auth/v1/callback
+              </code>
+            </div>
+          </div>
+        )}
 
         <p className="mt-4 text-center text-xs leading-relaxed text-muted-foreground">
           By continuing, you agree to EKA's{" "}

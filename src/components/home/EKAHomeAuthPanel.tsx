@@ -17,8 +17,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { EkaLogo } from "@/components/brand/Logo";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, isGoogleAuthEnabled } from "@/integrations/supabase/client";
 import { useProfile } from "@/hooks/useProfile";
 import { toast } from "sonner";
 
@@ -106,6 +105,16 @@ export function EKAHomeAuthPanel({ className = "" }: EKAHomeAuthPanelProps) {
   const handleGoogleLogin = async () => {
     setBusy(true);
     try {
+      const isEnabled = await isGoogleAuthEnabled();
+      if (!isEnabled) {
+        toast.error(
+          "Google OAuth is not enabled in Supabase Dashboard (Project: kbiutqzhcbyuseygcspe). Please enable Google under Authentication → Providers → Google.",
+          { duration: 8000 },
+        );
+        setBusy(false);
+        return;
+      }
+
       const redirectTo = `${window.location.origin}/auth/callback`;
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
@@ -115,6 +124,7 @@ export function EKAHomeAuthPanel({ className = "" }: EKAHomeAuthPanelProps) {
             access_type: "offline",
             prompt: "select_account",
           },
+          skipBrowserRedirect: true,
         },
       });
       if (error) {
@@ -124,7 +134,8 @@ export function EKAHomeAuthPanel({ className = "" }: EKAHomeAuthPanelProps) {
           error.message.includes("Unsupported provider")
         ) {
           toast.error(
-            "Google Login is pending configuration in the Supabase Dashboard (Authentication → Providers → Google). Please use email sign-in or enable Google OAuth.",
+            "Google Login is pending configuration in the Supabase Dashboard (Authentication → Providers → Google).",
+            { duration: 8000 },
           );
           setBusy(false);
           return;
@@ -132,7 +143,7 @@ export function EKAHomeAuthPanel({ className = "" }: EKAHomeAuthPanelProps) {
         throw error;
       }
       if (data?.url) {
-        window.location.href = data.url;
+        window.location.assign(data.url);
       }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Google sign in was interrupted.");

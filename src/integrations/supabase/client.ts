@@ -130,3 +130,33 @@ export const supabase = new Proxy({} as ReturnType<typeof createSupabaseClient>,
     return Reflect.get(_supabase, prop, receiver);
   },
 });
+
+/**
+ * Checks whether Google OAuth provider is actively enabled in the Supabase project.
+ */
+export async function isGoogleAuthEnabled(): Promise<boolean> {
+  if (typeof window === "undefined") return false;
+  try {
+    const supabaseUrl =
+      import.meta.env?.["VITE_SUPABASE_URL"] ||
+      import.meta.env?.["NEXT_PUBLIC_SUPABASE_URL"] ||
+      import.meta.env?.["SUPABASE_URL"] ||
+      DEFAULT_SUPABASE_URL;
+
+    const supabaseKey =
+      import.meta.env?.["VITE_SUPABASE_PUBLISHABLE_KEY"] ||
+      import.meta.env?.["VITE_SUPABASE_ANON_KEY"] ||
+      import.meta.env?.["NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY"] ||
+      import.meta.env?.["NEXT_PUBLIC_SUPABASE_ANON_KEY"] ||
+      DEFAULT_SUPABASE_PUBLISHABLE_KEY;
+
+    const res = await fetch(`${supabaseUrl}/auth/v1/settings`, {
+      headers: { apikey: supabaseKey },
+    });
+    if (!res.ok) return true; // Fail-open to avoid blocking if settings endpoint changes
+    const data = (await res.json()) as { external?: { google?: boolean } };
+    return Boolean(data?.external?.google);
+  } catch {
+    return true; // Fail-open fallback
+  }
+}
