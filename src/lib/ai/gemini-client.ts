@@ -12,7 +12,7 @@
 import {
   inspectPromptForInjection,
   validateAndSanitizeAgentOutput,
-} from "@/lib/security";
+} from "@/lib/security/ai-agent-security";
 
 export interface GeminiMessage {
   role: "user" | "model" | "system";

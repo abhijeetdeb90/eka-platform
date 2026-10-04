@@ -2,7 +2,6 @@
 // EKA PLATFORM — ZERO-TRUST IDENTITY & ACCESS SECURITY ENGINE
 // ==============================================================================
 
-import { createHmac, randomBytes } from "crypto";
 import { canUser } from "@/lib/studio/rbac";
 import type { StudioPermission, StudioRole } from "@/lib/studio/types";
 import { trackSecurityEvent } from "../monitoring";
@@ -268,6 +267,35 @@ export async function revokeAllUserSessions(userId: string, reason = "security_r
   return count;
 }
 
+function safeHash(str: string): string {
+  try {
+    if (typeof globalThis !== "undefined" && typeof (globalThis as unknown as { process?: unknown }).process !== "undefined") {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const crypto = require("node:crypto");
+      if (crypto && typeof crypto.createHmac === "function") {
+        return crypto.createHmac("sha256", "eka_backup_salt").update(str).digest("hex");
+      }
+    }
+  } catch {}
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash).toString(16).padStart(64, "0");
+}
+
+function safeRandomHex(len: number): string {
+  try {
+    if (typeof crypto !== "undefined" && typeof crypto.getRandomValues === "function") {
+      const arr = new Uint8Array(len);
+      crypto.getRandomValues(arr);
+      return Array.from(arr, (b) => b.toString(16).padStart(2, "0")).join("");
+    }
+  } catch {}
+  return Math.random().toString(16).slice(2, 2 + len * 2);
+}
+
 /**
  * MFA / TOTP Mock & Backup Code Security Utilities
  */
@@ -276,10 +304,10 @@ export function generateBackupCodes(): { plainCodes: string[]; hashedCodes: stri
   const hashedCodes: string[] = [];
 
   for (let i = 0; i < 8; i++) {
-    const code = randomBytes(4).toString("hex").toUpperCase();
+    const code = safeRandomHex(4).toUpperCase();
     const formatted = `${code.slice(0, 4)}-${code.slice(4)}`;
     plainCodes.push(formatted);
-    hashedCodes.push(createHmac("sha256", "eka_backup_salt").update(formatted).digest("hex"));
+    hashedCodes.push(safeHash(formatted));
   }
 
   return { plainCodes, hashedCodes };
@@ -289,7 +317,7 @@ export function verifyBackupCode(userId: string, code: string): boolean {
   const mfa = userMfaStore.get(userId);
   if (!mfa || !mfa.enabled) return false;
 
-  const targetHash = createHmac("sha256", "eka_backup_salt").update(code.trim().toUpperCase()).digest("hex");
+  const targetHash = safeHash(code.trim().toUpperCase());
   const idx = mfa.backupCodesHash.indexOf(targetHash);
   if (idx !== -1) {
     // Consume backup code (single-use)
