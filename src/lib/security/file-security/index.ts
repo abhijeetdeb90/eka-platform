@@ -2,7 +2,6 @@
 // EKA PLATFORM — MALWARE, FILE & UPLOAD SECURITY ENGINE
 // ==============================================================================
 
-import { randomUUID } from "crypto";
 import type { FileValidationResult } from "../types";
 
 // Maximum allowable file sizes in bytes
@@ -117,7 +116,8 @@ export function sanitizeUploadFilename(originalName: string, extension: string):
     .replace(/[^a-zA-Z0-9_\-\.]/g, "_")
     .slice(0, 50);
 
-  return `${Date.now()}_${randomUUID().slice(0, 8)}_${baseName}.${cleanExt}`;
+  const uid = typeof crypto !== "undefined" && typeof crypto.randomUUID === "function" ? crypto.randomUUID().slice(0, 8) : Math.random().toString(36).slice(2, 10);
+  return `${Date.now()}_${uid}_${baseName}.${cleanExt}`;
 }
 
 /**

@@ -2,7 +2,6 @@
 // EKA PLATFORM — API SECURITY, HEADERS & REPLAY PROTECTION ENGINE
 // ==============================================================================
 
-import { randomUUID } from "crypto";
 import { redactSecrets } from "../secrets-management";
 import { trackSecurityEvent } from "../monitoring";
 
@@ -88,7 +87,8 @@ export function resolveRequestId(requestHeaders?: Headers | null): string {
   if (incoming && /^[a-zA-Z0-9_\-]{8,64}$/.test(incoming)) {
     return incoming;
   }
-  return `req_${randomUUID().replace(/-/g, "").slice(0, 16)}`;
+  const id = typeof crypto !== "undefined" && typeof crypto.randomUUID === "function" ? crypto.randomUUID() : Math.random().toString(36).slice(2) + Date.now().toString(36);
+  return `req_${id.replace(/-/g, "").slice(0, 16)}`;
 }
 
 /**
