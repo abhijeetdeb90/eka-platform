@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, Outlet, useChildMatches } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { MailCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,11 +12,13 @@ import { applyJoinAnswers, loadAnswers } from "@/lib/join";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
-  validateSearch: (search: { next?: unknown }): { next?: string | undefined } => {
-    const raw = typeof search.next === "string" ? search.next : "";
+  validateSearch: (search: Record<string, unknown>): { next?: string; code?: string } => {
+    const rawNext = typeof search["next"] === "string" ? search["next"] : "";
+    const rawCode = typeof search["code"] === "string" ? search["code"] : "";
     // Only same-origin relative paths are safe to return to
     return {
-      next: raw.startsWith("/") && !raw.startsWith("//") && !raw.includes("\\") ? raw : undefined,
+      next: rawNext.startsWith("/") && !rawNext.startsWith("//") && !rawNext.includes("\\") ? rawNext : undefined,
+      code: rawCode ? rawCode : undefined,
     };
   },
   head: () => ({
@@ -30,8 +32,32 @@ export const Route = createFileRoute("/auth")({
       { property: "og:description", content: "The social network for your inner life." },
     ],
   }),
-  component: AuthPage,
+  component: AuthRouteComponent,
 });
+
+function AuthRouteComponent() {
+  const childMatches = useChildMatches();
+  const search = Route.useSearch();
+  const navigate = useNavigate();
+
+  // If a child route matches (such as /auth/callback), delegate rendering to Outlet
+  if (childMatches.length > 0) {
+    return <Outlet />;
+  }
+
+  // If someone landed directly on /auth?code=... (e.g. from an OAuth provider or verification link),
+  // immediately forward them to /auth/callback to exchange the authorization code
+  if (search.code) {
+    navigate({
+      to: "/auth/callback",
+      search: { code: search.code, next: search.next },
+      replace: true,
+    });
+    return null;
+  }
+
+  return <AuthPage />;
+}
 
 function AuthPage() {
   const navigate = useNavigate();
