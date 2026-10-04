@@ -71,24 +71,39 @@ export function DiscoveryHero({ onInspectCard }: DiscoveryHeroProps) {
     setIsSubmitting(true);
     try {
       if (authMode === "signin") {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: email.trim(),
           password,
         });
-        if (error) throw error;
-        toast.success("Welcome back to EKA.");
-        navigate({ to: "/app" });
+        if (error) {
+          if (error.message.includes("Invalid login credentials")) {
+            throw new Error("Invalid email or password. Please verify your credentials.");
+          } else if (error.message.includes("Email not confirmed")) {
+            throw new Error("Please verify your email before signing in.");
+          }
+          throw error;
+        }
+        if (data?.session) {
+          toast.success("Welcome back to EKA.");
+          navigate({ to: "/app" });
+        }
       } else {
-        const { error } = await supabase.auth.signUp({
-          email,
+        const { data, error } = await supabase.auth.signUp({
+          email: email.trim(),
           password,
           options: {
-            data: { display_name: displayName || email.split("@")[0] },
+            emailRedirectTo: `${window.location.origin}/auth/callback`,
+            data: { display_name: displayName.trim() || email.split("@")[0] },
           },
         });
         if (error) throw error;
-        toast.success("Account created! Welcome to EKA.");
-        navigate({ to: "/join" });
+        if (data?.session) {
+          toast.success("Account created! Welcome to EKA.");
+          navigate({ to: "/app" });
+        } else {
+          toast.info("Account created. Please check your email to verify your account.");
+          navigate({ to: "/auth" });
+        }
       }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Authentication error.");

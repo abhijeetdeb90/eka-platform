@@ -85,6 +85,11 @@ export function EKAHomeAuthPanel({ className = "" }: EKAHomeAuthPanelProps) {
       });
 
       if (error) {
+        if (error.message.includes("Invalid login credentials")) {
+          throw new Error("Invalid email or password. Please verify your credentials.");
+        } else if (error.message.includes("Email not confirmed")) {
+          throw new Error("Please verify your email before signing in.");
+        }
         throw error;
       }
 
@@ -101,18 +106,34 @@ export function EKAHomeAuthPanel({ className = "" }: EKAHomeAuthPanelProps) {
   const handleGoogleLogin = async () => {
     setBusy(true);
     try {
-      const redirectTo = `${window.location.origin}/app`;
-      const { error } = await supabase.auth.signInWithOAuth({
+      const redirectTo = `${window.location.origin}/auth/callback`;
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
           redirectTo,
           queryParams: {
             access_type: "offline",
-            prompt: "consent",
+            prompt: "select_account",
           },
         },
       });
-      if (error) throw error;
+      if (error) {
+        if (
+          error.message.includes("not enabled") ||
+          error.message.includes("validation_failed") ||
+          error.message.includes("Unsupported provider")
+        ) {
+          toast.error(
+            "Google Login is pending configuration in the Supabase Dashboard (Authentication → Providers → Google). Please use email sign-in or enable Google OAuth.",
+          );
+          setBusy(false);
+          return;
+        }
+        throw error;
+      }
+      if (data?.url) {
+        window.location.href = data.url;
+      }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Google sign in was interrupted.");
       setBusy(false);
@@ -352,12 +373,12 @@ export function EKAHomeAuthPanel({ className = "" }: EKAHomeAuthPanelProps) {
             </Link>
           </div>
 
-          {/* Footer Logo & Tagline */}
+          {/* Subtle EKA Logo underneath */}
           <div className="pt-3 border-t border-border/50 flex items-center justify-between">
+            <EkaLogo markClassName="size-4" className="opacity-70 scale-90 origin-left" withTagline={false} />
             <span className="text-[10px] font-mono text-muted-foreground/80">
               One Within. One With All.
             </span>
-            <span className="size-1.5 rounded-full bg-terracotta/60" />
           </div>
         </div>
       )}

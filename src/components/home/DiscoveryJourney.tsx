@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "motion/react";
 import {
@@ -12,6 +12,7 @@ import {
   Film,
   MapPin,
   ChevronRight,
+  ChevronLeft,
   Flame,
   CheckCircle2,
   Share2,
@@ -22,6 +23,8 @@ import {
   Layers,
   HelpCircle,
   Eye,
+  Play,
+  Pause,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -110,7 +113,49 @@ const DISCOVERY_CATEGORIES = [
 ];
 
 // ==============================================================================
-// 2. SCREEN 5: FROM ONE PLACE TO ANOTHER (Animated Journey)
+// 2. SCREEN 4: KNOWLEDGE MODEL CASE STUDY STEPS
+// ==============================================================================
+const KNOWLEDGE_STEPS = [
+  {
+    step: "01",
+    id: "step-discover",
+    title: "Discover",
+    summary: "Curiosity Sparks",
+    shortText: "See a living tradition that catches your eye.",
+    casePrompt: "You notice a small clay lamp floating gently on the river at sunset.",
+    curiosityQuestion: "Why do millions of families light lamps at dusk every autumn?",
+  },
+  {
+    step: "02",
+    id: "step-learn",
+    title: "Learn",
+    summary: "Context & Story",
+    shortText: "Hear the human story directly from the community.",
+    casePrompt: "You listen to Pandit Ramakrishna along Dashashwamedh Ghat.",
+    curiosityQuestion: "For 1,200 years, the five elements are offered back to the water as living gratitude.",
+  },
+  {
+    step: "03",
+    id: "step-understand",
+    title: "Understand",
+    summary: "Universal Truth",
+    shortText: "Notice how different cultures share common human values.",
+    casePrompt: "You connect this ritual to global traditions of sacred light.",
+    curiosityQuestion: "From Olympic fires in Greece to Celtic winter hearths, fire is reverence, not fear.",
+  },
+  {
+    step: "04",
+    id: "step-connect",
+    title: "Connect",
+    summary: "Living Community",
+    shortText: "Support master makers and share your own family traditions.",
+    casePrompt: "You join a quiet contemplation circle and support traditional potters.",
+    curiosityQuestion: "You discover: we are all custodians of the world's shared memory.",
+  },
+];
+
+// ==============================================================================
+// 3. SCREEN 5: FROM ONE PLACE TO ANOTHER (Animated Journey)
 // ==============================================================================
 const JOURNEY_STOPS = [
   {
@@ -118,6 +163,7 @@ const JOURNEY_STOPS = [
     step: 1,
     place: "India",
     location: "Varanasi, Uttar Pradesh",
+    coords: "25.3176° N, 82.9739° E",
     storyTitle: "Light on the Water",
     question: "Why do millions of people light lamps at dusk?",
     insight:
@@ -130,6 +176,7 @@ const JOURNEY_STOPS = [
     step: 2,
     place: "Nepal",
     location: "Kathmandu Valley",
+    coords: "27.7172° N, 85.3240° E",
     storyTitle: "Wind of Compassion",
     question: "Why do prayer flags stay outdoors until they fray?",
     insight:
@@ -142,10 +189,11 @@ const JOURNEY_STOPS = [
     step: 3,
     place: "Japan",
     location: "Kyoto & Nara",
+    coords: "35.0116° N, 135.7681° E",
     storyTitle: "The Sacred Boundary",
     question: "Why are Torii gates painted vermilion?",
     insight:
-      "Vermilion wardens against rot in sacred cedar wood, marking the exact threshold where inward focus begins.",
+      "Vermilion wardens against rot in sacred cedar wood, marking the exact threshold where human ambition yields to quiet contemplation.",
     image: kyotoImage,
     route: "/discover",
   },
@@ -154,6 +202,7 @@ const JOURNEY_STOPS = [
     step: 4,
     place: "Indonesia",
     location: "Bali Terraces",
+    coords: "8.3405° S, 115.0920° E",
     storyTitle: "Water Consensus",
     question: "Why do priests manage mountain canals?",
     insight:
@@ -166,10 +215,11 @@ const JOURNEY_STOPS = [
     step: 5,
     place: "Morocco",
     location: "Fez Medina",
+    coords: "34.0181° N, 5.0078° W",
     storyTitle: "Geometry in Stone",
     question: "How does zellige tilework mirror the infinite?",
     insight:
-      "Every tile is cut by hand with heavy iron chisels. Patterns repeat into infinity without a single focal portrait.",
+      "Every tile is cut by hand with heavy iron chisels. Patterns repeat into infinity without a single focal portrait, honoring symmetry.",
     image: marrakeshImage,
     route: "/discover",
   },
@@ -178,17 +228,18 @@ const JOURNEY_STOPS = [
     step: 6,
     place: "Mexico",
     location: "Oaxaca Valley",
+    coords: "17.0732° N, 96.7266° W",
     storyTitle: "Celebration of Reunion",
     question: "Why are marigolds scattered on doorsteps?",
     insight:
-      "The scent and golden glow of cempasúchil flowers guide ancestral spirits safely back to their family hearth for one night.",
+      "The scent and golden glow of cempasúchil flowers guide ancestral spirits safely back to their family hearth for one night of music and remembrance.",
     image: todayReflection,
     route: "/stories",
   },
 ];
 
 // ==============================================================================
-// 3. SCREEN 6: REAL CUSTODIANS & LIVING COMMUNITIES
+// 4. SCREEN 6: REAL CUSTODIANS & LIVING COMMUNITIES
 // ==============================================================================
 const LIVING_CUSTODIANS = [
   {
@@ -218,9 +269,21 @@ const LIVING_CUSTODIANS = [
 ];
 
 export function DiscoveryJourney() {
+  const [activeKnowledgeStep, setActiveKnowledgeStep] = useState(0);
   const [activeJourneyStep, setActiveJourneyStep] = useState(0);
+  const [isPlayingTour, setIsPlayingTour] = useState(false);
+
+  // Auto-tour for the 6 journey stops
+  useEffect(() => {
+    if (!isPlayingTour) return;
+    const timer = setInterval(() => {
+      setActiveJourneyStep((prev) => (prev + 1) % JOURNEY_STOPS.length);
+    }, 4500);
+    return () => clearInterval(timer);
+  }, [isPlayingTour]);
 
   const currentJourney = JOURNEY_STOPS[activeJourneyStep]!;
+  const currentModelStep = KNOWLEDGE_STEPS[activeKnowledgeStep]!;
 
   return (
     <div className="space-y-24 sm:space-y-32">
@@ -335,69 +398,76 @@ export function DiscoveryJourney() {
       </section>
 
       {/* ==================================================================== */}
-      {/* SCREEN 4: UNDERSTAND (The EKA Knowledge Model) */}
+      {/* SCREEN 4: UNDERSTAND (Interactive EKA Knowledge Model) */}
       {/* ==================================================================== */}
       <section className="container-eka">
-        <div className="rounded-3xl border border-border/80 bg-sand/15 p-8 sm:p-14 space-y-10">
+        <div className="rounded-3xl border border-border/80 bg-sand/15 p-8 sm:p-14 space-y-8">
           <div className="max-w-2xl space-y-2">
             <span className="text-[11px] font-mono uppercase tracking-widest text-terracotta font-semibold">
-              The EKA Way
+              The EKA Knowledge Model
             </span>
             <h2 className="font-display font-serif text-3xl sm:text-4xl font-normal text-foreground">
-              How curiosity becomes understanding
+              Discover → Learn → Understand → Connect
             </h2>
             <p className="text-sm text-muted-foreground font-light leading-relaxed">
-              We replace endless scrolling with a simple, four-step journey into real cultural depth.
+              We turn surface curiosity into deeper human understanding without technical jargon. Tap each step to see how it works in real life.
             </p>
           </div>
 
-          {/* 4-Step Knowledge Flow */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="rounded-2xl border border-border/80 bg-card p-6 space-y-3 shadow-xs">
-              <div className="size-10 rounded-xl bg-saffron/15 text-saffron flex items-center justify-center font-mono font-bold text-sm">
-                01
-              </div>
-              <h3 className="font-display font-serif text-xl font-normal text-foreground">
-                Discover
-              </h3>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                See a tradition, festival, craft, or place that sparks your wonder. Ask why it exists.
-              </p>
+          {/* Interactive Step Selector */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {KNOWLEDGE_STEPS.map((k, idx) => {
+              const isSelected = idx === activeKnowledgeStep;
+              return (
+                <button
+                  key={k.id}
+                  onClick={() => setActiveKnowledgeStep(idx)}
+                  className={`text-left rounded-2xl border p-5 transition-all duration-200 cursor-pointer ${
+                    isSelected
+                      ? "border-terracotta bg-card shadow-calm ring-2 ring-terracotta/20"
+                      : "border-border/80 bg-card/60 hover:bg-card hover:border-border"
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <span
+                      className={`size-8 rounded-xl flex items-center justify-center font-mono font-bold text-xs ${
+                        isSelected
+                          ? "bg-terracotta text-white"
+                          : "bg-sand text-muted-foreground"
+                      }`}
+                    >
+                      {k.step}
+                    </span>
+                    <span className="text-[10px] font-mono uppercase text-muted-foreground">
+                      {k.summary}
+                    </span>
+                  </div>
+                  <h3 className="font-display font-serif text-lg font-normal text-foreground">
+                    {k.title}
+                  </h3>
+                  <p className="text-xs text-muted-foreground mt-1 leading-snug">
+                    {k.shortText}
+                  </p>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Unfolded Real-World Demonstration Card */}
+          <div className="rounded-2xl border border-border/80 bg-card p-6 sm:p-8 space-y-4 shadow-xs">
+            <div className="flex items-center gap-2 text-xs font-mono text-terracotta uppercase tracking-wider">
+              <Sparkles className="size-3.5 text-saffron" />
+              <span>Step {currentModelStep.step} Demonstration: {currentModelStep.title}</span>
             </div>
 
-            <div className="rounded-2xl border border-border/80 bg-card p-6 space-y-3 shadow-xs">
-              <div className="size-10 rounded-xl bg-terracotta/15 text-terracotta flex items-center justify-center font-mono font-bold text-sm">
-                02
-              </div>
-              <h3 className="font-display font-serif text-xl font-normal text-foreground">
-                Learn
-              </h3>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                Hear the human story behind it from the people who live it every single day.
-              </p>
-            </div>
+            <h4 className="font-display font-serif text-xl sm:text-2xl font-normal text-foreground">
+              {currentModelStep.casePrompt}
+            </h4>
 
-            <div className="rounded-2xl border border-border/80 bg-card p-6 space-y-3 shadow-xs">
-              <div className="size-10 rounded-xl bg-forest/15 text-forest flex items-center justify-center font-mono font-bold text-sm">
-                03
-              </div>
-              <h3 className="font-display font-serif text-xl font-normal text-foreground">
-                Understand
-              </h3>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                Notice how different cultures share common human values: respect, gratitude, and care.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-border/80 bg-card p-6 space-y-3 shadow-xs">
-              <div className="size-10 rounded-xl bg-indigo-ink/15 text-indigo-ink flex items-center justify-center font-mono font-bold text-sm">
-                04
-              </div>
-              <h3 className="font-display font-serif text-xl font-normal text-foreground">
-                Connect
-              </h3>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                Join living circles, support master artisans, and share your own family traditions.
+            <div className="p-3.5 rounded-xl bg-sand/30 border border-border/80 text-xs sm:text-sm text-foreground flex items-start gap-2.5">
+              <HelpCircle className="size-4 text-saffron shrink-0 mt-0.5" />
+              <p className="leading-relaxed font-medium">
+                {currentModelStep.curiosityQuestion}
               </p>
             </div>
           </div>
@@ -408,17 +478,38 @@ export function DiscoveryJourney() {
       {/* SCREEN 5: FROM ONE PLACE TO ANOTHER (Animated Journey) */}
       {/* ==================================================================== */}
       <section className="container-eka space-y-8">
-        <div className="border-b border-border/70 pb-4">
-          <span className="text-[11px] font-mono uppercase tracking-widest text-terracotta font-semibold flex items-center gap-1.5">
-            <Orbit className="size-3.5 text-saffron" />
-            The Connected Journey
-          </span>
-          <h2 className="font-display font-serif text-2xl sm:text-4xl font-normal mt-1">
-            From one place to another
-          </h2>
-          <p className="text-xs sm:text-sm text-muted-foreground font-light mt-1">
-            Follow the living thread connecting six cultures across continents.
-          </p>
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-border/70 pb-4">
+          <div>
+            <span className="text-[11px] font-mono uppercase tracking-widest text-terracotta font-semibold flex items-center gap-1.5">
+              <Orbit className="size-3.5 text-saffron" />
+              The Connected Journey
+            </span>
+            <h2 className="font-display font-serif text-2xl sm:text-4xl font-normal mt-1">
+              From one place to another
+            </h2>
+            <p className="text-xs sm:text-sm text-muted-foreground font-light mt-1">
+              Follow the living thread connecting six cultures across continents.
+            </p>
+          </div>
+
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => setIsPlayingTour((prev) => !prev)}
+            className="rounded-xl px-4 text-xs font-mono gap-1.5 self-start sm:self-auto"
+          >
+            {isPlayingTour ? (
+              <>
+                <Pause className="size-3 text-saffron" />
+                <span>Pause Auto Journey</span>
+              </>
+            ) : (
+              <>
+                <Play className="size-3 text-saffron" />
+                <span>Play Journey</span>
+              </>
+            )}
+          </Button>
         </div>
 
         {/* Step Indicator Rail */}
@@ -426,7 +517,10 @@ export function DiscoveryJourney() {
           {JOURNEY_STOPS.map((stop, idx) => (
             <button
               key={stop.id}
-              onClick={() => setActiveJourneyStep(idx)}
+              onClick={() => {
+                setActiveJourneyStep(idx);
+                setIsPlayingTour(false);
+              }}
               className={`px-4 py-2 rounded-xl text-xs font-mono whitespace-nowrap transition-all flex items-center gap-2 ${
                 idx === activeJourneyStep
                   ? "bg-terracotta text-white shadow-xs font-medium"
@@ -452,7 +546,10 @@ export function DiscoveryJourney() {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/80 via-transparent to-transparent lg:hidden" />
             <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-white text-xs font-mono">
-              Stop 0{currentJourney.step} of 06
+              Stop 0{currentJourney.step} of 06 • {currentJourney.place}
+            </div>
+            <div className="absolute bottom-4 left-4 text-[10px] font-mono text-white/70 bg-black/50 backdrop-blur-md px-2.5 py-1 rounded-md">
+              {currentJourney.coords}
             </div>
           </div>
 
@@ -487,12 +584,20 @@ export function DiscoveryJourney() {
                 </Button>
               </Link>
 
-              {activeJourneyStep < JOURNEY_STOPS.length - 1 && (
+              {activeJourneyStep < JOURNEY_STOPS.length - 1 ? (
                 <button
                   onClick={() => setActiveJourneyStep((prev) => prev + 1)}
                   className="text-xs font-mono text-muted-foreground hover:text-foreground inline-flex items-center gap-1"
                 >
                   <span>Next: {JOURNEY_STOPS[activeJourneyStep + 1]?.place}</span>
+                  <ChevronRight className="size-3.5" />
+                </button>
+              ) : (
+                <button
+                  onClick={() => setActiveJourneyStep(0)}
+                  className="text-xs font-mono text-muted-foreground hover:text-foreground inline-flex items-center gap-1"
+                >
+                  <span>Restart at India</span>
                   <ChevronRight className="size-3.5" />
                 </button>
               )}
@@ -506,15 +611,21 @@ export function DiscoveryJourney() {
       {/* ==================================================================== */}
       <section className="container-eka space-y-8">
         <div className="border-b border-border/70 pb-4">
-          <span className="text-[11px] font-mono uppercase tracking-widest text-forest font-semibold flex items-center gap-1.5">
-            <Users className="size-3.5" />
-            Human Sanctuaries
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] font-mono uppercase tracking-widest text-forest font-semibold flex items-center gap-1.5">
+              <Users className="size-3.5" />
+              Living Custodians
+            </span>
+            <span className="text-border">•</span>
+            <span className="text-[10px] font-mono uppercase text-muted-foreground">
+              100% Real Human Heritage
+            </span>
+          </div>
           <h2 className="font-display font-serif text-2xl sm:text-4xl font-normal mt-1">
             People make culture living
           </h2>
-          <p className="text-xs sm:text-sm text-muted-foreground font-light mt-1">
-            EKA is built with real custodians, master artisans, and community elders. No fake users. No bots.
+          <p className="text-xs sm:text-sm text-muted-foreground font-light mt-1 max-w-2xl">
+            EKA is built around real people and real communities. AI assists research behind the scenes, but NEVER appears as fake creators, fake members or bot accounts.
           </p>
         </div>
 
@@ -553,7 +664,7 @@ export function DiscoveryJourney() {
               </div>
 
               <div className="pt-3 border-t border-border/60 flex items-center justify-between text-[11px] font-mono">
-                <span className="text-muted-foreground">Authentic Lineage</span>
+                <span className="text-muted-foreground">Verified Stewardship</span>
                 <Link
                   to="/discover"
                   className="text-terracotta hover:underline inline-flex items-center gap-1"
@@ -572,7 +683,7 @@ export function DiscoveryJourney() {
       {/* ==================================================================== */}
       <section className="container-eka">
         <div className="rounded-3xl border border-border/80 bg-gradient-to-br from-neutral-950 via-neutral-900 to-neutral-950 text-white p-8 sm:p-14 lg:p-16 text-center space-y-8 shadow-lift relative overflow-hidden">
-          {/* Subtle Glow */}
+          {/* Subtle Atmospheric Glows */}
           <div className="absolute top-0 right-1/4 w-96 h-96 bg-saffron/10 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-terracotta/10 rounded-full blur-3xl pointer-events-none" />
 

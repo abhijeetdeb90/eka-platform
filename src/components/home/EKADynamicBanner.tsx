@@ -14,8 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { EkaLogo } from "@/components/brand/Logo";
 import type { EKABannerItem } from "./banner-types";
-import { HOME_BANNERS, getRegionalBanners } from "./banner-data";
-import { useLocalization } from "@/lib/i18n";
+import { HOME_BANNERS } from "./banner-data";
 
 interface EKADynamicBannerProps {
   banners?: EKABannerItem[];
@@ -25,14 +24,11 @@ interface EKADynamicBannerProps {
 }
 
 export function EKADynamicBanner({
-  banners: propBanners,
+  banners = HOME_BANNERS,
   autoRotateInterval = 7000,
   className = "",
   onExploreWorld,
 }: EKADynamicBannerProps) {
-  const { region, locale } = useLocalization();
-  const banners = propBanners || getRegionalBanners(region, locale);
-
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
@@ -64,7 +60,6 @@ export function EKADynamicBanner({
     if (isPaused || prefersReducedMotion) return;
 
     const timer = setInterval(() => {
-      // Pause if tab is inactive
       if (document.hidden) return;
       goToNext();
     }, autoRotateInterval);
@@ -91,45 +86,45 @@ export function EKADynamicBanner({
     <div
       ref={bannerRef}
       role="region"
-      aria-label="Editorial Cultural Highlights"
-      className={`relative w-full rounded-3xl overflow-hidden bg-neutral-950 text-white border border-border/40 shadow-lift ${className}`}
+      aria-label="EKA Living Editorial Gateway"
+      className={`relative w-full rounded-3xl overflow-hidden bg-neutral-950 text-white border border-border/40 shadow-lift flex flex-col justify-between ${className}`}
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onFocus={() => setIsPaused(true)}
       onBlur={() => setIsPaused(false)}
     >
-      {/* Background Image Canvas with Crossfade */}
+      {/* Background Image Canvas with Atmospheric Crossfade */}
       <div className="absolute inset-0 w-full h-full overflow-hidden select-none">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentBanner.id}
-            initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, scale: 1.06 }}
+            initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, scale: 1.05 }}
             animate={prefersReducedMotion ? { opacity: 1 } : { opacity: 1, scale: 1 }}
             exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.98 }}
-            transition={{ duration: prefersReducedMotion ? 0.2 : 0.9, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: prefersReducedMotion ? 0.2 : 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="absolute inset-0 w-full h-full"
           >
             <img
               src={currentBanner.image}
               alt={currentBanner.title}
-              className="w-full h-full object-cover object-center brightness-[0.72] contrast-[1.05]"
+              className="w-full h-full object-cover object-center brightness-[0.70] contrast-[1.05]"
               loading={currentIndex === 0 ? "eager" : "lazy"}
             />
           </motion.div>
         </AnimatePresence>
 
         {/* Sophisticated Editorial Vignette & Lighting */}
-        <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/65 to-black/35 pointer-events-none" />
-        <div className="absolute inset-0 bg-gradient-to-r from-neutral-950/85 via-neutral-950/50 to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/70 to-black/40 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-r from-neutral-950/90 via-neutral-950/50 to-transparent pointer-events-none" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_transparent_40%,_rgba(0,0,0,0.65)_100%)] pointer-events-none" />
       </div>
 
       {/* Living Atmospheric Glow Ring */}
-      <div className="absolute -top-24 -left-24 size-80 rounded-full bg-saffron/10 blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-24 -right-24 size-80 rounded-full bg-terracotta/15 blur-3xl pointer-events-none" />
+      <div className="absolute -top-24 -left-24 size-80 rounded-full bg-saffron/15 blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-24 -right-24 size-80 rounded-full bg-terracotta/20 blur-3xl pointer-events-none" />
 
       {/* Main Content Area */}
-      <div className="relative z-10 flex flex-col justify-between min-h-[580px] sm:min-h-[620px] p-6 sm:p-10 lg:p-12">
+      <div className="relative z-10 flex flex-col justify-between flex-1 p-6 sm:p-10 lg:p-12 min-h-[580px] sm:min-h-[620px]">
         {/* Top Header Row in Banner */}
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
@@ -141,7 +136,7 @@ export function EKADynamicBanner({
                 withTagline={false}
               />
             </Link>
-            <span className="hidden sm:inline-block text-[11px] font-mono tracking-widest text-amber-200/70 uppercase">
+            <span className="hidden sm:inline-block text-[11px] font-mono tracking-widest text-amber-200/80 uppercase">
               • One Within. One With All.
             </span>
           </div>
@@ -156,115 +151,90 @@ export function EKADynamicBanner({
         </div>
 
         {/* Central Editorial Narrative */}
-        <div className="my-auto py-8 sm:py-10 max-w-2xl space-y-5">
+        <div className="my-auto py-6 sm:py-8 max-w-2xl space-y-5">
+          {/* Permanent Core Anchor */}
+          <div className="space-y-2">
+            <h1 className="font-display font-serif text-4xl sm:text-6xl lg:text-7xl font-normal leading-[1.05] tracking-tight text-white drop-shadow-md">
+              ONE WORLD. <br />
+              BILLIONS OF STORIES.
+            </h1>
+            <p className="font-display italic text-lg sm:text-2xl text-amber-200/90 font-light">
+              One Within. One With All.
+            </p>
+          </div>
+
+          {/* Dynamic Living Story Card inside Hero */}
           <AnimatePresence mode="wait">
             <motion.div
               key={currentBanner.id}
-              initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 16 }}
+              initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 12 }}
               animate={prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
-              exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -12 }}
-              transition={{ duration: 0.5, ease: "easeOut" }}
-              className="space-y-4"
+              exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -10 }}
+              transition={{ duration: 0.45, ease: "easeOut" }}
+              className="p-4 sm:p-5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 text-white/95 max-w-xl shadow-calm space-y-2.5"
             >
-              {/* Category Eyebrow */}
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-saffron/20 border border-saffron/40 text-amber-200 text-xs font-mono tracking-widest uppercase">
-                <Sparkles className="size-3 text-saffron animate-pulse" />
-                <span>{currentBanner.eyebrow}</span>
-                {currentBanner.festival && (
-                  <>
-                    <span className="opacity-40">•</span>
-                    <span className="text-white/80">{currentBanner.festival}</span>
-                  </>
-                )}
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-[10px] font-mono uppercase tracking-widest text-amber-300 font-semibold flex items-center gap-1.5">
+                  <Sparkles className="size-3 text-saffron animate-pulse" />
+                  {currentBanner.eyebrow}
+                  {currentBanner.festival && ` • ${currentBanner.festival}`}
+                </span>
+                <span className="text-[10px] font-mono text-white/60">
+                  {currentBanner.location}
+                </span>
               </div>
 
-              {/* Main Headline */}
-              <h1 className="font-display font-serif text-3xl sm:text-5xl lg:text-6xl font-normal leading-[1.08] tracking-tight text-white drop-shadow-md whitespace-pre-line">
-                {currentBanner.title}
-              </h1>
-
-              {/* Supporting Line / Subtitle */}
-              {currentBanner.subtitle && (
-                <p className="font-display italic text-lg sm:text-xl text-amber-200/90 font-light">
-                  {currentBanner.subtitle}
+              {/* Curiosity Question */}
+              {currentBanner.curiosityQuestion ? (
+                <p className="text-sm sm:text-base font-medium text-white leading-snug">
+                  {currentBanner.curiosityQuestion}
+                </p>
+              ) : (
+                <p className="text-sm sm:text-base font-medium text-white leading-snug">
+                  {currentBanner.title}
                 </p>
               )}
 
-              {/* Curiosity Hook: "Why should I care?" gap */}
-              {currentBanner.curiosityQuestion && (
-                <div className="inline-flex items-start gap-2.5 p-3 sm:p-3.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 text-white/95 max-w-xl shadow-calm">
-                  <HelpCircle className="size-4 text-saffron shrink-0 mt-0.5" />
-                  <p className="text-xs sm:text-sm font-medium tracking-wide leading-snug">
-                    {currentBanner.curiosityQuestion}
-                  </p>
-                </div>
-              )}
-
               {/* Simple Supporting Description */}
-              <p className="text-sm sm:text-base text-white/80 font-light leading-relaxed max-w-xl">
+              <p className="text-xs sm:text-sm text-white/80 font-light leading-relaxed">
                 {currentBanner.description}
               </p>
             </motion.div>
           </AnimatePresence>
 
           {/* Action CTAs */}
-          <div className="pt-3 flex flex-wrap items-center gap-3 sm:gap-4">
-            {currentBanner.ctaRoute.startsWith("#") ? (
+          <div className="pt-2 flex flex-wrap items-center gap-3 sm:gap-4">
+            <Button
+              size="lg"
+              onClick={(e) => handlePrimaryCtaClick(e, "#living-world")}
+              className="rounded-2xl px-7 py-5 bg-terracotta hover:bg-terracotta/90 text-white font-medium text-xs font-mono tracking-wider uppercase gap-2 shadow-calm group transition-all"
+            >
+              <span>EXPLORE THE WORLD</span>
+              <ArrowRight className="size-3.5 group-hover:translate-x-1 transition-transform" />
+            </Button>
+
+            <Link to="/join">
               <Button
                 size="lg"
-                onClick={(e) => handlePrimaryCtaClick(e, currentBanner.ctaRoute)}
-                className="rounded-2xl px-6 py-5 bg-terracotta hover:bg-terracotta/90 text-white font-medium text-xs font-mono tracking-wider uppercase gap-2 shadow-calm group transition-all"
+                variant="outline"
+                className="rounded-2xl px-6 py-5 border-white/30 bg-black/40 backdrop-blur-md text-white hover:bg-white/20 font-medium text-xs font-mono tracking-wider uppercase"
               >
-                <span>{currentBanner.ctaLabel}</span>
-                <ArrowRight className="size-3.5 group-hover:translate-x-1 transition-transform" />
+                JOIN EKA
               </Button>
-            ) : (
-              <Link to={currentBanner.ctaRoute}>
-                <Button
-                  size="lg"
-                  className="rounded-2xl px-6 py-5 bg-terracotta hover:bg-terracotta/90 text-white font-medium text-xs font-mono tracking-wider uppercase gap-2 shadow-calm group transition-all"
-                >
-                  <span>{currentBanner.ctaLabel}</span>
-                  <ArrowRight className="size-3.5 group-hover:translate-x-1 transition-transform" />
-                </Button>
-              </Link>
-            )}
-
-            {currentBanner.secondaryCtaLabel && (
-              currentBanner.secondaryCtaRoute?.startsWith("#") ? (
-                <Button
-                  size="lg"
-                  variant="outline"
-                  onClick={(e) => handlePrimaryCtaClick(e, currentBanner.secondaryCtaRoute || "#living-world")}
-                  className="rounded-2xl px-5 py-5 border-white/30 bg-black/40 backdrop-blur-md text-white hover:bg-white/20 font-medium text-xs font-mono tracking-wider uppercase"
-                >
-                  {currentBanner.secondaryCtaLabel}
-                </Button>
-              ) : (
-                <Link to={currentBanner.secondaryCtaRoute || "/join"}>
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="rounded-2xl px-5 py-5 border-white/30 bg-black/40 backdrop-blur-md text-white hover:bg-white/20 font-medium text-xs font-mono tracking-wider uppercase"
-                  >
-                    {currentBanner.secondaryCtaLabel}
-                  </Button>
-                </Link>
-              )
-            )}
+            </Link>
           </div>
         </div>
 
         {/* Bottom Navigation & Indicator Bar */}
         <div className="pt-4 border-t border-white/10 flex items-center justify-between gap-4">
           {/* Subtle Indicator Dots */}
-          <div className="flex items-center gap-2" role="tablist" aria-label="Banner slides">
+          <div className="flex items-center gap-2" role="tablist" aria-label="Living story moments">
             {banners.map((b, idx) => (
               <button
                 key={b.id}
                 role="tab"
                 aria-selected={idx === currentIndex}
-                aria-label={`Go to slide ${idx + 1}: ${b.eyebrow}`}
+                aria-label={`View story ${idx + 1}: ${b.eyebrow}`}
                 onClick={() => setCurrentIndex(idx)}
                 className={`transition-all duration-300 rounded-full h-2 ${
                   idx === currentIndex
@@ -284,7 +254,7 @@ export function EKADynamicBanner({
               variant="ghost"
               size="icon"
               onClick={goToPrev}
-              aria-label="Previous story"
+              aria-label="Previous story moment"
               className="size-8 rounded-full bg-white/10 hover:bg-white/20 text-white/80 hover:text-white border border-white/10"
             >
               <ChevronLeft className="size-4" />
@@ -293,7 +263,7 @@ export function EKADynamicBanner({
               variant="ghost"
               size="icon"
               onClick={goToNext}
-              aria-label="Next story"
+              aria-label="Next story moment"
               className="size-8 rounded-full bg-white/10 hover:bg-white/20 text-white/80 hover:text-white border border-white/10"
             >
               <ChevronRight className="size-4" />

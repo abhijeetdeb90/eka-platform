@@ -3,27 +3,39 @@ import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
-  beforeLoad: async () => {
-    console.log("[_authenticated beforeLoad] Running...");
-    if (typeof window !== "undefined") {
-      const tokenStr =
-        localStorage.getItem("sb-auth-token") ||
-        localStorage.getItem("sb-kbiutqzhcbyuseygcspe-auth-token") ||
-        localStorage.getItem("sb-woflebpvqiwwzhggwwxv-auth-token");
-      if (tokenStr) {
-        try {
-          const parsed = JSON.parse(tokenStr);
-          if (parsed?.user) {
-            console.log("[_authenticated beforeLoad] Found local session user:", parsed.user.email);
-            return { user: parsed.user };
-          }
-        } catch {}
-      }
+  beforeLoad: async ({ location }) => {
+    // 1. Guard against SSR running prematurely on server without client storage/cookies
+    if (typeof window === "undefined") {
+      return { user: null };
     }
-    const { data, error } = await supabase.auth.getUser();
-    console.log("[_authenticated beforeLoad] Supabase getUser:", data?.user?.id, error?.message);
-    if (error || !data.user) throw redirect({ to: "/auth" });
-    return { user: data.user };
+
+    // 2. Check local Supabase session first (instant, synchronous cache lookup)
+    const { data: sessionData } = await supabase.auth.getSession();
+    const session = sessionData?.session;
+
+    if (session?.user) {
+      return { user: session.user };
+    }
+
+    // 3. Fallback: attempt network verification or token refresh
+    try {
+      const { data: userData, error: userError } = await supabase.auth.getUser();
+      if (userData?.user && !userError) {
+        return { user: userData.user };
+      }
+    } catch (err) {
+      console.warn("[_authenticated beforeLoad] getUser warning:", err);
+    }
+
+    // 4. Truly unauthenticated: redirect to /auth while preserving destination
+    const targetPath = location.pathname + (location.searchStr || "");
+    const safeNext =
+      targetPath && targetPath !== "/app" && targetPath !== "/" ? targetPath : undefined;
+
+    throw redirect({
+      to: "/auth",
+      search: safeNext ? { next: safeNext } : undefined,
+    });
   },
   component: () => <Outlet />,
 });

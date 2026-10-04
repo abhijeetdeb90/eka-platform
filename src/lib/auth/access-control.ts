@@ -32,27 +32,22 @@ export async function getSessionAndRoles(): Promise<{
   isAuthenticated: boolean;
 }> {
   try {
-    // 1. Fast local session check
-    let localUserId: string | null = null;
-    if (typeof window !== "undefined") {
-      const tokenStr =
-        localStorage.getItem("sb-auth-token") ||
-        localStorage.getItem("sb-kbiutqzhcbyuseygcspe-auth-token") ||
-        localStorage.getItem("sb-woflebpvqiwwzhggwwxv-auth-token");
-      if (tokenStr) {
-        try {
-          const parsed = JSON.parse(tokenStr);
-          if (parsed?.user?.id) {
-            localUserId = parsed.user.id;
-          }
-        } catch {}
+    if (typeof window === "undefined") {
+      return { userId: null, roles: [], isAuthenticated: false };
+    }
+
+    // 1. Fast local session check via getSession
+    const { data: sessionData } = await supabase.auth.getSession();
+    let userId = sessionData?.session?.user?.id ?? null;
+
+    if (!userId) {
+      const { data: auth, error: authError } = await supabase.auth.getUser();
+      if (!authError && auth?.user?.id) {
+        userId = auth.user.id;
       }
     }
 
-    const { data: auth, error: authError } = await supabase.auth.getUser();
-    const userId = auth?.user?.id || localUserId;
-
-    if (!userId || authError) {
+    if (!userId) {
       return { userId: null, roles: [], isAuthenticated: false };
     }
 

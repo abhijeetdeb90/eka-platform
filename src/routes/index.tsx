@@ -17,7 +17,6 @@ import { EKADynamicBanner } from "@/components/home/EKADynamicBanner";
 import { EKAHomeAuthPanel } from "@/components/home/EKAHomeAuthPanel";
 import { LivingWorldVisual } from "@/components/home/LivingWorldVisual";
 import { DiscoveryJourney } from "@/components/home/DiscoveryJourney";
-import { RegionalDiscoveryProgression } from "@/components/home/RegionalDiscoveryProgression";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -74,14 +73,7 @@ function EkaHomePage() {
         </section>
 
         {/* ==================================================================== */}
-        {/* 2. REGIONAL DISCOVERY PROGRESSION — NO REGIONAL SILOS */}
-        {/* ==================================================================== */}
-        <section className="container-eka">
-          <RegionalDiscoveryProgression />
-        </section>
-
-        {/* ==================================================================== */}
-        {/* 3. LIVING WORLD VISUAL — INTERACTIVE MAP & CURIOSITY LOOP */}
+        {/* 2. LIVING WORLD VISUAL — INTERACTIVE MAP & CURIOSITY LOOP */}
         {/* ==================================================================== */}
         <section className="container-eka">
           <LivingWorldVisual />

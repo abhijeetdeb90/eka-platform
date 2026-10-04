@@ -169,7 +169,7 @@ test.describe("EKA Monetization & Access Model", () => {
     };
     await page.addInitScript(
       ({ session }) => {
-        localStorage.setItem("sb-woflebpvqiwwzhggwwxv-auth-token", JSON.stringify(session));
+        localStorage.setItem("sb-kbiutqzhcbyuseygcspe-auth-token", JSON.stringify(session));
         localStorage.setItem("sb-auth-token", JSON.stringify(session));
         localStorage.setItem("eka_user_tier_preview", "free");
       },

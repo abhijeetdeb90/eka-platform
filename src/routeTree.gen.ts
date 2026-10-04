@@ -63,6 +63,7 @@ import { Route as ApiReconciliationRouteImport } from './routes/api/reconciliati
 import { Route as ApiRefundsRouteImport } from './routes/api/refunds'
 import { Route as ApiSubscriptionsRouteImport } from './routes/api/subscriptions'
 import { Route as ApiWebhooksRouteImport } from './routes/api/webhooks'
+import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as BrandsEnterpriseIndexRouteImport } from './routes/brands-enterprise.index'
 import { Route as BrandsEnterpriseAgentRouteImport } from './routes/brands-enterprise.agent'
 import { Route as BrandsEnterpriseAudienceRouteImport } from './routes/brands-enterprise.audience'
@@ -416,6 +417,11 @@ const ApiWebhooksRoute = ApiWebhooksRouteImport.update({
   id: '/api/webhooks',
   path: '/api/webhooks',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthCallbackRoute = AuthCallbackRouteImport.update({
+  id: '/callback',
+  path: '/callback',
+  getParentRoute: () => AuthRoute,
 } as any)
 const BrandsEnterpriseIndexRoute = BrandsEnterpriseIndexRouteImport.update({
   id: '/',
@@ -875,7 +881,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/agent': typeof AgentRoute
   '/audience': typeof AudienceRoute
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
   '/brands': typeof BrandsRoute
   '/brands-enterprise': typeof BrandsEnterpriseRouteWithChildren
   '/campaigns': typeof CampaignsRoute
@@ -924,6 +930,7 @@ export interface FileRoutesByFullPath {
   '/api/refunds': typeof ApiRefundsRoute
   '/api/subscriptions': typeof ApiSubscriptionsRoute
   '/api/webhooks': typeof ApiWebhooksRouteWithChildren
+  '/auth/callback': typeof AuthCallbackRoute
   '/brands-enterprise/agent': typeof BrandsEnterpriseAgentRoute
   '/brands-enterprise/audience': typeof BrandsEnterpriseAudienceRoute
   '/brands-enterprise/campaigns': typeof BrandsEnterpriseCampaignsRoute
@@ -1013,7 +1020,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/agent': typeof AgentRoute
   '/audience': typeof AudienceRoute
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
   '/brands': typeof BrandsRoute
   '/campaigns': typeof CampaignsRoute
   '/community': typeof CommunityRoute
@@ -1059,6 +1066,7 @@ export interface FileRoutesByTo {
   '/api/refunds': typeof ApiRefundsRoute
   '/api/subscriptions': typeof ApiSubscriptionsRoute
   '/api/webhooks': typeof ApiWebhooksRouteWithChildren
+  '/auth/callback': typeof AuthCallbackRoute
   '/brands-enterprise/agent': typeof BrandsEnterpriseAgentRoute
   '/brands-enterprise/audience': typeof BrandsEnterpriseAudienceRoute
   '/brands-enterprise/campaigns': typeof BrandsEnterpriseCampaignsRoute
@@ -1150,7 +1158,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/agent': typeof AgentRoute
   '/audience': typeof AudienceRoute
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
   '/brands': typeof BrandsRoute
   '/brands-enterprise': typeof BrandsEnterpriseRouteWithChildren
   '/campaigns': typeof CampaignsRoute
@@ -1199,6 +1207,7 @@ export interface FileRoutesById {
   '/api/refunds': typeof ApiRefundsRoute
   '/api/subscriptions': typeof ApiSubscriptionsRoute
   '/api/webhooks': typeof ApiWebhooksRouteWithChildren
+  '/auth/callback': typeof AuthCallbackRoute
   '/brands-enterprise/agent': typeof BrandsEnterpriseAgentRoute
   '/brands-enterprise/audience': typeof BrandsEnterpriseAudienceRoute
   '/brands-enterprise/campaigns': typeof BrandsEnterpriseCampaignsRoute
@@ -1339,6 +1348,7 @@ export interface FileRouteTypes {
     | '/api/refunds'
     | '/api/subscriptions'
     | '/api/webhooks'
+    | '/auth/callback'
     | '/brands-enterprise/agent'
     | '/brands-enterprise/audience'
     | '/brands-enterprise/campaigns'
@@ -1474,6 +1484,7 @@ export interface FileRouteTypes {
     | '/api/refunds'
     | '/api/subscriptions'
     | '/api/webhooks'
+    | '/auth/callback'
     | '/brands-enterprise/agent'
     | '/brands-enterprise/audience'
     | '/brands-enterprise/campaigns'
@@ -1613,6 +1624,7 @@ export interface FileRouteTypes {
     | '/api/refunds'
     | '/api/subscriptions'
     | '/api/webhooks'
+    | '/auth/callback'
     | '/brands-enterprise/agent'
     | '/brands-enterprise/audience'
     | '/brands-enterprise/campaigns'
@@ -1704,7 +1716,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   AgentRoute: typeof AgentRoute
   AudienceRoute: typeof AudienceRoute
-  AuthRoute: typeof AuthRoute
+  AuthRoute: typeof AuthRouteWithChildren
   BrandsRoute: typeof BrandsRoute
   BrandsEnterpriseRoute: typeof BrandsEnterpriseRouteWithChildren
   CampaignsRoute: typeof CampaignsRoute
@@ -2144,6 +2156,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/webhooks'
       preLoaderRoute: typeof ApiWebhooksRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/auth/callback': {
+      id: '/auth/callback'
+      path: '/callback'
+      fullPath: '/auth/callback'
+      preLoaderRoute: typeof AuthCallbackRouteImport
+      parentRoute: typeof AuthRoute
     }
     '/brands-enterprise/': {
       id: '/brands-enterprise/'
@@ -2872,6 +2891,16 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface AuthRouteChildren {
+  AuthCallbackRoute: typeof AuthCallbackRoute
+}
+
+const AuthRouteChildren: AuthRouteChildren = {
+  AuthCallbackRoute: AuthCallbackRoute,
+}
+
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+
 interface BrandsEnterpriseRouteChildren {
   BrandsEnterpriseAgentRoute: typeof BrandsEnterpriseAgentRoute
   BrandsEnterpriseAudienceRoute: typeof BrandsEnterpriseAudienceRoute
@@ -2950,7 +2979,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   AgentRoute: AgentRoute,
   AudienceRoute: AudienceRoute,
-  AuthRoute: AuthRoute,
+  AuthRoute: AuthRouteWithChildren,
   BrandsRoute: BrandsRoute,
   BrandsEnterpriseRoute: BrandsEnterpriseRouteWithChildren,
   CampaignsRoute: CampaignsRoute,

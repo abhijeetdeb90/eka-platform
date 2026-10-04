@@ -1,6 +1,6 @@
 import { test, expect, type Page } from "@playwright/test";
 
-const PROJECT_ID = "woflebpvqiwwzhggwwxv";
+const PROJECT_ID = "kbiutqzhcbyuseygcspe";
 
 async function setupAuthenticatedUser(page: Page, role = "admin") {
   const mockUser = {

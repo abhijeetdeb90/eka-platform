@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { Link } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "motion/react";
 import {
@@ -8,12 +8,15 @@ import {
   ArrowRight,
   Globe,
   HelpCircle,
-  ZoomIn,
+  Play,
+  Pause,
   Maximize2,
   RefreshCw,
   ExternalLink,
   ChevronRight,
   Eye,
+  Info,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -35,6 +38,7 @@ export interface CulturalWorldHotspot {
   category: string;
   curiosityQuestion: string;
   shortStory: string;
+  culturalContext: string;
   image: string;
   route: string;
   x: number; // Percent 0 - 100 on map
@@ -44,13 +48,15 @@ export interface CulturalWorldHotspot {
 export const CULTURAL_HOTSPOTS: CulturalWorldHotspot[] = [
   {
     id: "spot-india",
-    name: "Varanasi & The Sacred River",
+    name: "Varanasi & Ganga River",
     country: "India",
     region: "asia",
     category: "Living Ritual",
     curiosityQuestion: "Why do millions of people light lamps at dusk?",
     shortStory:
       "During twilight aarti, five cosmic elements are offered back to the flowing river. Fire transforms into reverent gratitude, unbroken for 1,200 years.",
+    culturalContext:
+      "Across Indic philosophy, fire is the only element that naturally ascends upward. Lighting a clay lamp at twilight symbolizes returning the gift of awareness to the supreme source.",
     image: ritualLamp,
     route: "/stories",
     x: 69.5,
@@ -65,6 +71,8 @@ export const CULTURAL_HOTSPOTS: CulturalWorldHotspot[] = [
     curiosityQuestion: "Why are these gates found at the entrance of sacred spaces?",
     shortStory:
       "Torii gates mark the boundary where everyday busyness yields to natural reverence, inviting silent contemplation within ancient cedars.",
+    culturalContext:
+      "In Shinto philosophy, the physical world and the sacred spirits (Kami) are woven together. Stepping beneath the Torii gate is a conscious breath that cleanses the heart.",
     image: kyotoImage,
     route: "/junction",
     x: 84.5,
@@ -79,6 +87,8 @@ export const CULTURAL_HOTSPOTS: CulturalWorldHotspot[] = [
     curiosityQuestion: "How is this craft passed from one generation to another?",
     shortStory:
       "In labyrinthine stone courtyards, master artisans cut complex geometric zellige tiles without written blueprints, guided by memory and breath.",
+    culturalContext:
+      "Guild traditions in North Africa rely on master-apprentice (Maallem) lineage, where geometry is an act of contemplation and symmetry honors the boundless.",
     image: marrakeshImage,
     route: "/discover",
     x: 48.0,
@@ -92,7 +102,9 @@ export const CULTURAL_HOTSPOTS: CulturalWorldHotspot[] = [
     category: "Community Reunion",
     curiosityQuestion: "Why does this celebration bring entire communities together?",
     shortStory:
-      "Día de los Muertos is not mourning; it is an annual community reunion celebrating living memory with marigolds, bread, and midnight vigils.",
+      "Día de los Muertos is not mourning; it is an annual community reunion celebrating living memory with marigolds, sweet bread, and midnight vigils.",
+    culturalContext:
+      "Indigenous Zapotec and Mixtec worldviews celebrate the continuity of community. As long as a story is remembered and whispered at the hearth, no soul is forgotten.",
     image: todayReflection,
     route: "/stories",
     x: 23.5,
@@ -107,6 +119,8 @@ export const CULTURAL_HOTSPOTS: CulturalWorldHotspot[] = [
     curiosityQuestion: "Why do sacred water temples govern rice harvests?",
     shortStory:
       "The 1,000-year-old Subak system synchronizes water flow across entire volcanic valleys through collective village consensus and ritual stewardship.",
+    culturalContext:
+      "Tri Hita Karana philosophy requires harmony between humans, nature, and the divine. Agriculture in Bali is not an industry; it is a shared sacred ecosystem.",
     image: stillWater,
     route: "/discover",
     x: 79.5,
@@ -121,6 +135,8 @@ export const CULTURAL_HOTSPOTS: CulturalWorldHotspot[] = [
     curiosityQuestion: "Why do prayer flags carry blessings into the wind?",
     shortStory:
       "Five colors represent the cosmic elements: earth, water, fire, wind, and sky, rippling goodwill outward across mountain passes.",
+    culturalContext:
+      "In Himalayan Buddhist heritage, wind is the vehicle of universal breath (Lungta). Prayers printed with natural wooden blocks are released to touch all living beings.",
     image: monasteryCorridor,
     route: "/junction",
     x: 71.0,
@@ -135,6 +151,8 @@ export const CULTURAL_HOTSPOTS: CulturalWorldHotspot[] = [
     curiosityQuestion: "Why has the olive branch signified peace across millennia?",
     shortStory:
       "Olive groves require decades to fruit. Planting one is a quiet promise of peace, knowing only future generations will harvest its shade.",
+    culturalContext:
+      "In classical Mediterranean heritage, olive trees survive fires and wars, regenerating from their ancient roots as symbols of unbroken human endurance.",
     image: readingTable,
     route: "/discover",
     x: 55.5,
@@ -149,6 +167,8 @@ export const CULTURAL_HOTSPOTS: CulturalWorldHotspot[] = [
     curiosityQuestion: "How did stone masonry survive earthquakes without mortar?",
     shortStory:
       "Incan masons hand-carved colossal granite blocks with interlocking geometries that move like water during tremors and settle safely back into place.",
+    culturalContext:
+      "Andean philosophy views stone as living presence (Huaca). Masons did not conquer the rock; they listened to its grain, honoring Pachamama (Mother Earth).",
     image: journeyImage,
     route: "/discover",
     x: 29.5,
@@ -156,7 +176,7 @@ export const CULTURAL_HOTSPOTS: CulturalWorldHotspot[] = [
   },
 ];
 
-// Connection arcs linking key cultural corridors
+// Cultural connection corridors
 const CULTURAL_CORRIDORS = [
   { from: CULTURAL_HOTSPOTS[0]!, to: CULTURAL_HOTSPOTS[5]! }, // Varanasi -> Nepal
   { from: CULTURAL_HOTSPOTS[5]!, to: CULTURAL_HOTSPOTS[1]! }, // Nepal -> Kyoto
@@ -168,14 +188,24 @@ const CULTURAL_CORRIDORS = [
   { from: CULTURAL_HOTSPOTS[3]!, to: CULTURAL_HOTSPOTS[7]! }, // Mexico -> Peru
 ];
 
+// Viewbox presets for smooth pan & zoom
+const VIEWBOX_PRESETS = {
+  all: "0 0 1000 500",
+  asia: "480 30 520 400",
+  africa_med: "380 40 400 380",
+  americas: "80 40 450 440",
+};
+
 export function LivingWorldVisual({ className = "" }: { className?: string }) {
   const [selectedHotspotId, setSelectedHotspotId] = useState<string>("spot-india");
   const [regionFilter, setRegionFilter] = useState<"all" | "asia" | "africa_med" | "americas">("all");
-  const [isHovering, setIsHovering] = useState(false);
+  const [isPlayingAutoTour, setIsPlayingAutoTour] = useState(true);
+  const [cursorPos, setCursorPos] = useState<{ x: number; y: number } | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const mapCanvasRef = useRef<HTMLDivElement>(null);
 
-  // Load from session storage if visited previously
+  // Load from session storage
   useEffect(() => {
     if (typeof window !== "undefined") {
       const saved = sessionStorage.getItem("eka_selected_spot_id");
@@ -187,17 +217,16 @@ export function LivingWorldVisual({ className = "" }: { className?: string }) {
     }
   }, []);
 
-  // Save selected spot in session
-  const selectSpot = (spotId: string) => {
+  const selectSpot = useCallback((spotId: string) => {
     setSelectedHotspotId(spotId);
     if (typeof window !== "undefined") {
       sessionStorage.setItem("eka_selected_spot_id", spotId);
     }
-  };
+  }, []);
 
-  // Ambient curiosity cycle (loops every 6s unless user interacts)
+  // Ambient curiosity cycle
   useEffect(() => {
-    if (isHovering || prefersReducedMotion) return;
+    if (!isPlayingAutoTour || prefersReducedMotion) return;
 
     const interval = setInterval(() => {
       setSelectedHotspotId((prev) => {
@@ -206,10 +235,10 @@ export function LivingWorldVisual({ className = "" }: { className?: string }) {
         const nextId = CULTURAL_HOTSPOTS[nextIdx]!.id;
         return nextId;
       });
-    }, 6000);
+    }, 5500);
 
     return () => clearInterval(interval);
-  }, [isHovering, prefersReducedMotion]);
+  }, [isPlayingAutoTour, prefersReducedMotion]);
 
   const activeSpot = useMemo(() => {
     return CULTURAL_HOTSPOTS.find((s) => s.id === selectedHotspotId) || CULTURAL_HOTSPOTS[0]!;
@@ -220,78 +249,128 @@ export function LivingWorldVisual({ className = "" }: { className?: string }) {
     return CULTURAL_HOTSPOTS.filter((s) => s.region === regionFilter);
   }, [regionFilter]);
 
+  // Cursor Proximity calculation
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!mapCanvasRef.current) return;
+    const rect = mapCanvasRef.current.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    setCursorPos({ x, y });
+  };
+
+  const handleMouseLeave = () => {
+    setCursorPos(null);
+  };
+
+  const getProximityBonus = (spotX: number, spotY: number) => {
+    if (!cursorPos) return 0;
+    const dx = cursorPos.x - spotX;
+    const dy = cursorPos.y - spotY;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist < 12) {
+      return Math.max(0, 1 - dist / 12);
+    }
+    return 0;
+  };
+
   return (
     <div
       id="living-world"
-      ref={containerRef}
       role="region"
       aria-label="Interactive Living Cultural World Map"
       className={`relative w-full rounded-3xl border border-border/80 bg-neutral-950 text-white overflow-hidden shadow-lift ${className}`}
-      onMouseEnter={() => setIsHovering(true)}
-      onMouseLeave={() => setIsHovering(false)}
     >
       {/* 1. Header Toolbar */}
-      <div className="relative z-20 flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 sm:p-8 border-b border-white/10 bg-gradient-to-b from-neutral-900/80 to-transparent backdrop-blur-sm">
+      <div className="relative z-20 flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 sm:p-8 border-b border-white/10 bg-gradient-to-b from-neutral-900/90 to-transparent backdrop-blur-sm">
         <div className="space-y-1">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-saffron/20 border border-saffron/40 text-amber-200 text-xs font-mono uppercase tracking-widest">
             <span className="size-2 rounded-full bg-saffron animate-pulse" />
             <span>Living World Discovery</span>
           </div>
           <h2 className="font-display font-serif text-2xl sm:text-3xl font-normal text-white">
-            Touch the map. Unfold a story.
+            Touch the world. Unfold a story.
           </h2>
           <p className="text-xs sm:text-sm text-white/70 font-light max-w-xl">
             Gentle pulses reveal living traditions, sacred places, and master crafts across humanity.
           </p>
         </div>
 
-        {/* Region Filter Buttons */}
-        <div className="flex flex-wrap items-center gap-1.5 p-1 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15">
-          <button
-            onClick={() => setRegionFilter("all")}
-            className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all ${
-              regionFilter === "all"
-                ? "bg-terracotta text-white shadow-xs font-medium"
-                : "text-white/70 hover:text-white hover:bg-white/10"
-            }`}
+        {/* Region & Tour Controls */}
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Tour Play/Pause Toggle */}
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => setIsPlayingAutoTour((prev) => !prev)}
+            aria-label={isPlayingAutoTour ? "Pause discovery tour" : "Play discovery tour"}
+            className="rounded-xl px-3 py-2 text-xs font-mono bg-white/10 hover:bg-white/20 border border-white/15 text-white gap-1.5"
           >
-            All World
-          </button>
-          <button
-            onClick={() => setRegionFilter("asia")}
-            className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all ${
-              regionFilter === "asia"
-                ? "bg-terracotta text-white shadow-xs font-medium"
-                : "text-white/70 hover:text-white hover:bg-white/10"
-            }`}
-          >
-            Asia & India
-          </button>
-          <button
-            onClick={() => setRegionFilter("africa_med")}
-            className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all ${
-              regionFilter === "africa_med"
-                ? "bg-terracotta text-white shadow-xs font-medium"
-                : "text-white/70 hover:text-white hover:bg-white/10"
-            }`}
-          >
-            Morocco & Med
-          </button>
-          <button
-            onClick={() => setRegionFilter("americas")}
-            className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all ${
-              regionFilter === "americas"
-                ? "bg-terracotta text-white shadow-xs font-medium"
-                : "text-white/70 hover:text-white hover:bg-white/10"
-            }`}
-          >
-            Americas
-          </button>
+            {isPlayingAutoTour ? (
+              <>
+                <Pause className="size-3 text-saffron" />
+                <span className="hidden sm:inline">Tour Running</span>
+              </>
+            ) : (
+              <>
+                <Play className="size-3 text-saffron" />
+                <span className="hidden sm:inline">Start Tour</span>
+              </>
+            )}
+          </Button>
+
+          {/* Region Filter Buttons */}
+          <div className="flex items-center gap-1 p-1 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15">
+            <button
+              onClick={() => setRegionFilter("all")}
+              className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all ${
+                regionFilter === "all"
+                  ? "bg-terracotta text-white shadow-xs font-medium"
+                  : "text-white/70 hover:text-white hover:bg-white/10"
+              }`}
+            >
+              All World
+            </button>
+            <button
+              onClick={() => setRegionFilter("asia")}
+              className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all ${
+                regionFilter === "asia"
+                  ? "bg-terracotta text-white shadow-xs font-medium"
+                  : "text-white/70 hover:text-white hover:bg-white/10"
+              }`}
+            >
+              Asia & India
+            </button>
+            <button
+              onClick={() => setRegionFilter("africa_med")}
+              className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all ${
+                regionFilter === "africa_med"
+                  ? "bg-terracotta text-white shadow-xs font-medium"
+                  : "text-white/70 hover:text-white hover:bg-white/10"
+              }`}
+            >
+              Morocco & Med
+            </button>
+            <button
+              onClick={() => setRegionFilter("americas")}
+              className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all ${
+                regionFilter === "americas"
+                  ? "bg-terracotta text-white shadow-xs font-medium"
+                  : "text-white/70 hover:text-white hover:bg-white/10"
+              }`}
+            >
+              Americas
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* 2. Map Canvas Stage */}
-      <div className="relative w-full h-[460px] sm:h-[560px] lg:h-[620px] bg-[radial-gradient(ellipse_at_center,_#1c1917_0%,_#0c0a09_70%,_#000000_100%)] overflow-hidden select-none">
+      {/* 2. Map Canvas Stage with Proximity Engine */}
+      <div
+        ref={mapCanvasRef}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        className="relative w-full h-[480px] sm:h-[580px] lg:h-[640px] bg-[radial-gradient(ellipse_at_center,_#1c1917_0%,_#0c0a09_70%,_#000000_100%)] overflow-hidden select-none"
+      >
         {/* Subtle Latitude/Longitude Grid Lines */}
         <svg
           className="absolute inset-0 w-full h-full pointer-events-none opacity-20"
@@ -303,16 +382,16 @@ export function LivingWorldVisual({ className = "" }: { className?: string }) {
             </pattern>
           </defs>
           <rect width="100%" height="100%" fill="url(#world-grid)" />
-          {/* Equator & Prime Meridian Highlights */}
+          {/* Equator & Meridian Highlights */}
           <line x1="0" y1="50%" x2="100%" y2="50%" stroke="rgba(217, 119, 6, 0.25)" strokeWidth="1" strokeDasharray="4 4" />
           <line x1="50%" y1="0" x2="50%" y2="100%" stroke="rgba(217, 119, 6, 0.25)" strokeWidth="1" strokeDasharray="4 4" />
         </svg>
 
-        {/* Stylized Continents Silhouettes */}
+        {/* Continents Silhouettes with Smooth Animated Viewbox */}
         <svg
-          viewBox="0 0 1000 500"
+          viewBox={VIEWBOX_PRESETS[regionFilter]}
           preserveAspectRatio="xMidYMid meet"
-          className="absolute inset-0 w-full h-full pointer-events-none opacity-30 text-stone-700"
+          className="absolute inset-0 w-full h-full pointer-events-none opacity-30 text-stone-700 transition-all duration-700 ease-out"
         >
           {/* North America */}
           <path
@@ -349,7 +428,7 @@ export function LivingWorldVisual({ className = "" }: { className?: string }) {
             d="M 830 170 Q 860 190 850 230 Q 830 220 830 170 Z"
             fill="currentColor"
           />
-          {/* Southeast Asia & Indonesia archipelago */}
+          {/* Southeast Asia & Indonesia */}
           <path
             d="M 740 280 Q 810 300 830 350 Q 780 360 740 310 Z"
             fill="currentColor"
@@ -361,61 +440,79 @@ export function LivingWorldVisual({ className = "" }: { className?: string }) {
           />
         </svg>
 
-        {/* Ambient Arcs between Cultural Corridors */}
+        {/* Ambient Arcs Connecting Cultural Corridors */}
         <svg className="absolute inset-0 w-full h-full pointer-events-none">
           {CULTURAL_CORRIDORS.map((c, i) => {
             const isConnectedToActive =
               c.from.id === activeSpot.id || c.to.id === activeSpot.id;
             return (
-              <motion.line
+              <line
                 key={`corr-${i}`}
                 x1={`${c.from.x}%`}
                 y1={`${c.from.y}%`}
                 x2={`${c.to.x}%`}
                 y2={`${c.to.y}%`}
-                stroke={isConnectedToActive ? "oklch(0.585 0.077 45 / 0.75)" : "oklch(0.93 0.018 90 / 0.15)"}
-                strokeWidth={isConnectedToActive ? "1.8" : "0.75"}
+                stroke={isConnectedToActive ? "oklch(0.585 0.077 45 / 0.85)" : "oklch(0.93 0.018 90 / 0.15)"}
+                strokeWidth={isConnectedToActive ? "2" : "0.75"}
                 strokeDasharray={isConnectedToActive ? "6 3" : "3 4"}
-                initial={{ pathLength: 0, opacity: 0 }}
-                animate={{ pathLength: 1, opacity: 1 }}
-                transition={{ duration: 1.2, ease: "easeOut" }}
+                className={isConnectedToActive ? "transition-all duration-500" : ""}
               />
             );
           })}
         </svg>
 
-        {/* Cultural Hotspot Markers */}
+        {/* Cultural Hotspot Markers with Proximity Elevation */}
         <div className="absolute inset-0 w-full h-full">
           {filteredSpots.map((spot) => {
             const isSelected = spot.id === activeSpot.id;
+            const proximity = getProximityBonus(spot.x, spot.y);
+            const scale = isSelected ? 1.15 : 1 + proximity * 0.25;
+
             return (
               <div
                 key={spot.id}
-                style={{ left: `${spot.x}%`, top: `${spot.y}%` }}
-                className="absolute -translate-x-1/2 -translate-y-1/2 z-20"
+                style={{
+                  left: `${spot.x}%`,
+                  top: `${spot.y}%`,
+                  transform: `translate(-50%, -50%) scale(${scale})`,
+                }}
+                className="absolute z-20 transition-transform duration-200"
               >
                 {/* Marker Button */}
                 <button
                   type="button"
-                  onClick={() => selectSpot(spot.id)}
+                  onClick={() => {
+                    selectSpot(spot.id);
+                    setIsPlayingAutoTour(false);
+                  }}
                   aria-label={`Explore ${spot.name}, ${spot.country}`}
                   aria-pressed={isSelected}
                   className="group relative flex items-center justify-center p-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-saffron rounded-full cursor-pointer"
                 >
                   {/* Subtle Expanding Ripple on Active Marker */}
                   {isSelected && (
-                    <span className="absolute size-9 rounded-full bg-saffron/25 animate-ping pointer-events-none" />
+                    <span className="absolute size-10 rounded-full bg-saffron/30 animate-ping pointer-events-none" />
                   )}
 
                   {/* Outer Glow Halo */}
                   <span
                     className={`size-6 sm:size-7 rounded-full flex items-center justify-center transition-all duration-300 ${
                       isSelected
-                        ? "bg-terracotta text-white shadow-lg scale-110 border-2 border-amber-200"
+                        ? "bg-terracotta text-white shadow-xl border-2 border-amber-200"
+                        : proximity > 0.3
+                        ? "bg-amber-900/90 text-amber-200 border border-saffron shadow-md"
                         : "bg-neutral-900/90 hover:bg-neutral-800 text-amber-200/80 hover:text-white border border-white/30"
                     }`}
                   >
-                    <span className={`size-2 rounded-full ${isSelected ? "bg-white" : "bg-saffron group-hover:scale-125 transition-transform"}`} />
+                    <span
+                      className={`size-2 rounded-full ${
+                        isSelected
+                          ? "bg-white"
+                          : proximity > 0.3
+                          ? "bg-saffron scale-125"
+                          : "bg-saffron group-hover:scale-125 transition-transform"
+                      }`}
+                    />
                   </span>
 
                   {/* Floating Pill on Hover or Select */}
@@ -426,7 +523,7 @@ export function LivingWorldVisual({ className = "" }: { className?: string }) {
                         : "opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 bg-black/80 text-white/90 border border-white/20"
                     }`}
                   >
-                    {spot.name.split("·")[0]?.split("&")[0]?.trim()}
+                    {spot.country.toUpperCase()}: {spot.name.split("·")[0]?.split("&")[0]?.trim()}
                   </span>
                 </button>
               </div>
@@ -434,18 +531,18 @@ export function LivingWorldVisual({ className = "" }: { className?: string }) {
           })}
         </div>
 
-        {/* 3. Interactive Discovery Loop Card (Floating Overlay) */}
+        {/* 3. Interactive Curiosity Loop Card (IMAGE → SHORT STORY → PLACE → CULTURAL CONTEXT → EXPLORE) */}
         <div className="absolute left-4 right-4 sm:left-6 sm:right-auto sm:max-w-md bottom-4 sm:bottom-6 z-30">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeSpot.id}
-              initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 12, scale: 0.96 }}
+              initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 14, scale: 0.96 }}
               animate={prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
               exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -8, scale: 0.98 }}
               transition={{ duration: 0.35, ease: "easeOut" }}
               className="rounded-2xl border border-white/20 bg-neutral-950/92 backdrop-blur-xl p-4 sm:p-5 shadow-2xl text-white space-y-3.5"
             >
-              {/* Card Header */}
+              {/* Card Header: PLACE & CATEGORY */}
               <div className="flex items-start justify-between gap-3">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
@@ -453,7 +550,7 @@ export function LivingWorldVisual({ className = "" }: { className?: string }) {
                       {activeSpot.category}
                     </span>
                     <span className="text-white/40">•</span>
-                    <span className="text-[10px] font-mono text-white/70">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-amber-200">
                       {activeSpot.country}
                     </span>
                   </div>
@@ -462,7 +559,7 @@ export function LivingWorldVisual({ className = "" }: { className?: string }) {
                   </h3>
                 </div>
 
-                {/* Thumbnail Image */}
+                {/* IMAGE Thumbnail */}
                 <div className="size-14 sm:size-16 rounded-xl overflow-hidden shrink-0 border border-white/20 shadow-xs">
                   <img
                     src={activeSpot.image}
@@ -480,28 +577,42 @@ export function LivingWorldVisual({ className = "" }: { className?: string }) {
                 </p>
               </div>
 
-              {/* Short 2-Sentence Context */}
-              <p className="text-xs text-white/80 font-light leading-relaxed line-clamp-2 sm:line-clamp-3">
+              {/* SHORT STORY */}
+              <p className="text-xs text-white/80 font-light leading-relaxed line-clamp-2">
                 {activeSpot.shortStory}
               </p>
 
-              {/* Action Buttons */}
-              <div className="pt-1 flex items-center justify-between gap-3">
+              {/* Action Buttons: Full Unfold or Direct Exploration */}
+              <div className="pt-1 flex items-center justify-between gap-2.5">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setIsModalOpen(true)}
+                  className="rounded-xl border-white/30 bg-white/10 hover:bg-white/20 text-white font-medium text-[11px] font-mono tracking-wider uppercase py-4"
+                >
+                  <Eye className="size-3.5 mr-1 text-saffron" />
+                  <span>Unfold</span>
+                </Button>
+
                 <Link to={activeSpot.route} className="flex-1">
                   <Button
                     size="sm"
                     className="w-full rounded-xl bg-terracotta hover:bg-terracotta/90 text-white font-medium text-[11px] font-mono tracking-wider uppercase gap-1.5 py-4 shadow-xs"
                   >
-                    <span>Explore This Culture</span>
+                    <span>Explore Story</span>
                     <ArrowRight className="size-3.5" />
                   </Button>
                 </Link>
 
+                {/* Carousel Pips */}
                 <div className="flex items-center gap-1">
                   {CULTURAL_HOTSPOTS.map((s) => (
                     <button
-                      key={`btn-pip-${s.id}`}
-                      onClick={() => selectSpot(s.id)}
+                      key={`pip-${s.id}`}
+                      onClick={() => {
+                        selectSpot(s.id);
+                        setIsPlayingAutoTour(false);
+                      }}
                       aria-label={`Switch to ${s.name}`}
                       className={`size-2 rounded-full transition-all ${
                         s.id === activeSpot.id ? "w-5 bg-saffron" : "bg-white/30 hover:bg-white/60"
@@ -514,6 +625,91 @@ export function LivingWorldVisual({ className = "" }: { className?: string }) {
           </AnimatePresence>
         </div>
       </div>
+
+      {/* 4. Complete Curiosity Unfold Modal (IMAGE → SHORT STORY → PLACE → CULTURAL CONTEXT → EXPLORE) */}
+      <AnimatePresence>
+        {isModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-md">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 16 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 16 }}
+              transition={{ duration: 0.3 }}
+              className="relative w-full max-w-2xl rounded-3xl border border-white/20 bg-neutral-950 text-white p-6 sm:p-8 shadow-2xl space-y-6 overflow-hidden"
+            >
+              {/* Close Button */}
+              <button
+                onClick={() => setIsModalOpen(false)}
+                aria-label="Close story"
+                className="absolute top-5 right-5 size-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/80 hover:text-white transition-colors"
+              >
+                <X className="size-4" />
+              </button>
+
+              {/* IMAGE Banner */}
+              <div className="relative aspect-[16/9] w-full rounded-2xl overflow-hidden border border-white/15 bg-neutral-900">
+                <img
+                  src={activeSpot.image}
+                  alt={activeSpot.name}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-transparent to-transparent" />
+                <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-xs font-mono">
+                  <span className="px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-amber-200">
+                    {activeSpot.category}
+                  </span>
+                  <span className="flex items-center gap-1.5 text-white/90">
+                    <MapPin className="size-3.5 text-saffron" />
+                    {activeSpot.country}
+                  </span>
+                </div>
+              </div>
+
+              {/* PLACE & QUESTION */}
+              <div className="space-y-2">
+                <h3 className="font-display font-serif text-2xl sm:text-3xl font-normal text-white">
+                  {activeSpot.name}
+                </h3>
+                <p className="text-sm sm:text-base font-medium text-amber-200 leading-snug">
+                  {activeSpot.curiosityQuestion}
+                </p>
+              </div>
+
+              {/* SHORT STORY & CULTURAL CONTEXT */}
+              <div className="space-y-3 text-xs sm:text-sm text-white/80 font-light leading-relaxed">
+                <p>{activeSpot.shortStory}</p>
+                <div className="p-3.5 rounded-xl bg-white/10 border border-white/10 text-white/90">
+                  <span className="text-[10px] font-mono uppercase tracking-widest text-saffron block mb-1">
+                    Cultural Context
+                  </span>
+                  <p>{activeSpot.culturalContext}</p>
+                </div>
+              </div>
+
+              {/* EXPLORE Action CTA */}
+              <div className="pt-2 flex items-center justify-between gap-4">
+                <Button
+                  variant="ghost"
+                  onClick={() => setIsModalOpen(false)}
+                  className="rounded-xl px-4 text-xs font-mono text-white/70 hover:text-white"
+                >
+                  Close
+                </Button>
+
+                <Link to={activeSpot.route}>
+                  <Button
+                    onClick={() => setIsModalOpen(false)}
+                    className="rounded-xl px-6 py-5 bg-terracotta hover:bg-terracotta/90 text-white font-medium text-xs font-mono tracking-wider uppercase gap-2 shadow-calm"
+                  >
+                    <span>Explore on EKA</span>
+                    <ArrowRight className="size-3.5" />
+                  </Button>
+                </Link>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
