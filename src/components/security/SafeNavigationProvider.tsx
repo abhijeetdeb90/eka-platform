@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
-import { analyzeUrlForPhishing, type PhishingAnalysisResult } from "@/lib/security";
+import { analyzeUrlForPhishing } from "@/lib/security/anti-phishing";
+import type { PhishingAnalysisResult } from "@/lib/security/types";
 import { SafeLinkDialog } from "./SafeLinkDialog";
 
 interface SafeNavigationContextType {

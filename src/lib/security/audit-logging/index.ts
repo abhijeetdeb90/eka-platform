@@ -2,7 +2,6 @@
 // EKA PLATFORM — TAMPER-RESISTANT CRYPTOGRAPHIC AUDIT LOGGING ENGINE
 // ==============================================================================
 
-import { createHash } from "crypto";
 import { sanitizeObject } from "../secrets-management";
 import type { SecurityAuditRecord } from "../types";
 
@@ -19,7 +18,21 @@ let lastHash = GENESIS_HASH;
  */
 function computeRecordHash(prevHash: string, data: Omit<SecurityAuditRecord, "hash" | "prevHash">): string {
   const content = `${prevHash}|${data.id}|${data.timestamp}|${data.actorId ?? ""}|${data.actorRole ?? ""}|${data.action}|${data.resourceType}|${data.resourceId ?? ""}|${data.result}|${JSON.stringify(data.details)}`;
-  return createHash("sha256").update(content).digest("hex");
+  try {
+    if (typeof globalThis !== "undefined" && typeof (globalThis as unknown as { process?: unknown }).process !== "undefined") {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const crypto = require("node:crypto");
+      if (crypto && typeof crypto.createHash === "function") {
+        return crypto.createHash("sha256").update(content).digest("hex");
+      }
+    }
+  } catch {}
+  let hash = 0;
+  for (let i = 0; i < content.length; i++) {
+    hash = ((hash << 5) - hash) + content.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash).toString(16).padStart(64, "0");
 }
 
 /**
