@@ -68,7 +68,7 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "date-fns": "^4.1.0",
-    "drizzle-orm": "^0.45.2",
+    "drizzle-orm": "^0.45.3",
     "embla-carousel-react": "^8.6.0",
     "gsap": "^3.12.7",
     "input-otp": "^1.4.2",
@@ -96,7 +96,7 @@
   "devDependencies": {
     "@eslint/js": "^9.32.0",
     "@playwright/test": "^1.63.0",
-    "drizzle-kit": "^0.31.10",
+    "drizzle-kit": "^0.31.11",
     "eslint": "^9.32.0",
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-prettier": "^5.2.6",
