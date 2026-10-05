@@ -95,7 +95,7 @@ function Explore() {
   const topics = profile?.interests?.length ? profile.interests : INTERESTS.slice(0, 10);
 
   return (
-    <AppScreen eyebrow="Explore" title="Ideas, people and Sanghas">
+    <AppScreen variant="canvas" eyebrow="Explore" title="Ideas, people and Sanghas">
       {/* Interactive AI Knowledge Layer: Ask EKA */}
       <section className="space-y-2">
         <AskEkaDrawer inline />

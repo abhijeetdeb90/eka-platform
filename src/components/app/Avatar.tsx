@@ -3,6 +3,7 @@ import { BadgeCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { initials } from "@/lib/eka";
 import type { ProfileRow } from "@/lib/api";
+import { EkaBadge } from "@/components/app/EkaBadge";
 
 export function UserAvatar({
   profile,
@@ -54,7 +55,7 @@ export function AuthorLine({ profile, meta }: { profile: ProfileRow | null; meta
           ) : (
             <span className="truncate text-sm font-medium">Someone</span>
           )}
-          {profile?.verified && <BadgeCheck className="size-4 shrink-0 text-primary" />}
+          {profile && <EkaBadge profile={profile} size="sm" />}
           {(profile as unknown as { is_founding_contributor?: boolean })
             ?.is_founding_contributor && (
             <span

@@ -107,22 +107,22 @@ export const EKA_ACCESS_FEATURES: AccessModelFeature[] = [
     description: "Primary manuscript citations, multi-lingual translations, academic verifiers, and lineage roots.",
   },
 
-  // 3. Creator Studio (Creation Tools) — Paid (Creator Workspace)
+  // 3. Creator Studio & Monetization — Free creation for all, Pro tools for creators
+  {
+    id: "create_publish",
+    name: "Publish stories, photos, videos & carousels",
+    category: "Creation (Studio)",
+    free: true,
+    paid: true,
+    description: "Share reflections, stories, multi-image carousels, and video reels with the global community for free.",
+  },
   {
     id: "creator_studio",
     name: "Creator Studio",
     category: "Creation (Studio)",
     free: false,
     paid: true,
-    description: "Professional paid workspace for cultural storytellers, researchers, and community custodians.",
-  },
-  {
-    id: "create_publish",
-    name: "Create & publish stories",
-    category: "Creation (Studio)",
-    free: false,
-    paid: true,
-    description: "Rich multimedia story builder with provenance tagging, citation links, and community verification.",
+    description: "Professional monetization workspace for cultural storytellers, researchers, and community custodians.",
   },
   {
     id: "creator_analytics",
@@ -134,7 +134,7 @@ export const EKA_ACCESS_FEATURES: AccessModelFeature[] = [
   },
   {
     id: "advanced_creator_tools",
-    name: "Advanced creator tools",
+    name: "Advanced monetization & splits",
     category: "Creation (Studio)",
     free: false,
     paid: true,
@@ -161,19 +161,20 @@ export interface ProductTierConfig {
 export const PRODUCT_TIERS: Record<MonetizationTier, ProductTierConfig> = {
   free: {
     id: "free",
-    badge: "Open Cultural Library",
-    name: "Free Library",
-    tagline: "Discover → Read → Explore → Follow",
-    headline: "Knowledge should be free.",
+    badge: "Open Cultural Commons",
+    name: "Free Seeker",
+    tagline: "Discover → Share → Connect → Belong",
+    headline: "Creation and knowledge are open to all.",
     price: "₹0",
     period: "forever",
     priceNote: "Free forever · No credit card required",
     description:
-      "Open access to EKA's global cultural library, illuminated world map, traditions, places, and community stories.",
+      "Open access to explore EKA's cultural library, post reflections, share photos, publish stories, upload videos, and create carousels.",
     highlights: [
+      "Publish photos, stories, videos & multi-image carousels",
       "Explore the interactive Global Cultural Map",
       "Read all cultural stories & living traditions",
-      "View sacred places, imagery & community heritage",
+      "Join Circles and connect with custodians",
       "Full search across global cultural knowledge",
       "Follow creators & save public traditions",
     ],
@@ -239,9 +240,9 @@ export const CORE_PHILOSOPHY = {
         "EKA AI, contextual synthesis, personalized learning paths, and cross-cultural comparisons require computation and epistemic curation.",
     },
     {
-      title: "Creation should be paid.",
+      title: "Creation is open to everyone.",
       description:
-        "Creator Studio is a professional paid workspace providing distribution, analytics, lineage verification, and transparent revenue splits.",
+        "Every seeker can post stories, share photos, upload videos, and build multi-slide carousels for free. Creator Studio is an optional workspace for professional creators who want audience analytics, Qualified Contribution Scores, and 85% subscription revenue sharing.",
     },
   ],
   subscriptionHook:

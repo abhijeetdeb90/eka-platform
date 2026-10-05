@@ -16,18 +16,18 @@ function CreatePage() {
 
   return (
     <AppScreen eyebrow="Create" title="What is on your mind?">
-      {/* Creator Studio Workspace Reference */}
+      {/* Free Creation Banner with Creator Studio Link */}
       <div className="rounded-2xl border border-primary/25 bg-sand/20 p-3.5 flex flex-col sm:flex-row items-center justify-between gap-2.5 text-xs text-muted-foreground">
-        <span>Story publishing, creator analytics & 85% revenue pools are in the paid workspace.</span>
+        <span>📸 Photos, stories, videos & carousels are 100% free to publish for all seekers.</span>
         <Button variant="link" size="sm" asChild className="h-auto p-0 text-xs text-primary font-semibold shrink-0">
-          <Link to="/app/creator">Open Creator Studio 🔒 (Create → Publish → Analyse → Grow) →</Link>
+          <Link to="/app/creator">Creator Studio (Analytics & 85% Payout Pools) →</Link>
         </Button>
       </div>
       <div role="tablist" aria-label="What to create" className="flex gap-1.5">
         {(
           [
-            { id: "share", label: "Share a reflection" },
-            { id: "knowledge", label: "Contribute knowledge" },
+            { id: "share", label: "Story, Photo & Reflection" },
+            { id: "knowledge", label: "Contribute Knowledge" },
           ] as const
         ).map((t) => (
           <button

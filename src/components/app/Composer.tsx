@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Film, ImagePlus, Loader2, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Film, ImagePlus, Layers, Loader2, Plus, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -41,44 +41,89 @@ export function Composer({
   const [topic, setTopic] = useState("");
   const [community, setCommunity] = useState(communityId ?? "");
   const [busy, setBusy] = useState(false);
-  const [file, setFile] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
+  const [previews, setPreviews] = useState<string[]>([]);
+  const [activeIndex, setActiveIndex] = useState(0);
   const [aspect, setAspect] = useState<AspectKey>("original");
   const [uploading, setUploading] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
-  const isVideo = !!file && isVideoFile(file);
+  const isVideo = files.length === 1 && isVideoFile(files[0]);
 
   useEffect(() => {
-    if (!file) {
-      setPreview(null);
+    if (files.length === 0) {
+      setPreviews([]);
       return;
     }
-    const url = URL.createObjectURL(file);
-    setPreview(url);
-    return () => URL.revokeObjectURL(url);
-  }, [file]);
+    const urls = files.map((f) => URL.createObjectURL(f));
+    setPreviews(urls);
+    return () => {
+      urls.forEach((u) => URL.revokeObjectURL(u));
+    };
+  }, [files]);
 
-  const pickFile = (f: File | null) => {
-    if (!f) return;
-    const video = f.type.startsWith("video/");
-    if (!video && !f.type.startsWith("image/")) {
-      toast.error("Please choose a photo or a video.");
+  const handleFilesSelected = (selectedFiles: FileList | null) => {
+    if (!selectedFiles || selectedFiles.length === 0) return;
+    const newFiles = Array.from(selectedFiles);
+
+    const hasVideo = newFiles.some((f) => f.type.startsWith("video/"));
+    if (hasVideo) {
+      if (newFiles.length > 1 || files.length > 0) {
+        toast.info("Videos are uploaded individually.");
+      }
+      const vid = newFiles.find((f) => f.type.startsWith("video/"))!;
+      if (vid.size > VIDEO_MAX_BYTES) {
+        toast.error("Videos need to be under 50 MB.");
+        return;
+      }
+      clearMedia();
+      setFiles([vid]);
+      setAspect("wide");
+      setActiveIndex(0);
       return;
     }
-    if (video && f.size > VIDEO_MAX_BYTES) {
-      toast.error("Videos need to be under 50 MB.");
-      return;
+
+    const validImages: File[] = [];
+    for (const f of newFiles) {
+      if (!f.type.startsWith("image/")) {
+        toast.error(`"${f.name}" is not a recognized photo or video.`);
+        continue;
+      }
+      if (f.size > IMAGE_MAX_BYTES) {
+        toast.error(`"${f.name}" exceeds the 10 MB photo limit.`);
+        continue;
+      }
+      validImages.push(f);
     }
-    if (!video && f.size > IMAGE_MAX_BYTES) {
-      toast.error("Photos need to be under 10 MB.");
-      return;
+
+    if (validImages.length === 0) return;
+
+    const baseFiles = isVideo ? [] : [...files];
+    const combined = [...baseFiles, ...validImages];
+    if (combined.length > 10) {
+      toast.info("Carousels support up to 10 photos. Added first 10.");
     }
-    if (video) setAspect("wide");
-    setFile(f);
+    const finalFiles = combined.slice(0, 10);
+    setFiles(finalFiles);
+    if (finalFiles.length > 1 && type === "reflection") {
+      setType("story");
+    }
+  };
+
+  const removeFile = (idx: number) => {
+    const next = files.filter((_, i) => i !== idx);
+    setFiles(next);
+    if (activeIndex >= next.length) {
+      setActiveIndex(Math.max(0, next.length - 1));
+    }
+    if (next.length === 0) {
+      clearMedia();
+    }
   };
 
   const clearMedia = () => {
-    setFile(null);
+    setFiles([]);
+    setPreviews([]);
+    setActiveIndex(0);
     setAspect("original");
     if (fileInput.current) fileInput.current.value = "";
   };
@@ -110,17 +155,33 @@ export function Composer({
     }
 
     let mediaValue: string | null = null;
-    if (file) {
+    if (files.length > 0) {
       setUploading(true);
       try {
-        const upload = isVideo ? file : await prepareImage(file, aspect);
-        const ext = upload.name.split(".").pop()?.toLowerCase() || (isVideo ? "mp4" : "webp");
-        const path = `${auth.user.id}/${crypto.randomUUID()}.${ext}`;
-        const { error: upErr } = await supabase.storage
-          .from(MEDIA_BUCKET)
-          .upload(path, upload, { contentType: upload.type, upsert: false });
-        if (upErr) throw upErr;
-        mediaValue = toStoredMedia(path);
+        if (isVideo) {
+          const upload = files[0];
+          const ext = upload.name.split(".").pop()?.toLowerCase() || "mp4";
+          const path = `${auth.user.id}/${crypto.randomUUID()}.${ext}`;
+          const { error: upErr } = await supabase.storage
+            .from(MEDIA_BUCKET)
+            .upload(path, upload, { contentType: upload.type, upsert: false });
+          if (upErr) throw upErr;
+          mediaValue = toStoredMedia(path);
+        } else {
+          const uploadedPaths = await Promise.all(
+            files.map(async (file) => {
+              const upload = await prepareImage(file, aspect);
+              const ext = upload.name.split(".").pop()?.toLowerCase() || "webp";
+              const path = `${auth.user.id}/${crypto.randomUUID()}.${ext}`;
+              const { error: upErr } = await supabase.storage
+                .from(MEDIA_BUCKET)
+                .upload(path, upload, { contentType: upload.type, upsert: false });
+              if (upErr) throw upErr;
+              return toStoredMedia(path);
+            }),
+          );
+          mediaValue = uploadedPaths.length > 1 ? JSON.stringify(uploadedPaths) : uploadedPaths[0];
+        }
       } catch {
         setUploading(false);
         setBusy(false);
@@ -149,10 +210,8 @@ export function Composer({
       return;
     }
 
-    track("post_create", { type, has_image: !!mediaValue });
+    track("post_create", { type, has_image: !!mediaValue, is_carousel: files.length > 1 });
 
-    // Show the new post at the top of the feed straight away, fully hydrated
-    // with tags, media, reactions and comment counts.
     try {
       const [hydrated] = await hydratePosts([inserted as unknown as PostRow]);
       if (hydrated) {
@@ -174,6 +233,8 @@ export function Composer({
     onPosted?.();
   };
 
+  const currentPreview = previews[activeIndex] ?? null;
+
   return (
     <div className="rounded-2xl border border-border/70 bg-card p-5 transition-shadow duration-500 focus-within:shadow-calm sm:p-6">
       <p className="text-[10px] uppercase tracking-[0.28em] text-muted-foreground">Share</p>
@@ -181,7 +242,7 @@ export function Composer({
         What are you sitting with today?
       </h2>
       <p className="mt-1.5 text-sm text-muted-foreground" id="composer-hint">
-        Share something that may help another person see differently.
+        Share a reflection, photo story, video or tradition. Free for all seekers.
       </p>
 
       <Label htmlFor="composer-content" className="sr-only">
@@ -197,13 +258,14 @@ export function Composer({
         className="mt-4 resize-none border-0 bg-transparent px-0 text-[16px] leading-relaxed shadow-none focus-visible:ring-0"
       />
 
-      {preview && (
-        <div className="mt-3">
+      {currentPreview && (
+        <div className="mt-3 space-y-3">
+          {/* Main Media Preview Frame */}
           <div className="relative overflow-hidden rounded-xl border border-border bg-muted">
             <div className={cn("w-full", aspectClass[aspect])}>
               {isVideo ? (
                 <video
-                  src={preview}
+                  src={currentPreview}
                   controls
                   playsInline
                   className={cn(
@@ -213,8 +275,8 @@ export function Composer({
                 />
               ) : (
                 <img
-                  src={preview}
-                  alt="Preview of the media you attached"
+                  src={currentPreview}
+                  alt={`Preview slide ${activeIndex + 1} of ${previews.length}`}
                   className={cn(
                     "w-full",
                     aspect === "original" ? "max-h-80 object-contain" : "h-full object-cover",
@@ -222,6 +284,44 @@ export function Composer({
                 />
               )}
             </div>
+
+            {/* Carousel Slide Count Pill */}
+            {previews.length > 1 && (
+              <div className="absolute left-2.5 top-2.5 flex items-center gap-1.5 rounded-full bg-background/90 px-2.5 py-1 text-[11px] font-medium text-foreground shadow-calm backdrop-blur">
+                <Layers className="size-3 text-primary" />
+                <span>
+                  {activeIndex + 1} of {previews.length}
+                </span>
+              </div>
+            )}
+
+            {/* Slide Navigation Arrows */}
+            {previews.length > 1 && (
+              <>
+                {activeIndex > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setActiveIndex((i) => i - 1)}
+                    aria-label="Previous image"
+                    className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-background/90 p-1.5 text-foreground shadow-calm backdrop-blur hover:bg-background transition-transform active:scale-95"
+                  >
+                    <ChevronLeft className="size-4" />
+                  </button>
+                )}
+                {activeIndex < previews.length - 1 && (
+                  <button
+                    type="button"
+                    onClick={() => setActiveIndex((i) => i + 1)}
+                    aria-label="Next image"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-background/90 p-1.5 text-foreground shadow-calm backdrop-blur hover:bg-background transition-transform active:scale-95"
+                  >
+                    <ChevronRight className="size-4" />
+                  </button>
+                )}
+              </>
+            )}
+
+            {/* Clear All Media Button */}
             <button
               type="button"
               onClick={clearMedia}
@@ -232,6 +332,58 @@ export function Composer({
             </button>
           </div>
 
+          {/* Carousel Thumbnails Strip */}
+          {!isVideo && previews.length > 0 && (
+            <div className="flex items-center gap-2 overflow-x-auto pb-1">
+              {previews.map((url, idx) => (
+                <div
+                  key={idx}
+                  className={cn(
+                    "group relative size-16 shrink-0 cursor-pointer overflow-hidden rounded-lg border-2 transition-all",
+                    activeIndex === idx
+                      ? "border-primary shadow-sm ring-2 ring-primary/20"
+                      : "border-border/70 opacity-70 hover:opacity-100",
+                  )}
+                  onClick={() => setActiveIndex(idx)}
+                >
+                  <img
+                    src={url}
+                    alt={`Thumbnail ${idx + 1}`}
+                    className="size-full object-cover"
+                  />
+                  <span className="absolute bottom-1 left-1 rounded bg-black/70 px-1 text-[9px] font-semibold text-white">
+                    {idx + 1}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeFile(idx);
+                    }}
+                    aria-label={`Remove photo ${idx + 1}`}
+                    className="absolute right-0.5 top-0.5 rounded-full bg-background/90 p-0.5 text-foreground opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <X className="size-3" />
+                  </button>
+                </div>
+              ))}
+
+              {/* Add more photos button for carousel */}
+              {files.length < 10 && (
+                <button
+                  type="button"
+                  onClick={() => fileInput.current?.click()}
+                  className="flex size-16 shrink-0 flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed border-border/80 text-muted-foreground hover:border-primary hover:text-foreground transition-colors"
+                  title="Add more photos to carousel (up to 10)"
+                >
+                  <Plus className="size-4" />
+                  <span className="text-[9px] font-medium">+ Slide</span>
+                </button>
+              )}
+            </div>
+          )}
+
+          {/* Crop Ratio Options */}
           {!isVideo && (
             <fieldset className="mt-2">
               <legend className="text-[10px] uppercase tracking-[0.24em] text-muted-foreground">
@@ -287,9 +439,13 @@ export function Composer({
           ref={fileInput}
           type="file"
           accept={ACCEPTED_MEDIA}
+          multiple
           className="sr-only"
-          aria-label="Attach a photo or video"
-          onChange={(e) => pickFile(e.target.files?.[0] ?? null)}
+          aria-label="Attach photos, story carousel, or video"
+          onChange={(e) => {
+            handleFilesSelected(e.target.files);
+            if (e.target) e.target.value = "";
+          }}
         />
         <Button
           type="button"
@@ -299,15 +455,27 @@ export function Composer({
         >
           {isVideo ? (
             <Film aria-hidden="true" className="mr-2 size-4" />
+          ) : files.length > 1 ? (
+            <Layers aria-hidden="true" className="mr-2 size-4 text-primary" />
           ) : (
             <ImagePlus aria-hidden="true" className="mr-2 size-4" />
           )}
-          {file ? "Change media" : "Photo or video"}
+          {files.length === 0
+            ? "Photo, story or video"
+            : isVideo
+              ? "Change video"
+              : files.length > 1
+                ? `${files.length} Photos in Carousel`
+                : "1 Photo (Tap to add slides)"}
         </Button>
-        {file ? (
-          <span className="truncate text-xs text-muted-foreground">{file.name}</span>
+        {files.length > 0 ? (
+          <span className="truncate text-xs text-muted-foreground">
+            {isVideo
+              ? files[0].name
+              : `${files.length} photo${files.length > 1 ? "s" : ""} selected · Free for all seekers`}
+          </span>
         ) : (
-          <span className="text-xs text-muted-foreground">Photos to 10 MB · video to 50 MB</span>
+          <span className="text-xs text-muted-foreground">Photos to 10 MB · Video to 50 MB · Carousels up to 10 photos</span>
         )}
       </div>
 

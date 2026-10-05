@@ -42,6 +42,7 @@ export type AccountType = (typeof ACCOUNT_TYPES)[number];
 
 export const POST_TYPES = [
   { value: "reflection", label: "Reflection", hint: "What I'm thinking about today." },
+  { value: "story", label: "Story", hint: "A living cultural narrative, photo story or memory." },
   { value: "practice", label: "Practice", hint: "Today's spiritual practice." },
   { value: "question", label: "Question", hint: "Ask the community." },
   { value: "wisdom", label: "Wisdom", hint: "A quote, teaching or insight." },

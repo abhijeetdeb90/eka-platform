@@ -9,6 +9,7 @@ import { PostCard } from "@/components/app/PostCard";
 import { EmptyState } from "@/components/app/AppScreen";
 import { fetchPostsBy, fetchSocialCounts, toggleFollow, type ProfileRow } from "@/lib/api";
 import { track } from "@/lib/analytics";
+import { EkaBadge } from "@/components/app/EkaBadge";
 
 export function ProfileView({ profile, isSelf }: { profile: ProfileRow; isSelf: boolean }) {
   const queryClient = useQueryClient();
@@ -70,15 +71,22 @@ export function ProfileView({ profile, isSelf }: { profile: ProfileRow; isSelf: 
           <div className="flex min-w-0 items-center gap-4">
             <UserAvatar profile={profile} className="size-16 text-lg" />
             <div className="min-w-0">
-              <div className="flex min-w-0 items-center gap-1.5">
+              <div className="flex flex-wrap items-center gap-2">
                 <h1 className="truncate text-2xl">{profile.display_name ?? profile.username}</h1>
-                {profile.verified && <BadgeCheck className="size-5 shrink-0 text-primary" />}
+                <EkaBadge profile={profile} size="md" showLabel={true} />
               </div>
               <p className="truncate text-sm text-muted-foreground">@{profile.username}</p>
-              {profile.account_type !== "personal" && (
-                <span className="mt-1 inline-block rounded-full bg-primary-soft px-2 py-0.5 text-[10px] uppercase tracking-[0.16em]">
-                  {profile.account_type}
-                </span>
+              {profile.interests && profile.interests.length > 0 && (
+                <div className="mt-1.5 flex flex-wrap gap-1">
+                  {profile.interests.slice(0, 3).map((interest) => (
+                    <span
+                      key={interest}
+                      className="rounded-full bg-accent/60 px-2 py-0.5 text-[10px] text-muted-foreground"
+                    >
+                      {interest}
+                    </span>
+                  ))}
+                </div>
               )}
             </div>
           </div>

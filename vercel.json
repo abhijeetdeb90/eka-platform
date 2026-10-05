@@ -5,14 +5,6 @@
   "outputDirectory": ".vercel/output",
   "cleanUrls": true,
   "framework": null,
-  "env": {
-    "DANGEROUSLY_DEPLOY_VULNERABLE_TANSTACK_START_XSS": "1"
-  },
-  "build": {
-    "env": {
-      "DANGEROUSLY_DEPLOY_VULNERABLE_TANSTACK_START_XSS": "1"
-    }
-  },
   "headers": [
     {
       "source": "/(.*)",

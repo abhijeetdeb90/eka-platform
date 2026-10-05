@@ -14,6 +14,7 @@ import stillWater from "@/assets/still-water.jpg";
 import ritualLamp from "@/assets/ritual-lamp.jpg";
 import readingTable from "@/assets/reading-table.jpg";
 import { fetchActiveHomepageSections, resolveSectionCards } from "@/lib/studio/homepage-service";
+import { PageShell } from "@/components/layout/PageShell";
 
 export const Route = createFileRoute("/_authenticated/app/")({
   component: HomeFeed,
@@ -185,13 +186,11 @@ function HomeFeed() {
   });
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-4 pt-5 sm:px-6 lg:pt-8">
+    <PageShell variant="canvas" rightRail={<HomeRail />}>
       <h1 className="sr-only">Your EKA home</h1>
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_20rem] xl:gap-8">
-        <div className="min-w-0 space-y-6">
-          <FadeIn delay={0.02} direction="up">
-            <DailyRitual name={profile?.display_name ?? null} />
-          </FadeIn>
+      <FadeIn delay={0.02} direction="up">
+        <DailyRitual name={profile?.display_name ?? null} />
+      </FadeIn>
 
           <FadeIn delay={0.06} direction="up">
             <Composer />
@@ -304,14 +303,6 @@ function HomeFeed() {
               </p>
             </div>
           )}
-        </div>
-
-        <aside aria-label="Discovery" className="hidden xl:block">
-          <div className="sticky top-6 max-h-[calc(100dvh-3rem)] overflow-y-auto pb-10 pr-1">
-            <HomeRail />
-          </div>
-        </aside>
-      </div>
-    </div>
+    </PageShell>
   );
 }

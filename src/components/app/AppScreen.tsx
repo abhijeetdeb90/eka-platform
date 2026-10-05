@@ -1,29 +1,23 @@
 import type { ReactNode } from "react";
+import { PageShell, type PageShellVariant } from "@/components/layout/PageShell";
 
 export function AppScreen({
   eyebrow,
   title,
   action,
   children,
+  variant = "reading",
 }: {
   eyebrow?: string;
   title: string;
   action?: ReactNode;
   children: ReactNode;
+  variant?: PageShellVariant;
 }) {
   return (
-    <div className="mx-auto w-full max-w-2xl px-5 pt-6 lg:pt-10">
-      <header className="grid animate-rise grid-cols-[minmax(0,1fr)_auto] items-end gap-4">
-        <div className="min-w-0">
-          {eyebrow && (
-            <p className="text-xs uppercase tracking-[0.28em] text-muted-foreground">{eyebrow}</p>
-          )}
-          <h1 className="mt-2 text-2xl leading-snug sm:text-3xl">{title}</h1>
-        </div>
-        {action}
-      </header>
-      <div className="mt-6 space-y-4">{children}</div>
-    </div>
+    <PageShell variant={variant} eyebrow={eyebrow} title={title} action={action}>
+      {children}
+    </PageShell>
   );
 }
 

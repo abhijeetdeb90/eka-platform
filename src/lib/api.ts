@@ -79,12 +79,34 @@ export function toStoredMedia(path: string) {
   return `${STORAGE_PREFIX}${path}`;
 }
 
+export function parseMediaArray(raw: string | null): string[] {
+  if (!raw) return [];
+  const trimmed = raw.trim();
+  if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (Array.isArray(parsed)) {
+        return parsed.filter((item): item is string => typeof item === "string" && item.length > 0);
+      }
+    } catch {
+      // Fallback to single string
+    }
+  }
+  return [trimmed];
+}
+
 /** Turns internal storage references into temporary viewable URLs. */
 async function resolveMedia(rows: PostRow[]): Promise<Map<string, string>> {
-  const paths = rows
-    .map((r) => r.media_url)
-    .filter((u): u is string => isStoredMedia(u))
-    .map((u) => u.slice(STORAGE_PREFIX.length));
+  const paths: string[] = [];
+  for (const r of rows) {
+    if (!r.media_url) continue;
+    const items = parseMediaArray(r.media_url);
+    for (const item of items) {
+      if (isStoredMedia(item)) {
+        paths.push(item.slice(STORAGE_PREFIX.length));
+      }
+    }
+  }
   if (paths.length === 0) return new Map();
   const { data } = await supabase.storage
     .from(MEDIA_BUCKET)
@@ -124,16 +146,30 @@ export async function hydratePosts(rows: PostRow[]): Promise<FeedPost[]> {
   const likedSet = new Set((likes.data ?? []).map((l) => l.post_id));
   const savedSet = new Set((saves.data ?? []).map((s) => s.post_id));
 
-  return rows.map((r) => ({
-    ...r,
-    media_url: r.media_url
-      ? (mediaMap.get(r.media_url) ?? (isStoredMedia(r.media_url) ? null : r.media_url))
-      : null,
-    author: pMap.get(r.author_id) ?? null,
-    community: r.community_id ? (cMap.get(r.community_id) ?? null) : null,
-    liked: likedSet.has(r.id),
-    saved: savedSet.has(r.id),
-  })) as FeedPost[];
+  return rows.map((r) => {
+    let resolvedMedia: string | null = null;
+    if (r.media_url) {
+      const items = parseMediaArray(r.media_url);
+      if (items.length > 1) {
+        const resolved = items
+          .map((item) => mediaMap.get(item) ?? (isStoredMedia(item) ? null : item))
+          .filter((u): u is string => Boolean(u));
+        resolvedMedia = resolved.length > 0 ? JSON.stringify(resolved) : null;
+      } else if (items.length === 1) {
+        const item = items[0];
+        resolvedMedia = mediaMap.get(item) ?? (isStoredMedia(item) ? null : item);
+      }
+    }
+
+    return {
+      ...r,
+      media_url: resolvedMedia,
+      author: pMap.get(r.author_id) ?? null,
+      community: r.community_id ? (cMap.get(r.community_id) ?? null) : null,
+      liked: likedSet.has(r.id),
+      saved: savedSet.has(r.id),
+    };
+  }) as FeedPost[];
 }
 
 export type FeedReason = "following" | "sangha" | "interest" | "recent";

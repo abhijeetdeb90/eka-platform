@@ -92,6 +92,7 @@ import { Route as AuthenticatedAdminKnowledgeRouteImport } from './routes/_authe
 import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app.index'
 import { Route as AuthenticatedAppAdminRouteImport } from './routes/_authenticated/app.admin'
 import { Route as AuthenticatedAppAppealRouteImport } from './routes/_authenticated/app.appeal'
+import { Route as AuthenticatedAppAskRouteImport } from './routes/_authenticated/app.ask'
 import { Route as AuthenticatedAppBillingRouteImport } from './routes/_authenticated/app.billing'
 import { Route as AuthenticatedAppCancelRouteImport } from './routes/_authenticated/app.cancel'
 import { Route as AuthenticatedAppCreateRouteImport } from './routes/_authenticated/app.create'
@@ -570,6 +571,11 @@ const AuthenticatedAppAppealRoute = AuthenticatedAppAppealRouteImport.update({
   path: '/appeal',
   getParentRoute: () => AuthenticatedAppRoute,
 } as any)
+const AuthenticatedAppAskRoute = AuthenticatedAppAskRouteImport.update({
+  id: '/ask',
+  path: '/ask',
+  getParentRoute: () => AuthenticatedAppRoute,
+} as any)
 const AuthenticatedAppBillingRoute = AuthenticatedAppBillingRouteImport.update({
   id: '/billing',
   path: '/billing',
@@ -958,6 +964,7 @@ export interface FileRoutesByFullPath {
   '/admin/knowledge': typeof AuthenticatedAdminKnowledgeRoute
   '/app/admin': typeof AuthenticatedAppAdminRoute
   '/app/appeal': typeof AuthenticatedAppAppealRoute
+  '/app/ask': typeof AuthenticatedAppAskRoute
   '/app/billing': typeof AuthenticatedAppBillingRoute
   '/app/cancel': typeof AuthenticatedAppCancelRoute
   '/app/create': typeof AuthenticatedAppCreateRoute
@@ -1094,6 +1101,7 @@ export interface FileRoutesByTo {
   '/admin/knowledge': typeof AuthenticatedAdminKnowledgeRoute
   '/app/admin': typeof AuthenticatedAppAdminRoute
   '/app/appeal': typeof AuthenticatedAppAppealRoute
+  '/app/ask': typeof AuthenticatedAppAskRoute
   '/app/billing': typeof AuthenticatedAppBillingRoute
   '/app/cancel': typeof AuthenticatedAppCancelRoute
   '/app/create': typeof AuthenticatedAppCreateRoute
@@ -1235,6 +1243,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/knowledge': typeof AuthenticatedAdminKnowledgeRoute
   '/_authenticated/app/admin': typeof AuthenticatedAppAdminRoute
   '/_authenticated/app/appeal': typeof AuthenticatedAppAppealRoute
+  '/_authenticated/app/ask': typeof AuthenticatedAppAskRoute
   '/_authenticated/app/billing': typeof AuthenticatedAppBillingRoute
   '/_authenticated/app/cancel': typeof AuthenticatedAppCancelRoute
   '/_authenticated/app/create': typeof AuthenticatedAppCreateRoute
@@ -1376,6 +1385,7 @@ export interface FileRouteTypes {
     | '/admin/knowledge'
     | '/app/admin'
     | '/app/appeal'
+    | '/app/ask'
     | '/app/billing'
     | '/app/cancel'
     | '/app/create'
@@ -1512,6 +1522,7 @@ export interface FileRouteTypes {
     | '/admin/knowledge'
     | '/app/admin'
     | '/app/appeal'
+    | '/app/ask'
     | '/app/billing'
     | '/app/cancel'
     | '/app/create'
@@ -1652,6 +1663,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/knowledge'
     | '/_authenticated/app/admin'
     | '/_authenticated/app/appeal'
+    | '/_authenticated/app/ask'
     | '/_authenticated/app/billing'
     | '/_authenticated/app/cancel'
     | '/_authenticated/app/create'
@@ -2360,6 +2372,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppAppealRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
+    '/_authenticated/app/ask': {
+      id: '/_authenticated/app/ask'
+      path: '/ask'
+      fullPath: '/app/ask'
+      preLoaderRoute: typeof AuthenticatedAppAskRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
     '/_authenticated/app/billing': {
       id: '/_authenticated/app/billing'
       path: '/billing'
@@ -2768,6 +2787,7 @@ const AuthenticatedAppCreatorRouteWithChildren =
 interface AuthenticatedAppRouteChildren {
   AuthenticatedAppAdminRoute: typeof AuthenticatedAppAdminRoute
   AuthenticatedAppAppealRoute: typeof AuthenticatedAppAppealRoute
+  AuthenticatedAppAskRoute: typeof AuthenticatedAppAskRoute
   AuthenticatedAppBillingRoute: typeof AuthenticatedAppBillingRoute
   AuthenticatedAppCancelRoute: typeof AuthenticatedAppCancelRoute
   AuthenticatedAppCreateRoute: typeof AuthenticatedAppCreateRoute
@@ -2819,6 +2839,7 @@ interface AuthenticatedAppRouteChildren {
 const AuthenticatedAppRouteChildren: AuthenticatedAppRouteChildren = {
   AuthenticatedAppAdminRoute: AuthenticatedAppAdminRoute,
   AuthenticatedAppAppealRoute: AuthenticatedAppAppealRoute,
+  AuthenticatedAppAskRoute: AuthenticatedAppAskRoute,
   AuthenticatedAppBillingRoute: AuthenticatedAppBillingRoute,
   AuthenticatedAppCancelRoute: AuthenticatedAppCancelRoute,
   AuthenticatedAppCreateRoute: AuthenticatedAppCreateRoute,

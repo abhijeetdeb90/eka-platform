@@ -11,24 +11,8 @@ import {
   Bell,
   Bookmark,
   Search,
-  Clock,
-  Sparkles,
-  Flame,
-  CalendarDays,
-  NotebookPen,
-  Sunrise,
-  Route as RouteIcon,
-  LayoutDashboard,
-  Film,
-  Globe,
-  Headphones,
-  Wallet,
-  HeartHandshake,
-  BookMarked,
   HelpCircle,
-  Network,
-  TrendingUp,
-  Scale,
+  LayoutDashboard,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useRealtimeNotifications } from "@/hooks/useRealtime";
@@ -45,72 +29,25 @@ export const Route = createFileRoute("/_authenticated/app")({
 });
 
 const mobileTabs = [
-  { to: "/app/daily", label: "Daily", icon: Sunrise, exact: false },
   { to: "/app", label: "Home", icon: Home, exact: true },
-  { to: "/app/reels", label: "Reels", icon: Film, exact: false },
-  { to: "/app/create", label: "Create", icon: PlusSquare, exact: false },
-  { to: "/app/path", label: "Path", icon: Sparkles, exact: false },
+  { to: "/app/explore", label: "Discover", icon: Compass, exact: false },
+  { to: "/app/ask", label: "Ask", icon: HelpCircle, exact: false },
+  { to: "/app/sanghas", label: "Community", icon: Users, exact: false },
+  { to: "/app/dashboard", label: "My EKA", icon: LayoutDashboard, exact: false },
 ] as const;
 
-const navGroups = [
-  {
-    label: "EKA",
-    links: [
-      { to: "/app", label: "Home", icon: Home, exact: true },
-      { to: "/app/daily", label: "EKA Daily", icon: Sunrise, exact: false },
-      { to: "/app/explore", label: "Explore", icon: Compass, exact: false },
-      { to: "/app/themes", label: "Start from a question", icon: HelpCircle, exact: false },
-      { to: "/app/navigator", label: "Wisdom Navigator", icon: Compass, exact: false },
-      { to: "/app/wisdom", label: "Wisdom Graph", icon: Network, exact: false },
-      { to: "/app/reels", label: "Reels", icon: Film, exact: false },
-    ],
-  },
-  {
-    label: "Your path",
-    links: [
-      { to: "/app/path", label: "Your Path", icon: Sparkles, exact: false },
-      { to: "/app/rhythm", label: "Rhythm", icon: Clock, exact: false },
-      { to: "/app/journeys", label: "Journey", icon: RouteIcon, exact: false },
-      { to: "/app/practice", label: "Practice", icon: Flame, exact: false },
-      { to: "/app/journal", label: "Journal", icon: NotebookPen, exact: false },
-      { to: "/app/observe", label: "Observe", icon: CalendarDays, exact: false },
-      { to: "/app/dashboard", label: "My EKA", icon: LayoutDashboard, exact: false },
-      { to: "/app/passport", label: "Wisdom Passport", icon: BookMarked, exact: false },
-    ],
-  },
-  {
-    label: "Workspace (Paid)",
-    links: [
-      { to: "/app/creator", label: "Creator Studio 🔒", icon: TrendingUp, exact: false },
-    ],
-  },
-  {
-    label: "Community",
-    links: [
-      { to: "/app/episodes", label: "Conversations", icon: Headphones, exact: false },
-      { to: "/app/sanghas", label: "Circles", icon: Users, exact: false },
-      { to: "/app/discover", label: "Religions & cultures", icon: Globe, exact: false },
-      { to: "/app/junction", label: "The Junction", icon: Globe, exact: false },
-      { to: "/app/market", label: "Guidance", icon: HeartHandshake, exact: false },
-      { to: "/app/governance", label: "Governance", icon: Scale, exact: false },
-    ],
-  },
-  {
-    label: "You",
-    links: [
-      { to: "/app/saved", label: "Saved", icon: Bookmark, exact: false },
-      { to: "/app/notifications", label: "Notifications", icon: Bell, exact: false },
-      { to: "/app/me", label: "Profile", icon: User, exact: false },
-      { to: "/app/search", label: "Search", icon: Search, exact: false },
-    ],
-  },
+const primaryNavItems = [
+  { to: "/app", label: "Home", icon: Home, exact: true },
+  { to: "/app/explore", label: "Discover", icon: Compass, exact: false },
+  { to: "/app/ask", label: "Ask", icon: HelpCircle, exact: false },
+  { to: "/app/sanghas", label: "Community", icon: Users, exact: false },
+  { to: "/app/dashboard", label: "My EKA", icon: LayoutDashboard, exact: false },
 ] as const;
 
-const footerLinks = [
-  { to: "/app/welcome", label: "First 7 days", icon: Sparkles, exact: false },
-  { to: "/app/market/practice", label: "Offer guidance", icon: HeartHandshake, exact: false },
-  { to: "/app/wallet", label: "Wallet", icon: Wallet, exact: false },
-  { to: "/app/plus", label: "Membership", icon: Sparkles, exact: false },
+const utilityNavItems = [
+  { to: "/app/search", label: "Search", icon: Search, exact: false },
+  { to: "/app/saved", label: "Saved", icon: Bookmark, exact: false },
+  { to: "/app/notifications", label: "Notifications", icon: Bell, exact: false },
 ] as const;
 
 const navItemClass =
@@ -182,6 +119,11 @@ function AppLayout() {
           </Link>
           <div className="flex shrink-0 items-center gap-1.5">
             <Button asChild variant="ghost" size="icon" className="rounded-xl">
+              <Link to="/app/create" aria-label="Create something new">
+                <PlusSquare aria-hidden="true" className="size-5 text-primary" strokeWidth={1.8} />
+              </Link>
+            </Button>
+            <Button asChild variant="ghost" size="icon" className="rounded-xl">
               <Link to="/app/search" search={{ q: "" }} aria-label="Search EKA">
                 <Search aria-hidden="true" className="size-5" strokeWidth={1.6} />
               </Link>
@@ -215,44 +157,31 @@ function AppLayout() {
             <EkaLogo withTagline />
           </Link>
 
-          <div className="space-y-6">
-            {navGroups.map((group) => (
-              <div key={group.label}>
-                <p className="px-3 pb-1.5 text-[10px] font-semibold uppercase tracking-[0.24em] text-muted-foreground/80">
-                  {group.label}
-                </p>
-                <div className="space-y-0.5">
-                  {group.links.map((l) => (
-                    <Link
-                      key={l.to}
-                      to={l.to}
-                      activeOptions={{ exact: l.exact }}
-                      activeProps={{
-                        className: "bg-accent/80 font-medium text-foreground shadow-xs",
-                        "aria-current": "page",
-                      }}
-                      className={navItemClass}
-                    >
-                      <l.icon
-                        aria-hidden="true"
-                        className="size-4 shrink-0 transition-transform duration-200 group-hover:scale-110"
-                        strokeWidth={1.6}
-                      />
-                      <span className="truncate">{l.label}</span>
-                      {l.label === "Notifications" && (unread ?? 0) > 0 && (
-                        <span className="ml-auto rounded-full bg-primary px-1.5 py-0.2 text-[10px] font-semibold text-primary-foreground">
-                          <span className="sr-only">Unread notifications: </span>
-                          {unread}
-                        </span>
-                      )}
-                    </Link>
-                  ))}
-                </div>
-              </div>
+          {/* 5 Primary Intent Actions */}
+          <nav aria-label="Main Navigation" className="space-y-1">
+            {primaryNavItems.map((l) => (
+              <Link
+                key={l.to}
+                to={l.to}
+                activeOptions={{ exact: l.exact }}
+                activeProps={{
+                  className: "bg-accent/80 font-medium text-foreground shadow-xs",
+                  "aria-current": "page",
+                }}
+                className={navItemClass}
+              >
+                <l.icon
+                  aria-hidden="true"
+                  className="size-4 shrink-0 transition-transform duration-200 group-hover:scale-110"
+                  strokeWidth={1.6}
+                />
+                <span className="truncate">{l.label}</span>
+              </Link>
             ))}
-          </div>
+          </nav>
 
-          <div className="mt-6 px-2">
+          {/* Primary Persistent Action */}
+          <div className="my-5 px-1">
             <TactileWrapper className="w-full">
               <Button
                 className="w-full rounded-xl py-5 shadow-calm transition-all hover:shadow-lift"
@@ -264,14 +193,14 @@ function AppLayout() {
             </TactileWrapper>
           </div>
 
-          {/* Footer Navigation in Sidebar */}
-          <div className="mt-auto space-y-0.5 pt-8">
-            {footerLinks.map((l) => (
+          {/* Secondary Utilities */}
+          <div className="space-y-1 border-t border-border/50 pt-4">
+            {utilityNavItems.map((l) => (
               <Link
                 key={l.to}
                 to={l.to}
                 activeProps={{
-                  className: "bg-accent/80 font-medium text-foreground",
+                  className: "bg-accent/80 font-medium text-foreground shadow-xs",
                   "aria-current": "page",
                 }}
                 className={navItemClass}
@@ -279,15 +208,23 @@ function AppLayout() {
                 <l.icon
                   aria-hidden="true"
                   className="size-4 shrink-0 transition-transform duration-200 group-hover:scale-110"
-                  strokeWidth={1.5}
+                  strokeWidth={1.6}
                 />
                 <span className="truncate">{l.label}</span>
+                {l.label === "Notifications" && (unread ?? 0) > 0 && (
+                  <span className="ml-auto rounded-full bg-primary px-1.5 py-0.2 text-[10px] font-semibold text-primary-foreground">
+                    <span className="sr-only">Unread notifications: </span>
+                    {unread}
+                  </span>
+                )}
               </Link>
             ))}
+          </div>
 
-            {/* Profile Pill */}
+          {/* Profile Pill & Footnote */}
+          <div className="mt-auto space-y-2 pt-6">
             {profile && (
-              <div className="mt-3 border-t border-border/50 pt-3">
+              <div className="border-t border-border/50 pt-3">
                 <Link
                   to="/app/me"
                   className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs text-muted-foreground transition-colors hover:bg-accent/50 hover:text-foreground"

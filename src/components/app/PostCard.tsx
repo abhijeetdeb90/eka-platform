@@ -10,6 +10,9 @@ import {
   MoreHorizontal,
   Flag,
   GitFork,
+  ChevronLeft,
+  ChevronRight,
+  Layers,
 } from "lucide-react";
 import { toast } from "sonner";
 import { AuthorLine } from "@/components/app/Avatar";
@@ -29,6 +32,117 @@ import { ProvenanceBadge } from "@/components/app/ProvenanceBadge";
 import { ShareCardModal } from "@/components/app/ShareCardModal";
 import { CommunityVariationModal } from "@/components/app/CommunityVariationModal";
 
+function parseMediaUrls(raw: string | null): string[] {
+  if (!raw) return [];
+  const trimmed = raw.trim();
+  if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (Array.isArray(parsed)) {
+        return parsed.filter((item): item is string => typeof item === "string" && item.length > 0);
+      }
+    } catch {
+      // fallback
+    }
+  }
+  return [trimmed];
+}
+
+function MediaCarousel({ urls, post }: { urls: string[]; post: FeedPost }) {
+  const [index, setIndex] = useState(0);
+  const [loaded, setLoaded] = useState<Record<number, boolean>>({});
+
+  const next = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (index < urls.length - 1) setIndex((i) => i + 1);
+  };
+
+  const prev = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (index > 0) setIndex((i) => i - 1);
+  };
+
+  return (
+    <div className="relative overflow-hidden bg-muted group/carousel">
+      {/* Active Carousel Slide */}
+      <Link
+        to="/app/p/$postId"
+        params={{ postId: post.id }}
+        className="block overflow-hidden focus:outline-hidden"
+      >
+        <img
+          src={urls[index]}
+          alt={
+            post.topic
+              ? `${post.topic} - Slide ${index + 1} of ${urls.length}`
+              : `Slide ${index + 1} of ${urls.length}`
+          }
+          loading="lazy"
+          decoding="async"
+          onLoad={() => setLoaded((prev) => ({ ...prev, [index]: true }))}
+          className={cn(
+            "max-h-[30rem] w-full object-cover transition-all duration-500 ease-out",
+            loaded[index] ? "opacity-100" : "media-loading min-h-56 opacity-0",
+          )}
+        />
+      </Link>
+
+      {/* Slide Index Badge (e.g. 1 / 4) */}
+      <div className="absolute right-3 top-3 flex items-center gap-1.5 rounded-full bg-black/60 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur shadow-sm select-none">
+        <Layers className="size-3" />
+        <span>
+          {index + 1} / {urls.length}
+        </span>
+      </div>
+
+      {/* Prev / Next tactile buttons */}
+      {index > 0 && (
+        <button
+          type="button"
+          onClick={prev}
+          aria-label="Previous slide"
+          className="absolute left-2.5 top-1/2 -translate-y-1/2 rounded-full bg-background/90 p-2 text-foreground shadow-lift backdrop-blur transition-all duration-200 hover:bg-background hover:scale-105 active:scale-95 z-10"
+        >
+          <ChevronLeft className="size-4" />
+        </button>
+      )}
+
+      {index < urls.length - 1 && (
+        <button
+          type="button"
+          onClick={next}
+          aria-label="Next slide"
+          className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-full bg-background/90 p-2 text-foreground shadow-lift backdrop-blur transition-all duration-200 hover:bg-background hover:scale-105 active:scale-95 z-10"
+        >
+          <ChevronRight className="size-4" />
+        </button>
+      )}
+
+      {/* Indicator dots */}
+      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-10 select-none">
+        {urls.map((_, i) => (
+          <button
+            key={i}
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setIndex(i);
+            }}
+            aria-label={`Go to slide ${i + 1}`}
+            className={cn(
+              "h-1.5 rounded-full transition-all duration-300",
+              index === i ? "w-6 bg-white shadow" : "w-1.5 bg-white/50 hover:bg-white/80",
+            )}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function PostCard({ post, compact = false }: { post: FeedPost; compact?: boolean }) {
   const queryClient = useQueryClient();
   const [liked, setLiked] = useState(post.liked);
@@ -37,6 +151,7 @@ export function PostCard({ post, compact = false }: { post: FeedPost; compact?: 
   const [mediaReady, setMediaReady] = useState(false);
   const [shareModalOpen, setShareModalOpen] = useState(false);
   const [variationModalOpen, setVariationModalOpen] = useState(false);
+  const mediaUrls = parseMediaUrls(post.media_url);
 
   const like = async () => {
     const next = !liked;
@@ -145,10 +260,12 @@ export function PostCard({ post, compact = false }: { post: FeedPost; compact?: 
         </Link>
       </div>
 
-      {post.media_url &&
-        (isVideoUrl(post.media_url) ? (
+      {mediaUrls.length > 1 ? (
+        <MediaCarousel urls={mediaUrls} post={post} />
+      ) : mediaUrls.length === 1 ? (
+        isVideoUrl(mediaUrls[0]) ? (
           <video
-            src={post.media_url}
+            src={mediaUrls[0]}
             controls
             playsInline
             preload="metadata"
@@ -162,7 +279,7 @@ export function PostCard({ post, compact = false }: { post: FeedPost; compact?: 
             className="block overflow-hidden focus:outline-hidden"
           >
             <img
-              src={post.media_url}
+              src={mediaUrls[0]}
               alt={
                 post.topic
                   ? `Image shared with the post about ${post.topic}`
@@ -177,7 +294,8 @@ export function PostCard({ post, compact = false }: { post: FeedPost; compact?: 
               )}
             />
           </Link>
-        ))}
+        )
+      ) : null}
 
       <footer className="flex items-center gap-1 border-t border-border/40 px-3 py-2 text-muted-foreground sm:px-4">
         {/* Like/Resonate Button with Spring Bounce */}

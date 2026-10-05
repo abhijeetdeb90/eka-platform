@@ -164,10 +164,14 @@ export async function isGoogleAuthEnabled(): Promise<boolean> {
     const res = await fetch(`${supabaseUrl}/auth/v1/settings`, {
       headers: { apikey: supabaseKey },
     });
-    if (!res.ok) return true; // Fail-open to avoid blocking if settings endpoint changes
+    if (!res.ok) {
+      console.warn("[Auth] Unable to fetch Supabase auth settings (status: " + res.status + "). Disabling OAuth fallback.");
+      return false;
+    }
     const data = (await res.json()) as { external?: { google?: boolean } };
     return Boolean(data?.external?.google);
-  } catch {
-    return true; // Fail-open fallback
+  } catch (err) {
+    console.warn("[Auth] Failed to verify Google OAuth status:", err);
+    return false;
   }
 }
