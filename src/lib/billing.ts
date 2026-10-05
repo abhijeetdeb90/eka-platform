@@ -1,12 +1,13 @@
 import { supabase } from "@/integrations/supabase/client";
 import { currentUserId } from "@/lib/api";
+import { PLUS_PRICE_PAISE, PLUS_ANNUAL_PAISE } from "@/lib/constants/economics";
 
 /** One membership, two billing cadences. ₹299/month is the benchmark price. */
 export const PLANS = [
   {
     id: "monthly",
     name: "Monthly",
-    priceCents: 29_900,
+    priceCents: PLUS_PRICE_PAISE,
     currency: "INR",
     label: "₹299",
     cadence: "month",
@@ -17,7 +18,7 @@ export const PLANS = [
   {
     id: "annual",
     name: "Annual",
-    priceCents: 299_000,
+    priceCents: PLUS_ANNUAL_PAISE,
     currency: "INR",
     label: "₹2,990",
     cadence: "year",

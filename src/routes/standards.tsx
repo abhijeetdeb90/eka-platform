@@ -8,6 +8,8 @@ import {
   CheckCircle2,
   XCircle,
   Sparkles,
+  Clock,
+  BookOpen,
 } from "lucide-react";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { Button } from "@/components/ui/button";
@@ -190,6 +192,87 @@ function StandardsPage() {
             part of a moderation decision. Enforcement looks at behaviour — reports, history,
             severity — not identity.
           </p>
+        </section>
+
+        <section className="mt-8 rounded-2xl border border-border bg-card p-6">
+          <h2 className="flex items-center gap-2 font-display text-xl">
+            <Clock className="size-5 text-primary" aria-hidden /> Reviewer Operations & Response SLAs
+          </h2>
+          <p className="mt-3 text-sm text-muted-foreground">
+            All reviews and appeals are governed by strict operational targets. Reviewers must declare conflicts and recuse themselves from evaluating their own contributions, institutions, or paid relationships.
+          </p>
+          <div className="mt-4 overflow-hidden rounded-xl border border-border">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-muted/40 border-b border-border text-foreground font-semibold uppercase tracking-wider">
+                <tr>
+                  <th className="p-3">Queue</th>
+                  <th className="p-3">First Response</th>
+                  <th className="p-3">Final Decision</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border text-muted-foreground">
+                <tr>
+                  <td className="p-3 font-medium text-foreground">Safety / Hate / Harassment</td>
+                  <td className="p-3 text-emerald-600 font-semibold">6 hours</td>
+                  <td className="p-3">24 hours</td>
+                </tr>
+                <tr>
+                  <td className="p-3 font-medium text-foreground">Copyright Takedown</td>
+                  <td className="p-3">36 hours</td>
+                  <td className="p-3">Per statutory policy</td>
+                </tr>
+                <tr>
+                  <td className="p-3 font-medium text-foreground">Knowledge Verification (L2+)</td>
+                  <td className="p-3">72 hours</td>
+                  <td className="p-3">7 days</td>
+                </tr>
+                <tr>
+                  <td className="p-3 font-medium text-foreground">Disputed Claims (remains visible with flag)</td>
+                  <td className="p-3">72 hours</td>
+                  <td className="p-3">14 days (needs ≥2 lineage reviewers)</td>
+                </tr>
+                <tr>
+                  <td className="p-3 font-medium text-foreground">Appeals (independent reviewer)</td>
+                  <td className="p-3">72 hours</td>
+                  <td className="p-3">7 days</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p className="mt-3 text-xs text-muted-foreground">
+            Verification Level 2 and above can only ever be conferred by a verified human tradition keeper or accredited scholar, never by an automated algorithm or AI system.
+          </p>
+        </section>
+
+        <section className="mt-8 rounded-2xl border border-border bg-card p-6">
+          <h2 className="flex items-center gap-2 font-display text-xl">
+            <BookOpen className="size-5 text-primary" aria-hidden /> The 5-Tier Epistemic Canon
+          </h2>
+          <p className="mt-3 text-sm text-muted-foreground">
+            To prevent distortion, every piece of cultural knowledge in EKA is classified along two axes: <strong>Epistemic Type</strong> and <strong>Verification Level (L0 to L5)</strong>, supplemented by explicit provenance flags:
+          </p>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2 text-xs">
+            <div className="rounded-lg border border-border p-3 bg-muted/20">
+              <span className="font-semibold text-foreground">1. Documented Tradition:</span>
+              <p className="mt-1 text-muted-foreground">Verifiable historical, canonical, or scriptural citations.</p>
+            </div>
+            <div className="rounded-lg border border-border p-3 bg-muted/20">
+              <span className="font-semibold text-foreground">2. Interpretation:</span>
+              <p className="mt-1 text-muted-foreground">Commentary or philosophical exposition by a specific school.</p>
+            </div>
+            <div className="rounded-lg border border-border p-3 bg-muted/20">
+              <span className="font-semibold text-foreground">3. Living Practice:</span>
+              <p className="mt-1 text-muted-foreground">Active folkways, ritual practices, and oral community heritage.</p>
+            </div>
+            <div className="rounded-lg border border-border p-3 bg-muted/20">
+              <span className="font-semibold text-foreground">4. Opinion & Reflection:</span>
+              <p className="mt-1 text-muted-foreground">Subjective experience and personal contemplation.</p>
+            </div>
+            <div className="rounded-lg border border-border p-3 bg-muted/20 sm:col-span-2">
+              <span className="font-semibold text-foreground">5. AI-Assisted Synthesis:</span>
+              <p className="mt-1 text-muted-foreground">Architecturally capped at Level 1. Can never achieve Level 2+ without human lineage endorsement.</p>
+            </div>
+          </div>
         </section>
 
         <div className="mt-10 flex flex-wrap gap-3">

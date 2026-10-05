@@ -298,6 +298,65 @@ function PrivacyPolicyPage() {
             </p>
           </section>
 
+          {/* 8.1 Data Retention Schedule */}
+          <section className="rounded-2xl border border-border/80 bg-card p-6 sm:p-8">
+            <h2 className="flex items-center gap-2 font-display text-2xl text-foreground">
+              <FileText className="size-5 text-primary" />
+              8.1 Data Retention Schedule
+            </h2>
+            <p className="mt-3 text-muted-foreground text-xs">
+              We retain personal data strictly as long as necessary to provide platform services, maintain trust and provenance, and satisfy statutory tax and compliance obligations:
+            </p>
+            <div className="mt-4 overflow-hidden rounded-xl border border-border/70">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-sand/40 border-b border-border/70 text-foreground font-semibold">
+                  <tr>
+                    <th className="p-3">Data Category</th>
+                    <th className="p-3">Retention Window & Policy</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border/60 text-muted-foreground">
+                  <tr>
+                    <td className="p-3 font-medium text-foreground">Active Account & Profile</td>
+                    <td className="p-3">Retained while account remains active and in good standing.</td>
+                  </tr>
+                  <tr>
+                    <td className="p-3 font-medium text-foreground">Account Deletion Request</td>
+                    <td className="p-3">Soft-deleted for 14 days, permanently hard-deleted within 30 days. Backups roll off within 35 days.</td>
+                  </tr>
+                  <tr>
+                    <td className="p-3 font-medium text-foreground">Private Reflections & Journals</td>
+                    <td className="p-3">100% user-controlled. Deleted immediately on request; never used for analytics or AI training.</td>
+                  </tr>
+                  <tr>
+                    <td className="p-3 font-medium text-foreground">Published Knowledge & Traditions</td>
+                    <td className="p-3">Attribution may be anonymised on deletion; canonical citations and provenance remain in the knowledge graph.</td>
+                  </tr>
+                  <tr>
+                    <td className="p-3 font-medium text-foreground">Financial Ledger & Invoices</td>
+                    <td className="p-3">8 years in compliance with applicable Indian tax and financial accounting regulations.</td>
+                  </tr>
+                  <tr>
+                    <td className="p-3 font-medium text-foreground">Auth & Security Logs</td>
+                    <td className="p-3">12 months for threat detection and audit validation.</td>
+                  </tr>
+                  <tr>
+                    <td className="p-3 font-medium text-foreground">Analytics & Behavioral Telemetry</td>
+                    <td className="p-3">14 months raw; pseudonymised after 90 days; subject to explicit consent choices.</td>
+                  </tr>
+                  <tr>
+                    <td className="p-3 font-medium text-foreground">Moderation & Enforcement Records</td>
+                    <td className="p-3">24 months to maintain safety and address repeat violations.</td>
+                  </tr>
+                  <tr>
+                    <td className="p-3 font-medium text-foreground">Platform Audit Log</td>
+                    <td className="p-3">Append-only for 3 years; actor identities pseudonymised upon account deletion.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
           {/* 9. Grievance Redressal Officer */}
           <section className="border-t border-border/70 pt-8">
             <h2 className="font-display text-2xl text-foreground">

@@ -205,8 +205,10 @@ function TermsPage() {
             </p>
             <ul className="mt-3 list-disc pl-5 space-y-1.5 text-xs text-muted-foreground">
               <li>
-                <strong>Fair Fees:</strong> EKA deducts a standard 10% platform reinvestment fee to
-                support verification infrastructure, hosting, and community moderation.
+                <strong>Transparent Platform Commission:</strong> EKA charges 5% (500 bps) on consultations,
+                workshops, bookings, and fan support, and 10% (1000 bps) on physical goods, curated marketplace,
+                brand collaborations, and digital courses. Fees are computed with half-up integer paise rounding;
+                gateway fees, GST, and TDS are disclosed as separate transparent line items in accordance with applicable law.
               </li>
               <li>
                 <strong>Authentic Verification:</strong> Practitioners must undergo identity and
