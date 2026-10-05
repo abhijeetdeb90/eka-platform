@@ -47,7 +47,18 @@ function createAuthStorage() {
   return {
     getItem: (key: string): string | null => {
       try {
-        return window.localStorage.getItem(key);
+        const val = window.localStorage.getItem(key);
+        if (val) return val;
+        if (typeof document !== "undefined") {
+          const cookies = document.cookie.split("; ");
+          for (const c of cookies) {
+            const [cookieKey, cookieVal] = c.split("=");
+            if (decodeURIComponent(cookieKey) === key && cookieVal) {
+              return decodeURIComponent(cookieVal);
+            }
+          }
+        }
+        return null;
       } catch {
         return null;
       }
@@ -115,7 +126,7 @@ function createSupabaseClient() {
       storage: createAuthStorage(),
       persistSession: true,
       autoRefreshToken: true,
-      detectSessionInUrl: true,
+      detectSessionInUrl: false,
       flowType: "pkce",
     },
   });

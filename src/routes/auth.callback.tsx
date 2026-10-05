@@ -42,8 +42,20 @@ function AuthCallbackPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [statusText, setStatusText] = useState("Connecting your sanctuary session...");
   const processedRef = useRef(false);
+  const navigatedRef = useRef(false);
 
   useEffect(() => {
+    // Safety listener: if auth state fires a valid session, navigate immediately
+    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (session && !navigatedRef.current) {
+        navigatedRef.current = true;
+        setStatusText("Session verified. Opening EKA...");
+        await applyJoinAnswers();
+        const destination = search.next || "/app";
+        navigate({ to: destination });
+      }
+    });
+
     if (processedRef.current) return;
     processedRef.current = true;
 
@@ -60,11 +72,34 @@ function AuthCallbackPage() {
       }
 
       try {
-        // 2. PKCE Authorization Code Exchange
+        // 2. Check if a valid session is already active (proactive check)
+        const { data: initialSession } = await supabase.auth.getSession();
+        if (initialSession?.session && !navigatedRef.current) {
+          navigatedRef.current = true;
+          setStatusText("Session active. Preparing your sanctuary space...");
+          await applyJoinAnswers();
+          const destination = search.next || "/app";
+          navigate({ to: destination });
+          return;
+        }
+
+        // 3. PKCE Authorization Code Exchange
         if (search.code) {
           setStatusText("Exchanging security tokens with EKA...");
           const { data, error } = await supabase.auth.exchangeCodeForSession(search.code);
+
+          // Even if exchange returned an error (e.g. code was processed concurrently), check session again
           if (error) {
+            const { data: retrySession } = await supabase.auth.getSession();
+            if (retrySession?.session && !navigatedRef.current) {
+              navigatedRef.current = true;
+              setStatusText("Welcome to EKA...");
+              await applyJoinAnswers();
+              const destination = search.next || "/app";
+              navigate({ to: destination });
+              return;
+            }
+
             console.error("[AuthCallback] Code exchange failed:", error);
             setErrorMessage(
               error.message ||
@@ -73,7 +108,8 @@ function AuthCallbackPage() {
             return;
           }
 
-          if (data?.session) {
+          if (data?.session && !navigatedRef.current) {
+            navigatedRef.current = true;
             setStatusText("Preparing your sanctuary space...");
             await applyJoinAnswers();
             const destination = search.next || "/app";
@@ -82,7 +118,7 @@ function AuthCallbackPage() {
           }
         }
 
-        // 3. Fallback: Check if session is already active (e.g. implicit flow, auto-detection)
+        // 4. Fallback check for session
         setStatusText("Verifying session status...");
         const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
         if (sessionError) {
@@ -91,7 +127,8 @@ function AuthCallbackPage() {
           return;
         }
 
-        if (sessionData?.session) {
+        if (sessionData?.session && !navigatedRef.current) {
+          navigatedRef.current = true;
           await applyJoinAnswers();
           const destination = search.next || "/app";
           navigate({ to: destination });
@@ -99,16 +136,24 @@ function AuthCallbackPage() {
         }
 
         // If neither code nor session was found
-        setErrorMessage("No authentication credentials found in the callback request.");
+        if (!navigatedRef.current) {
+          setErrorMessage("No authentication credentials found in the callback request.");
+        }
       } catch (err) {
         console.error("[AuthCallback] Unexpected error:", err);
-        setErrorMessage(
-          err instanceof Error ? err.message : "An unexpected error occurred during authentication.",
-        );
+        if (!navigatedRef.current) {
+          setErrorMessage(
+            err instanceof Error ? err.message : "An unexpected error occurred during authentication.",
+          );
+        }
       }
     }
 
     void handleCallback();
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
   }, [navigate, search]);
 
   return (

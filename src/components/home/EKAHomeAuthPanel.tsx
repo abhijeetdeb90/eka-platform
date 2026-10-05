@@ -61,26 +61,43 @@ export function EKAHomeAuthPanel({ className = "" }: EKAHomeAuthPanelProps) {
       return;
     }
 
+    const cleanId = identifier.trim();
     setBusy(true);
     try {
-      let emailToUse = identifier.trim();
+      // Check if user entered an international/national phone number
+      const isPhone = /^\+?[0-9\s-]{8,15}$/.test(cleanId);
+      if (isPhone) {
+        const cleanPhone = cleanId.replace(/[\s-]/g, "");
+        const { error } = await supabase.auth.signInWithPassword({
+          phone: cleanPhone,
+          password,
+        });
+        if (error) {
+          if (error.message.includes("Invalid login credentials")) {
+            throw new Error("Invalid phone number or password. Please verify your credentials.");
+          }
+          throw error;
+        }
+        toast.success("Welcome back to EKA.");
+        navigate({ to: "/app" });
+        return;
+      }
 
-      // If user provided a username without '@', look up corresponding email if available
-      if (!emailToUse.includes("@")) {
+      // If user provided a username without '@', look up corresponding profile
+      if (!cleanId.includes("@")) {
         const { data: profileMatch } = await supabase
           .from("profiles")
           .select("id")
-          .eq("username", emailToUse.toLowerCase())
+          .eq("username", cleanId.toLowerCase())
           .maybeSingle();
 
-        // In standard Supabase auth, signIn requires email, but if profile found we use entered text as email fallback or inform user
         if (!profileMatch) {
-          // If not found as username, try as email directly in case
+          throw new Error("No account found with this username. Please sign in with your email address.");
         }
       }
 
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: emailToUse,
+      const { error } = await supabase.auth.signInWithPassword({
+        email: cleanId,
         password,
       });
 

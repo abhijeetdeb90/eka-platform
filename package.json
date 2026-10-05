@@ -17,7 +17,8 @@
     "format": "prettier --write .",
     "test:e2e": "playwright test",
     "manifest:system": "node scripts/archive-system-files.mjs",
-    "backup:drive": "node scripts/backup-to-drive.mjs"
+    "backup:drive": "node scripts/backup-to-drive.mjs",
+    "test:smoke": "node scripts/smoke-test-production.mjs"
   },
   "overrides": {
     "rolldown": "1.2.1"

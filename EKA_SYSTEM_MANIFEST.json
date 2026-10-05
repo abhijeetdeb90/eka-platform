@@ -1,7 +1,7 @@
 {
   "platform": "EKA — The Living Cultural Intelligence Layer",
   "version": "2.4.0-production",
-  "generatedAt": "2026-10-05T07:00:47.049Z",
+  "generatedAt": "2026-10-05T08:03:47.726Z",
   "vault": {
     "target": "Google Drive Cloud Vault",
     "folderId": "1qjLsG3WEWCTvxjZCyR-W_W61AOkTtoHL",
@@ -10,14 +10,14 @@
     "liveDatabase": "Supabase (PostgreSQL 15 + RLS + GoTrue Auth) [Project: kbiutqzhcbyuseygcspe]"
   },
   "statistics": {
-    "totalFiles": 785,
-    "totalLines": 190391,
-    "totalSizeBytes": 16924401,
-    "totalSizeMB": "16.14",
+    "totalFiles": 786,
+    "totalLines": 190706,
+    "totalSizeBytes": 16937572,
+    "totalSizeMB": "16.15",
     "categories": {
       "Architecture Documentation": 119,
       "Configuration & Tooling": 24,
-      "System Support File": 93,
+      "System Support File": 94,
       "Internal Workspace Container": 10,
       "Founder Cockpit & Platform Ops": 11,
       "UI Component": 193,
@@ -1211,19 +1211,19 @@
     },
     {
       "path": "EKA_SYSTEM_MANIFEST.json",
-      "sizeBytes": 227651,
-      "lines": 6261,
+      "sizeBytes": 230430,
+      "lines": 6333,
       "category": "Configuration & Tooling",
-      "sha256": "bf8733d0ce655e57de392394d51551942dabce93cc08bb49f33563d7674e8b06",
-      "lastModified": "2026-10-05T06:56:02.436Z"
+      "sha256": "b3af479dcff68e263ab698575c01e925e670f42de8f8a016aff1853924046210",
+      "lastModified": "2026-10-05T07:00:47.057Z"
     },
     {
       "path": "EKA_SYSTEM_MANIFEST.md",
       "sizeBytes": 3413,
       "lines": 68,
       "category": "Architecture Documentation",
-      "sha256": "46c21c744ce0b2e0dbf16d8f39235b1e638560a284464ddda45c392c0e2f35b3",
-      "lastModified": "2026-10-05T06:56:02.804Z"
+      "sha256": "c350e30dbb9ca651af7baa934432219e8d47edba5140889d50c178c07b612881",
+      "lastModified": "2026-10-05T07:00:47.170Z"
     },
     {
       "path": "eslint.config.js",
@@ -1259,11 +1259,11 @@
     },
     {
       "path": "package.json",
-      "sizeBytes": 3753,
-      "lines": 112,
+      "sizeBytes": 3814,
+      "lines": 113,
       "category": "Configuration & Tooling",
-      "sha256": "7cff8376dd3ffaaebf2f55e61a02e93365ba2b4dea727a68e8a3bfbfb7c72e17",
-      "lastModified": "2026-10-05T07:00:00.912Z"
+      "sha256": "236c45dd82c64a5d4bf7117d7a3a31bdf96d843b2d3ef1e28e172c33806010de",
+      "lastModified": "2026-10-05T08:03:31.861Z"
     },
     {
       "path": "playwright.config.ts",
@@ -1512,6 +1512,14 @@
       "category": "System Support File",
       "sha256": "704fe51cbd725f00a5f269dfd4337c496b13cd3d15a80a783807656a46b9e4e1",
       "lastModified": "2026-10-05T06:50:13.148Z"
+    },
+    {
+      "path": "scripts/smoke-test-production.mjs",
+      "sizeBytes": 7610,
+      "lines": 169,
+      "category": "System Support File",
+      "sha256": "631bfce871c914f88479e9cf4aad0b2aad64caae4ed909481a45a7cbe035278f",
+      "lastModified": "2026-10-05T08:03:03.591Z"
     },
     {
       "path": "set-vercel-envs.ps1",
@@ -2683,11 +2691,11 @@
     },
     {
       "path": "src/components/home/EKAHomeAuthPanel.tsx",
-      "sizeBytes": 15506,
-      "lines": 400,
+      "sizeBytes": 16054,
+      "lines": 417,
       "category": "UI Component",
-      "sha256": "acd221455faa03fd4994ab1401be14a29886097a7e428979188a80a8c5e1189e",
-      "lastModified": "2026-10-05T06:06:59.292Z"
+      "sha256": "8d87afb28cb1e25588b9e95a585d84eeb1fc0b7df1beb60ff46a3a98d5ccb8cf",
+      "lastModified": "2026-10-05T07:53:07.782Z"
     },
     {
       "path": "src/components/home/LivingWorldVisual.tsx",
@@ -3515,11 +3523,11 @@
     },
     {
       "path": "src/integrations/supabase/client.ts",
-      "sizeBytes": 5718,
-      "lines": 163,
+      "sizeBytes": 6128,
+      "lines": 174,
       "category": "Supabase SDK & Types",
-      "sha256": "acad2bd333feebb25a9e34da5f4a30af472423253570b3b68a714e6fcf3db654",
-      "lastModified": "2026-10-04T16:57:34.295Z"
+      "sha256": "e96d5a76031e3a5909e4933c0aaf203c34ec6a8005f9d96ecd4653099f9f7074",
+      "lastModified": "2026-10-05T07:52:30.778Z"
     },
     {
       "path": "src/integrations/supabase/cron-auth.ts",
@@ -4915,11 +4923,11 @@
     },
     {
       "path": "src/routes/auth.callback.tsx",
-      "sizeBytes": 5323,
-      "lines": 144,
+      "sizeBytes": 7086,
+      "lines": 189,
       "category": "Application Route / Page",
-      "sha256": "370abfbfde9ba657d46e76d6cb7352e0bcbac0a7ba262c116abac13b69f754c6",
-      "lastModified": "2026-10-04T12:26:09.124Z"
+      "sha256": "a865b70aaad8dffd45564e54e36b9d249e2b4bf9c5353a5a7f6d35dc26cea968",
+      "lastModified": "2026-10-05T07:52:50.670Z"
     },
     {
       "path": "src/routes/auth.tsx",
