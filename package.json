@@ -15,7 +15,9 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "manifest:system": "node scripts/archive-system-files.mjs",
+    "backup:drive": "node scripts/backup-to-drive.mjs"
   },
   "overrides": {
     "rolldown": "1.2.1"

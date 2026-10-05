@@ -139,23 +139,54 @@ export async function assertServerRole(
     return { ok: false, status: 401, error: "Unauthorized: Invalid Bearer token" };
   }
 
-  // Validate with supabase
+  // Validate session token with supabase
   const { data, error } = await supabase.auth.getUser(token);
   if (error || !data.user) {
     return { ok: false, status: 401, error: "Unauthorized: Invalid session" };
   }
 
-  const { data: roleRecords } = await supabase
-    .from("user_roles")
-    .select("role")
-    .eq("user_id", data.user.id);
+  const userId = data.user.id;
+  let roles: string[] = [];
 
-  const roles = (roleRecords ?? []).map((r) => String(r.role).toLowerCase());
-  const hasAllowedRole = roles.some((r) => allowedRoles.includes(r));
+  // Try server admin client first if running in server context
+  try {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    if (supabaseAdmin) {
+      const { data: roleRecords } = await (supabaseAdmin as any)
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", userId);
+      roles = (roleRecords ?? []).map((r: any) => String(r.role).toLowerCase());
+    }
+  } catch {
+    // If supabaseAdmin is unavailable or fails, query using the authenticated token
+    try {
+      const { createClient } = await import("@supabase/supabase-js");
+      const client = createClient(
+        process.env["VITE_SUPABASE_URL"] || "https://kbiutqzhcbyuseygcspe.supabase.co",
+        process.env["VITE_SUPABASE_PUBLISHABLE_KEY"] || "sb_publishable_DKdNOtbppccL297o2_Ixkw_f2j0Rf7-",
+        {
+          global: {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+          auth: { persistSession: false },
+        }
+      );
+      const { data: roleRecords } = await client
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", userId);
+      roles = (roleRecords ?? []).map((r: any) => String(r.role).toLowerCase());
+    } catch (e) {
+      console.error("[assertServerRole] Failed to fetch roles:", e);
+    }
+  }
+
+  const hasAllowedRole = roles.some((r) => allowedRoles.map((a) => a.toLowerCase()).includes(r));
 
   if (!hasAllowedRole) {
     return { ok: false, status: 403, error: "Forbidden: Access restricted to authorized roles" };
   }
 
-  return { ok: true, status: 200, userId: data.user.id };
+  return { ok: true, status: 200, userId };
 }

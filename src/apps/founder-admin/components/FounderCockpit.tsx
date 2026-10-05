@@ -21,7 +21,10 @@ import {
   ExternalLink,
   Bot,
   Users,
+  Database,
+  Cloud,
 } from "lucide-react";
+import { GOOGLE_DRIVE_BACKUP_CONFIG } from "@/lib/backup";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
@@ -100,8 +103,8 @@ export function FounderCockpit() {
         </div>
       </div>
 
-      {/* 3 Pillars Metric Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+      {/* 4 Pillars Metric Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         <div className="rounded-2xl border border-neutral-800 bg-neutral-900/60 p-5 space-y-2">
           <div className="flex items-center justify-between text-xs text-neutral-400">
             <span className="font-mono uppercase text-[10px] tracking-wider">Archive Scale</span>
@@ -127,6 +130,30 @@ export function FounderCockpit() {
           </div>
           <p className="text-2xl sm:text-3xl font-display font-medium text-white">₹26.8L / mo</p>
           <p className="text-[11px] text-neutral-400">Sustainable reserve pool & creator dividend</p>
+        </div>
+
+        <div className="rounded-2xl border border-neutral-800 bg-neutral-900/60 p-5 space-y-2">
+          <div className="flex items-center justify-between text-xs text-neutral-400">
+            <span className="font-mono uppercase text-[10px] tracking-wider">Google Drive Vault</span>
+            <Cloud className="size-4 text-sky-400" />
+          </div>
+          <div className="flex items-center justify-between">
+            <p className="text-xl sm:text-2xl font-display font-medium text-white">Disaster Recovery</p>
+            <Badge variant="outline" className="text-[9px] font-mono border-emerald-500/40 text-emerald-400 bg-emerald-500/10">
+              Synced
+            </Badge>
+          </div>
+          <div className="flex items-center justify-between pt-1">
+            <span className="text-[10px] font-mono text-neutral-500">Target: {GOOGLE_DRIVE_BACKUP_CONFIG.folderId.slice(0, 10)}...</span>
+            <a
+              href={GOOGLE_DRIVE_BACKUP_CONFIG.folderUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[10px] text-sky-400 hover:underline flex items-center gap-1"
+            >
+              Open Vault <ExternalLink className="size-2.5" />
+            </a>
+          </div>
         </div>
       </div>
 

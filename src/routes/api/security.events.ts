@@ -38,12 +38,12 @@ export const Route = createFileRoute("/api/security/events")({
 
           const userId = claimsData.user.id;
 
-          // Check role in studio_user_roles
+          // Check role in user_roles
           const { data: roleData, error: roleErr } = await (supabaseAdmin as any)
-            .from("studio_user_roles")
+            .from("user_roles")
             .select("role")
             .eq("user_id", userId)
-            .in("role", ["Founder", "Super Admin"])
+            .in("role", ["admin", "super_admin", "founder"])
             .maybeSingle();
 
           if (roleErr || !roleData) {

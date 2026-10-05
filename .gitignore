@@ -41,6 +41,7 @@ supabase/.temp/
 *.gz
 *.bak
 *.tmp
+.backup-vault/
 
 # Testing & coverage
 test-results/

@@ -33,10 +33,10 @@ export const Route = createFileRoute("/api/security/incident-response")({
 
           const userId = claimsData.user.id;
           const { data: roleData } = await (supabaseAdmin as any)
-            .from("studio_user_roles")
+            .from("user_roles")
             .select("role")
             .eq("user_id", userId)
-            .in("role", ["Founder", "Super Admin"])
+            .in("role", ["admin", "super_admin", "founder"])
             .maybeSingle();
 
           if (!roleData) {
@@ -72,10 +72,10 @@ export const Route = createFileRoute("/api/security/incident-response")({
 
           const userId = claimsData.user.id;
           const { data: roleData } = await (supabaseAdmin as any)
-            .from("studio_user_roles")
+            .from("user_roles")
             .select("role")
             .eq("user_id", userId)
-            .in("role", ["Founder", "Super Admin"])
+            .in("role", ["admin", "super_admin", "founder"])
             .maybeSingle();
 
           if (!roleData) {
