@@ -1,0 +1,172 @@
+{
+  "version": "1.0.0",
+  "mode": "production_full",
+  "lastIndexedAt": "2026-10-06T15:25:18.011Z",
+  "culturalFiles": [
+    {
+      "fileName": "Religions_Traditions.md",
+      "recordCount": 23,
+      "byteSize": 24087,
+      "indexed": true
+    },
+    {
+      "fileName": "Culture_Communities.md",
+      "recordCount": 80,
+      "byteSize": 73054,
+      "indexed": true
+    },
+    {
+      "fileName": "India_Languages.md",
+      "recordCount": 22,
+      "byteSize": 19139,
+      "indexed": true
+    },
+    {
+      "fileName": "Global_Languages.md",
+      "recordCount": 85,
+      "byteSize": 76005,
+      "indexed": true
+    },
+    {
+      "fileName": "Image_Prompt_Library.md",
+      "recordCount": 10,
+      "byteSize": 3087,
+      "indexed": true
+    },
+    {
+      "fileName": "Antigravity_Schema.md",
+      "recordCount": 18,
+      "byteSize": 3189,
+      "indexed": true
+    },
+    {
+      "fileName": "README.md",
+      "recordCount": 8,
+      "byteSize": 2044,
+      "indexed": true
+    }
+  ],
+  "questionChunks": [
+    {
+      "fileName": "Sheet1_chunk_01.md",
+      "recordCount": 500,
+      "byteSize": 318989,
+      "indexed": true
+    },
+    {
+      "fileName": "Sheet1_chunk_02.md",
+      "recordCount": 500,
+      "byteSize": 318467,
+      "indexed": true
+    },
+    {
+      "fileName": "Sheet1_chunk_03.md",
+      "recordCount": 500,
+      "byteSize": 322508,
+      "indexed": true
+    },
+    {
+      "fileName": "Sheet1_chunk_04.md",
+      "recordCount": 500,
+      "byteSize": 321276,
+      "indexed": true
+    },
+    {
+      "fileName": "Sheet1_chunk_05.md",
+      "recordCount": 500,
+      "byteSize": 319592,
+      "indexed": true
+    },
+    {
+      "fileName": "Sheet1_chunk_06.md",
+      "recordCount": 500,
+      "byteSize": 322482,
+      "indexed": true
+    },
+    {
+      "fileName": "Sheet1_chunk_07.md",
+      "recordCount": 500,
+      "byteSize": 326943,
+      "indexed": true
+    },
+    {
+      "fileName": "Sheet1_chunk_08.md",
+      "recordCount": 500,
+      "byteSize": 325198,
+      "indexed": true
+    },
+    {
+      "fileName": "Sheet1_chunk_09.md",
+      "recordCount": 500,
+      "byteSize": 322544,
+      "indexed": true
+    },
+    {
+      "fileName": "Sheet1_chunk_10.md",
+      "recordCount": 500,
+      "byteSize": 321672,
+      "indexed": true
+    },
+    {
+      "fileName": "Sheet1_chunk_11.md",
+      "recordCount": 500,
+      "byteSize": 323254,
+      "indexed": true
+    },
+    {
+      "fileName": "Sheet1_chunk_12.md",
+      "recordCount": 500,
+      "byteSize": 318107,
+      "indexed": true
+    },
+    {
+      "fileName": "Sheet1_chunk_13.md",
+      "recordCount": 500,
+      "byteSize": 322163,
+      "indexed": true
+    },
+    {
+      "fileName": "Sheet1_chunk_14.md",
+      "recordCount": 500,
+      "byteSize": 321862,
+      "indexed": true
+    },
+    {
+      "fileName": "Sheet1_chunk_15.md",
+      "recordCount": 500,
+      "byteSize": 324406,
+      "indexed": true
+    },
+    {
+      "fileName": "Sheet1_chunk_16.md",
+      "recordCount": 500,
+      "byteSize": 323294,
+      "indexed": true
+    },
+    {
+      "fileName": "Sheet1_chunk_17.md",
+      "recordCount": 500,
+      "byteSize": 320803,
+      "indexed": true
+    },
+    {
+      "fileName": "Sheet1_chunk_18.md",
+      "recordCount": 500,
+      "byteSize": 327853,
+      "indexed": true
+    },
+    {
+      "fileName": "Sheet1_chunk_19.md",
+      "recordCount": 500,
+      "byteSize": 318627,
+      "indexed": true
+    },
+    {
+      "fileName": "Sheet1_chunk_20.md",
+      "recordCount": 500,
+      "byteSize": 326223,
+      "indexed": true
+    }
+  ],
+  "totalRecordsIndexed": 10246
+}

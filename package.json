@@ -18,7 +18,10 @@
     "test:e2e": "playwright test",
     "manifest:system": "node scripts/archive-system-files.mjs",
     "backup:drive": "node scripts/backup-to-drive.mjs",
-    "test:smoke": "node scripts/smoke-test-production.mjs"
+    "test:smoke": "node scripts/smoke-test-production.mjs",
+    "knowledge:index": "tsx scripts/test-phase2-full-retrieval.mjs",
+    "knowledge:test:phase1": "tsx scripts/test-phase1-retrieval.mjs",
+    "knowledge:test:full": "tsx scripts/test-phase2-full-retrieval.mjs"
   },
   "overrides": {
     "rolldown": "1.2.1"
