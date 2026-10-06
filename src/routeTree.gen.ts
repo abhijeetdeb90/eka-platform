@@ -12,12 +12,14 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AdsRouteImport } from './routes/ads'
 import { Route as AgentRouteImport } from './routes/agent'
 import { Route as AskRouteImport } from './routes/ask'
 import { Route as AudienceRouteImport } from './routes/audience'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as BrandsRouteImport } from './routes/brands'
 import { Route as BrandsEnterpriseRouteImport } from './routes/brands-enterprise'
+import { Route as BusinessRouteImport } from './routes/business'
 import { Route as CampaignsRouteImport } from './routes/campaigns'
 import { Route as CommunityRouteImport } from './routes/community'
 import { Route as ContentRouteImport } from './routes/content'
@@ -166,6 +168,11 @@ const AdminRoute = AdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdsRoute = AdsRouteImport.update({
+  id: '/ads',
+  path: '/ads',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AgentRoute = AgentRouteImport.update({
   id: '/agent',
   path: '/agent',
@@ -194,6 +201,11 @@ const BrandsRoute = BrandsRouteImport.update({
 const BrandsEnterpriseRoute = BrandsEnterpriseRouteImport.update({
   id: '/brands-enterprise',
   path: '/brands-enterprise',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BusinessRoute = BusinessRouteImport.update({
+  id: '/business',
+  path: '/business',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CampaignsRoute = CampaignsRouteImport.update({
@@ -903,12 +915,14 @@ const AuthenticatedAppMarketBookingIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/ads': typeof AdsRoute
   '/agent': typeof AgentRoute
   '/ask': typeof AskRoute
   '/audience': typeof AudienceRoute
   '/auth': typeof AuthRouteWithChildren
   '/brands': typeof BrandsRoute
   '/brands-enterprise': typeof BrandsEnterpriseRouteWithChildren
+  '/business': typeof BusinessRoute
   '/campaigns': typeof CampaignsRoute
   '/community': typeof CommunityRoute
   '/content': typeof ContentRoute
@@ -1046,11 +1060,13 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/ads': typeof AdsRoute
   '/agent': typeof AgentRoute
   '/ask': typeof AskRoute
   '/audience': typeof AudienceRoute
   '/auth': typeof AuthRouteWithChildren
   '/brands': typeof BrandsRoute
+  '/business': typeof BusinessRoute
   '/campaigns': typeof CampaignsRoute
   '/community': typeof CommunityRoute
   '/content': typeof ContentRoute
@@ -1188,12 +1204,14 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/admin': typeof AdminRoute
+  '/ads': typeof AdsRoute
   '/agent': typeof AgentRoute
   '/ask': typeof AskRoute
   '/audience': typeof AudienceRoute
   '/auth': typeof AuthRouteWithChildren
   '/brands': typeof BrandsRoute
   '/brands-enterprise': typeof BrandsEnterpriseRouteWithChildren
+  '/business': typeof BusinessRoute
   '/campaigns': typeof CampaignsRoute
   '/community': typeof CommunityRoute
   '/content': typeof ContentRoute
@@ -1333,12 +1351,14 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
+    | '/ads'
     | '/agent'
     | '/ask'
     | '/audience'
     | '/auth'
     | '/brands'
     | '/brands-enterprise'
+    | '/business'
     | '/campaigns'
     | '/community'
     | '/content'
@@ -1476,11 +1496,13 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/admin'
+    | '/ads'
     | '/agent'
     | '/ask'
     | '/audience'
     | '/auth'
     | '/brands'
+    | '/business'
     | '/campaigns'
     | '/community'
     | '/content'
@@ -1617,12 +1639,14 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/admin'
+    | '/ads'
     | '/agent'
     | '/ask'
     | '/audience'
     | '/auth'
     | '/brands'
     | '/brands-enterprise'
+    | '/business'
     | '/campaigns'
     | '/community'
     | '/content'
@@ -1762,12 +1786,14 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AdminRoute: typeof AdminRoute
+  AdsRoute: typeof AdsRoute
   AgentRoute: typeof AgentRoute
   AskRoute: typeof AskRoute
   AudienceRoute: typeof AudienceRoute
   AuthRoute: typeof AuthRouteWithChildren
   BrandsRoute: typeof BrandsRoute
   BrandsEnterpriseRoute: typeof BrandsEnterpriseRouteWithChildren
+  BusinessRoute: typeof BusinessRoute
   CampaignsRoute: typeof CampaignsRoute
   CommunityRoute: typeof CommunityRoute
   ContentRoute: typeof ContentRoute
@@ -1850,6 +1876,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ads': {
+      id: '/ads'
+      path: '/ads'
+      fullPath: '/ads'
+      preLoaderRoute: typeof AdsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/agent': {
       id: '/agent'
       path: '/agent'
@@ -1890,6 +1923,13 @@ declare module '@tanstack/react-router' {
       path: '/brands-enterprise'
       fullPath: '/brands-enterprise'
       preLoaderRoute: typeof BrandsEnterpriseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/business': {
+      id: '/business'
+      path: '/business'
+      fullPath: '/business'
+      preLoaderRoute: typeof BusinessRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/campaigns': {
@@ -3059,12 +3099,14 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AdminRoute: AdminRoute,
+  AdsRoute: AdsRoute,
   AgentRoute: AgentRoute,
   AskRoute: AskRoute,
   AudienceRoute: AudienceRoute,
   AuthRoute: AuthRouteWithChildren,
   BrandsRoute: BrandsRoute,
   BrandsEnterpriseRoute: BrandsEnterpriseRouteWithChildren,
+  BusinessRoute: BusinessRoute,
   CampaignsRoute: CampaignsRoute,
   CommunityRoute: CommunityRoute,
   ContentRoute: ContentRoute,
