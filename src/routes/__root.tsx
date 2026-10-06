@@ -18,6 +18,7 @@ import { SafeNavigationProvider } from "@/components/security/SafeNavigationProv
 import { CookieConsentBanner } from "@/components/common/CookieConsentBanner";
 import { MobileBottomNav } from "@/components/navigation/MobileBottomNav";
 import { LocalizationProvider } from "@/lib/i18n";
+import { InvestorDemoBanner } from "@/components/investor/InvestorDemoBanner";
 
 function NotFoundComponent() {
   return (
@@ -86,23 +87,23 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "EKA — The Social Network for Your Inner Life" },
+      { title: "EKA — The World's Trusted Cultural Intelligence Layer" },
       {
         name: "description",
         content:
-          "Connect, explore, practice and belong — a calm social network for spirituality, wisdom, faith and personal growth.",
+          "One Within. One With All. Don't just scroll the world. Understand it. A universal cultural intelligence platform connecting traditions, living stories, crafts, and sacred places across the globe.",
       },
-      { property: "og:title", content: "EKA — The Social Network for Your Inner Life" },
+      { property: "og:title", content: "EKA — The World's Trusted Cultural Intelligence Layer" },
       {
         property: "og:description",
         content:
-          "Connect, explore, practice and belong across spirituality, wisdom, faith and personal growth.",
+          "One Within. One With All. Don't just scroll the world. Understand it. Cultural discovery, living traditions, and global intelligence.",
       },
       { property: "og:type", content: "website" },
-      { property: "og:image", content: "/brand/eka-banner-sunset.jpg" },
-      { property: "og:image:alt", content: "EKA — One within. One with all." },
+      { property: "og:image", content: "/brand/eka-banner.jpg" },
+      { property: "og:image:alt", content: "EKA — The World's Trusted Cultural Intelligence Layer" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:image", content: "/brand/eka-banner-sunset.jpg" },
+      { name: "twitter:image", content: "/brand/eka-banner.jpg" },
     ],
     links: [
       {
@@ -115,9 +116,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=Karla:wght@300;400;500;600&display=swap",
       },
-      { rel: "icon", href: "/brand/eka-logo.png", type: "image/png" },
-      { rel: "shortcut icon", href: "/brand/eka-logo.png", type: "image/png" },
-      { rel: "apple-touch-icon", href: "/brand/eka-logo.png" },
+      { rel: "icon", href: "/brand/favicon.svg", type: "image/svg+xml" },
+      { rel: "alternate icon", href: "/brand/eka-logo.png", type: "image/png" },
+      { rel: "shortcut icon", href: "/brand/favicon.svg", type: "image/svg+xml" },
+      { rel: "apple-touch-icon", href: "/brand/app-icon.png" },
     ],
   }),
 
@@ -155,6 +157,9 @@ function RootComponent() {
           >
             Skip to main content
           </a>
+
+          {/* Investor Presentation Mode Active Feedback */}
+          <InvestorDemoBanner />
 
           {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
           <SafeNavigationProvider>

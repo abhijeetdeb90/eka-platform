@@ -20,44 +20,65 @@ export type MarketCategory = {
 
 export const MARKET_CATEGORIES: MarketCategory[] = [
   {
+    slug: "living-crafts",
+    label: "Master Crafts & Artisans",
+    glyph: "🏺",
+    blurb: "Handloom, metalwork, woodcarving & indigenous arts",
+  },
+  {
+    slug: "cultural-consultation",
+    label: "Cultural Heritage & Lineage",
+    glyph: "📜",
+    blurb: "One-on-one inquiry into history, rituals, and regional traditions",
+  },
+  {
+    slug: "culinary-traditions",
+    label: "Foodways & Ancestral Gastronomy",
+    glyph: "🌾",
+    blurb: "Ancient fermentation, heritage grains, and culinary rituals",
+  },
+  {
+    slug: "oral-traditions",
+    label: "Oral Epics & Sacred Music",
+    glyph: "🪕",
+    blurb: "Chants, folk epics, living ballads, and classical traditions",
+  },
+  {
+    slug: "sacred-geography",
+    label: "Sacred Geography & Architecture",
+    glyph: "🏛️",
+    blurb: "Monastic sanctuaries, pilgrimage routes, and temple science",
+  },
+  {
+    slug: "contemplative-practice",
+    label: "Contemplative Wisdom & Silence",
+    glyph: "🕯️",
+    blurb: "Monastic contemplation, breathwork, Zen, and Advaita guidance",
+  },
+  {
+    slug: "rituals",
+    label: "Rituals & Seasonal Ceremonies",
+    glyph: "✨",
+    blurb: "Marking life thresholds, solstices, and harvest observances",
+  },
+  {
+    slug: "languages-manuscripts",
+    label: "Classical Languages & Philosophy",
+    glyph: "📚",
+    blurb: "Study with scholars in primary languages and classical texts",
+  },
+  {
     slug: "yoga",
-    label: "Yoga & Meditation",
+    label: "Traditional Yoga & Embodied Arts",
     glyph: "🧘",
-    blurb: "Practice with the body and the breath",
+    blurb: "Root lineage asana, pranayama, and somatic philosophy",
   },
   {
     slug: "astrology",
-    label: "Astrology",
-    glyph: "🔮",
-    blurb: "Traditional chart reading, offered as reflection",
+    label: "Traditional Cosmologies",
+    glyph: "🔭",
+    blurb: "Ancient astronomical calendars and reflective chart reading",
   },
-  {
-    slug: "spiritual-guidance",
-    label: "Spiritual Guidance",
-    glyph: "🕉️",
-    blurb: "One-to-one conversation about your path",
-  },
-  {
-    slug: "religious-services",
-    label: "Religious Services",
-    glyph: "📿",
-    blurb: "Ceremony, ritual and festival days",
-  },
-  { slug: "gurus", label: "Gurus & Teachers", glyph: "🧘‍♂️", blurb: "Longer study with a teacher" },
-  {
-    slug: "wellness",
-    label: "Wellness & Healing",
-    glyph: "🌿",
-    blurb: "Rest, grief, breath and recovery",
-  },
-  { slug: "talks", label: "Talks & Satsang", glyph: "🎙️", blurb: "Listen, ask, sit with others" },
-  {
-    slug: "rituals",
-    label: "Rituals & Ceremonies",
-    glyph: "✨",
-    blurb: "Marking a threshold with care",
-  },
-  { slug: "meditation", label: "Meditation", glyph: "🕯️", blurb: "Instruction you can return to" },
 ];
 
 export const CATEGORY_LABEL = Object.fromEntries(MARKET_CATEGORIES.map((c) => [c.slug, c.label]));

@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <!-- EKA STANDALONE SYMBOL: THE CULTURAL MERIDIAN -->
+  <!-- "One Within. One With All." -->
+  <defs>
+    <linearGradient id="ekaCoreGradSym" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#C25E3E"/>
+      <stop offset="100%" stop-color="#9E472A"/>
+    </linearGradient>
+    <mask id="symMask">
+      <rect width="100" height="100" fill="#FFFFFF"/>
+      <circle cx="50" cy="50" r="15" fill="#000000"/>
+    </mask>
+  </defs>
+
+  <!-- Outer Global Boundary -->
+  <circle cx="50" cy="50" r="44" stroke="#1E2A38" stroke-width="4"/>
+
+  <!-- Masked Interior Meridians -->
+  <g mask="url(#symMask)" stroke="#1E2A38" stroke-width="4" stroke-linecap="round">
+    <line x1="6" y1="50" x2="94" y2="50"/>
+    <path d="M 50 6 C 68 22, 68 78, 50 94"/>
+    <path d="M 50 6 C 32 22, 32 78, 50 94"/>
+  </g>
+
+  <!-- Cardinal Meridian Nodes -->
+  <circle cx="50" cy="6" r="2.5" fill="#C25E3E"/>
+  <circle cx="94" cy="50" r="2.5" fill="#C25E3E"/>
+  <circle cx="50" cy="94" r="2.5" fill="#C25E3E"/>
+  <circle cx="6" cy="50" r="2.5" fill="#C25E3E"/>
+
+  <!-- The "One Within" Focal Core -->
+  <circle cx="50" cy="50" r="9" fill="url(#ekaCoreGradSym)"/>
+</svg>

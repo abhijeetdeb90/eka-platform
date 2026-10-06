@@ -1,9 +1,11 @@
 // ==============================================================================
-// CONSUMER APPLICATION — SITE HEADER
+// CONSUMER APPLICATION — SITE HEADER (CANONICAL UNIFIED IA)
 // ==============================================================================
-// Public consumer-only header shell.
-// Prominent EKA logo branding + Instant Language Selector (অসমীয়া ▾).
-// Completely localized interface.
+// 1. Unified 8 Primary Destinations:
+//    Home | Discover | Stories | Learn | Ask EKA | Community | Messages | My EKA
+// 2. High-visibility Create action (contribute to living archive)
+// 3. Global controls: Search | Language | Messages | Account Menu
+// 4. Responsive desktop navigation with clean mobile drawer
 // ==============================================================================
 
 import { useState, useEffect } from "react";
@@ -13,11 +15,13 @@ import {
   X,
   Search,
   User,
-  ArrowRight,
   Sparkles,
   LogOut,
   LogIn,
   Bookmark,
+  Plus,
+  MessageSquare,
+  ArrowRight,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { Button } from "@/components/ui/button";
@@ -34,7 +38,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useProfile } from "@/hooks/useProfile";
 import { supabase } from "@/integrations/supabase/client";
-import { CONSUMER_PRIMARY_NAV } from "../config/navigation";
+import { PRIMARY_NAV_ITEMS, CREATE_ACTION_ITEM } from "@/config/navigation";
+import { track } from "@/lib/analytics";
 
 export function ConsumerHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -77,13 +82,9 @@ export function ConsumerHeader() {
     navigate({ to: "/" });
   };
 
-  const getNavLabel = (to: string, defaultLabel: string) => {
-    if (to === "/discover") return t("nav.discover", defaultLabel);
-    if (to === "/stories") return t("nav.stories", defaultLabel);
-    if (to === "/learn") return t("nav.learn", defaultLabel);
-    if (to === "/create") return t("nav.create", defaultLabel);
-    if (to === "/knowledge") return t("nav.knowledge", defaultLabel);
-    return defaultLabel;
+  const handleNavClick = (to: string, label: string) => {
+    track("navigation_clicked", { to, label });
+    setMobileMenuOpen(false);
   };
 
   return (
@@ -94,51 +95,87 @@ export function ConsumerHeader() {
           : "border-b border-border/40 bg-background/70 backdrop-blur-sm"
       }`}
     >
-      <div className="container-eka flex h-16 items-center justify-between gap-3 sm:gap-4">
+      <div className="container-eka flex h-16 items-center justify-between gap-2 sm:gap-4">
         {/* Logo and Desktop Nav */}
-        <div className="flex min-w-0 items-center gap-6 lg:gap-10">
+        <div className="flex min-w-0 items-center gap-3 lg:gap-6 xl:gap-8">
           <Link
             to="/"
-            className="min-w-0 transition-opacity hover:opacity-90 flex items-center"
+            onClick={() => handleNavClick("/", "Home")}
+            className="min-w-0 transition-opacity hover:opacity-90 flex items-center shrink-0"
             aria-label="EKA Home"
           >
-            <EkaLogo size="md" />
+            <EkaLogo size="md" withBeta />
           </Link>
 
-          <nav className="hidden items-center gap-1 md:flex" aria-label="Main Navigation">
-            {CONSUMER_PRIMARY_NAV.map((l) => (
-              <Link
-                key={l.to}
-                to={l.to}
-                activeProps={{ className: "text-foreground font-semibold bg-accent/60" }}
-                className="relative rounded-lg px-3.5 py-1.5 text-sm font-medium text-muted-foreground transition-all duration-200 hover:bg-accent/40 hover:text-foreground"
-              >
-                {getNavLabel(l.to, l.label)}
-              </Link>
-            ))}
+          {/* Desktop Navigation: 8 Primary Pillars */}
+          <nav
+            className="hidden items-center gap-0.5 lg:gap-1 lg:flex"
+            aria-label="Main Navigation"
+          >
+            {PRIMARY_NAV_ITEMS.map((l) => {
+              const Icon = l.icon;
+              return (
+                <Link
+                  key={l.to}
+                  to={l.to}
+                  activeOptions={{ exact: l.exact }}
+                  onClick={() => handleNavClick(l.to, l.label)}
+                  activeProps={{ className: "text-foreground font-semibold bg-accent/70" }}
+                  className="relative flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[13px] font-medium text-muted-foreground transition-all duration-200 hover:bg-accent/40 hover:text-foreground"
+                >
+                  <Icon className="size-3.5 stroke-[1.8] opacity-75" />
+                  <span>{l.label}</span>
+                </Link>
+              );
+            })}
           </nav>
         </div>
 
-        {/* Desktop Actions: Language Selector + Search (🔍) + Profile/Account (◯) */}
-        <div className="hidden items-center gap-2.5 sm:gap-3 md:flex">
+        {/* Desktop Global Controls & Create Button */}
+        <div className="hidden items-center gap-2 sm:gap-2.5 md:flex shrink-0">
+          {/* Prominent Desktop Create Action Button */}
+          <Button
+            asChild
+            size="sm"
+            className="rounded-xl bg-gradient-to-r from-terracotta to-saffron text-white shadow-calm hover:shadow-lift hover:opacity-95 font-medium px-3.5 py-1.5 text-xs transition-all mr-1"
+            onClick={() => track("create_started", { source: "header" })}
+          >
+            <Link to={CREATE_ACTION_ITEM.to}>
+              <Plus className="size-3.5 mr-1 stroke-[2.5]" />
+              <span>{CREATE_ACTION_ITEM.label}</span>
+            </Link>
+          </Button>
+
           {/* Instant Visible Language Selector */}
           <LanguageSelector variant="header" />
 
           {/* Search Trigger */}
           <Link
             to="/search"
-            className="flex items-center justify-center size-9 rounded-full text-muted-foreground transition-colors hover:bg-accent/60 hover:text-foreground border border-transparent hover:border-border/60"
+            onClick={() => track("search_submitted", { source: "header_icon" })}
+            className="flex items-center justify-center size-8.5 rounded-full text-muted-foreground transition-colors hover:bg-accent/60 hover:text-foreground border border-transparent hover:border-border/60"
             aria-label={t("action.search")}
             title={t("action.search")}
           >
             <Search className="size-4" />
           </Link>
 
-          {/* Profile / Account Dropdown (◯) */}
+          {/* Direct Messages Quick Action */}
+          <Link
+            to="/messages"
+            onClick={() => track("navigation_clicked", { to: "/messages", label: "Messages" })}
+            className="flex items-center justify-center size-8.5 rounded-full text-muted-foreground transition-colors hover:bg-accent/60 hover:text-foreground border border-transparent hover:border-border/60"
+            aria-label="Direct Messages"
+            title="Messages"
+          >
+            <MessageSquare className="size-4" />
+          </Link>
+
+          {/* Profile / My EKA Account Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button
-                className="flex items-center justify-center size-9 rounded-full border border-border/80 bg-accent/30 text-foreground transition-all hover:bg-accent hover:border-border hover:shadow-xs focus:outline-hidden"
+                className="flex items-center justify-center size-8.5 rounded-full border border-border/80 bg-accent/30 text-foreground transition-all hover:bg-accent hover:border-border hover:shadow-xs focus:outline-hidden"
                 aria-label="Account Menu"
               >
                 {profile?.avatar_url ? (
@@ -167,9 +204,13 @@ export function ConsumerHeader() {
                   <DropdownMenuSeparator />
 
                   <DropdownMenuItem asChild>
-                    <Link to="/app/me" className="flex items-center gap-2 cursor-pointer text-xs">
+                    <Link
+                      to="/my-eka"
+                      onClick={() => track("my_eka_opened", { source: "header_dropdown" })}
+                      className="flex items-center gap-2 cursor-pointer text-xs"
+                    >
                       <User className="size-3.5 text-muted-foreground" />
-                      <span>{t("nav.profile")}</span>
+                      <span>My EKA Sanctuary</span>
                     </Link>
                   </DropdownMenuItem>
 
@@ -177,6 +218,13 @@ export function ConsumerHeader() {
                     <Link to="/app/saved" className="flex items-center gap-2 cursor-pointer text-xs">
                       <Bookmark className="size-3.5 text-muted-foreground" />
                       <span>{t("nav.saved")}</span>
+                    </Link>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem asChild>
+                    <Link to="/messages" className="flex items-center gap-2 cursor-pointer text-xs">
+                      <MessageSquare className="size-3.5 text-muted-foreground" />
+                      <span>Messages & Connections</span>
                     </Link>
                   </DropdownMenuItem>
 
@@ -192,6 +240,13 @@ export function ConsumerHeader() {
               ) : (
                 <>
                   <DropdownMenuItem asChild>
+                    <Link to="/my-eka" className="flex items-center gap-2 cursor-pointer text-xs font-medium">
+                      <User className="size-3.5 text-muted-foreground" />
+                      <span>My EKA Sanctuary</span>
+                    </Link>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem asChild>
                     <Link to="/auth" className="flex items-center gap-2 cursor-pointer text-xs font-medium">
                       <LogIn className="size-3.5 text-muted-foreground" />
                       <span>{t("auth.signIn")}</span>
@@ -201,7 +256,7 @@ export function ConsumerHeader() {
                   <DropdownMenuItem asChild>
                     <Link to="/join" className="flex items-center gap-2 cursor-pointer text-xs text-terracotta font-medium">
                       <Sparkles className="size-3.5" />
-                      <span>{t("auth.joinSanctuary")}</span>
+                      <span>Join Living Archive</span>
                     </Link>
                   </DropdownMenuItem>
                 </>
@@ -210,25 +265,37 @@ export function ConsumerHeader() {
           </DropdownMenu>
 
           {!profile && (
-            <Button asChild size="sm" className="rounded-xl shadow-calm hover:shadow-lift ml-1">
+            <Button asChild size="sm" variant="outline" className="rounded-xl text-xs h-8 ml-0.5">
               <Link to="/join">
-                <span>{t("auth.join")}</span>
-                <ArrowRight className="ml-1 size-3.5" />
+                <span>Join</span>
+                <ArrowRight className="ml-1 size-3" />
               </Link>
             </Button>
           )}
         </div>
 
-        {/* Mobile Actions: Language + Search + Hamburger */}
+        {/* Mobile Header Actions */}
         <div className="flex items-center gap-1.5 md:hidden">
+          <Button
+            asChild
+            size="sm"
+            className="rounded-xl bg-gradient-to-r from-terracotta to-saffron text-white shadow-xs font-medium px-2.5 py-1 text-xs"
+            onClick={() => track("create_started", { source: "mobile_header" })}
+          >
+            <Link to="/create">
+              <Plus className="size-3.5 mr-0.5 stroke-[2.5]" />
+              <span>Create</span>
+            </Link>
+          </Button>
+
           <LanguageSelector variant="compact" />
 
           <Link
             to="/search"
-            className="flex items-center justify-center size-9 rounded-xl text-muted-foreground hover:text-foreground"
+            className="flex items-center justify-center size-8.5 rounded-xl text-muted-foreground hover:text-foreground"
             aria-label={t("action.search")}
           >
-            <Search className="size-4.5" />
+            <Search className="size-4" />
           </Link>
 
           <Button
@@ -237,84 +304,123 @@ export function ConsumerHeader() {
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-expanded={mobileMenuOpen}
             aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
-            className="size-10 min-h-[40px] min-w-[40px] rounded-xl"
+            className="size-9 rounded-xl"
           >
             {mobileMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
           </Button>
         </div>
       </div>
 
-      {/* Mobile Drawer */}
+      {/* Mobile Drawer Navigation */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-            className="overflow-hidden border-b border-border/80 bg-background/98 backdrop-blur-xl md:hidden"
+            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+            className="overflow-hidden border-b border-border/80 bg-background/98 backdrop-blur-xl md:hidden shadow-xl"
           >
-            <div className="container-eka flex flex-col gap-2 py-6">
-              <div className="flex items-center justify-between px-3 pb-2 border-b border-border/40">
-                <EkaLogo size="sm" />
+            <div className="container-eka flex flex-col gap-1.5 py-5 max-h-[calc(100vh-4rem)] overflow-y-auto">
+              <div className="flex items-center justify-between px-3 pb-3 border-b border-border/40">
+                <EkaLogo size="sm" withBeta />
                 <LanguageSelector variant="pill" />
               </div>
 
-              {CONSUMER_PRIMARY_NAV.map((l, i) => (
-                <motion.div
-                  key={l.to}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.04 + 0.05 }}
-                >
-                  <Link
-                    to={l.to}
-                    onClick={() => setMobileMenuOpen(false)}
-                    activeProps={{ className: "bg-accent/80 text-foreground font-semibold" }}
-                    className="flex min-h-[44px] items-center justify-between rounded-xl px-3.5 py-2.5 text-base text-muted-foreground transition-colors hover:bg-accent/50 hover:text-foreground"
-                  >
-                    <span>{getNavLabel(l.to, l.label)}</span>
-                    <ArrowRight className="size-4 opacity-50" />
-                  </Link>
-                </motion.div>
-              ))}
+              {/* 8 Primary Navigation Pillars in Drawer */}
+              <div className="grid grid-cols-1 gap-1 py-1">
+                {PRIMARY_NAV_ITEMS.map((l, i) => {
+                  const Icon = l.icon;
+                  return (
+                    <motion.div
+                      key={l.to}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.03 + 0.04 }}
+                    >
+                      <Link
+                        to={l.to}
+                        activeOptions={{ exact: l.exact }}
+                        onClick={() => handleNavClick(l.to, l.label)}
+                        activeProps={{ className: "bg-accent/80 text-foreground font-semibold" }}
+                        className="flex min-h-[42px] items-center justify-between rounded-xl px-3.5 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent/50 hover:text-foreground"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <Icon className="size-4 opacity-75" />
+                          <span>{l.label}</span>
+                        </div>
+                        <span className="text-[11px] text-muted-foreground/70 font-mono">
+                          {l.description.split("—")[0]?.trim()}
+                        </span>
+                      </Link>
+                    </motion.div>
+                  );
+                })}
+              </div>
 
-              <div className="mt-3 flex flex-col gap-2.5 border-t border-border/60 pt-4">
+              {/* Create CTA Button in Drawer */}
+              <div className="my-2 px-1">
+                <Button
+                  asChild
+                  className="w-full rounded-xl py-5 bg-gradient-to-r from-terracotta to-saffron text-white font-medium shadow-calm"
+                  onClick={() => {
+                    track("create_started", { source: "drawer" });
+                    setMobileMenuOpen(false);
+                  }}
+                >
+                  <Link to="/create">
+                    <Plus className="mr-1.5 size-4 stroke-[2.5]" />
+                    <span>Contribute to Living Archive</span>
+                  </Link>
+                </Button>
+              </div>
+
+              {/* Account & Profile */}
+              <div className="flex flex-col gap-2 border-t border-border/60 pt-3">
                 {profile ? (
                   <>
                     <Button
                       asChild
                       variant="outline"
-                      className="w-full rounded-xl py-5 justify-between"
+                      className="w-full rounded-xl py-4.5 justify-between"
                       onClick={() => setMobileMenuOpen(false)}
                     >
-                      <Link to="/app/me">
-                        <span>{t("nav.profile")} ({profile.display_name || profile.username})</span>
+                      <Link to="/my-eka">
+                        <span>My EKA (@{profile.username || "sanctuary"})</span>
                         <User className="size-4" />
                       </Link>
                     </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleSignOut}
+                      className="text-xs text-destructive hover:text-destructive justify-start"
+                    >
+                      <LogOut className="mr-1.5 size-3.5" />
+                      <span>{t("auth.signOut")}</span>
+                    </Button>
                   </>
                 ) : (
-                  <>
-                    <Button
-                      asChild
-                      className="w-full rounded-xl py-5"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      <Link to="/join">
-                        <Sparkles className="mr-1.5 size-4 text-saffron" />
-                        <span>{t("auth.join")}</span>
-                      </Link>
-                    </Button>
+                  <div className="grid grid-cols-2 gap-2">
                     <Button
                       asChild
                       variant="outline"
-                      className="w-full rounded-xl py-5"
+                      className="rounded-xl py-4"
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       <Link to="/auth">{t("auth.signIn")}</Link>
                     </Button>
-                  </>
+                    <Button
+                      asChild
+                      className="rounded-xl py-4"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <Link to="/join">
+                        <Sparkles className="mr-1 size-3.5 text-saffron" />
+                        <span>{t("auth.join")}</span>
+                      </Link>
+                    </Button>
+                  </div>
                 )}
               </div>
             </div>

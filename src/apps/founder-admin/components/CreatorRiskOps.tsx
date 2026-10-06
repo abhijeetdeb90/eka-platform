@@ -249,15 +249,15 @@ export function CreatorRiskOps() {
           <div className="rounded-2xl border border-primary/30 bg-primary/5 p-5 shadow-calm">
             <div className="flex items-center justify-between">
               <span className="text-xs uppercase tracking-wider text-primary font-medium">
-                Knowledge Pool Funded
+                Net EKA Platform Revenue
               </span>
               <DollarSign className="size-4 text-primary" />
             </div>
             <p className="mt-2 font-display text-3xl text-primary">
-              {formatINR(poolSim.knowledgePoolFunded)}
+              {formatINR(poolSim.ekaOwnedRevenue.totalNetEkaRevenue)}
             </p>
             <p className="mt-1 text-xs text-muted-foreground">
-              85% of ₹299/mo membership subscriptions
+              100% of subscriptions + transaction commission net
             </p>
           </div>
         </section>
@@ -537,10 +537,10 @@ export function CreatorRiskOps() {
                 </div>
                 <div className="rounded-xl border border-primary/20 bg-primary/5 p-3.5">
                   <span className="text-[11px] uppercase tracking-wider text-primary block">
-                    Knowledge Pool (85% of ₹299 Subscriptions)
+                    Net EKA Platform Revenue (Subscriptions + Commission)
                   </span>
                   <span className="font-display text-lg text-primary">
-                    {formatINR(poolSim.knowledgePoolFunded)}
+                    {formatINR(poolSim.ekaOwnedRevenue.totalNetEkaRevenue)}
                   </span>
                 </div>
                 <div className="rounded-xl border border-border bg-muted/20 p-3.5">

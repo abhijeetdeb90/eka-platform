@@ -9,6 +9,7 @@
 
 import { redirect } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
+import { getInvestorDemoSession, startInvestorDemoSession } from "./demo-session";
 
 export type EkaRole =
   | "consumer"
@@ -34,6 +35,25 @@ export async function getSessionAndRoles(): Promise<{
   try {
     if (typeof window === "undefined") {
       return { userId: null, roles: [], isAuthenticated: false };
+    }
+
+    // 0. Auto-activate demo if requested via query param
+    if (window.location.search.includes("demo=admin") || window.location.search.includes("demo=true")) {
+      startInvestorDemoSession("admin");
+    } else if (window.location.search.includes("demo=enterprise")) {
+      startInvestorDemoSession("enterprise");
+    } else if (window.location.search.includes("demo=consumer")) {
+      startInvestorDemoSession("consumer");
+    }
+
+    // Check for active investor demo presentation session
+    const demo = getInvestorDemoSession();
+    if (demo && demo.active) {
+      return {
+        userId: demo.userId,
+        roles: demo.roles,
+        isAuthenticated: true,
+      };
     }
 
     // 1. Fast local session check via getSession
@@ -77,6 +97,19 @@ export async function getSessionAndRoles(): Promise<{
  * DO NOT expose internal UI or structure to unauthorized users.
  */
 export async function verifyFounderAdminAccess(redirectTo: string = "/"): Promise<{ userId: string; roles: string[] }> {
+  // Check investor demo mode
+  if (typeof window !== "undefined") {
+    if (window.location.search.includes("demo=admin") || window.location.search.includes("demo=true")) {
+      startInvestorDemoSession("admin");
+      const demo = getInvestorDemoSession();
+      if (demo) return { userId: demo.userId, roles: demo.roles };
+    }
+    const demo = getInvestorDemoSession();
+    if (demo && demo.active && (demo.role === "admin" || demo.roles.includes("admin") || demo.roles.includes("founder"))) {
+      return { userId: demo.userId, roles: demo.roles };
+    }
+  }
+
   const session = await getSessionAndRoles();
 
   if (!session.isAuthenticated) {
@@ -103,6 +136,19 @@ export async function verifyFounderAdminAccess(redirectTo: string = "/"): Promis
  * immediately deny access and redirect to consumer root ('/').
  */
 export async function verifyBrandEnterpriseAccess(redirectTo: string = "/"): Promise<{ userId: string; roles: string[] }> {
+  // Check investor demo mode
+  if (typeof window !== "undefined") {
+    if (window.location.search.includes("demo=enterprise") || window.location.search.includes("demo=true")) {
+      startInvestorDemoSession("enterprise");
+      const demo = getInvestorDemoSession();
+      if (demo) return { userId: demo.userId, roles: demo.roles };
+    }
+    const demo = getInvestorDemoSession();
+    if (demo && demo.active && (demo.role === "enterprise" || demo.roles.includes("enterprise") || demo.roles.includes("brand"))) {
+      return { userId: demo.userId, roles: demo.roles };
+    }
+  }
+
   const session = await getSessionAndRoles();
 
   if (!session.isAuthenticated) {

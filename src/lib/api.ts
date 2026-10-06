@@ -155,9 +155,9 @@ export async function hydratePosts(rows: PostRow[]): Promise<FeedPost[]> {
           .map((item) => mediaMap.get(item) ?? (isStoredMedia(item) ? null : item))
           .filter((u): u is string => Boolean(u));
         resolvedMedia = resolved.length > 0 ? JSON.stringify(resolved) : null;
-      } else if (items.length === 1) {
+      } else if (items.length === 1 && items[0]) {
         const item = items[0];
-        resolvedMedia = mediaMap.get(item) ?? (isStoredMedia(item) ? null : item);
+        resolvedMedia = (mediaMap.get(item) ?? (isStoredMedia(item) ? null : item)) ?? null;
       }
     }
 

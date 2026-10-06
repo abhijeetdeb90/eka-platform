@@ -1,8 +1,9 @@
 // ==============================================================================
 // EKA BRAND LOGO & EMBLEM — PRODUCTION CANONICAL
 // ==============================================================================
+// "THE WORLD'S TRUSTED CULTURAL INTELLIGENCE LAYER"
 // "ONE WITHIN. ONE WITH ALL."
-// Ensures prominent, high-fidelity visual branding across all headers, footers,
+// Ensures universal, authoritative visual branding across all headers, footers,
 // cockpit consoles, navigation bars, and cultural portals.
 // ==============================================================================
 
@@ -15,7 +16,9 @@ export interface EkaLogoProps {
   markClassName?: string;
   textClassName?: string;
   taglineClassName?: string;
+  betaClassName?: string;
   withTagline?: boolean;
+  withBeta?: boolean;
   taglineText?: string;
   useVector?: boolean;
   size?: "xs" | "sm" | "md" | "lg" | "xl";
@@ -30,11 +33,13 @@ const SIZE_PRESETS = {
 };
 
 /**
- * EKA Cultural Emblem (Mandala Mark)
+ * EKA Cultural Meridian Mark ("One Within. One With All.")
+ * Represents the global commons of humanity, the cartographic meridian,
+ * the documentary aperture of cultural discovery, and the central focal core of consciousness.
  */
 export function EkaMark({
   className,
-  useVector = false,
+  useVector = true,
   size = "md",
 }: {
   className?: string;
@@ -47,12 +52,12 @@ export function EkaMark({
   if (!useVector && !imageError) {
     return (
       <img
-        src={ekaLogoImg || "/brand/eka-logo.png"}
-        alt="EKA Emblem"
+        src={ekaLogoImg || "/brand/logo-symbol.svg"}
+        alt="EKA Cultural Meridian Emblem"
         loading="eager"
         onError={() => setImageError(true)}
         className={cn(
-          "rounded-full object-contain shrink-0 drop-shadow-sm select-none transition-transform duration-500 hover:scale-105",
+          "rounded-full object-contain shrink-0 drop-shadow-xs select-none transition-transform duration-500 hover:scale-105",
           sizeClass,
           className
         )}
@@ -60,49 +65,59 @@ export function EkaMark({
     );
   }
 
-  // High-fidelity fallback SVG mandala
+  // Canonical Vector SVG Cultural Meridian
   return (
     <svg
-      viewBox="0 0 200 200"
+      viewBox="0 0 100 100"
       fill="none"
       role="img"
-      aria-label="EKA Mandala Mark"
-      className={cn("shrink-0 drop-shadow-sm", sizeClass, className)}
+      aria-label="EKA Cultural Meridian Emblem"
+      className={cn("shrink-0 select-none drop-shadow-xs transition-transform duration-500", sizeClass, className)}
     >
-      <circle cx="100" cy="100" r="96" className="fill-terracotta/10 stroke-terracotta/30" strokeWidth="1.5" />
-      <g stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="text-terracotta">
-        {Array.from({ length: 12 }, (_, i) => {
-          const a = (2 * Math.PI * i) / 12;
-          return (
-            <circle
-              key={`o${i}`}
-              cx={100 + 42 * Math.cos(a)}
-              cy={100 + 42 * Math.sin(a)}
-              r="38"
-              opacity="0.45"
-            />
-          );
-        })}
-        <circle cx="100" cy="100" r="78" />
-        {Array.from({ length: 12 }, (_, i) => {
-          const a = (2 * Math.PI * i) / 12;
-          return (
-            <circle
-              key={`n${i}`}
-              cx={100 + 78 * Math.cos(a)}
-              cy={100 + 78 * Math.sin(a)}
-              r="3.5"
-              fill="currentColor"
-              stroke="none"
-            />
-          );
-        })}
-        <circle cx="100" cy="100" r="34" />
-        <circle cx="100" cy="100" r="27" />
-        <circle cx="100" cy="90" r="5" fill="currentColor" />
-        <path d="M86 112c0-8 6.3-14 14-14s14 6 14 14" strokeWidth="2" />
-        <path d="M100 100v14" strokeWidth="2" />
+      <defs>
+        <linearGradient id="ekaVectorCoreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#C25E3E" />
+          <stop offset="100%" stopColor="#9E472A" />
+        </linearGradient>
+        <mask id="ekaVectorMask">
+          <rect width="100" height="100" fill="#FFFFFF" />
+          <circle cx="50" cy="50" r="15" fill="#000000" />
+        </mask>
+      </defs>
+
+      {/* Outer Global Boundary Ring */}
+      <circle
+        cx="50"
+        cy="50"
+        r="44"
+        stroke="currentColor"
+        strokeWidth="4"
+        className="text-foreground/85 dark:text-foreground/90"
+      />
+
+      {/* Interior Masked Cultural Meridians */}
+      <g
+        mask="url(#ekaVectorMask)"
+        stroke="currentColor"
+        strokeWidth="4"
+        strokeLinecap="round"
+        className="text-foreground/75 dark:text-foreground/80"
+      >
+        {/* The Shared Human Horizon (Equator) */}
+        <line x1="6" y1="50" x2="94" y2="50" />
+        {/* Prime Cultural Meridians */}
+        <path d="M 50 6 C 68 22, 68 78, 50 94" />
+        <path d="M 50 6 C 32 22, 32 78, 50 94" />
       </g>
+
+      {/* Cardinal Meridian Nodes */}
+      <circle cx="50" cy="6" r="2.5" fill="#C25E3E" />
+      <circle cx="94" cy="50" r="2.5" fill="#C25E3E" />
+      <circle cx="50" cy="94" r="2.5" fill="#C25E3E" />
+      <circle cx="6" cy="50" r="2.5" fill="#C25E3E" />
+
+      {/* The "One Within" Focal Core: Radiant Terracotta Beacon */}
+      <circle cx="50" cy="50" r="9" fill="url(#ekaVectorCoreGrad)" />
     </svg>
   );
 }
@@ -115,9 +130,11 @@ export function EkaLogo({
   markClassName,
   textClassName,
   taglineClassName,
+  betaClassName,
   withTagline = false,
-  taglineText = "One Within. One With All.",
-  useVector = false,
+  withBeta = false,
+  taglineText = "Cultural Intelligence",
+  useVector = true,
   size = "md",
 }: EkaLogoProps) {
   const currentSize = SIZE_PRESETS[size];
@@ -138,14 +155,26 @@ export function EkaLogo({
         )}
       />
       <span className="flex flex-col leading-none">
-        <span
-          className={cn(
-            "font-display font-bold text-foreground tracking-[0.24em] transition-colors",
-            currentSize.text,
-            textClassName
+        <span className="inline-flex items-center gap-2">
+          <span
+            className={cn(
+              "font-display font-bold text-foreground tracking-[0.24em] transition-colors",
+              currentSize.text,
+              textClassName
+            )}
+          >
+            EKA
+          </span>
+          {withBeta && (
+            <span
+              className={cn(
+                "inline-flex items-center px-1.5 py-0.5 rounded-sm text-[8.5px] font-mono font-semibold uppercase tracking-widest border border-border/80 bg-accent/60 text-muted-foreground leading-none shrink-0 select-none",
+                betaClassName
+              )}
+            >
+              BETA
+            </span>
           )}
-        >
-          EKA
         </span>
         {withTagline && (
           <span

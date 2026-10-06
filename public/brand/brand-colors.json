@@ -1,0 +1,53 @@
+{
+  "system": "EKA Universal Brand Color System",
+  "version": "2.0.0",
+  "philosophy": "Universal Cultural Intelligence — grounded, documentary, human, editorial.",
+  "tokens": {
+    "primary": {
+      "name": "Earth Terracotta",
+      "hex": "#C25E3E",
+      "oklch": "oklch(0.585 0.077 45)",
+      "usage": "Primary brand accent, focal core ('One Within'), active pins, verified indicators. Found across pottery, earth, textiles, and living crafts globally."
+    },
+    "slateObsidian": {
+      "name": "Global Meridian Charcoal",
+      "hex": "#1E2A38",
+      "oklch": "oklch(0.248 0.004 95)",
+      "usage": "Logotype, boundary rings, structural grid lines, primary headers. Evokes cartographic precision and editorial depth."
+    },
+    "sandstoneAlabaster": {
+      "name": "Warm Sandstone Canvas",
+      "hex": "#F7F6F2",
+      "oklch": "oklch(0.966 0.005 95)",
+      "usage": "Primary background canvas in light mode. Warm, neutral, highly flattering to photography from all global cultures."
+    },
+    "deepObsidian": {
+      "name": "Deep Obsidian Canvas",
+      "hex": "#11161F",
+      "oklch": "oklch(0.196 0.008 160)",
+      "usage": "Dark mode primary surface, reels theater canvas, cinema views."
+    },
+    "lapisIndigo": {
+      "name": "Knowledge Indigo",
+      "hex": "#25384D",
+      "oklch": "oklch(0.395 0.079 268)",
+      "usage": "Maps, intelligence networks, enterprise data interfaces."
+    },
+    "sageMineral": {
+      "name": "Living Sage",
+      "hex": "#2E5C47",
+      "oklch": "oklch(0.352 0.048 155)",
+      "usage": "Ecological stewardship, DPDP compliance badge, living traditions."
+    },
+    "amberBeacon": {
+      "name": "Dawn Amber",
+      "hex": "#D97736",
+      "oklch": "oklch(0.735 0.126 68)",
+      "usage": "Subtle curiosity highlights, twilight festivals, dawn reflections."
+    }
+  },
+  "watermarkPolicy": {
+    "rule": "ZERO WATERMARKS ALLOWED",
+    "details": "No user-facing visual may display Gemini, Google, or any AI tool watermark, placeholder artifact, or synthetic distortion. Every asset must have an authentic documentary provenance."
+  }
+}

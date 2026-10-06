@@ -318,6 +318,28 @@ function LearnPage() {
                     </p>
                   </div>
 
+                  {/* 2.5 Interconnected Loop Pathways */}
+                  <div className="flex flex-wrap items-center gap-1.5 pt-1 text-[11px]">
+                    <Link
+                      to="/stories"
+                      className="rounded-md bg-sand/60 dark:bg-stone-800/60 px-2 py-0.5 text-muted-foreground hover:text-terracotta hover:bg-terracotta/10 transition-colors font-medium"
+                    >
+                      Stories →
+                    </Link>
+                    <Link
+                      to="/discover"
+                      className="rounded-md bg-sand/60 dark:bg-stone-800/60 px-2 py-0.5 text-muted-foreground hover:text-forest hover:bg-forest/10 transition-colors font-medium"
+                    >
+                      Map Pin →
+                    </Link>
+                    <Link
+                      to="/community"
+                      className="rounded-md bg-sand/60 dark:bg-stone-800/60 px-2 py-0.5 text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors font-medium"
+                    >
+                      Community →
+                    </Link>
+                  </div>
+
                   {/* 3. Ask EKA Action (Gated with Ask EKA 🔒 / Understand more with EKA AI) */}
                   <div className="border-t border-border/60 pt-3 flex flex-col gap-1.5">
                     <Button

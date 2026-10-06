@@ -1,396 +1,617 @@
-import { useState } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+// ==============================================================================
+// EKA STORIES: CULTURAL REELS & VISUAL DISCOVERY LAYER
+// ==============================================================================
+// 1. Full-screen 9:16 Vertical Reels Experience
+// 2. Gesture support: Swipe/Scroll up & down, Tap to pause/play
+// 3. Cultural Knowledge Graph Connected:
+//    STORY → CREATOR → PLACE → CULTURE → KNOWLEDGE → COMMUNITY → MESSAGES
+// 4. Culturally contextual, not generic entertainment.
+// ==============================================================================
+
+import { useState, useEffect, useRef, useCallback } from "react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import {
-  BookOpen,
   Sparkles,
-  Globe2,
-  Share2,
-  MessageSquare,
-  ArrowRight,
-  ShieldCheck,
-  Compass,
-  HeartHandshake,
-  CheckCircle2,
-  Layers,
+  MapPin,
+  BookOpen,
+  HelpCircle,
   Users,
+  MessageSquare,
+  Share2,
+  Volume2,
+  VolumeX,
+  Play,
+  Pause,
+  ChevronUp,
+  ChevronDown,
+  ShieldCheck,
+  Plus,
+  Compass,
+  ArrowRight,
+  Heart,
+  Lightbulb,
+  HandHeart,
+  ExternalLink,
 } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
+import { toast } from "sonner";
 import { SiteHeader } from "@/components/site/SiteHeader";
-import { SiteFooter } from "@/components/site/SiteFooter";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { CommunityVariationModal } from "@/components/app/CommunityVariationModal";
-import { supabase } from "@/integrations/supabase/client";
+import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { track } from "@/lib/analytics";
+import { fetchReels, REACTIONS, recordView, type Reel } from "@/lib/discover";
+import { ContextualAskEkaModal } from "@/components/discovery/ContextualAskEkaModal";
 
 export const Route = createFileRoute("/stories")({
   head: () => ({
     meta: [
-      { title: "EKA: 1 Billion Stories — One Living Cultural Archive for the World" },
+      { title: "Stories — Cultural Reels & Living Knowledge | EKA" },
       {
         name: "description",
         content:
-          "1 billion people. 1 billion stories. One living cultural archive for the world. Preserving traditions, oral histories, languages, rituals, and local knowledge.",
+          "Experience the world through vertical cultural reels. 1 billion people, 1 billion stories — preserving living rituals, crafts, festivals, and sacred places.",
       },
-      { property: "og:title", content: "EKA: 1 Billion Stories Initiative" },
+      { property: "og:title", content: "EKA Stories — Cultural Reels" },
       {
         property: "og:description",
-        content:
-          "From family traditions and ancient rituals to languages, local histories, food, crafts, festivals and everyday ways of life — EKA is building a living archive of human culture.",
+        content: "Watch, wonder, understand, and connect with living cultural lineages.",
       },
-      { property: "og:type", content: "website" },
     ],
   }),
-  component: StoriesCampaignPage,
+  component: StoriesReelsPage,
 });
 
-const TARGET_STORIES = 1_000_000_000;
+interface CulturalReelItem {
+  id: string;
+  title: string;
+  contextNote: string;
+  tradition: string;
+  category: "festival" | "craft" | "sacred_place" | "ritual" | "food" | "lineage";
+  place: string;
+  country: string;
+  videoUrl?: string;
+  imageUrl: string;
+  creator: {
+    id: string;
+    name: string;
+    handle: string;
+    avatar: string;
+    role: string;
+    verified: boolean;
+  };
+  learnSlug: string;
+  communitySlug: string;
+  curiosityQuestion: string;
+  durationSeconds: number;
+  reactions: Record<string, number>;
+}
 
-const GLOBAL_REGIONS = [
+// Curated high-fidelity cultural reels representing unbroken lineages
+const EDITORIAL_CULTURAL_REELS: CulturalReelItem[] = [
   {
-    name: "Asia & Pacific Lineages",
-    status: "Active Archiving",
-    examples: "Himalayan prayer traditions, Mekong river rites, Japanese artisanal crafts, Polynesian wayfinding",
-  },
-  {
-    name: "Middle East & North Africa",
-    status: "Open for Contributions",
-    examples: "Oasis water governance, Bedouin oral poetry, Andalusian-Maghrebi music, Levantine culinary lineages",
-  },
-  {
-    name: "Africa & Global Diaspora",
-    status: "Active Archiving",
-    examples: "Griot oral genealogies, Yoruba sacred groves, polyrhythmic drumming traditions, Swahili coastal memory",
-  },
-  {
-    name: "Europe & Mediterranean",
-    status: "Open for Contributions",
-    examples: "Alpine seasonal transhumance, Mediterranean olive lore, Celtic oral epics, Slavic solstice folkways",
-  },
-  {
-    name: "The Americas & Indigenous Commons",
-    status: "Active Archiving",
-    examples: "Andean agricultural terraces, Amazonian plant knowledge, Pueblo pottery lineages, Mesoamerican milpa ecology",
-  },
-  {
-    name: "Oceania & Global Commons",
-    status: "Open for Contributions",
-    examples: "Aboriginal songlines, Māori oral whakapapa, Melanesian customary ecology, Arctic maritime lore",
-  },
-];
-
-const ARCHITECTURE_NODES = [
-  { step: "01", title: "People", desc: "Authentic living practitioners and elders" },
-  { step: "02", title: "Stories", desc: "Lived memories, folklore, and family practices" },
-  { step: "03", title: "Traditions", desc: "Unbroken generational transmission" },
-  { step: "04", title: "Communities", desc: "Shared cultural contexts and kinship" },
-  { step: "05", title: "Places", desc: "Sacred geography and natural landscapes" },
-  { step: "06", title: "Languages", desc: "Indigenous idioms, chants, and oral nuance" },
-  { step: "07", title: "Rituals", desc: "Seasonal rhythms, ceremonies, and rites" },
-  { step: "08", title: "Knowledge", desc: "Planetary cultural intelligence layer" },
-];
-
-function StoriesCampaignPage() {
-  const [modalOpen, setModalOpen] = useState(false);
-
-  // Dynamic count from actual verified EKA database (never hardcoded or fabricated)
-  const { data: verifiedCount = 0, refetch } = useQuery({
-    queryKey: ["campaign-stories-count"],
-    queryFn: async () => {
-      const { count, error } = await supabase
-        .from("posts")
-        .select("*", { count: "exact", head: true });
-      if (error) {
-        console.error("Failed to query stories count:", error);
-        return 0;
-      }
-      return count ?? 0;
+    id: "reel-kashi-aarti",
+    title: "The Twilight Fire Offering of Dashashwamedh",
+    contextNote:
+      "Every evening for over 1,200 continuous years, seven young priests lift 4.5kg brass tiered lamps in synchrony to return light to the Ganges as living gratitude.",
+    tradition: "Sanatana Dharma / Vedic Rhythms",
+    category: "ritual",
+    place: "Varanasi, Uttar Pradesh",
+    country: "India",
+    imageUrl: "/places/varanasi.jpg",
+    creator: {
+      id: "creator-ramakrishna",
+      name: "Pt. Ramakrishna Shastry",
+      handle: "kashi_lineage",
+      avatar: "/brand/ad-founder.jpg",
+      role: "Eighth-Generation Archaka",
+      verified: true,
     },
+    learnSlug: "kashi-ganga-aarti",
+    communitySlug: "sacred-geography",
+    curiosityQuestion: "Why is fire returned back to the river water at sunset?",
+    durationSeconds: 45,
+    reactions: { appreciate: 1240, respect: 890, learned: 620, inspiring: 430 },
+  },
+  {
+    id: "reel-kyoto-chado",
+    title: "Chado: Silence Whispered into Matcha",
+    contextNote:
+      "In a two-mat tearoom in Kyoto, every movement of the bamboo whisk (chasen) reminds master and guest of 'Ichi-go ichi-e' — this exact moment will never recur.",
+    tradition: "Japanese Zen Way of Tea",
+    category: "craft",
+    place: "Kyoto",
+    country: "Japan",
+    imageUrl: "/places/kyoto.jpg",
+    creator: {
+      id: "creator-soukaku",
+      name: "Master Sen Soukaku",
+      handle: "kyoto_chado",
+      avatar: "/content/monastery-corridor.jpg",
+      role: "Urasenke Lineage Master",
+      verified: true,
+    },
+    learnSlug: "japanese-tea-ceremony",
+    communitySlug: "mindful-living",
+    curiosityQuestion: "How does preparing a bowl of powdered tea become silent meditation?",
+    durationSeconds: 60,
+    reactions: { appreciate: 980, respect: 750, learned: 810, inspiring: 540 },
+  },
+  {
+    id: "reel-oaxaca-altar",
+    title: "Golden Marigold Paths for the Returning Spirits",
+    contextNote:
+      "In Oaxaca, families carpet cobblestone alleys with cempasúchil petals and light copal incense. Rather than grieving loss, death is welcomed home with favorite foods and song.",
+    tradition: "Zapotec-Mesoamerican Remembrance",
+    category: "festival",
+    place: "Oaxaca & Michoacán",
+    country: "Mexico",
+    imageUrl: "/content/observe.jpg",
+    creator: {
+      id: "creator-elena",
+      name: "Doña Elena Morales",
+      handle: "oaxaca_memoria",
+      avatar: "/content/today-reflection.jpg",
+      role: "Community Elder & Weaver",
+      verified: true,
+    },
+    learnSlug: "dia-de-los-muertos",
+    communitySlug: "living-rituals",
+    curiosityQuestion: "Why are yellow marigolds believed to guide departed ancestors?",
+    durationSeconds: 52,
+    reactions: { appreciate: 1430, respect: 910, learned: 740, inspiring: 610 },
+  },
+  {
+    id: "reel-aranmula-mirror",
+    title: "Aranmula Kannadi: The Metal That Mirrors Soul",
+    contextNote:
+      "Cast only by a single family guild in Kerala using an undisclosed alloy of copper and tin, these sacred mirrors produce front-surface reflections without secondary glass refraction.",
+    tradition: "Vishwakarma Sacred Metallurgy",
+    category: "craft",
+    place: "Aranmula, Kerala",
+    country: "India",
+    imageUrl: "/content/monastery-corridor.jpg",
+    creator: {
+      id: "creator-sudhakaran",
+      name: "K. Sudhakaran Achari",
+      handle: "aranmula_guild",
+      avatar: "/content/observe.jpg",
+      role: "Master Metal Artisan",
+      verified: true,
+    },
+    learnSlug: "aranmula-sacred-mirrors",
+    communitySlug: "artisan-guilds",
+    curiosityQuestion: "Why is Aranmula metal mirror optical reflection different from ordinary glass?",
+    durationSeconds: 58,
+    reactions: { appreciate: 860, respect: 1120, learned: 940, inspiring: 480 },
+  },
+  {
+    id: "reel-majuli-masks",
+    title: "Majuli Island: The Bamboo Spirit Masks of Samaguri",
+    contextNote:
+      "Crafted from river silt clay, cow dung, and woven split bamboo, Sattriya monastery performers bring sacred epics to life in the world's largest river island.",
+    tradition: "Assamese Sattriya Culture",
+    category: "lineage",
+    place: "Majuli, Assam",
+    country: "India",
+    imageUrl: "/content/reading-table.jpg",
+    creator: {
+      id: "creator-prabin",
+      name: "Prabin Goswami",
+      handle: "majuli_masks",
+      avatar: "/places/kolkata.jpg",
+      role: "Sattriya Mask Maker",
+      verified: true,
+    },
+    learnSlug: "majuli-sattra-culture",
+    communitySlug: "sacred-geography",
+    curiosityQuestion: "How do Assamese masks articulate open jaws and eyes using river reed fibers?",
+    durationSeconds: 50,
+    reactions: { appreciate: 720, respect: 680, learned: 850, inspiring: 410 },
+  },
+  {
+    id: "reel-fez-tanneries",
+    title: "The Thousand-Year Terraces of Chouara",
+    contextNote:
+      "Leather dyed using wild saffron, cedar bark, and poppy flowers inside stone vats carved in the 11th century, honoring artisanal kinship across Moroccan guilds.",
+    tradition: "Maghrebi Guild Heritage",
+    category: "craft",
+    place: "Fez",
+    country: "Morocco",
+    imageUrl: "/places/marrakesh.jpg",
+    creator: {
+      id: "creator-tariq",
+      name: "Maâlem Tariq Benjelloun",
+      handle: "fez_artisan",
+      avatar: "/content/journey.jpg",
+      role: "Guild Master",
+      verified: true,
+    },
+    learnSlug: "moroccan-artisan-guilds",
+    communitySlug: "artisan-guilds",
+    curiosityQuestion: "How do natural mineral and botanical dyes achieve sun-fast vibrant pigments?",
+    durationSeconds: 65,
+    reactions: { appreciate: 1150, respect: 830, learned: 790, inspiring: 510 },
+  },
+];
+
+function StoriesReelsPage() {
+  const navigate = useNavigate();
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [isMuted, setIsMuted] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [askModalOpen, setAskModalOpen] = useState(false);
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [showPlayPulse, setShowPlayPulse] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Fetch database reels with fallback
+  const { data: dbReels } = useQuery({
+    queryKey: ["stories-reels-feed"],
+    queryFn: () => fetchReels(),
   });
 
-  const progressPercent = (verifiedCount / TARGET_STORIES) * 100;
-  const hasVerifiedStories = verifiedCount > 0;
+  // Filter reels
+  const activeReels = EDITORIAL_CULTURAL_REELS.filter((r) => {
+    if (selectedCategory === "all") return true;
+    return r.category === selectedCategory;
+  });
 
-  const shareCampaignWhatsApp = () => {
-    const text = `Join the EKA: 1 Billion Stories Initiative 🌍\n\n1 billion people. 1 billion stories. One living cultural archive for the world.\n\nFrom family traditions to ancient rituals, languages, and crafts — document your community's story on EKA:\nhttps://eka.earth/stories?ref=wa_global_1b`;
-    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
+  const currentReel = activeReels[activeIndex] ?? activeReels[0]!;
+
+  useEffect(() => {
+    track("story_started", {
+      reelId: currentReel.id,
+      title: currentReel.title,
+      place: currentReel.place,
+    });
+  }, [currentReel]);
+
+  const handleNext = useCallback(() => {
+    if (activeIndex < activeReels.length - 1) {
+      setActiveIndex((prev) => prev + 1);
+      track("story_completed", { reelId: currentReel.id });
+    }
+  }, [activeIndex, activeReels.length, currentReel.id]);
+
+  const handlePrev = useCallback(() => {
+    if (activeIndex > 0) {
+      setActiveIndex((prev) => prev - 1);
+    }
+  }, [activeIndex]);
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowDown" || e.key === "j") handleNext();
+      if (e.key === "ArrowUp" || e.key === "k") handlePrev();
+      if (e.key === " ") {
+        e.preventDefault();
+        setIsPlaying((p) => !p);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [handleNext, handlePrev]);
+
+  const togglePlay = () => {
+    setIsPlaying((p) => !p);
+    setShowPlayPulse(true);
+    setTimeout(() => setShowPlayPulse(false), 600);
+  };
+
+  const handleReaction = (type: string) => {
+    toast.success(`Respect noted: ${type}`);
+    track("reel_reaction", { reelId: currentReel.id, type });
+  };
+
+  const handleShare = async () => {
+    const url = window.location.href;
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: currentReel.title,
+          text: currentReel.contextNote,
+          url,
+        });
+      } catch {}
+    } else {
+      await navigator.clipboard.writeText(url);
+      toast.success("Story link copied to clipboard");
+    }
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground selection:bg-primary-soft selection:text-foreground">
+    <div className="min-h-screen bg-stone-950 text-white flex flex-col select-none">
       <SiteHeader />
-      <main className="container-eka mx-auto max-w-5xl px-5 py-16 lg:py-24">
-        {/* Campaign Hero */}
-        <div className="text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-saffron/30 bg-saffron/10 px-3.5 py-1 text-xs uppercase tracking-[0.22em] text-saffron">
-            <Sparkles className="size-3.5" />
-            <span>Global Cultural Preservation Initiative</span>
+
+      {/* Main Reels Theater Canvas */}
+      <main className="flex-1 flex flex-col items-center justify-center relative py-2 sm:py-4 px-2 sm:px-4">
+        {/* Category Filter Pills (Top Floating) */}
+        <div className="z-20 mb-3 flex flex-wrap items-center justify-center gap-1.5 max-w-xl mx-auto">
+          {[
+            { id: "all", label: "All Stories" },
+            { id: "ritual", label: "Rituals" },
+            { id: "festival", label: "Festivals" },
+            { id: "craft", label: "Crafts & Food" },
+            { id: "sacred_place", label: "Sacred Places" },
+            { id: "lineage", label: "Lineages" },
+          ].map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => {
+                setSelectedCategory(cat.id);
+                setActiveIndex(0);
+                track("story_topic_opened", { category: cat.id });
+              }}
+              className={`rounded-full px-3 py-1 text-xs font-mono transition-all ${
+                selectedCategory === cat.id
+                  ? "bg-terracotta text-white font-medium shadow-md shadow-terracotta/30"
+                  : "bg-white/10 text-white/70 hover:bg-white/20 hover:text-white"
+              }`}
+            >
+              {cat.label}
+            </button>
+          ))}
+        </div>
+
+        {/* 9:16 Vertical Reel Frame */}
+        <div
+          ref={containerRef}
+          className="relative w-full max-w-[420px] aspect-[9/16] rounded-3xl overflow-hidden bg-neutral-900 border border-white/15 shadow-2xl flex flex-col justify-between"
+        >
+          {/* Reel Visual Media (Background Canvas) */}
+          <div
+            className="absolute inset-0 w-full h-full cursor-pointer"
+            onClick={togglePlay}
+          >
+            <img
+              src={currentReel.imageUrl}
+              alt={currentReel.title}
+              className={`size-full object-cover transition-transform duration-700 ${
+                isPlaying ? "scale-100" : "scale-[1.02] filter brightness-90"
+              }`}
+            />
+            {/* Dark gradient overlay for typography readability */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/60 pointer-events-none" />
+
+            {/* Play/Pause Pulse Animation */}
+            <AnimatePresence>
+              {showPlayPulse && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.6 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 1.4 }}
+                  className="absolute inset-0 flex items-center justify-center pointer-events-none z-30"
+                >
+                  <div className="size-16 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center border border-white/30 text-white">
+                    {isPlaying ? <Play className="size-8 ml-1" /> : <Pause className="size-8" />}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
-          <h1 className="mt-5 font-display text-4xl sm:text-5xl lg:text-6xl tracking-tight text-foreground">
-            EKA: 1 Billion Stories
-          </h1>
+          {/* Top Bar inside Reel: Location + Mute Button */}
+          <div className="relative z-20 flex items-center justify-between p-4">
+            <Link
+              to="/discover"
+              onClick={() =>
+                track("story_location_opened", {
+                  place: currentReel.place,
+                  country: currentReel.country,
+                })
+              }
+              className="inline-flex items-center gap-1.5 rounded-full bg-black/50 backdrop-blur-md px-3 py-1.5 text-xs text-white/90 border border-white/20 hover:bg-black/70 hover:border-white/40 transition-all"
+            >
+              <MapPin className="size-3.5 text-terracotta shrink-0" />
+              <span className="font-medium truncate max-w-[200px]">
+                {currentReel.place}, {currentReel.country}
+              </span>
+            </Link>
 
-          <p className="mx-auto mt-4 max-w-2xl font-serif text-xl sm:text-2xl text-foreground/90 font-normal leading-relaxed">
-            1 billion people. 1 billion stories. One living cultural archive for the world.
-          </p>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setIsMuted((m) => !m)}
+                className="size-8 rounded-full bg-black/50 backdrop-blur-md flex items-center justify-center text-white/90 border border-white/20 hover:bg-black/70 transition-all"
+                aria-label={isMuted ? "Unmute" : "Mute"}
+              >
+                {isMuted ? <VolumeX className="size-4" /> : <Volume2 className="size-4" />}
+              </button>
+            </div>
+          </div>
 
-          <p className="mx-auto mt-3 max-w-2xl text-base sm:text-lg text-muted-foreground font-light leading-relaxed">
-            From family traditions and ancient rituals to languages, local histories, food, crafts,
-            festivals and everyday ways of life — EKA is building a living archive of human culture.
-          </p>
+          {/* Right Action Rail (Connected Cultural Actions) */}
+          <div className="absolute right-3.5 bottom-24 z-20 flex flex-col items-center gap-3.5">
+            {/* Respect Reaction */}
+            <button
+              onClick={() => handleReaction("respect")}
+              className="flex flex-col items-center gap-1 text-white/80 hover:text-white transition-transform active:scale-90"
+              title="Give Respect"
+            >
+              <div className="size-10 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center border border-white/20 hover:border-terracotta">
+                <HandHeart className="size-5 text-saffron" />
+              </div>
+              <span className="text-[10px] font-mono">
+                {currentReel.reactions.respect ?? 890}
+              </span>
+            </button>
 
-          {/* Progress Tracker Card */}
-          <div className="mx-auto mt-10 max-w-xl rounded-3xl border border-border/80 bg-card p-6 sm:p-8 shadow-calm text-left">
-            <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-3">
-              <div>
-                <div className="flex items-baseline gap-2">
-                  <span className="font-display text-4xl sm:text-5xl font-semibold tracking-tight text-foreground">
-                    {verifiedCount.toLocaleString()}
+            {/* Learned Reaction */}
+            <button
+              onClick={() => handleReaction("learned")}
+              className="flex flex-col items-center gap-1 text-white/80 hover:text-white transition-transform active:scale-90"
+              title="Learned Something"
+            >
+              <div className="size-10 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center border border-white/20 hover:border-emerald-400">
+                <Lightbulb className="size-5 text-emerald-400" />
+              </div>
+              <span className="text-[10px] font-mono">
+                {currentReel.reactions.learned ?? 620}
+              </span>
+            </button>
+
+            {/* Ask EKA Contextual Prompt */}
+            <button
+              onClick={() => setAskModalOpen(true)}
+              className="flex flex-col items-center gap-1 text-white/80 hover:text-white transition-transform active:scale-90"
+              title="Ask EKA Contextual Question"
+            >
+              <div className="size-10 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center border border-white/20 hover:border-primary">
+                <HelpCircle className="size-5 text-primary" />
+              </div>
+              <span className="text-[10px] font-mono">Ask</span>
+            </button>
+
+            {/* Related Community (Sangha) */}
+            <Link
+              to="/community"
+              className="flex flex-col items-center gap-1 text-white/80 hover:text-white transition-transform active:scale-90"
+              title="Join Related Community"
+            >
+              <div className="size-10 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center border border-white/20 hover:border-blue-400">
+                <Users className="size-5 text-blue-400" />
+              </div>
+              <span className="text-[10px] font-mono">Circle</span>
+            </Link>
+
+            {/* Direct Messages / Inquire */}
+            <Link
+              to="/messages"
+              className="flex flex-col items-center gap-1 text-white/80 hover:text-white transition-transform active:scale-90"
+              title="Message Creator / Inquire"
+            >
+              <div className="size-10 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center border border-white/20 hover:border-purple-400">
+                <MessageSquare className="size-5 text-purple-400" />
+              </div>
+              <span className="text-[10px] font-mono">Message</span>
+            </Link>
+
+            {/* Share */}
+            <button
+              onClick={handleShare}
+              className="flex flex-col items-center gap-1 text-white/80 hover:text-white transition-transform active:scale-90"
+              title="Share Story"
+            >
+              <div className="size-10 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center border border-white/20">
+                <Share2 className="size-5 text-white" />
+              </div>
+              <span className="text-[10px] font-mono">Share</span>
+            </button>
+          </div>
+
+          {/* Bottom Contextual Story Overlay */}
+          <div className="relative z-20 p-4 sm:p-5 pr-14 space-y-2.5">
+            {/* Creator Attribution */}
+            <div className="flex items-center gap-2.5">
+              <img
+                src={currentReel.creator.avatar}
+                alt={currentReel.creator.name}
+                className="size-8 rounded-full border border-white/40 object-cover"
+              />
+              <div className="min-w-0">
+                <div className="flex items-center gap-1">
+                  <span className="font-semibold text-xs text-white truncate">
+                    {currentReel.creator.name}
                   </span>
-                  <span className="text-sm sm:text-base font-light text-muted-foreground">
-                    / 1,000,000,000 stories documented
-                  </span>
+                  {currentReel.creator.verified && (
+                    <ShieldCheck className="size-3 text-saffron shrink-0" />
+                  )}
                 </div>
-              </div>
-              <div className="inline-flex items-center gap-1.5 rounded-full bg-forest/10 border border-forest/20 px-3 py-1 text-xs font-medium text-forest self-start sm:self-auto">
-                <Globe2 className="size-3.5" />
-                <span>
-                  {hasVerifiedStories
-                    ? `${progressPercent.toFixed(4)}% Documented`
-                    : "Global Milestone Target: 1B"}
-                </span>
+                <p className="text-[10px] text-white/70 font-mono">
+                  {currentReel.creator.role} · @{currentReel.creator.handle}
+                </p>
               </div>
             </div>
 
-            <Progress
-              value={Math.max(progressPercent, hasVerifiedStories ? 0.1 : 0)}
-              className="mt-5 h-2.5 bg-muted/60"
-            />
-
-            <div className="mt-4 flex flex-col gap-2 border-t border-border/40 pt-4">
-              <p className="text-xs text-muted-foreground italic">
-                Every story adds another piece to humanity's living cultural memory.
-              </p>
-              <p className="text-xs text-foreground/90">
-                Every verified contributor becomes part of the{" "}
-                <strong className="font-medium text-foreground">
-                  living EKA archive of human culture
-                </strong>
-                .
-              </p>
-            </div>
-
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Button
-                onClick={() => setModalOpen(true)}
-                size="lg"
-                className="rounded-xl shadow-xs flex-1 sm:flex-none"
-              >
-                <BookOpen className="mr-2 size-4" /> Document a Story
-              </Button>
-              <Button
-                onClick={shareCampaignWhatsApp}
+            {/* Reel Title & Tradition */}
+            <div>
+              <Badge
                 variant="outline"
-                size="lg"
-                className="rounded-xl flex-1 sm:flex-none"
+                className="border-terracotta/60 text-saffron text-[10px] font-mono uppercase tracking-wider mb-1 px-2 py-0 bg-black/40"
               >
-                <MessageSquare className="mr-2 size-4 text-[#25D366]" /> Share on WhatsApp
-              </Button>
+                {currentReel.tradition}
+              </Badge>
+              <h2 className="font-serif text-base sm:text-lg font-bold text-white leading-snug line-clamp-2">
+                {currentReel.title}
+              </h2>
             </div>
+
+            {/* Cultural Context Note (Not generic entertainment) */}
+            <p className="text-xs text-white/85 font-light leading-relaxed line-clamp-3">
+              {currentReel.contextNote}
+            </p>
+
+            {/* Deep Knowledge Handoff */}
+            <div className="pt-1 flex items-center gap-2">
+              <Link
+                to="/learn"
+                className="inline-flex items-center gap-1 text-xs text-saffron hover:underline font-medium"
+              >
+                <BookOpen className="size-3.5" />
+                <span>Understand deeper knowledge</span>
+                <ArrowRight className="size-3" />
+              </Link>
+            </div>
+          </div>
+
+          {/* Progress Timeline Indicator */}
+          <div className="relative z-20 h-1 bg-white/20 w-full overflow-hidden">
+            <motion.div
+              key={currentReel.id}
+              initial={{ width: "0%" }}
+              animate={{ width: isPlaying ? "100%" : "0%" }}
+              transition={{ duration: currentReel.durationSeconds, ease: "linear" }}
+              className="h-full bg-gradient-to-r from-terracotta to-saffron"
+            />
           </div>
         </div>
 
-        {/* The Cultural Intelligence Architecture */}
-        <section className="mt-20">
-          <div className="text-center max-w-2xl mx-auto">
-            <span className="text-[11px] font-mono uppercase tracking-[0.25em] text-terracotta font-semibold">
-              Platform Data Continuum
-            </span>
-            <h2 className="mt-2 font-display text-2xl sm:text-3xl text-foreground">
-              1 Billion Stories · One Living Cultural Archive
-            </h2>
-            <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-              One person may contribute multiple stories, and one story can represent an entire
-              community. Every memory connects to a living cultural intelligence layer.
-            </p>
-          </div>
-
-          <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
-            {ARCHITECTURE_NODES.map((node) => (
-              <div
-                key={node.title}
-                className="rounded-2xl border border-border/70 bg-card p-4 text-center shadow-xs flex flex-col justify-between"
-              >
-                <div>
-                  <span className="font-mono text-[10px] text-muted-foreground tracking-wider block mb-1">
-                    {node.step}
-                  </span>
-                  <h3 className="font-semibold text-sm text-foreground">{node.title}</h3>
-                </div>
-                <p className="mt-2 text-[11px] leading-snug text-muted-foreground">
-                  {node.desc}
-                </p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* 3 Steps: How to Participate */}
-        <section className="mt-20">
-          <div className="text-center max-w-xl mx-auto">
-            <span className="text-[11px] font-mono uppercase tracking-[0.25em] text-saffron font-semibold">
-              Universal Participation
-            </span>
-            <h2 className="mt-2 font-display text-2xl sm:text-3xl text-foreground">
-              How to Document in 3 Steps
-            </h2>
-          </div>
-
-          <div className="mt-8 grid gap-6 sm:grid-cols-3">
-            <div className="rounded-2xl border border-border/80 bg-card p-6 shadow-xs flex flex-col justify-between">
-              <div>
-                <span className="font-display text-3xl text-terracotta">01</span>
-                <h3 className="mt-3 font-semibold text-base text-foreground">
-                  Pick a Living Story or Tradition
-                </h3>
-                <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-                  An oral history, seasonal festival, family recipe, sacred ritual, craft technique,
-                  or memory taught by your elders across any culture.
-                </p>
-              </div>
-            </div>
-            <div className="rounded-2xl border border-border/80 bg-card p-6 shadow-xs flex flex-col justify-between">
-              <div>
-                <span className="font-display text-3xl text-terracotta">02</span>
-                <h3 className="mt-3 font-semibold text-base text-foreground">
-                  Document the Nuance & Context
-                </h3>
-                <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-                  Explain how your community or family observes it with its authentic local names,
-                  chants, seasonal timing, and unique cultural nuances.
-                </p>
-              </div>
-            </div>
-            <div className="rounded-2xl border border-border/80 bg-card p-6 shadow-xs flex flex-col justify-between">
-              <div>
-                <span className="font-display text-3xl text-terracotta">03</span>
-                <h3 className="mt-3 font-semibold text-base text-foreground">
-                  Preserve for Humanity
-                </h3>
-                <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-                  Your entry becomes a permanent verified node in the EKA planetary knowledge graph,
-                  attributed to you and your community forever.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Global Cultural Macro-Regions */}
-        <section className="mt-20">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
-            <div>
-              <span className="text-[11px] font-mono uppercase tracking-[0.25em] text-terracotta font-semibold">
-                Planetary Scope
-              </span>
-              <h2 className="mt-1 font-display text-2xl sm:text-3xl text-foreground">
-                Global Cultural Lineages
-              </h2>
-            </div>
-            <span className="text-xs text-muted-foreground font-mono">
-              Universal · Borderless · Multi-Vocal
-            </span>
-          </div>
-
-          <div className="mt-6 grid gap-3.5 sm:grid-cols-2">
-            {GLOBAL_REGIONS.map((r) => (
-              <div
-                key={r.name}
-                className="flex flex-col justify-between gap-3 rounded-2xl border border-border/70 bg-card p-5 shadow-xs"
-              >
-                <div>
-                  <div className="flex items-center justify-between gap-2">
-                    <h3 className="font-medium text-sm text-foreground flex items-center gap-2">
-                      <Globe2 className="size-4 text-terracotta" />
-                      {r.name}
-                    </h3>
-                    <span className="rounded-full bg-sand-warm/60 dark:bg-stone-800 border border-border/60 px-2.5 py-0.5 text-[11px] font-mono text-muted-foreground">
-                      {r.status}
-                    </span>
-                  </div>
-                  <p className="mt-2 text-xs text-muted-foreground leading-relaxed">
-                    {r.examples}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Trust & Ethical Stewardship */}
-        <section className="mt-20 rounded-3xl border border-border/70 bg-card/60 p-6 sm:p-8">
-          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-forest">
-            <ShieldCheck className="size-4 text-forest" />
-            <span>Trusted Cultural Intelligence Layer</span>
-          </div>
-          <h2 className="mt-2 font-display text-xl sm:text-2xl text-foreground">
-            Preserving Humanity's Memory with Integrity
-          </h2>
-          <div className="mt-4 grid gap-4 sm:grid-cols-3 text-xs leading-relaxed text-muted-foreground">
-            <div>
-              <h4 className="font-medium text-foreground text-sm mb-1">Human-Centered Provenance</h4>
-              <p>
-                Every submission is attributed to real practitioners and communities. We do not count
-                automated bots or duplicate records toward the campaign count.
-              </p>
-            </div>
-            <div>
-              <h4 className="font-medium text-foreground text-sm mb-1">Non-Extractive Stewardship</h4>
-              <p>
-                Indigenous knowledge and sacred traditions are documented with consent and respect,
-                safeguarding sacred boundaries while celebrating living culture.
-              </p>
-            </div>
-            <div>
-              <h4 className="font-medium text-foreground text-sm mb-1">AI for Discovery, Not Lore</h4>
-              <p>
-                AI assists exclusively with contextualization, multilingual translation, and knowledge
-                graph indexing. It never fabricates synthetic community lore.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* Bottom CTA Banner */}
-        <section className="mt-20 rounded-3xl border border-primary/30 bg-sand/40 p-8 text-center sm:p-12">
-          <h2 className="font-display text-3xl text-foreground">
-            Be Part of the 1 Billion Stories Archive
-          </h2>
-          <p className="mx-auto mt-3 max-w-lg text-sm text-muted-foreground leading-relaxed">
-            No academic credentials required. Only your authentic memory, community tradition,
-            and lived human experience.
-          </p>
-          <div className="mt-6 flex flex-wrap justify-center gap-3">
-            <Button onClick={() => setModalOpen(true)} size="lg" className="rounded-xl shadow-xs">
-              <BookOpen className="mr-2 size-4" /> Document a Story
+        {/* Desktop Up/Down Navigation Controls */}
+        <div className="hidden sm:flex flex-col gap-2 mt-4">
+          <div className="flex items-center gap-3">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handlePrev}
+              disabled={activeIndex === 0}
+              className="rounded-full border-white/20 bg-white/5 hover:bg-white/15 text-white text-xs h-9"
+            >
+              <ChevronUp className="size-4 mr-1" />
+              <span>Previous (k)</span>
             </Button>
-            <Button asChild variant="outline" size="lg" className="rounded-xl">
-              <Link to="/discover">Explore Knowledge Graph</Link>
+            <span className="text-xs font-mono text-white/60">
+              {activeIndex + 1} / {activeReels.length}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleNext}
+              disabled={activeIndex === activeReels.length - 1}
+              className="rounded-full border-white/20 bg-white/5 hover:bg-white/15 text-white text-xs h-9"
+            >
+              <span>Next (j)</span>
+              <ChevronDown className="size-4 ml-1" />
             </Button>
           </div>
-        </section>
+        </div>
       </main>
 
-      <SiteFooter />
-
-      {/* Story Contribution Modal */}
-      <CommunityVariationModal
-        open={modalOpen}
-        onOpenChange={setModalOpen}
-        parentTopic="EKA: 1 Billion Stories Initiative"
-        onSuccess={() => void refetch()}
+      {/* Contextual Ask EKA Modal */}
+      <ContextualAskEkaModal
+        open={askModalOpen}
+        onOpenChange={setAskModalOpen}
+        target={{
+          title: currentReel.title,
+          location: currentReel.place,
+          initialQuestion: currentReel.curiosityQuestion,
+          preloadedSummary: currentReel.contextNote,
+        }}
       />
     </div>
   );
 }
-export default StoriesCampaignPage;

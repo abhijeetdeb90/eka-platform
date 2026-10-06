@@ -154,6 +154,40 @@ export async function runProductionSmokeTests() {
     return `404 status handled gracefully: HTTP ${res.status}`;
   });
 
+  // TEST 13: Investor Presentation Gateway Route (/investor)
+  await recordTest("TEST-13", "Investor Gateway Route (/investor)", async () => {
+    const res = await fetch(`${BASE_URL}/investor`);
+    if (!res.ok) throw new Error(`/investor HTTP ${res.status}`);
+    const html = await res.text();
+    if (!html.includes("EKA")) throw new Error("Missing EKA branding on /investor");
+    return "Investor Gateway accessible with HTTP 200 and core brand assets";
+  });
+
+  // TEST 14: Investor Admin Presentation Route Guarding & Demo
+  await recordTest("TEST-14", "Investor Admin Route (/investor/admin)", async () => {
+    const res = await fetch(`${BASE_URL}/investor/admin`);
+    if (!res.ok) throw new Error(`/investor/admin returned HTTP ${res.status}`);
+    const html = await res.text();
+    if (!html.includes("EKA")) throw new Error("Missing EKA brand on /investor/admin");
+    return "Investor Admin presentation environment accessible with HTTP 200 and operational UI";
+  });
+
+  // TEST 15: Investor Enterprise Route (/investor/enterprise)
+  await recordTest("TEST-15", "Investor Enterprise Route (/investor/enterprise)", async () => {
+    const res = await fetch(`${BASE_URL}/investor/enterprise`);
+    if (!res.ok) throw new Error(`/investor/enterprise returned HTTP ${res.status}`);
+    const html = await res.text();
+    if (!html.includes("EKA")) throw new Error("Missing EKA brand on /investor/enterprise");
+    return "Investor Enterprise presentation environment accessible with HTTP 200 and operational UI";
+  });
+
+  // TEST 16: Ask EKA Cultural Intelligence Search Route
+  await recordTest("TEST-16", "Ask EKA Cultural Intelligence Route (/ask)", async () => {
+    const res = await fetch(`${BASE_URL}/ask`);
+    if (!res.ok) throw new Error(`/ask HTTP ${res.status}`);
+    return "Ask EKA query route rendered HTTP 200";
+  });
+
   console.log("==================================================================");
   const passed = results.filter((r) => r.status === "PASSED").length;
   const failed = results.filter((r) => r.status === "FAILED").length;

@@ -45,7 +45,7 @@ export const Route = createFileRoute("/membership")({
           "Ask questions. Compare cultures. Explore deeper. Create with EKA.",
       },
       { property: "og:type", content: "website" },
-      { property: "og:image", content: "/brand/eka-circle-communion.jpg" },
+      { property: "og:image", content: "/brand/eka-banner.jpg" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
@@ -89,7 +89,7 @@ function MembershipPage() {
       title="Go beyond the story."
       lede={CORE_PHILOSOPHY.subscriptionHook}
       image={circleCommunion}
-      imageAlt="Diverse seekers, researchers and practitioners standing in circular communion around the sacred EKA mandala"
+      imageAlt="Diverse community members, researchers and cultural custodians standing in circular dialogue representing the universal EKA cultural commons"
     >
       {/* 1. The Important Distinction Section */}
       <section className="py-20 border-b border-border/60 bg-sand/15">

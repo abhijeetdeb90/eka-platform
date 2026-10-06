@@ -48,6 +48,7 @@ export const Route = createFileRoute("/discover")({
 function DiscoverPage() {
   const [activePillar, setActivePillar] = useState<string>("world");
   const [activeSubcategory, setActiveSubcategory] = useState<string>("India");
+  const [activeView, setActiveView] = useState<"map" | "feed">("map");
   const [modalOpen, setModalOpen] = useState(false);
   const [modalTarget, setModalTarget] = useState<ContextualAskEkaTarget | null>(null);
   const [isHydrated, setIsHydrated] = useState(false);
@@ -93,15 +94,58 @@ function DiscoverPage() {
           onSelect={handleNavSelect}
         />
 
-        {/* 3. Global Cultural Intelligence Map (Interactive MVP) */}
-        <section id="cultural-map" className="space-y-4">
-          <GlobalCulturalMap onAskEka={handleOpenAskEka} />
-        </section>
+        {/* View Switcher: Map View vs Feed / List View */}
+        <div className="flex items-center justify-between border-b border-border/60 pb-4">
+          <div className="space-y-0.5">
+            <h2 className="font-serif text-xl sm:text-2xl font-bold text-foreground">
+              {activeView === "map" ? "Geographic Cultural Map" : "Visual Cultural Feed"}
+            </h2>
+            <p className="text-xs text-muted-foreground font-light">
+              {activeView === "map"
+                ? "Explore by territory, sacred confluences, and cultural hotspots on earth"
+                : "Curated stories, traditions, foodways, and artisan lineages across the archive"}
+            </p>
+          </div>
 
-        {/* 4. Visual Discover Feed (Pinterest x NatGeo x Cultural Feed) */}
-        <section id="visual-feed" className="space-y-6">
-          <VisualDiscoverFeed onAskEka={handleOpenAskEka} />
-        </section>
+          <div className="flex items-center rounded-2xl border border-border/80 bg-card p-1 shadow-xs">
+            <button
+              onClick={() => setActiveView("map")}
+              className={`flex items-center gap-1.5 rounded-xl px-3.5 py-1.5 text-xs font-medium transition-all ${
+                activeView === "map"
+                  ? "bg-primary text-primary-foreground shadow-xs font-semibold"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <Compass className="size-3.5" />
+              <span>Map View</span>
+            </button>
+            <button
+              onClick={() => setActiveView("feed")}
+              className={`flex items-center gap-1.5 rounded-xl px-3.5 py-1.5 text-xs font-medium transition-all ${
+                activeView === "feed"
+                  ? "bg-primary text-primary-foreground shadow-xs font-semibold"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <BookOpen className="size-3.5" />
+              <span>Feed / List View</span>
+            </button>
+          </div>
+        </div>
+
+        {/* 3. Global Cultural Intelligence Map (Interactive Map View) */}
+        {activeView === "map" && (
+          <section id="cultural-map" className="space-y-4 animate-fadeIn">
+            <GlobalCulturalMap onAskEka={handleOpenAskEka} />
+          </section>
+        )}
+
+        {/* 4. Visual Discover Feed (List / Feed View) */}
+        {activeView === "feed" && (
+          <section id="visual-feed" className="space-y-6 animate-fadeIn">
+            <VisualDiscoverFeed onAskEka={handleOpenAskEka} />
+          </section>
+        )}
 
         {/* 5. Compare Cultures Viral Feature ("ONE WITH ALL") */}
         <section id="compare-cultures" className="space-y-6">

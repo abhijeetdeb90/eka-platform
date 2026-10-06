@@ -53,7 +53,7 @@ function createAuthStorage() {
           const cookies = document.cookie.split("; ");
           for (const c of cookies) {
             const [cookieKey, cookieVal] = c.split("=");
-            if (decodeURIComponent(cookieKey) === key && cookieVal) {
+            if (cookieKey && decodeURIComponent(cookieKey) === key && cookieVal) {
               return decodeURIComponent(cookieVal);
             }
           }

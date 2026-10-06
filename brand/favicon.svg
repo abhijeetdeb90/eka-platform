@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <!-- EKA Browser Tab Favicon -->
+  <defs>
+    <linearGradient id="favCore" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#C25E3E"/>
+      <stop offset="100%" stop-color="#9E472A"/>
+    </linearGradient>
+    <mask id="favMask">
+      <rect width="100" height="100" fill="#FFFFFF"/>
+      <circle cx="50" cy="50" r="17" fill="#000000"/>
+    </mask>
+  </defs>
+
+  <!-- High-contrast Globe Outer Ring -->
+  <circle cx="50" cy="50" r="43" stroke="#1E2A38" stroke-width="6"/>
+
+  <!-- Interior Masked Meridians -->
+  <g mask="url(#favMask)" stroke="#1E2A38" stroke-width="6" stroke-linecap="round">
+    <line x1="7" y1="50" x2="93" y2="50"/>
+    <path d="M 50 7 C 68 22, 68 78, 50 93"/>
+    <path d="M 50 7 C 32 22, 32 78, 50 93"/>
+  </g>
+
+  <!-- Cardinal Meridian Nodes -->
+  <circle cx="50" cy="7" r="3.5" fill="#C25E3E"/>
+  <circle cx="93" cy="50" r="3.5" fill="#C25E3E"/>
+  <circle cx="50" cy="93" r="3.5" fill="#C25E3E"/>
+  <circle cx="7" cy="50" r="3.5" fill="#C25E3E"/>
+
+  <!-- Central "One Within" Beacon -->
+  <circle cx="50" cy="50" r="10.5" fill="url(#favCore)"/>
+</svg>

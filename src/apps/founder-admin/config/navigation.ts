@@ -15,6 +15,8 @@ import {
   Layers,
   HeartHandshake,
   Receipt,
+  Radio,
+  Cpu,
 } from "lucide-react";
 
 export interface FounderAdminNavItem {
@@ -91,5 +93,21 @@ export const FOUNDER_ADMIN_NAV: FounderAdminNavItem[] = [
     to: "/founder-admin/finance",
     icon: Receipt,
     description: "Platform reconciliation, tax records & invoicing",
+  },
+  {
+    id: "ai-context",
+    label: "AI Context Health",
+    to: "/founder-admin/ai-context",
+    icon: Cpu,
+    badge: "1M Guard",
+    description: "Token telemetry, budget enforcement & context health",
+  },
+  {
+    id: "investor",
+    label: "Investor Status",
+    to: "/founder-admin/ops?tab=investor-status",
+    icon: Radio,
+    badge: "Live",
+    description: "Product maturity states & health validator",
   },
 ];

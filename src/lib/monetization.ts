@@ -134,11 +134,11 @@ export const EKA_ACCESS_FEATURES: AccessModelFeature[] = [
   },
   {
     id: "advanced_creator_tools",
-    name: "Advanced monetization & splits",
+    name: "Advanced monetization & offerings",
     category: "Creation (Studio)",
     free: false,
     paid: true,
-    description: "Multi-contributor splits, 85% pool allocation, lineage verification rights, and licensing tools.",
+    description: "Publish paid workshops, consultations, cultural experiences, digital products, and manage payout ledgers.",
   },
 ];
 
@@ -213,13 +213,13 @@ export const PRODUCT_TIERS: Record<MonetizationTier, ProductTierConfig> = {
     period: "month",
     priceNote: "+ applicable taxes · Professional suite",
     description:
-      "A dedicated, professional workspace for cultural storytellers, researchers, and lineage custodians to build, publish, and earn.",
+      "A dedicated, professional workspace for cultural storytellers, researchers, and lineage custodians to publish paid offerings and earn.",
     highlights: [
       "Full Creator Studio professional workspace",
-      "Create, edit & publish verified cultural stories",
-      "Comprehensive creator analytics & Qualified Contribution Score",
-      "Participate in 85% monthly subscription payout pool",
-      "Multi-contributor attribution & verified lineage badge",
+      "Offer paid workshops, cultural consultations & masterclasses",
+      "Transaction-driven commerce with transparent 5–10% commission",
+      "Audience analytics & Qualified Contribution Score (QCS)",
+      "Direct payout settlement ledger with automated tax compliance",
     ],
     ctaLabel: "Enter Creator Studio",
     actionUrl: "/app/creator",
@@ -242,7 +242,7 @@ export const CORE_PHILOSOPHY = {
     {
       title: "Creation is open to everyone.",
       description:
-        "Every seeker can post stories, share photos, upload videos, and build multi-slide carousels for free. Creator Studio is an optional workspace for professional creators who want audience analytics, Qualified Contribution Scores, and 85% subscription revenue sharing.",
+        "Every seeker can post stories, share photos, upload videos, and build multi-slide carousels for free. Creator Studio is an optional workspace for professional creators who offer ticketed events, workshops, cultural experiences, consultations, and digital products, with transparent transaction accounting and direct payouts.",
     },
   ],
   subscriptionHook:

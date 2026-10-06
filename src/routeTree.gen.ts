@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AgentRouteImport } from './routes/agent'
+import { Route as AskRouteImport } from './routes/ask'
 import { Route as AudienceRouteImport } from './routes/audience'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as BrandsRouteImport } from './routes/brands'
@@ -31,12 +32,14 @@ import { Route as FounderAdminRouteImport } from './routes/founder-admin'
 import { Route as GiveRouteImport } from './routes/give'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as InsightsRouteImport } from './routes/insights'
+import { Route as InvestorRouteImport } from './routes/investor'
 import { Route as JoinRouteImport } from './routes/join'
 import { Route as JourneyRouteImport } from './routes/journey'
 import { Route as JunctionRouteImport } from './routes/junction'
 import { Route as LearnRouteImport } from './routes/learn'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as MembershipRouteImport } from './routes/membership'
+import { Route as MessagesRouteImport } from './routes/messages'
 import { Route as MyEkaRouteImport } from './routes/my-eka'
 import { Route as ObserveRouteImport } from './routes/observe'
 import { Route as OpsRouteImport } from './routes/ops'
@@ -71,6 +74,7 @@ import { Route as BrandsEnterpriseCampaignsRouteImport } from './routes/brands-e
 import { Route as BrandsEnterpriseEnterpriseRouteImport } from './routes/brands-enterprise.enterprise'
 import { Route as BrandsEnterpriseFinanceRouteImport } from './routes/brands-enterprise.finance'
 import { Route as FounderAdminIndexRouteImport } from './routes/founder-admin.index'
+import { Route as FounderAdminAiContextRouteImport } from './routes/founder-admin.ai-context'
 import { Route as FounderAdminCrmRouteImport } from './routes/founder-admin.crm'
 import { Route as FounderAdminEconomicsRouteImport } from './routes/founder-admin.economics'
 import { Route as FounderAdminFinanceRouteImport } from './routes/founder-admin.finance'
@@ -80,6 +84,8 @@ import { Route as FounderAdminRiskRouteImport } from './routes/founder-admin.ris
 import { Route as FounderAdminStudioRouteImport } from './routes/founder-admin.studio'
 import { Route as FounderAdminSystemRouteImport } from './routes/founder-admin.system'
 import { Route as FounderAdRouteImport } from './routes/founder.ad'
+import { Route as InvestorAdminRouteImport } from './routes/investor.admin'
+import { Route as InvestorEnterpriseRouteImport } from './routes/investor.enterprise'
 import { Route as KnowledgeIndexRouteImport } from './routes/knowledge.index'
 import { Route as KnowledgeSlugRouteImport } from './routes/knowledge.$slug'
 import { Route as PassportSlugRouteImport } from './routes/passport.$slug'
@@ -166,6 +172,11 @@ const AdminRoute = AdminRouteImport.update({
 const AgentRoute = AgentRouteImport.update({
   id: '/agent',
   path: '/agent',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AskRoute = AskRouteImport.update({
+  id: '/ask',
+  path: '/ask',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AudienceRoute = AudienceRouteImport.update({
@@ -258,6 +269,11 @@ const InsightsRoute = InsightsRouteImport.update({
   path: '/insights',
   getParentRoute: () => rootRouteImport,
 } as any)
+const InvestorRoute = InvestorRouteImport.update({
+  id: '/investor',
+  path: '/investor',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const JoinRoute = JoinRouteImport.update({
   id: '/join',
   path: '/join',
@@ -286,6 +302,11 @@ const McpRoute = McpRouteImport.update({
 const MembershipRoute = MembershipRouteImport.update({
   id: '/membership',
   path: '/membership',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MessagesRoute = MessagesRouteImport.update({
+  id: '/messages',
+  path: '/messages',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MyEkaRoute = MyEkaRouteImport.update({
@@ -462,6 +483,11 @@ const FounderAdminIndexRoute = FounderAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => FounderAdminRoute,
 } as any)
+const FounderAdminAiContextRoute = FounderAdminAiContextRouteImport.update({
+  id: '/ai-context',
+  path: '/ai-context',
+  getParentRoute: () => FounderAdminRoute,
+} as any)
 const FounderAdminCrmRoute = FounderAdminCrmRouteImport.update({
   id: '/crm',
   path: '/crm',
@@ -506,6 +532,16 @@ const FounderAdRoute = FounderAdRouteImport.update({
   id: '/ad',
   path: '/ad',
   getParentRoute: () => FounderRoute,
+} as any)
+const InvestorAdminRoute = InvestorAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => InvestorRoute,
+} as any)
+const InvestorEnterpriseRoute = InvestorEnterpriseRouteImport.update({
+  id: '/enterprise',
+  path: '/enterprise',
+  getParentRoute: () => InvestorRoute,
 } as any)
 const KnowledgeIndexRoute = KnowledgeIndexRouteImport.update({
   id: '/knowledge/',
@@ -886,6 +922,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/agent': typeof AgentRoute
+  '/ask': typeof AskRoute
   '/audience': typeof AudienceRoute
   '/auth': typeof AuthRouteWithChildren
   '/brands': typeof BrandsRoute
@@ -904,12 +941,14 @@ export interface FileRoutesByFullPath {
   '/give': typeof GiveRoute
   '/home': typeof HomeRoute
   '/insights': typeof InsightsRoute
+  '/investor': typeof InvestorRouteWithChildren
   '/join': typeof JoinRoute
   '/journey': typeof JourneyRoute
   '/junction': typeof JunctionRoute
   '/learn': typeof LearnRoute
   '/mcp': typeof McpRoute
   '/membership': typeof MembershipRoute
+  '/messages': typeof MessagesRoute
   '/my-eka': typeof MyEkaRoute
   '/observe': typeof ObserveRoute
   '/ops': typeof OpsRoute
@@ -942,6 +981,7 @@ export interface FileRoutesByFullPath {
   '/brands-enterprise/campaigns': typeof BrandsEnterpriseCampaignsRoute
   '/brands-enterprise/enterprise': typeof BrandsEnterpriseEnterpriseRoute
   '/brands-enterprise/finance': typeof BrandsEnterpriseFinanceRoute
+  '/founder-admin/ai-context': typeof FounderAdminAiContextRoute
   '/founder-admin/crm': typeof FounderAdminCrmRoute
   '/founder-admin/economics': typeof FounderAdminEconomicsRoute
   '/founder-admin/finance': typeof FounderAdminFinanceRoute
@@ -951,6 +991,8 @@ export interface FileRoutesByFullPath {
   '/founder-admin/studio': typeof FounderAdminStudioRoute
   '/founder-admin/system': typeof FounderAdminSystemRoute
   '/founder/ad': typeof FounderAdRoute
+  '/investor/admin': typeof InvestorAdminRoute
+  '/investor/enterprise': typeof InvestorEnterpriseRoute
   '/knowledge/$slug': typeof KnowledgeSlugRoute
   '/passport/$slug': typeof PassportSlugRoute
   '/people/$username': typeof PeopleUsernameRoute
@@ -1026,6 +1068,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/agent': typeof AgentRoute
+  '/ask': typeof AskRoute
   '/audience': typeof AudienceRoute
   '/auth': typeof AuthRouteWithChildren
   '/brands': typeof BrandsRoute
@@ -1042,12 +1085,14 @@ export interface FileRoutesByTo {
   '/give': typeof GiveRoute
   '/home': typeof HomeRoute
   '/insights': typeof InsightsRoute
+  '/investor': typeof InvestorRouteWithChildren
   '/join': typeof JoinRoute
   '/journey': typeof JourneyRoute
   '/junction': typeof JunctionRoute
   '/learn': typeof LearnRoute
   '/mcp': typeof McpRoute
   '/membership': typeof MembershipRoute
+  '/messages': typeof MessagesRoute
   '/my-eka': typeof MyEkaRoute
   '/observe': typeof ObserveRoute
   '/ops': typeof OpsRoute
@@ -1079,6 +1124,7 @@ export interface FileRoutesByTo {
   '/brands-enterprise/campaigns': typeof BrandsEnterpriseCampaignsRoute
   '/brands-enterprise/enterprise': typeof BrandsEnterpriseEnterpriseRoute
   '/brands-enterprise/finance': typeof BrandsEnterpriseFinanceRoute
+  '/founder-admin/ai-context': typeof FounderAdminAiContextRoute
   '/founder-admin/crm': typeof FounderAdminCrmRoute
   '/founder-admin/economics': typeof FounderAdminEconomicsRoute
   '/founder-admin/finance': typeof FounderAdminFinanceRoute
@@ -1088,6 +1134,8 @@ export interface FileRoutesByTo {
   '/founder-admin/studio': typeof FounderAdminStudioRoute
   '/founder-admin/system': typeof FounderAdminSystemRoute
   '/founder/ad': typeof FounderAdRoute
+  '/investor/admin': typeof InvestorAdminRoute
+  '/investor/enterprise': typeof InvestorEnterpriseRoute
   '/knowledge/$slug': typeof KnowledgeSlugRoute
   '/passport/$slug': typeof PassportSlugRoute
   '/people/$username': typeof PeopleUsernameRoute
@@ -1165,6 +1213,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/admin': typeof AdminRoute
   '/agent': typeof AgentRoute
+  '/ask': typeof AskRoute
   '/audience': typeof AudienceRoute
   '/auth': typeof AuthRouteWithChildren
   '/brands': typeof BrandsRoute
@@ -1183,12 +1232,14 @@ export interface FileRoutesById {
   '/give': typeof GiveRoute
   '/home': typeof HomeRoute
   '/insights': typeof InsightsRoute
+  '/investor': typeof InvestorRouteWithChildren
   '/join': typeof JoinRoute
   '/journey': typeof JourneyRoute
   '/junction': typeof JunctionRoute
   '/learn': typeof LearnRoute
   '/mcp': typeof McpRoute
   '/membership': typeof MembershipRoute
+  '/messages': typeof MessagesRoute
   '/my-eka': typeof MyEkaRoute
   '/observe': typeof ObserveRoute
   '/ops': typeof OpsRoute
@@ -1221,6 +1272,7 @@ export interface FileRoutesById {
   '/brands-enterprise/campaigns': typeof BrandsEnterpriseCampaignsRoute
   '/brands-enterprise/enterprise': typeof BrandsEnterpriseEnterpriseRoute
   '/brands-enterprise/finance': typeof BrandsEnterpriseFinanceRoute
+  '/founder-admin/ai-context': typeof FounderAdminAiContextRoute
   '/founder-admin/crm': typeof FounderAdminCrmRoute
   '/founder-admin/economics': typeof FounderAdminEconomicsRoute
   '/founder-admin/finance': typeof FounderAdminFinanceRoute
@@ -1230,6 +1282,8 @@ export interface FileRoutesById {
   '/founder-admin/studio': typeof FounderAdminStudioRoute
   '/founder-admin/system': typeof FounderAdminSystemRoute
   '/founder/ad': typeof FounderAdRoute
+  '/investor/admin': typeof InvestorAdminRoute
+  '/investor/enterprise': typeof InvestorEnterpriseRoute
   '/knowledge/$slug': typeof KnowledgeSlugRoute
   '/passport/$slug': typeof PassportSlugRoute
   '/people/$username': typeof PeopleUsernameRoute
@@ -1307,6 +1361,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/agent'
+    | '/ask'
     | '/audience'
     | '/auth'
     | '/brands'
@@ -1325,12 +1380,14 @@ export interface FileRouteTypes {
     | '/give'
     | '/home'
     | '/insights'
+    | '/investor'
     | '/join'
     | '/journey'
     | '/junction'
     | '/learn'
     | '/mcp'
     | '/membership'
+    | '/messages'
     | '/my-eka'
     | '/observe'
     | '/ops'
@@ -1363,6 +1420,7 @@ export interface FileRouteTypes {
     | '/brands-enterprise/campaigns'
     | '/brands-enterprise/enterprise'
     | '/brands-enterprise/finance'
+    | '/founder-admin/ai-context'
     | '/founder-admin/crm'
     | '/founder-admin/economics'
     | '/founder-admin/finance'
@@ -1372,6 +1430,8 @@ export interface FileRouteTypes {
     | '/founder-admin/studio'
     | '/founder-admin/system'
     | '/founder/ad'
+    | '/investor/admin'
+    | '/investor/enterprise'
     | '/knowledge/$slug'
     | '/passport/$slug'
     | '/people/$username'
@@ -1447,6 +1507,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/agent'
+    | '/ask'
     | '/audience'
     | '/auth'
     | '/brands'
@@ -1463,12 +1524,14 @@ export interface FileRouteTypes {
     | '/give'
     | '/home'
     | '/insights'
+    | '/investor'
     | '/join'
     | '/journey'
     | '/junction'
     | '/learn'
     | '/mcp'
     | '/membership'
+    | '/messages'
     | '/my-eka'
     | '/observe'
     | '/ops'
@@ -1500,6 +1563,7 @@ export interface FileRouteTypes {
     | '/brands-enterprise/campaigns'
     | '/brands-enterprise/enterprise'
     | '/brands-enterprise/finance'
+    | '/founder-admin/ai-context'
     | '/founder-admin/crm'
     | '/founder-admin/economics'
     | '/founder-admin/finance'
@@ -1509,6 +1573,8 @@ export interface FileRouteTypes {
     | '/founder-admin/studio'
     | '/founder-admin/system'
     | '/founder/ad'
+    | '/investor/admin'
+    | '/investor/enterprise'
     | '/knowledge/$slug'
     | '/passport/$slug'
     | '/people/$username'
@@ -1585,6 +1651,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/admin'
     | '/agent'
+    | '/ask'
     | '/audience'
     | '/auth'
     | '/brands'
@@ -1603,12 +1670,14 @@ export interface FileRouteTypes {
     | '/give'
     | '/home'
     | '/insights'
+    | '/investor'
     | '/join'
     | '/journey'
     | '/junction'
     | '/learn'
     | '/mcp'
     | '/membership'
+    | '/messages'
     | '/my-eka'
     | '/observe'
     | '/ops'
@@ -1641,6 +1710,7 @@ export interface FileRouteTypes {
     | '/brands-enterprise/campaigns'
     | '/brands-enterprise/enterprise'
     | '/brands-enterprise/finance'
+    | '/founder-admin/ai-context'
     | '/founder-admin/crm'
     | '/founder-admin/economics'
     | '/founder-admin/finance'
@@ -1650,6 +1720,8 @@ export interface FileRouteTypes {
     | '/founder-admin/studio'
     | '/founder-admin/system'
     | '/founder/ad'
+    | '/investor/admin'
+    | '/investor/enterprise'
     | '/knowledge/$slug'
     | '/passport/$slug'
     | '/people/$username'
@@ -1727,6 +1799,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AdminRoute: typeof AdminRoute
   AgentRoute: typeof AgentRoute
+  AskRoute: typeof AskRoute
   AudienceRoute: typeof AudienceRoute
   AuthRoute: typeof AuthRouteWithChildren
   BrandsRoute: typeof BrandsRoute
@@ -1745,12 +1818,14 @@ export interface RootRouteChildren {
   GiveRoute: typeof GiveRoute
   HomeRoute: typeof HomeRoute
   InsightsRoute: typeof InsightsRoute
+  InvestorRoute: typeof InvestorRouteWithChildren
   JoinRoute: typeof JoinRoute
   JourneyRoute: typeof JourneyRoute
   JunctionRoute: typeof JunctionRoute
   LearnRoute: typeof LearnRoute
   McpRoute: typeof McpRoute
   MembershipRoute: typeof MembershipRoute
+  MessagesRoute: typeof MessagesRoute
   MyEkaRoute: typeof MyEkaRoute
   ObserveRoute: typeof ObserveRoute
   OpsRoute: typeof OpsRoute
@@ -1817,6 +1892,13 @@ declare module '@tanstack/react-router' {
       path: '/agent'
       fullPath: '/agent'
       preLoaderRoute: typeof AgentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ask': {
+      id: '/ask'
+      path: '/ask'
+      fullPath: '/ask'
+      preLoaderRoute: typeof AskRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/audience': {
@@ -1945,6 +2027,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InsightsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/investor': {
+      id: '/investor'
+      path: '/investor'
+      fullPath: '/investor'
+      preLoaderRoute: typeof InvestorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/join': {
       id: '/join'
       path: '/join'
@@ -1985,6 +2074,13 @@ declare module '@tanstack/react-router' {
       path: '/membership'
       fullPath: '/membership'
       preLoaderRoute: typeof MembershipRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/messages': {
+      id: '/messages'
+      path: '/messages'
+      fullPath: '/messages'
+      preLoaderRoute: typeof MessagesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/my-eka': {
@@ -2225,6 +2321,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FounderAdminIndexRouteImport
       parentRoute: typeof FounderAdminRoute
     }
+    '/founder-admin/ai-context': {
+      id: '/founder-admin/ai-context'
+      path: '/ai-context'
+      fullPath: '/founder-admin/ai-context'
+      preLoaderRoute: typeof FounderAdminAiContextRouteImport
+      parentRoute: typeof FounderAdminRoute
+    }
     '/founder-admin/crm': {
       id: '/founder-admin/crm'
       path: '/crm'
@@ -2287,6 +2390,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/founder/ad'
       preLoaderRoute: typeof FounderAdRouteImport
       parentRoute: typeof FounderRoute
+    }
+    '/investor/admin': {
+      id: '/investor/admin'
+      path: '/admin'
+      fullPath: '/investor/admin'
+      preLoaderRoute: typeof InvestorAdminRouteImport
+      parentRoute: typeof InvestorRoute
+    }
+    '/investor/enterprise': {
+      id: '/investor/enterprise'
+      path: '/enterprise'
+      fullPath: '/investor/enterprise'
+      preLoaderRoute: typeof InvestorEnterpriseRouteImport
+      parentRoute: typeof InvestorRoute
     }
     '/knowledge/': {
       id: '/knowledge/'
@@ -2955,6 +3072,7 @@ const FounderRouteWithChildren =
   FounderRoute._addFileChildren(FounderRouteChildren)
 
 interface FounderAdminRouteChildren {
+  FounderAdminAiContextRoute: typeof FounderAdminAiContextRoute
   FounderAdminCrmRoute: typeof FounderAdminCrmRoute
   FounderAdminEconomicsRoute: typeof FounderAdminEconomicsRoute
   FounderAdminFinanceRoute: typeof FounderAdminFinanceRoute
@@ -2967,6 +3085,7 @@ interface FounderAdminRouteChildren {
 }
 
 const FounderAdminRouteChildren: FounderAdminRouteChildren = {
+  FounderAdminAiContextRoute: FounderAdminAiContextRoute,
   FounderAdminCrmRoute: FounderAdminCrmRoute,
   FounderAdminEconomicsRoute: FounderAdminEconomicsRoute,
   FounderAdminFinanceRoute: FounderAdminFinanceRoute,
@@ -2980,6 +3099,20 @@ const FounderAdminRouteChildren: FounderAdminRouteChildren = {
 
 const FounderAdminRouteWithChildren = FounderAdminRoute._addFileChildren(
   FounderAdminRouteChildren,
+)
+
+interface InvestorRouteChildren {
+  InvestorAdminRoute: typeof InvestorAdminRoute
+  InvestorEnterpriseRoute: typeof InvestorEnterpriseRoute
+}
+
+const InvestorRouteChildren: InvestorRouteChildren = {
+  InvestorAdminRoute: InvestorAdminRoute,
+  InvestorEnterpriseRoute: InvestorEnterpriseRoute,
+}
+
+const InvestorRouteWithChildren = InvestorRoute._addFileChildren(
+  InvestorRouteChildren,
 )
 
 interface ApiWebhooksRouteChildren {
@@ -2999,6 +3132,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AdminRoute: AdminRoute,
   AgentRoute: AgentRoute,
+  AskRoute: AskRoute,
   AudienceRoute: AudienceRoute,
   AuthRoute: AuthRouteWithChildren,
   BrandsRoute: BrandsRoute,
@@ -3017,12 +3151,14 @@ const rootRouteChildren: RootRouteChildren = {
   GiveRoute: GiveRoute,
   HomeRoute: HomeRoute,
   InsightsRoute: InsightsRoute,
+  InvestorRoute: InvestorRouteWithChildren,
   JoinRoute: JoinRoute,
   JourneyRoute: JourneyRoute,
   JunctionRoute: JunctionRoute,
   LearnRoute: LearnRoute,
   McpRoute: McpRoute,
   MembershipRoute: MembershipRoute,
+  MessagesRoute: MessagesRoute,
   MyEkaRoute: MyEkaRoute,
   ObserveRoute: ObserveRoute,
   OpsRoute: OpsRoute,

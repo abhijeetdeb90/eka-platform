@@ -19,10 +19,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Link } from "@tanstack/react-router";
 import {
   COUNTRY_PROFILES,
   MAP_HOTSPOTS,
   EKA_REGIONS,
+  CULTURAL_MAP_FILTER_OPTIONS,
+  type CulturalMapFilterId,
   searchGlobalCulturalMap,
   type CountryCulturalProfile,
   type CulturalStoryItem,
@@ -47,6 +50,7 @@ export function GlobalCulturalMap({
   compactMode = false,
 }: GlobalCulturalMapProps) {
   const [selectedRegion, setSelectedRegion] = useState<EkaRegion>("all");
+  const [selectedFilter, setSelectedFilter] = useState<CulturalMapFilterId>("all");
   const [selectedCountryId, setSelectedCountryId] = useState<string>("india");
   const [selectedHotspotId, setSelectedHotspotId] = useState<string | null>("spot-kolkata");
   const [searchQuery, setSearchQuery] = useState("");
@@ -75,10 +79,25 @@ export function GlobalCulturalMap({
     );
   }, [selectedCountryId]);
 
+  const currentHotspot = useMemo(() => {
+    return MAP_HOTSPOTS.find((h) => h.id === selectedHotspotId) || MAP_HOTSPOTS[0]!;
+  }, [selectedHotspotId]);
+
   const filteredHotspots = useMemo(() => {
-    if (selectedRegion === "all") return MAP_HOTSPOTS;
-    return MAP_HOTSPOTS.filter((h) => h.region === selectedRegion);
-  }, [selectedRegion]);
+    return MAP_HOTSPOTS.filter((h) => {
+      const regionMatches = selectedRegion === "all" || h.region === selectedRegion;
+      const filterMatches =
+        selectedFilter === "all" ||
+        h.filterCategory === selectedFilter ||
+        (selectedFilter === "festivals" && h.type === "festival") ||
+        (selectedFilter === "traditions" && (h.type === "tradition" || h.type === "ritual")) ||
+        (selectedFilter === "sacred_places" && h.type === "sacred_place") ||
+        (selectedFilter === "craft" && h.type === "craft") ||
+        (selectedFilter === "communities" && h.type === "community") ||
+        (selectedFilter === "stories" && h.type === "story");
+      return regionMatches && filterMatches;
+    });
+  }, [selectedRegion, selectedFilter]);
 
   const handleHotspotClick = (spot: MapHotspotMarker) => {
     setSelectedHotspotId(spot.id);
@@ -152,6 +171,47 @@ export function GlobalCulturalMap({
               <span>{r.label}</span>
             </button>
           ))}
+        </div>
+
+        {/* 14 Cultural Knowledge Layers Filters */}
+        <div className="mt-3 flex items-center gap-1 overflow-x-auto pb-1 scrollbar-none">
+          {CULTURAL_MAP_FILTER_OPTIONS.map((f) => (
+            <button
+              key={f.id}
+              type="button"
+              onClick={() => setSelectedFilter(f.id)}
+              className={`rounded-full px-3 py-1 text-[11px] font-mono transition-all shrink-0 flex items-center gap-1 border ${
+                selectedFilter === f.id
+                  ? "border-terracotta bg-terracotta/10 text-terracotta font-semibold"
+                  : "border-border/60 bg-card/60 text-muted-foreground hover:border-primary/40 hover:text-foreground"
+              }`}
+              data-testid={`filter-btn-${f.id}`}
+            >
+              <span>{f.icon}</span>
+              <span>{f.label}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Hierarchical Navigation Breadcrumb: World → Region → Country → District → Knowledge Object */}
+        <div className="mt-3 pt-2.5 border-t border-border/40 flex items-center gap-1.5 text-[11px] font-mono text-muted-foreground flex-wrap">
+          <span className="text-foreground font-semibold">World</span>
+          <ChevronRight className="size-3 text-muted-foreground/60" />
+          <span className="capitalize">{selectedRegion === "all" ? "Planetary" : selectedRegion}</span>
+          <ChevronRight className="size-3 text-muted-foreground/60" />
+          <span className="text-foreground font-medium">{currentCountry.name}</span>
+          {currentHotspot?.stateOrDistrict && (
+            <>
+              <ChevronRight className="size-3 text-muted-foreground/60" />
+              <span>{currentHotspot.stateOrDistrict}</span>
+            </>
+          )}
+          {currentHotspot && (
+            <>
+              <ChevronRight className="size-3 text-muted-foreground/60" />
+              <span className="text-primary font-bold">{currentHotspot.name}</span>
+            </>
+          )}
         </div>
       </div>
 
@@ -512,20 +572,38 @@ export function GlobalCulturalMap({
             </div>
           </div>
 
-          {/* Bottom Explore CTA */}
-          <div className="border-t border-border/60 pt-4">
+          {/* Bottom Explore CTAs: Knowledge Object & Ask EKA */}
+          <div className="border-t border-border/60 pt-4 space-y-2">
+            {currentHotspot?.knowledgeSlug && (
+              <Link
+                to="/knowledge/$slug"
+                params={{ slug: currentHotspot.knowledgeSlug }}
+                className="block w-full"
+              >
+                <Button
+                  variant="outline"
+                  className="w-full rounded-full gap-2 text-xs border-primary/40 text-primary hover:bg-primary/5 font-medium cursor-pointer"
+                >
+                  <BookOpen className="size-3.5 text-primary" />
+                  <span>Open Canonical Knowledge Object</span>
+                  <ArrowRight className="size-3.5" />
+                </Button>
+              </Link>
+            )}
+
             <Button
-              className="w-full rounded-full gap-2 text-xs bg-primary text-primary-foreground hover:bg-primary/90"
+              className="w-full rounded-full gap-2 text-xs bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer"
               onClick={() =>
                 onAskEka({
-                  title: currentCountry.name,
-                  location: currentCountry.regionLabel,
-                  initialQuestion: `Explain the living traditions and culture of ${currentCountry.name} to someone new.`,
+                  title: currentHotspot ? currentHotspot.name : currentCountry.name,
+                  location: currentHotspot?.stateOrDistrict || currentCountry.regionLabel,
+                  initialQuestion: currentHotspot?.wonderQuestion || `Explain the living traditions of ${currentCountry.name}.`,
                   preloadedSummary: currentCountry.intro,
                 })
               }
             >
-              <span>Explore {currentCountry.name} with EKA</span>
+              <Sparkles className="size-3.5 text-saffron" />
+              <span>Ask EKA about {currentHotspot ? currentHotspot.name.split(" ")[0] : currentCountry.name}</span>
               <ArrowRight className="size-3.5" />
             </Button>
           </div>

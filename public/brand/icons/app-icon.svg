@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <!-- EKA App Icon (iOS / Android / PWA) -->
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#18202A"/>
+      <stop offset="100%" stop-color="#0E131A"/>
+    </linearGradient>
+    <linearGradient id="appCoreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E2734E"/>
+      <stop offset="100%" stop-color="#B84A28"/>
+    </linearGradient>
+    <mask id="appMask">
+      <rect width="512" height="512" fill="#FFFFFF"/>
+      <circle cx="256" cy="256" r="76" fill="#000000"/>
+    </mask>
+  </defs>
+
+  <!-- Background Squircle / Rounded Canvas -->
+  <rect width="512" height="512" rx="112" fill="url(#bgGrad)"/>
+  <rect x="2" y="2" width="508" height="508" rx="110" stroke="#FFFFFF" stroke-opacity="0.1" stroke-width="3"/>
+
+  <!-- Outer Cultural Sphere Ring -->
+  <circle cx="256" cy="256" r="160" stroke="#F1F5F9" stroke-width="15"/>
+
+  <!-- Interior Masked Meridians -->
+  <g mask="url(#appMask)" stroke="#F1F5F9" stroke-width="15" stroke-linecap="round">
+    <!-- Equator -->
+    <line x1="96" y1="256" x2="416" y2="256"/>
+    <!-- Prime Meridians -->
+    <path d="M 256 96 C 330 156, 330 356, 256 416"/>
+    <path d="M 256 96 C 182 156, 182 356, 256 416"/>
+  </g>
+
+  <!-- Cardinal Meridian Nodes -->
+  <circle cx="256" cy="96" r="10" fill="#E2734E"/>
+  <circle cx="416" cy="256" r="10" fill="#E2734E"/>
+  <circle cx="256" cy="416" r="10" fill="#E2734E"/>
+  <circle cx="96" cy="256" r="10" fill="#E2734E"/>
+
+  <!-- Central "One Within" Beacon -->
+  <circle cx="256" cy="256" r="46" fill="url(#appCoreGrad)"/>
+</svg>

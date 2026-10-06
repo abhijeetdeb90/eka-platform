@@ -1,0 +1,25 @@
+{
+  "system": "EKA Universal Typography System",
+  "version": "2.0.0",
+  "editorialHierarchy": {
+    "display": {
+      "family": "Fraunces, Georgia, serif",
+      "weights": ["300 (Light)", "400 (Regular)", "500 (Medium)", "700 (Bold)"],
+      "usage": "Editorial titles, story headlines, brand wordmark, cultural place names. Gives warmth, book-craft provenance, and intellectual authority without religious tilt."
+    },
+    "body": {
+      "family": "Karla, -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif",
+      "weights": ["300 (Light)", "400 (Regular)", "500 (Medium)", "600 (Semi-Bold)"],
+      "usage": "Body narrative, community discussion, metadata, cultural context notes. High x-height, ultra-readable across mobile, tablet, and desktop."
+    },
+    "mono": {
+      "family": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
+      "weights": ["400 (Regular)", "500 (Medium)"],
+      "usage": "Geographic coordinates, provenance timestamps, DPDP compliance tags, knowledge taxonomy slugs."
+    }
+  },
+  "internationalization": {
+    "multilingualSupport": "Native support for Assamese (অসমীয়া), Bengali (বাংলা), Hindi (हिन्दी), Tamil (தமிழ்), Japanese (日本語), Arabic (العربية), Latin (Spanish/Portuguese/French), and global scripts.",
+    "characterClarity": "Preserves script dignity with proportional line-height and unclipped ascenders/descenders."
+  }
+}

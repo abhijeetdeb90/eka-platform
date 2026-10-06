@@ -1,8 +1,11 @@
 // ==============================================================================
 // EKA MOTION PRIMITIVE: EkaLogoLoader
 // ==============================================================================
-// Circular contemplative loading indicator inspired by traditional Indic sacred geometry.
-// Represents the single unmanifest point (Bindu) expanding into the manifest universe (Mandala).
+// Cultural Meridian loading indicator representing universal human connection.
+// Choreography: "One Within -> One With All"
+// 1. One point (individual consciousness & story)
+// 2. Cultural pathways & meridians (human connection & dialogue)
+// 3. Expanding global sphere (the world's shared cultural intelligence)
 // ==============================================================================
 
 import { motion, useReducedMotion } from "motion/react";
@@ -16,7 +19,7 @@ interface EkaLogoLoaderProps {
 
 export function EkaLogoLoader({
   size = "md",
-  label = "Gathering wisdom...",
+  label = "Connecting cultural intelligence...",
   className,
 }: EkaLogoLoaderProps) {
   const shouldReduceMotion = useReducedMotion();
@@ -28,66 +31,68 @@ export function EkaLogoLoader({
   }[size];
 
   return (
-    <div className={cn("flex flex-col items-center justify-center gap-3 p-4", className)}>
+    <div className={cn("flex flex-col items-center justify-center gap-3 p-4 select-none", className)}>
       <div
         className="relative flex items-center justify-center"
         style={{ width: dimension, height: dimension }}
+        role="status"
+        aria-label={label || "Loading"}
       >
-        {/* Outer Arc Ring */}
+        {/* 1. Outer Global Meridian Ring: Smooth, authoritative orbital rotation */}
         <motion.div
           animate={
             shouldReduceMotion
-              ? { opacity: 0.6 }
+              ? { opacity: 0.8 }
               : {
                   rotate: 360,
                 }
           }
           transition={{
-            duration: 2.8,
+            duration: 2.4,
             repeat: Infinity,
             ease: "linear",
           }}
-          className="absolute inset-0 rounded-full border-2 border-transparent border-t-terracotta border-r-saffron/40"
+          className="absolute inset-0 rounded-full border-2 border-border/40 border-t-terracotta border-r-foreground/30"
         />
 
-        {/* Counter-rotating Inner Arc */}
+        {/* 2. Longitudinal Meridian Arc: Intersecting cultural pathway */}
         <motion.div
           animate={
             shouldReduceMotion
-              ? { opacity: 0.4 }
+              ? { opacity: 0.5 }
               : {
                   rotate: -360,
+                  scale: [0.94, 1.04, 0.94],
                 }
           }
           transition={{
-            duration: 1.8,
-            repeat: Infinity,
-            ease: "linear",
+            rotate: { duration: 3.2, repeat: Infinity, ease: "linear" },
+            scale: { duration: 1.6, repeat: Infinity, ease: "easeInOut" },
           }}
-          className="absolute inset-2 rounded-full border-2 border-transparent border-b-forest/80 border-l-amber-500/50"
+          className="absolute inset-1.5 rounded-full border border-dashed border-terracotta/40 border-b-foreground/60"
         />
 
-        {/* Pulsing Central Bindu */}
+        {/* 3. The "One Within" Focal Nucleus: Radiant, steady human consciousness pulse */}
         <motion.div
           animate={
             shouldReduceMotion
               ? { scale: 1 }
               : {
-                  scale: [0.8, 1.25, 0.8],
-                  opacity: [0.6, 1, 0.6],
+                  scale: [0.85, 1.2, 0.85],
+                  opacity: [0.75, 1, 0.75],
                 }
           }
           transition={{
-            duration: 1.4,
+            duration: 1.6,
             repeat: Infinity,
             ease: "easeInOut",
           }}
-          className="size-2.5 rounded-full bg-terracotta shadow-[0_0_12px_rgba(200,90,50,0.6)]"
+          className="size-2.5 rounded-full bg-terracotta shadow-[0_0_10px_rgba(194,94,62,0.5)]"
         />
       </div>
 
       {label && (
-        <p className="text-xs font-mono tracking-widest uppercase text-muted-foreground animate-pulse">
+        <p className="text-xs font-mono tracking-wider uppercase text-muted-foreground animate-pulse">
           {label}
         </p>
       )}

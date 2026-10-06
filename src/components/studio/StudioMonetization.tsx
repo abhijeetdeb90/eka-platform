@@ -84,15 +84,15 @@ export function StudioMonetization({ currentRole }: StudioMonetizationProps) {
         </div>
 
         <div className="rounded-2xl border border-border bg-card p-4">
-          <span className="text-xs uppercase text-muted-foreground font-medium">Creator Pool</span>
-          <p className="mt-1 font-display text-2xl font-semibold">₹1,45,000</p>
-          <span className="text-[11px] text-primary font-medium">Distributed by Score</span>
+          <span className="text-xs uppercase text-muted-foreground font-medium">Creator Commerce GMV</span>
+          <p className="mt-1 font-display text-2xl font-semibold">₹14,50,000</p>
+          <span className="text-[11px] text-primary font-medium">Completed Offerings</span>
         </div>
 
         <div className="rounded-2xl border border-border bg-card p-4">
-          <span className="text-xs uppercase text-muted-foreground font-medium">Peace & Knowledge Fund</span>
-          <p className="mt-1 font-display text-2xl font-semibold">₹97,000</p>
-          <span className="text-[11px] text-muted-foreground">20% of Fee Tithe</span>
+          <span className="text-xs uppercase text-muted-foreground font-medium">Net Creator Payouts</span>
+          <p className="mt-1 font-display text-2xl font-semibold">₹13,05,000</p>
+          <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">Dispatched via Ledger</span>
         </div>
       </div>
 

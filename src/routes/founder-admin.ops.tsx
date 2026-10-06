@@ -15,6 +15,7 @@ export const Route = createFileRoute("/founder-admin/ops")({
       "telemetry",
       "agents",
       "crm",
+      "investor-status",
     ];
     const requested = search["tab"] as OpsTab;
     return {

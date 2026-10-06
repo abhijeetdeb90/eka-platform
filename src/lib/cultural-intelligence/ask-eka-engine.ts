@@ -2,18 +2,29 @@
 // EKA CULTURAL INTELLIGENCE REASONING ENGINE: "ASK EKA"
 // ==============================================================================
 // Grounds inquiries in structured cultural knowledge + verified citations.
-// Does NOT behave like a generic ChatGPT wrapper.
-// Connects: Person → Identity → Context → Culture → Source → Community
+// Architecture:
+// User Question → Intent Detection → Entity Detection → Knowledge Retrieval →
+// Relevant Knowledge Objects → Relevant Sources → AI Context Builder → Gemini AI
+// (Bounded strictly within token budgets: 5,000–20,000 tokens)
 // ==============================================================================
 
 import { CULTURAL_KNOWLEDGE_CORPUS } from "./knowledge-corpus";
 import type { CulturalKnowledgeObject, CulturalInquiryResult } from "./types";
 import { generateGeminiContent } from "@/lib/ai/gemini-client";
+import { buildEkaAiContext } from "@/lib/knowledge/knowledge-context-builder";
+import { TOKEN_BUDGETS } from "@/lib/ai/token-budget-manager";
 
 export async function askEkaCulturalEngine(userQuery: string): Promise<CulturalInquiryResult> {
   const queryLower = userQuery.toLowerCase().trim();
 
-  // 1. Semantic Token & Keyword Match against Corpus
+  // 1. Multi-stage RAG Retrieval & Context Assembly bounded by token budget
+  const contextBundle = await buildEkaAiContext(
+    userQuery,
+    undefined,
+    TOKEN_BUDGETS.ASK_EKA_PREFERRED_MAX,
+  );
+
+  // 2. Resolve matched knowledge object from corpus
   const queryTokens = queryLower.split(/\s+/).filter((w) => w.length > 2);
   let matchedObject: CulturalKnowledgeObject | undefined = CULTURAL_KNOWLEDGE_CORPUS.find((item) => {
     const textBlob = `${item.id} ${item.slug} ${item.title} ${item.region} ${item.tags.join(" ")} ${item.curiosityQuestion}`.toLowerCase();
@@ -26,7 +37,7 @@ export async function askEkaCulturalEngine(userQuery: string): Promise<CulturalI
 
   const baseObj = matchedObject || CULTURAL_KNOWLEDGE_CORPUS[0]!;
 
-  // 2. Default Curated Answer Layer
+  // 3. Baseline Curated Answer Layer
   let explanation = {
     summary: baseObj.summary,
     deepExplanation: `${baseObj.what}\n\n${baseObj.why}\n\nHistorical Origin: ${baseObj.origin.historicalContext}`,
@@ -35,29 +46,15 @@ export async function askEkaCulturalEngine(userQuery: string): Promise<CulturalI
     poweredBy: "EKA Curated Lineage Archives",
   };
 
-  // 3. Dynamic Gemini Contextual Enrichment
+  // 4. Bounded Gemini Reasoning via Automatic Context Guard
   try {
-    const prompt = `User Query: "${userQuery}"
-Subject Cultural Knowledge Object: "${baseObj.title}"
-Region: ${baseObj.region}
-What: ${baseObj.what}
-Why: ${baseObj.why}
-Origin: ${baseObj.origin.historicalContext}
-Philosophical Root: ${baseObj.origin.philosophicalRoot}
-Primary Sources: ${baseObj.sources.map((s) => `${s.title} (${s.citationRef})`).join("; ")}
-
-You are the EKA Cultural Intelligence Layer.
-Respond in a contemplative, objective, and deeply respectful editorial tone.
-Answer the user's specific curiosity with precise cultural context.
-Do NOT sound like generic conversational AI. Avoid filler ("Certainly!", "Great question!").
-Format your response into:
-1. SUMMARY: A concise 2-sentence direct answer.
-2. DEEP CONTEXT: 1-2 paragraphs detailing the meaning, lineage, and regional nuance.
-3. VISITOR GUIDANCE: Practical respectful etiquette for someone wishing to witness or experience this.`;
-
-    const geminiRes = await generateGeminiContent(prompt, {
+    const geminiRes = await generateGeminiContent(contextBundle.contextPrompt, {
       temperature: 0.2,
       maxOutputTokens: 900,
+      taskType: "ask_eka",
+      maxBudget: TOKEN_BUDGETS.ASK_EKA_PREFERRED_MAX,
+      retrievedObjects: [contextBundle.primaryKnowledgeObject],
+      retrievedSources: contextBundle.verifiedSources,
       systemInstruction:
         "You are the EKA Cultural Intelligence Engine. Ground all answers in authentic primary lineages, regional distinctions, and philosophical roots. Emphasize plural understanding over monoculture.",
     });
@@ -71,9 +68,9 @@ Format your response into:
       explanation = {
         summary: summaryMatch?.[1]?.trim() || baseObj.summary,
         deepExplanation: deepMatch?.[1]?.trim() || explanation.deepExplanation,
-        culturalNuance: `Grounding verified through Gemini reasoning against primary citations: ${baseObj.sources.map((s) => s.citationRef).join(", ")}.`,
+        culturalNuance: `Grounding verified through Gemini reasoning against ${contextBundle.verifiedSources.length} primary citations.`,
         visitorGuidance: guidanceMatch?.[1]?.trim() || baseObj.how.visitorEtiquette,
-        poweredBy: "Google Gemini 2.5 & EKA Verified Lineage Corpus",
+        poweredBy: `Google Gemini (${geminiRes.provider === "google-direct" ? "Direct API" : "Gateway"}) & EKA Verified Lineage Corpus`,
       };
     }
   } catch (err) {
@@ -82,7 +79,7 @@ Format your response into:
 
   // Related traditions
   const relatedTraditions = CULTURAL_KNOWLEDGE_CORPUS.filter(
-    (c) => c.id !== baseObj.id && (c.category === baseObj.category || baseObj.relatedKnowledgeIds.includes(c.id))
+    (c) => c.id !== baseObj.id && (c.category === baseObj.category || baseObj.relatedKnowledgeIds.includes(c.id)),
   ).map((c) => ({ id: c.id, title: c.title, region: c.region }));
 
   return {

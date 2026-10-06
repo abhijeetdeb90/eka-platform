@@ -63,6 +63,8 @@ import { Input } from "@/components/ui/input";
 import { EkaLogo } from "@/components/brand/Logo";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { InvestorStatusManager } from "@/components/investor/InvestorStatusManager";
+import { AiContextHealthOps } from "./AiContextHealthOps";
 
 export type OpsTab =
   | "founder"
@@ -71,7 +73,9 @@ export type OpsTab =
   | "brand-ops"
   | "telemetry"
   | "agents"
-  | "crm";
+  | "crm"
+  | "investor-status"
+  | "ai-context";
 
 interface OpsSearch {
   tab?: OpsTab;
@@ -235,7 +239,9 @@ export function OpsRadar({ initialTab = "founder" }: { initialTab?: OpsTab }) {
             { id: "brand-ops", label: "Brand Campaign Ops", icon: Building2, badge: `${pendingCampaigns.length} Review` },
             { id: "telemetry", label: "Platform Telemetry", icon: Server, badge: "99.9%" },
             { id: "agents", label: "AI Agent Registry", icon: Bot, badge: "Gemini" },
+            { id: "ai-context", label: "AI Context Health", icon: Cpu, badge: "1M Guard" },
             { id: "crm", label: "Ops CRM & Access", icon: HeartHandshake, badge: null },
+            { id: "investor-status", label: "Investor Status & Health", icon: Radio, badge: "Hub" },
           ].map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
@@ -647,6 +653,41 @@ export function OpsRadar({ initialTab = "founder" }: { initialTab?: OpsTab }) {
                   </table>
                 </div>
               </div>
+            </div>
+          )}
+
+          {activeTab === "investor-status" && (
+            <div className="space-y-6 animate-fade-in font-sans">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-neutral-800">
+                <div>
+                  <span className="text-[10px] uppercase tracking-widest text-amber-500 font-mono font-semibold">
+                    Investor Presentation Governance
+                  </span>
+                  <h2 className="font-display text-xl sm:text-2xl font-bold text-white mt-1">
+                    Investor Status Registry & Health Validator
+                  </h2>
+                  <p className="text-xs text-neutral-400 font-light mt-0.5">
+                    Single source of truth for LIVE, BETA, and ROADMAP product maturity states.
+                  </p>
+                </div>
+                <Link to="/investor">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="border-amber-500/30 text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 text-xs font-mono gap-1.5 h-8"
+                  >
+                    <ExternalLink className="size-3.5" />
+                    <span>Open Investor Gateway</span>
+                  </Button>
+                </Link>
+              </div>
+              <InvestorStatusManager />
+            </div>
+          )}
+
+          {activeTab === "ai-context" && (
+            <div className="space-y-6 animate-fade-in font-sans">
+              <AiContextHealthOps />
             </div>
           )}
         </main>

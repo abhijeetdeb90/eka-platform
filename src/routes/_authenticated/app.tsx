@@ -28,24 +28,10 @@ export const Route = createFileRoute("/_authenticated/app")({
   component: AppLayout,
 });
 
-const mobileTabs = [
-  { to: "/app", label: "Home", icon: Home, exact: true },
-  { to: "/app/explore", label: "Discover", icon: Compass, exact: false },
-  { to: "/app/ask", label: "Ask", icon: HelpCircle, exact: false },
-  { to: "/app/sanghas", label: "Community", icon: Users, exact: false },
-  { to: "/app/dashboard", label: "My EKA", icon: LayoutDashboard, exact: false },
-] as const;
-
-const primaryNavItems = [
-  { to: "/app", label: "Home", icon: Home, exact: true },
-  { to: "/app/explore", label: "Discover", icon: Compass, exact: false },
-  { to: "/app/ask", label: "Ask", icon: HelpCircle, exact: false },
-  { to: "/app/sanghas", label: "Community", icon: Users, exact: false },
-  { to: "/app/dashboard", label: "My EKA", icon: LayoutDashboard, exact: false },
-] as const;
+import { PRIMARY_NAV_ITEMS, CREATE_ACTION_ITEM } from "@/config/navigation";
 
 const utilityNavItems = [
-  { to: "/app/search", label: "Search", icon: Search, exact: false },
+  { to: "/search", label: "Search", icon: Search, exact: false },
   { to: "/app/saved", label: "Saved", icon: Bookmark, exact: false },
   { to: "/app/notifications", label: "Notifications", icon: Bell, exact: false },
 ] as const;
@@ -157,9 +143,9 @@ function AppLayout() {
             <EkaLogo withTagline />
           </Link>
 
-          {/* 5 Primary Intent Actions */}
+          {/* 8 Primary Intent Actions */}
           <nav aria-label="Main Navigation" className="space-y-1">
-            {primaryNavItems.map((l) => (
+            {PRIMARY_NAV_ITEMS.map((l) => (
               <Link
                 key={l.to}
                 to={l.to}
@@ -181,14 +167,14 @@ function AppLayout() {
           </nav>
 
           {/* Primary Persistent Action */}
-          <div className="my-5 px-1">
+          <div className="my-4 px-1">
             <TactileWrapper className="w-full">
               <Button
-                className="w-full rounded-xl py-5 shadow-calm transition-all hover:shadow-lift"
-                onClick={() => navigate({ to: "/app/create" })}
+                className="w-full rounded-xl py-5 bg-gradient-to-r from-terracotta to-saffron text-white shadow-calm transition-all hover:shadow-lift"
+                onClick={() => navigate({ to: CREATE_ACTION_ITEM.to })}
               >
                 <PlusSquare className="mr-1.5 size-4" />
-                <span>Create</span>
+                <span>{CREATE_ACTION_ITEM.label}</span>
               </Button>
             </TactileWrapper>
           </div>
@@ -226,7 +212,7 @@ function AppLayout() {
             {profile && (
               <div className="border-t border-border/50 pt-3">
                 <Link
-                  to="/app/me"
+                  to="/my-eka"
                   className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs text-muted-foreground transition-colors hover:bg-accent/50 hover:text-foreground"
                 >
                   <span className="size-2 rounded-full bg-forest" />
@@ -246,33 +232,6 @@ function AppLayout() {
           <Outlet />
         </main>
       </div>
-
-      {/* --- Mobile Bottom Navigation (Glass Dock) ---------------------- */}
-      <nav
-        aria-label="Primary mobile"
-        className="fixed inset-x-0 bottom-0 z-40 border-t border-border/70 bg-background/90 backdrop-blur-lg lg:hidden"
-      >
-        <div className="mx-auto flex max-w-lg items-stretch">
-          {mobileTabs.map((tab) => (
-            <Link
-              key={tab.to}
-              to={tab.to}
-              activeOptions={{ exact: tab.exact }}
-              activeProps={{ className: "text-primary font-medium", "aria-current": "page" }}
-              className="group relative flex min-h-[3.5rem] flex-1 flex-col items-center justify-center gap-1 py-2 text-[10px] text-muted-foreground transition-colors hover:text-foreground"
-            >
-              <motion.div whileTap={{ scale: 0.88 }} transition={{ duration: 0.15 }}>
-                <tab.icon
-                  aria-hidden="true"
-                  className="size-5 transition-transform group-hover:scale-105"
-                  strokeWidth={1.6}
-                />
-              </motion.div>
-              <span>{tab.label}</span>
-            </Link>
-          ))}
-        </div>
-      </nav>
     </div>
   );
 }

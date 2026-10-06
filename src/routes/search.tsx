@@ -96,17 +96,42 @@ function PublicMultilingualSearchPage() {
               className="border-primary/40 text-primary text-xs font-mono uppercase tracking-wider mb-1"
             >
               <Sparkles className="size-3 mr-1.5 inline" />
-              Language-Independent Semantic Search
+              Language-Independent Cultural Search
             </Badge>
 
             <h1 className="font-display text-3xl sm:text-5xl font-bold tracking-tight text-foreground">
-              Search the World in Your Language
+              Search the Living Cultural Archive
             </h1>
 
             <p className="font-serif text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              Ask cultural questions or search traditions in Assamese, Tamil, Bengali, Hindi,
-              English, or any supported language.
+              Explore traditions, stories, sacred places, communities, crafts and wisdom in your native tongue.
             </p>
+          </div>
+
+          {/* Unified Intelligent Layer: Ask EKA Bridge */}
+          <div className="rounded-2xl border border-primary/30 bg-primary/5 p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="size-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 text-primary">
+                <Sparkles className="size-5" />
+              </div>
+              <div className="text-left">
+                <div className="flex items-center gap-2">
+                  <span className="font-display text-sm font-semibold text-foreground">Looking for deep answers & synthesis?</span>
+                  <Badge variant="secondary" className="text-[10px] bg-primary/10 text-primary">Universal Wisdom</Badge>
+                </div>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Ask EKA connects Stories, Codex Guides, Living Sanghas, and Cultural Lineages into one synthesized answer.
+                </p>
+              </div>
+            </div>
+            <Link
+              to="/ask"
+              search={{ q: searchTerm || undefined }}
+              className="shrink-0 inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-xs font-medium text-primary-foreground shadow-xs hover:bg-primary/90 transition-all"
+            >
+              <span>Open Ask EKA</span>
+              <ArrowRight className="size-3.5" />
+            </Link>
           </div>
 
           {/* Search Input Bar */}
@@ -117,7 +142,7 @@ function PublicMultilingualSearchPage() {
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder={t("search.askQuestion", "Ask any cultural question in your own language...")}
+                placeholder={t("search.askQuestion", "Search people, traditions, places, crafts, festivals...")}
                 className="border-0 bg-transparent py-6 px-3.5 text-base sm:text-lg shadow-none focus-visible:ring-0 placeholder:text-muted-foreground/70"
                 autoFocus
               />
@@ -129,6 +154,49 @@ function PublicMultilingualSearchPage() {
                   Clear
                 </button>
               )}
+            </div>
+          </div>
+
+          {/* Contextual IA Pathway Pills */}
+          <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-muted-foreground pt-1 border-b border-border/50 pb-4">
+            <span className="font-mono text-[11px] uppercase tracking-wider">Contextual Pathways:</span>
+            <div className="flex flex-wrap gap-2">
+              <Link
+                to="/discover"
+                className="inline-flex items-center gap-1 rounded-lg border border-border/60 bg-card/60 px-2.5 py-1 text-foreground/80 hover:text-foreground hover:border-primary/40"
+              >
+                <Compass className="size-3 text-terracotta" />
+                <span>Discover Map</span>
+              </Link>
+              <Link
+                to="/stories"
+                className="inline-flex items-center gap-1 rounded-lg border border-border/60 bg-card/60 px-2.5 py-1 text-foreground/80 hover:text-foreground hover:border-primary/40"
+              >
+                <BookOpen className="size-3 text-forest" />
+                <span>Reels & Stories</span>
+              </Link>
+              <Link
+                to="/learn"
+                className="inline-flex items-center gap-1 rounded-lg border border-border/60 bg-card/60 px-2.5 py-1 text-foreground/80 hover:text-foreground hover:border-primary/40"
+              >
+                <BookOpen className="size-3 text-saffron" />
+                <span>Knowledge Codex</span>
+              </Link>
+              <Link
+                to="/community"
+                className="inline-flex items-center gap-1 rounded-lg border border-border/60 bg-card/60 px-2.5 py-1 text-foreground/80 hover:text-foreground hover:border-primary/40"
+              >
+                <Filter className="size-3 text-primary" />
+                <span>Communities</span>
+              </Link>
+              <Link
+                to="/ask"
+                search={{ q: searchTerm || undefined }}
+                className="inline-flex items-center gap-1 rounded-lg border border-primary/40 bg-primary/10 px-2.5 py-1 text-primary font-medium hover:bg-primary/20"
+              >
+                <Sparkles className="size-3" />
+                <span>Ask EKA AI</span>
+              </Link>
             </div>
           </div>
 
@@ -202,6 +270,36 @@ function PublicMultilingualSearchPage() {
                         <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed line-clamp-2">
                           {result.summary}
                         </p>
+
+                        {/* Contextual Action Pathways */}
+                        <div className="flex flex-wrap items-center gap-3 pt-3 text-xs">
+                          <span className="text-[11px] font-mono text-muted-foreground uppercase">Connect to:</span>
+                          <Link
+                            to="/stories"
+                            className="text-terracotta hover:underline font-medium"
+                          >
+                            Stories & Reels →
+                          </Link>
+                          <Link
+                            to="/discover"
+                            className="text-forest hover:underline font-medium"
+                          >
+                            Place on Map →
+                          </Link>
+                          <Link
+                            to="/community"
+                            className="text-primary hover:underline font-medium"
+                          >
+                            Community Discussions →
+                          </Link>
+                          <Link
+                            to="/ask"
+                            search={{ q: `What is the cultural significance of ${result.title}?` }}
+                            className="text-saffron hover:underline font-medium"
+                          >
+                            Ask EKA AI →
+                          </Link>
+                        </div>
                       </div>
 
                       <div className="shrink-0 pt-2 sm:pt-0">
@@ -219,17 +317,29 @@ function PublicMultilingualSearchPage() {
                 ))}
               </div>
             ) : searchTerm.trim().length > 1 ? (
-              <div className="rounded-2xl border border-border/80 bg-card/60 p-12 text-center space-y-3">
+              <div className="rounded-2xl border border-border/80 bg-card/60 p-12 text-center space-y-4">
                 <HelpCircle className="size-10 text-muted-foreground/60 mx-auto" />
                 <h3 className="font-display text-lg font-semibold text-foreground">
                   {t("search.noResults")}
                 </h3>
                 <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                  Try searching with traditional keywords like "বিহু", "பொங்கல்", "दीपावली", or browse our full Knowledge Directory.
+                  Try asking our universal cultural AI, or exploring through the interactive global map.
                 </p>
-                <div className="pt-2">
-                  <Link to="/knowledge">
-                    <Button variant="outline" size="sm">Browse Cultural Directory</Button>
+                <div className="flex flex-wrap justify-center gap-3 pt-2">
+                  <Link
+                    to="/ask"
+                    search={{ q: searchTerm }}
+                  >
+                    <Button className="rounded-full text-xs gap-1.5 bg-primary text-primary-foreground hover:bg-primary/90">
+                      <Sparkles className="size-3.5" />
+                      <span>Ask EKA About "{searchTerm}"</span>
+                    </Button>
+                  </Link>
+                  <Link to="/discover">
+                    <Button variant="outline" className="rounded-full text-xs gap-1.5">
+                      <Compass className="size-3.5 text-primary" />
+                      <span>Explore on Cultural Map</span>
+                    </Button>
                   </Link>
                 </div>
               </div>

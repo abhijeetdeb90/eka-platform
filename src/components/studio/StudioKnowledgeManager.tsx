@@ -638,7 +638,7 @@ export function StudioKnowledgeManager({ currentRole, selectedId }: StudioKnowle
                       localizedTitle: `${activeObj.title} — ${SUPPORTED_LOCALES[selectedTranslationLang as SupportedLocale]?.name || "Localized"} Cultural Entity`,
                       localizedOneLiner: activeObj.summary,
                       localizedSummary: activeObj.description || activeObj.summary,
-                      regionLabel: activeObj.region || "Canonical Region",
+                      regionLabel: activeObj.geography?.origin_region || "Canonical Region",
                       categoryLabel: activeObj.category || "Living Culture",
                       traditions: [activeObj.tradition],
                       places: [],
@@ -646,7 +646,7 @@ export function StudioKnowledgeManager({ currentRole, selectedId }: StudioKnowle
                       translationStatus: "draft" as TranslationStatus,
                       verificationStatus: "review_needed" as const,
                       reviewedBy: "Pending Linguistic Board Review",
-                      lastQaDate: new Date().toISOString().split("T")[0],
+                      lastQaDate: new Date().toISOString().slice(0, 10),
                     };
 
                   const handleUpdateTranslation = (

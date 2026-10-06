@@ -299,7 +299,7 @@
   border-bottom: 1px solid color-mix(in oklch, var(--color-border) 60%, transparent);
 }
 
-/* Subtle spiritual aura and halo glow */
+/* Editorial Cultural Focus Glow (Universal Ambient Vignette) */
 @utility halo-sacred {
   position: relative;
   &::before {
@@ -309,7 +309,25 @@
     border-radius: 9999px;
     background: radial-gradient(
       circle,
-      color-mix(in oklch, var(--color-saffron) 18%, transparent) 0%,
+      color-mix(in oklch, var(--color-terracotta) 12%, transparent) 0%,
+      transparent 70%
+    );
+    filter: blur(24px);
+    pointer-events: none;
+    z-index: 0;
+  }
+}
+
+@utility halo-cultural {
+  position: relative;
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -12%;
+    border-radius: 9999px;
+    background: radial-gradient(
+      circle,
+      color-mix(in oklch, var(--color-terracotta) 12%, transparent) 0%,
       transparent 70%
     );
     filter: blur(24px);
