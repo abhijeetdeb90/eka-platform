@@ -93,10 +93,13 @@ function EkaHomePage() {
           <div className="mb-4 sm:mb-6 rounded-2xl border border-border/70 bg-card/60 p-4 sm:p-5 shadow-xs backdrop-blur-xs">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
               <div className="space-y-1">
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <span className="size-2 rounded-full bg-terracotta animate-pulse" />
                   <span className="font-display font-semibold text-xs tracking-wider uppercase text-terracotta">
                     The World's Trusted Cultural Intelligence Layer
+                  </span>
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-mono font-medium border border-terracotta/30 bg-terracotta/10 text-terracotta">
+                    PRE-LAUNCH · EARLY ACCESS
                   </span>
                   <span className="text-xs text-muted-foreground hidden sm:inline">•</span>
                   <span className="text-xs text-muted-foreground italic hidden sm:inline">

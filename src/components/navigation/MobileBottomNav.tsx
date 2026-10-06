@@ -30,6 +30,7 @@ export function MobileBottomNav() {
   if (
     currentPath.startsWith("/founder-admin") ||
     currentPath.startsWith("/brands-enterprise") ||
+    currentPath.startsWith("/enterprise") ||
     currentPath.startsWith("/ops") ||
     currentPath.startsWith("/admin") ||
     currentPath.startsWith("/brands")

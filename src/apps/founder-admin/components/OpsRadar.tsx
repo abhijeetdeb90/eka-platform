@@ -670,16 +670,6 @@ export function OpsRadar({ initialTab = "founder" }: { initialTab?: OpsTab }) {
                     Single source of truth for LIVE, BETA, and ROADMAP product maturity states.
                   </p>
                 </div>
-                <Link to="/investor">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="border-amber-500/30 text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 text-xs font-mono gap-1.5 h-8"
-                  >
-                    <ExternalLink className="size-3.5" />
-                    <span>Open Investor Gateway</span>
-                  </Button>
-                </Link>
               </div>
               <InvestorStatusManager />
             </div>

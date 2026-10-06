@@ -18,7 +18,6 @@ import { SafeNavigationProvider } from "@/components/security/SafeNavigationProv
 import { CookieConsentBanner } from "@/components/common/CookieConsentBanner";
 import { MobileBottomNav } from "@/components/navigation/MobileBottomNav";
 import { LocalizationProvider } from "@/lib/i18n";
-import { InvestorDemoBanner } from "@/components/investor/InvestorDemoBanner";
 
 function NotFoundComponent() {
   return (
@@ -157,9 +156,6 @@ function RootComponent() {
           >
             Skip to main content
           </a>
-
-          {/* Investor Presentation Mode Active Feedback */}
-          <InvestorDemoBanner />
 
           {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
           <SafeNavigationProvider>

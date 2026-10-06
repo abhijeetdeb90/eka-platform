@@ -1,8 +1,9 @@
 // ==============================================================================
 // CONSUMER APPLICATION — SITE FOOTER
 // ==============================================================================
-// Public consumer-only footer shell.
-// Prominent EKA branding, localized legal notices, and visible Language Selector.
+// Clean, consumer-focused public footer.
+// Strictly consumer discovery, community, trust & safety, and company information.
+// Zero internal tools, zero investor leaks, zero enterprise dashboard exposure.
 // ==============================================================================
 
 import { Link } from "@tanstack/react-router";
@@ -12,14 +13,13 @@ import { LanguageSelector } from "@/components/i18n/LanguageSelector";
 import { useSmoothScroll } from "@/components/motion/SmoothScrollProvider";
 import { FOOTER_IA_CONFIG, EKA_BRAND } from "@/config/navigation";
 import { FooterLocalDiscovery } from "@/components/site/FooterLocalDiscovery";
-import { AppStoreBadges } from "@/components/brand/AppStoreBadges";
 
 export function ConsumerFooter() {
   const { scrollTo } = useSmoothScroll();
 
   return (
     <footer className="relative border-t border-border/70 bg-sand/30">
-      {/* 1. Local & Cultural Discovery Layer (Snapchat-inspired Local Explorer) */}
+      {/* 1. Local & Cultural Discovery Layer */}
       <FooterLocalDiscovery />
 
       {/* 2. Primary Footer Directory Grid */}
@@ -38,23 +38,20 @@ export function ConsumerFooter() {
                 wisdom of humanity. No synthetic cultures, no algorithmic homogenisation.
               </p>
               <div className="flex items-center gap-2 pt-2 text-xs text-muted-foreground">
-                <ShieldCheck className="size-4 text-forest shrink-0" />
+                <ShieldCheck className="size-4 text-emerald-600 shrink-0" />
                 <span>Digital Personal Data Protection (DPDP) Act, 2023 Compliant</span>
-              </div>
-              <div className="pt-2">
-                <AppStoreBadges />
               </div>
             </div>
 
-            {/* Structured IA Directory Columns */}
-            <div className="sm:col-span-2 md:col-span-3 lg:col-span-6 xl:col-span-8 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-8">
+            {/* Structured IA Directory Columns (4 Clean Consumer Columns) */}
+            <div className="sm:col-span-2 md:col-span-3 lg:col-span-6 xl:col-span-8 grid grid-cols-2 sm:grid-cols-4 gap-8">
               {/* Explore Column */}
               <div>
                 <h4 className="font-display text-xs font-bold uppercase tracking-[0.16em] text-foreground">
-                  {FOOTER_IA_CONFIG.explore.title}
+                  {FOOTER_IA_CONFIG.explore?.title || "Explore"}
                 </h4>
                 <ul className="mt-4 space-y-2.5 text-xs">
-                  {FOOTER_IA_CONFIG.explore.links.map((l) => (
+                  {FOOTER_IA_CONFIG.explore?.links.map((l) => (
                     <li key={l.label}>
                       <Link
                         to={l.to as any}
@@ -67,13 +64,13 @@ export function ConsumerFooter() {
                 </ul>
               </div>
 
-              {/* Communities Column */}
+              {/* Community Column */}
               <div>
                 <h4 className="font-display text-xs font-bold uppercase tracking-[0.16em] text-foreground">
-                  {FOOTER_IA_CONFIG.communities.title}
+                  {FOOTER_IA_CONFIG.community?.title || "Community"}
                 </h4>
                 <ul className="mt-4 space-y-2.5 text-xs">
-                  {FOOTER_IA_CONFIG.communities.links.map((l) => (
+                  {FOOTER_IA_CONFIG.community?.links.map((l) => (
                     <li key={l.label}>
                       <Link
                         to={l.to as any}
@@ -86,13 +83,13 @@ export function ConsumerFooter() {
                 </ul>
               </div>
 
-              {/* Creators Column */}
+              {/* Trust & Safety Column */}
               <div>
                 <h4 className="font-display text-xs font-bold uppercase tracking-[0.16em] text-foreground">
-                  {FOOTER_IA_CONFIG.creators.title}
+                  {FOOTER_IA_CONFIG.trustAndSafety?.title || "Trust & Safety"}
                 </h4>
                 <ul className="mt-4 space-y-2.5 text-xs">
-                  {FOOTER_IA_CONFIG.creators.links.map((l) => (
+                  {FOOTER_IA_CONFIG.trustAndSafety?.links.map((l) => (
                     <li key={l.label}>
                       <Link
                         to={l.to as any}
@@ -105,51 +102,13 @@ export function ConsumerFooter() {
                 </ul>
               </div>
 
-              {/* Business & Enterprise */}
+              {/* Company Column */}
               <div>
                 <h4 className="font-display text-xs font-bold uppercase tracking-[0.16em] text-foreground">
-                  {FOOTER_IA_CONFIG.business.title}
+                  {FOOTER_IA_CONFIG.company?.title || "Company"}
                 </h4>
                 <ul className="mt-4 space-y-2.5 text-xs">
-                  {FOOTER_IA_CONFIG.business.links.map((l) => (
-                    <li key={l.label}>
-                      <Link
-                        to={l.to as any}
-                        className="text-muted-foreground transition-colors hover:text-foreground"
-                      >
-                        {l.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Trust & Safety */}
-              <div>
-                <h4 className="font-display text-xs font-bold uppercase tracking-[0.16em] text-foreground">
-                  {FOOTER_IA_CONFIG.trustAndSafety.title}
-                </h4>
-                <ul className="mt-4 space-y-2.5 text-xs">
-                  {FOOTER_IA_CONFIG.trustAndSafety.links.map((l) => (
-                    <li key={l.label}>
-                      <Link
-                        to={l.to as any}
-                        className="text-muted-foreground transition-colors hover:text-foreground"
-                      >
-                        {l.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Company */}
-              <div>
-                <h4 className="font-display text-xs font-bold uppercase tracking-[0.16em] text-foreground">
-                  {FOOTER_IA_CONFIG.company.title}
-                </h4>
-                <ul className="mt-4 space-y-2.5 text-xs">
-                  {FOOTER_IA_CONFIG.company.links.map((l) => (
+                  {FOOTER_IA_CONFIG.company?.links.map((l) => (
                     <li key={l.label}>
                       {l.to.startsWith("mailto:") ? (
                         <a
@@ -166,50 +125,6 @@ export function ConsumerFooter() {
                           {l.label}
                         </Link>
                       )}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Investors Column */}
-              <div>
-                <h4 className="font-display text-xs font-bold uppercase tracking-[0.16em] text-foreground flex items-center gap-1.5">
-                  <span>{FOOTER_IA_CONFIG.investors?.title || "Investors"}</span>
-                  <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                </h4>
-                <ul className="mt-4 space-y-2.5 text-xs">
-                  {FOOTER_IA_CONFIG.investors?.links.map((l) => (
-                    <li key={l.label}>
-                      <Link
-                        to={l.to as any}
-                        className="text-muted-foreground transition-colors hover:text-foreground flex items-center justify-between group"
-                      >
-                        <span>{l.label}</span>
-                        {l.badge && (
-                          <span className="text-[9px] font-mono text-terracotta bg-terracotta/10 px-1 rounded">
-                            {l.badge}
-                          </span>
-                        )}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Legal & Privacy */}
-              <div className="col-span-2 sm:col-span-1">
-                <h4 className="font-display text-xs font-bold uppercase tracking-[0.16em] text-foreground">
-                  {FOOTER_IA_CONFIG.legal.title}
-                </h4>
-                <ul className="mt-4 space-y-2.5 text-xs">
-                  {FOOTER_IA_CONFIG.legal.links.map((l) => (
-                    <li key={l.label}>
-                      <Link
-                        to={l.to as any}
-                        className="text-muted-foreground transition-colors hover:text-foreground"
-                      >
-                        {l.label}
-                      </Link>
                     </li>
                   ))}
                 </ul>

@@ -216,42 +216,25 @@ export const FOOTER_IA_CONFIG: Record<string, FooterSection> = {
       { to: "/ask", label: "Ask EKA (Universal Wisdom)" },
       { to: "/discover#cultural-map", label: "Cultural Intelligence Map" },
       { to: "/search", label: "Multilingual Search" },
-      { to: "/observe", label: "Daily Observances & Calendar" },
     ],
   },
-  communities: {
-    title: "For Communities",
+  community: {
+    title: "Community",
     links: [
-      { to: "/community", label: "Discover Communities" },
-      { to: "/create", label: "Create a Community" },
-      { to: "/standards", label: "Community Guidelines" },
-      { to: "/give", label: "Transparency & Stewardship" },
-    ],
-  },
-  creators: {
-    title: "For Creators",
-    links: [
-      { to: "/create", label: "Contribute Your Story" },
-      { to: "/membership", label: "Sanctuary Membership" },
-      { to: "/app/creator", label: "Creator Studio & Pools" },
-      { to: "/standards", label: "Archive Quality Standards" },
-    ],
-  },
-  business: {
-    title: "For Business",
-    links: [
-      { to: "/brands-enterprise", label: "Enterprise & Institutions" },
-      { to: "/brands", label: "Cultural Partnerships" },
-      { to: "/give", label: "Patronage & Grants" },
+      { to: "/community", label: "Discover Sanghas" },
+      { to: "/create", label: "Contribute to Archive" },
+      { to: "/standards", label: "Community Standards" },
+      { to: "/give", label: "Stewardship & Grants" },
     ],
   },
   trustAndSafety: {
     title: "Trust & Safety",
     links: [
       { to: "/standards", label: "How EKA Works" },
-      { to: "/standards", label: "Verification & Attribution" },
-      { to: "/privacy", label: "Privacy & DPDP Rights" },
-      { to: "/standards", label: "Report Content" },
+      { to: "/standards", label: "Verification & Provenance" },
+      { to: "/privacy", label: "Privacy Policy (DPDP 2023)" },
+      { to: "/terms", label: "Terms of Service" },
+      { to: "/refund", label: "Refund Policy" },
     ],
   },
   company: {
@@ -259,27 +242,7 @@ export const FOOTER_IA_CONFIG: Record<string, FooterSection> = {
     links: [
       { to: "/", label: "About EKA" },
       { to: "/stories", label: "Living Archive Vision" },
-      { to: "/investor", label: "Investor Presentation Gateway", badge: "Live" },
       { to: "mailto:contact@eka.earth", label: "Contact Us" },
-    ],
-  },
-  investors: {
-    title: "Investors",
-    links: [
-      { to: "/investor", label: "Investor Gateway", badge: "Gateway" },
-      { to: "/investor#product-matrix", label: "Product Maturity Matrix" },
-      { to: "/founder-admin?demo=true", label: "Admin Panel Demo" },
-      { to: "/brands-enterprise?demo=true", label: "Enterprise Demo" },
-    ],
-  },
-  legal: {
-    title: "Legal",
-    links: [
-      { to: "/privacy", label: "Privacy Policy (DPDP 2023)" },
-      { to: "/terms", label: "Terms of Service" },
-      { to: "/refund", label: "Refund Policy" },
-      { to: "/copyright", label: "Copyright & Attribution" },
-      { to: "/cookies", label: "Cookie Preferences" },
     ],
   },
 };

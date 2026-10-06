@@ -2,14 +2,13 @@
 // EKA PLATFORM — CENTRALIZED ACCESS CONTROL & RBAC ARCHITECTURE
 // ==============================================================================
 // Hard product separation:
-// 1. CONSUMER (Public / Launch-Ready: eka.world)
-// 2. FOUNDER / ADMIN (Private Internal Operating System: admin.eka.world)
-// 3. BRANDS / ENTERPRISE (Future B2B Product: business.eka.world)
+// 1. CONSUMER (Public / Pre-Launch Early Access: eka.earth)
+// 2. FOUNDER / ADMIN (Private Internal Operating System: /founder-admin)
+// 3. BRANDS / ENTERPRISE (Separate Commercial B2B Product: /brands-enterprise)
 // ==============================================================================
 
 import { redirect } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
-import { getInvestorDemoSession, startInvestorDemoSession } from "./demo-session";
 
 export type EkaRole =
   | "consumer"
@@ -26,6 +25,7 @@ export const BRANDS_ENTERPRISE_ROLES = ["brand", "enterprise", "founder", "super
 
 /**
  * Fetch authenticated user and roles from Supabase session and user_roles table.
+ * Strictly uses cryptographic auth sessions; zero query-parameter backdoors.
  */
 export async function getSessionAndRoles(): Promise<{
   userId: string | null;
@@ -35,25 +35,6 @@ export async function getSessionAndRoles(): Promise<{
   try {
     if (typeof window === "undefined") {
       return { userId: null, roles: [], isAuthenticated: false };
-    }
-
-    // 0. Auto-activate demo if requested via query param
-    if (window.location.search.includes("demo=admin") || window.location.search.includes("demo=true")) {
-      startInvestorDemoSession("admin");
-    } else if (window.location.search.includes("demo=enterprise")) {
-      startInvestorDemoSession("enterprise");
-    } else if (window.location.search.includes("demo=consumer")) {
-      startInvestorDemoSession("consumer");
-    }
-
-    // Check for active investor demo presentation session
-    const demo = getInvestorDemoSession();
-    if (demo && demo.active) {
-      return {
-        userId: demo.userId,
-        roles: demo.roles,
-        isAuthenticated: true,
-      };
     }
 
     // 1. Fast local session check via getSession
@@ -71,7 +52,7 @@ export async function getSessionAndRoles(): Promise<{
       return { userId: null, roles: [], isAuthenticated: false };
     }
 
-    // 2. Fetch roles assigned to this user
+    // 2. Fetch roles assigned to this user from verified database table
     const { data: roleRecords } = await supabase
       .from("user_roles")
       .select("role")
@@ -97,23 +78,9 @@ export async function getSessionAndRoles(): Promise<{
  * DO NOT expose internal UI or structure to unauthorized users.
  */
 export async function verifyFounderAdminAccess(redirectTo: string = "/"): Promise<{ userId: string; roles: string[] }> {
-  // Check investor demo mode
-  if (typeof window !== "undefined") {
-    if (window.location.search.includes("demo=admin") || window.location.search.includes("demo=true")) {
-      startInvestorDemoSession("admin");
-      const demo = getInvestorDemoSession();
-      if (demo) return { userId: demo.userId, roles: demo.roles };
-    }
-    const demo = getInvestorDemoSession();
-    if (demo && demo.active && (demo.role === "admin" || demo.roles.includes("admin") || demo.roles.includes("founder"))) {
-      return { userId: demo.userId, roles: demo.roles };
-    }
-  }
-
   const session = await getSessionAndRoles();
 
   if (!session.isAuthenticated) {
-    // Not signed in -> silent redirect to home or auth
     throw redirect({ to: "/auth" });
   }
 
@@ -122,7 +89,6 @@ export async function verifyFounderAdminAccess(redirectTo: string = "/"): Promis
   );
 
   if (!hasAccess) {
-    // Authenticated consumer or creator attempting to access internal admin -> DENY ACCESS
     console.warn(`[AccessControl] Denied internal admin access to user ${session.userId}. Redirecting to ${redirectTo}`);
     throw redirect({ to: redirectTo });
   }
@@ -136,19 +102,6 @@ export async function verifyFounderAdminAccess(redirectTo: string = "/"): Promis
  * immediately deny access and redirect to consumer root ('/').
  */
 export async function verifyBrandEnterpriseAccess(redirectTo: string = "/"): Promise<{ userId: string; roles: string[] }> {
-  // Check investor demo mode
-  if (typeof window !== "undefined") {
-    if (window.location.search.includes("demo=enterprise") || window.location.search.includes("demo=true")) {
-      startInvestorDemoSession("enterprise");
-      const demo = getInvestorDemoSession();
-      if (demo) return { userId: demo.userId, roles: demo.roles };
-    }
-    const demo = getInvestorDemoSession();
-    if (demo && demo.active && (demo.role === "enterprise" || demo.roles.includes("enterprise") || demo.roles.includes("brand"))) {
-      return { userId: demo.userId, roles: demo.roles };
-    }
-  }
-
   const session = await getSessionAndRoles();
 
   if (!session.isAuthenticated) {

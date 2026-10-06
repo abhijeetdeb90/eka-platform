@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link, useNavigate, Outlet, useChildMatches } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { MailCheck, AlertTriangle, ExternalLink, X, ShieldCheck, Compass, Layers, Building2, ArrowRight } from "lucide-react";
+import { MailCheck, AlertTriangle, ExternalLink, X, Compass, ArrowRight } from "lucide-react";
 import { supabase, isGoogleAuthEnabled } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,7 +9,6 @@ import { Label } from "@/components/ui/label";
 import { EkaLogo } from "@/components/brand/Logo";
 import { track } from "@/lib/analytics";
 import { applyJoinAnswers, loadAnswers } from "@/lib/join";
-import { startInvestorDemoSession, type InvestorDemoRole } from "@/lib/auth/demo-session";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
@@ -359,70 +358,6 @@ function AuthPage() {
         <Button variant="outline" className="mt-3 w-full" onClick={google} disabled={busy}>
           Continue with Google
         </Button>
-
-        {/* Investor Demo Presentation Access */}
-        <div className="mt-5 rounded-2xl border border-amber-500/30 bg-amber-500/5 p-4 text-xs space-y-2.5">
-          <div className="flex items-center justify-between">
-            <span className="font-mono text-[10px] uppercase tracking-wider text-amber-700 dark:text-amber-400 font-semibold flex items-center gap-1.5">
-              <ShieldCheck className="size-3.5" />
-              Investor Presentation Access
-            </span>
-            <Link
-              to="/investor"
-              className="text-[10px] font-mono text-terracotta hover:underline flex items-center gap-0.5"
-            >
-              <span>Hub</span>
-              <ArrowRight className="size-2.5" />
-            </Link>
-          </div>
-          <p className="text-[11px] text-muted-foreground leading-relaxed">
-            Evaluating EKA as an investor? Launch an instant least-privilege demo session without personal credentials:
-          </p>
-          <div className="grid grid-cols-3 gap-1.5 pt-1">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                startInvestorDemoSession("consumer");
-                toast.success("Consumer Demo Mode activated");
-                navigate({ to: next || "/app" });
-              }}
-              className="h-7 text-[11px] px-2 rounded-lg bg-card hover:bg-emerald-500/10 hover:text-emerald-700 dark:hover:text-emerald-300 border-border/80"
-            >
-              <Compass className="size-3 mr-1 text-emerald-600" />
-              <span>Consumer</span>
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                startInvestorDemoSession("admin");
-                toast.success("Admin Demo Mode activated");
-                navigate({ to: "/investor/admin" });
-              }}
-              className="h-7 text-[11px] px-2 rounded-lg bg-card hover:bg-amber-500/10 hover:text-amber-700 dark:hover:text-amber-300 border-border/80"
-            >
-              <Layers className="size-3 mr-1 text-amber-600" />
-              <span>Admin</span>
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                startInvestorDemoSession("enterprise");
-                toast.success("Enterprise Demo Mode activated");
-                navigate({ to: "/investor/enterprise" });
-              }}
-              className="h-7 text-[11px] px-2 rounded-lg bg-card hover:bg-blue-500/10 hover:text-blue-700 dark:hover:text-blue-300 border-border/80"
-            >
-              <Building2 className="size-3 mr-1 text-blue-600" />
-              <span>Enterprise</span>
-            </Button>
-          </div>
-        </div>
 
         {googleNoticeOpen && (
           <div className="mt-3 rounded-xl border border-amber-500/30 bg-amber-500/10 p-3.5 text-left text-xs animate-rise">
