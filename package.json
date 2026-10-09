@@ -79,7 +79,7 @@
     "gsap": "^3.12.7",
     "input-otp": "^1.4.2",
     "lenis": "^1.1.20",
-    "lucide-react": "^0.575.0",
+    "lucide-react": "^1.52.0",
     "motion": "^12.4.7",
     "nitro": "3.0.260603-beta",
     "postgres": "^3.4.9",
