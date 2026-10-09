@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { HERO_HEADLINES, TODAY_ON_EKA, type EkaDiscoveryCard } from "@/lib/homepage-data";
+import { CulturalSearchBar } from "@/components/search";
 
 interface DiscoveryHeroProps {
   onInspectCard: (card: EkaDiscoveryCard) => void;
@@ -146,6 +147,14 @@ export function DiscoveryHero({ onInspectCard }: DiscoveryHeroProps) {
               localized living wisdom — connecting authentic people, places, lineages and living
               practices into an open, verifiable human context graph.
             </p>
+
+            {/* Cultural Command Palette & Search Bar */}
+            <div className="pt-2 max-w-xl">
+              <CulturalSearchBar
+                variant="hero"
+                placeholder="Search living traditions, communities, sacred crafts... (⌘K)"
+              />
+            </div>
 
             {/* Quick Actions */}
             <div className="flex flex-wrap items-center gap-3 pt-1">

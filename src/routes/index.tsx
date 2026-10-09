@@ -33,6 +33,7 @@ import {
   Send,
 } from "lucide-react";
 import { track } from "@/lib/analytics";
+import { MetaTags, createWebApplicationSchema } from "@/components/seo";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -81,6 +82,19 @@ function EkaHomePage() {
 
   return (
     <div className="min-h-screen bg-sand/20 dark:bg-stone-950 text-foreground flex flex-col selection:bg-terracotta/20">
+      <MetaTags
+        title="EKA — The World's Trusted Cultural Intelligence Layer"
+        description="One Within. One With All. Don't just scroll the world. Understand it. Discover traditions, sacred places, living crafts, and festivals across the world through real human stories."
+        ogTitle="EKA — The World's Trusted Cultural Intelligence Layer"
+        ogDescription="One Within. One With All. The world's trusted cultural intelligence layer connecting communities, traditions, and living knowledge."
+        ogImage="/brand/eka-banner.jpg"
+        canonicalUrl="/"
+        twitterCard="summary_large_image"
+        twitterTitle="EKA — The World's Trusted Cultural Intelligence Layer"
+        twitterDescription="One Within. One With All. Don't just scroll the world. Understand it."
+        keywords={["cultural intelligence", "living traditions", "sacred geography", "indigenous knowledge", "rituals", "festivals"]}
+        structuredData={createWebApplicationSchema()}
+      />
       {/* 1. Primary Unified Navigation Header */}
       <SiteHeader />
 

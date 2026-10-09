@@ -14,11 +14,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { Plus, MoreHorizontal, X, ArrowRight } from "lucide-react";
 import { easings } from "@/lib/tokens/motion";
 import { cn } from "@/lib/utils";
-import {
-  MOBILE_PRIMARY_TABS,
-  CREATE_ACTION_ITEM,
-  MOBILE_MORE_ITEMS,
-} from "@/config/navigation";
+import { MOBILE_PRIMARY_TABS, CREATE_ACTION_ITEM, MOBILE_MORE_ITEMS } from "@/config/navigation";
 import { track } from "@/lib/analytics";
 
 export function MobileBottomNav() {
@@ -129,8 +125,10 @@ export function MobileBottomNav() {
                   to={item.to}
                   onClick={() => handleTabClick(item.to, item.label)}
                   className={cn(
-                    "relative flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-colors select-none",
-                    isActive ? "text-terracotta font-medium" : "text-muted-foreground hover:text-foreground"
+                    "relative flex flex-col items-center justify-center py-1 px-1.5 sm:px-2 rounded-xl transition-colors select-none",
+                    isActive
+                      ? "text-terracotta font-medium"
+                      : "text-muted-foreground hover:text-foreground",
                   )}
                 >
                   {/* Active Animated Background Pill */}
@@ -168,7 +166,9 @@ export function MobileBottomNav() {
             }}
             className={cn(
               "relative flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-colors select-none",
-              moreDrawerOpen ? "text-terracotta font-medium" : "text-muted-foreground hover:text-foreground"
+              moreDrawerOpen
+                ? "text-terracotta font-medium"
+                : "text-muted-foreground hover:text-foreground",
             )}
             aria-label="More pathways"
           >

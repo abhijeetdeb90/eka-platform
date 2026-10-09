@@ -40,6 +40,7 @@ import { useProfile } from "@/hooks/useProfile";
 import { supabase } from "@/integrations/supabase/client";
 import { PRIMARY_NAV_ITEMS, CREATE_ACTION_ITEM } from "@/config/navigation";
 import { track } from "@/lib/analytics";
+import { CulturalSearchBar } from "@/components/search";
 
 export function ConsumerHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -149,16 +150,9 @@ export function ConsumerHeader() {
           {/* Instant Visible Language Selector */}
           <LanguageSelector variant="header" />
 
-          {/* Search Trigger */}
-          <Link
-            to="/search"
-            onClick={() => track("search_submitted", { source: "header_icon" })}
-            className="flex items-center justify-center size-8.5 rounded-full text-muted-foreground transition-colors hover:bg-accent/60 hover:text-foreground border border-transparent hover:border-border/60"
-            aria-label={t("action.search")}
-            title={t("action.search")}
-          >
-            <Search className="size-4" />
-          </Link>
+          {/* Cultural Command Palette & Search Trigger */}
+          <CulturalSearchBar variant="header" className="hidden lg:flex" />
+          <CulturalSearchBar variant="compact" className="lg:hidden" />
 
           {/* Direct Messages Quick Action */}
           <Link
@@ -215,7 +209,10 @@ export function ConsumerHeader() {
                   </DropdownMenuItem>
 
                   <DropdownMenuItem asChild>
-                    <Link to="/app/saved" className="flex items-center gap-2 cursor-pointer text-xs">
+                    <Link
+                      to="/app/saved"
+                      className="flex items-center gap-2 cursor-pointer text-xs"
+                    >
                       <Bookmark className="size-3.5 text-muted-foreground" />
                       <span>{t("nav.saved")}</span>
                     </Link>
@@ -240,21 +237,30 @@ export function ConsumerHeader() {
               ) : (
                 <>
                   <DropdownMenuItem asChild>
-                    <Link to="/my-eka" className="flex items-center gap-2 cursor-pointer text-xs font-medium">
+                    <Link
+                      to="/my-eka"
+                      className="flex items-center gap-2 cursor-pointer text-xs font-medium"
+                    >
                       <User className="size-3.5 text-muted-foreground" />
                       <span>My EKA Sanctuary</span>
                     </Link>
                   </DropdownMenuItem>
 
                   <DropdownMenuItem asChild>
-                    <Link to="/auth" className="flex items-center gap-2 cursor-pointer text-xs font-medium">
+                    <Link
+                      to="/auth"
+                      className="flex items-center gap-2 cursor-pointer text-xs font-medium"
+                    >
                       <LogIn className="size-3.5 text-muted-foreground" />
                       <span>{t("auth.signIn")}</span>
                     </Link>
                   </DropdownMenuItem>
 
                   <DropdownMenuItem asChild>
-                    <Link to="/join" className="flex items-center gap-2 cursor-pointer text-xs text-terracotta font-medium">
+                    <Link
+                      to="/join"
+                      className="flex items-center gap-2 cursor-pointer text-xs text-terracotta font-medium"
+                    >
                       <Sparkles className="size-3.5" />
                       <span>Join Living Archive</span>
                     </Link>
@@ -290,13 +296,7 @@ export function ConsumerHeader() {
 
           <LanguageSelector variant="compact" />
 
-          <Link
-            to="/search"
-            className="flex items-center justify-center size-8.5 rounded-xl text-muted-foreground hover:text-foreground"
-            aria-label={t("action.search")}
-          >
-            <Search className="size-4" />
-          </Link>
+          <CulturalSearchBar variant="compact" />
 
           <Button
             variant="ghost"

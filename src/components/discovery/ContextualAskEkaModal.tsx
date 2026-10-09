@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Sparkles,
   Search,
@@ -13,7 +13,13 @@ import {
   Lock,
 } from "lucide-react";
 import { Link } from "@tanstack/react-router";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -43,16 +49,56 @@ interface ContextualAskEkaModalProps {
 }
 
 const DEFAULT_SUGGESTED_PROMPTS = [
-  { icon: "🌍", text: "Why do people celebrate this?", query: "Why do people celebrate this cultural festival?" },
-  { icon: "🕯️", text: "What does this ritual mean?", query: "What does this ritual mean and what is its spiritual root?" },
-  { icon: "🍛", text: "Why is this food important?", query: "Why is this sacred food important to the community?" },
-  { icon: "🛕", text: "What happens inside this sacred place?", query: "What happens inside this sacred place and what etiquette should I follow?" },
-  { icon: "👘", text: "What does this clothing represent?", query: "What does this traditional clothing and weaving represent?" },
-  { icon: "🗣️", text: "Where did this language come from?", query: "Where did this ancestral language come from and how is it spoken?" },
-  { icon: "💍", text: "How do people get married here?", query: "How do wedding rituals work here and what vows are exchanged?" },
-  { icon: "🎉", text: "What festival is happening today?", query: "What festivals are celebrated during this season across cultures?" },
-  { icon: "🧬", text: "How did this tradition evolve?", query: "How did this tradition evolve over the last 500 years?" },
-  { icon: "🤝", text: "What should I know before visiting?", query: "What cultural etiquette and customs should I know before visiting this community?" },
+  {
+    icon: "🌍",
+    text: "Why do people celebrate this?",
+    query: "Why do people celebrate this cultural festival?",
+  },
+  {
+    icon: "🕯️",
+    text: "What does this ritual mean?",
+    query: "What does this ritual mean and what is its spiritual root?",
+  },
+  {
+    icon: "🍛",
+    text: "Why is this food important?",
+    query: "Why is this sacred food important to the community?",
+  },
+  {
+    icon: "🛕",
+    text: "What happens inside this sacred place?",
+    query: "What happens inside this sacred place and what etiquette should I follow?",
+  },
+  {
+    icon: "👘",
+    text: "What does this clothing represent?",
+    query: "What does this traditional clothing and weaving represent?",
+  },
+  {
+    icon: "🗣️",
+    text: "Where did this language come from?",
+    query: "Where did this ancestral language come from and how is it spoken?",
+  },
+  {
+    icon: "💍",
+    text: "How do people get married here?",
+    query: "How do wedding rituals work here and what vows are exchanged?",
+  },
+  {
+    icon: "🎉",
+    text: "What festival is happening today?",
+    query: "What festivals are celebrated during this season across cultures?",
+  },
+  {
+    icon: "🧬",
+    text: "How did this tradition evolve?",
+    query: "How did this tradition evolve over the last 500 years?",
+  },
+  {
+    icon: "🤝",
+    text: "What should I know before visiting?",
+    query: "What cultural etiquette and customs should I know before visiting this community?",
+  },
 ];
 
 export function ContextualAskEkaModal({
@@ -74,6 +120,25 @@ export function ContextualAskEkaModal({
   const [result, setResult] = useState<CulturalInquiryResult | null>(null);
   const [curiosityLoops, setCuriosityLoops] = useState<CuriosityLoopItem[]>([]);
 
+  const handleExecuteQuery = useCallback(async (queryText: string) => {
+    if (!queryText.trim()) return;
+    setIsLoading(true);
+    setQuery(queryText);
+
+    try {
+      const contextPrefix = target
+        ? `[Context: ${target.title} in ${target.location || "Global"}] `
+        : "";
+      const res = await askEkaCulturalEngine(`${contextPrefix}${queryText}`);
+      setResult(res);
+      setCuriosityLoops(getCuriosityLoops(queryText));
+    } catch {
+      toast.error("Unable to connect to Cultural Intelligence engine. Using verified archives.");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [target]);
+
   // When target changes, set up contextual question and chips
   useEffect(() => {
     if (target) {
@@ -93,24 +158,7 @@ export function ContextualAskEkaModal({
       setResult(null);
       setCuriosityLoops(getCuriosityLoops("culture"));
     }
-  }, [target, isModalOpen]);
-
-  const handleExecuteQuery = async (queryText: string) => {
-    if (!queryText.trim()) return;
-    setIsLoading(true);
-    setQuery(queryText);
-
-    try {
-      const contextPrefix = target ? `[Context: ${target.title} in ${target.location || "Global"}] ` : "";
-      const res = await askEkaCulturalEngine(`${contextPrefix}${queryText}`);
-      setResult(res);
-      setCuriosityLoops(getCuriosityLoops(queryText));
-    } catch {
-      toast.error("Unable to connect to Cultural Intelligence engine. Using verified archives.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  }, [target, isModalOpen, handleExecuteQuery]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -126,7 +174,7 @@ export function ContextualAskEkaModal({
         target.title,
         target.category || "tradition",
         target.location || "World",
-        target.preloadedSummary
+        target.preloadedSummary,
       )
     : null;
 
@@ -136,56 +184,59 @@ export function ContextualAskEkaModal({
         className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 rounded-3xl border border-border/80 bg-background shadow-2xl text-foreground scrollbar-thin"
         data-testid="contextual-ask-eka-modal"
       >
-          {/* Modal Header */}
-          <div className="relative border-b border-border/60 bg-sand/15 p-6 sm:p-7">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-0.5 text-xs font-mono uppercase tracking-wider text-primary font-semibold">
-                <Sparkles className="size-3 text-saffron" />
-                EKA Cultural Guide
+        {/* Modal Header */}
+        <div className="relative border-b border-border/60 bg-sand/15 p-6 sm:p-7">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-0.5 text-xs font-mono uppercase tracking-wider text-primary font-semibold">
+              <Sparkles className="size-3 text-saffron" />
+              EKA Cultural Guide
+            </span>
+            {!canUseIntelligence ? (
+              <span className="inline-flex items-center gap-1 text-xs font-mono text-terracotta font-semibold">
+                <Lock className="size-3" /> EKA+ Intelligence
               </span>
-              {!canUseIntelligence ? (
-                <span className="inline-flex items-center gap-1 text-xs font-mono text-terracotta font-semibold">
-                  <Lock className="size-3" /> EKA+ Intelligence
-                </span>
-              ) : (
-                <span className="text-xs text-muted-foreground">• Trusted Intelligence</span>
-              )}
-            </div>
-
-            <DialogTitle className="font-serif text-2xl sm:text-3xl font-normal text-foreground">
-              {target ? (
-                <>
-                  I can help you understand{" "}
-                  <span className="italic font-medium text-primary">{target.title}</span>.
-                </>
-              ) : (
-                <>
-                  Ask EKA {!canUseIntelligence && <Lock className="inline size-5 text-saffron align-middle" />}
-                </>
-              )}
-            </DialogTitle>
-
-            <DialogDescription className="mt-1.5 text-xs sm:text-sm text-muted-foreground leading-relaxed">
-              {target ? (
-                target.location ? (
-                  <span className="inline-flex items-center gap-1">
-                    <MapPin className="size-3 text-terracotta" />
-                    {target.location} · What would you like to know?
-                  </span>
-                ) : (
-                  "What would you like to know about this living tradition?"
-                )
-              ) : (
-                "Understand the world, one question at a time."
-              )}
-            </DialogDescription>
-
-            {!canUseIntelligence && (
-              <div className="mt-2.5 rounded-xl border border-primary/30 bg-primary/5 p-2.5 text-xs text-primary font-serif italic">
-                "{CORE_PHILOSOPHY.subscriptionHook}"
-              </div>
+            ) : (
+              <span className="text-xs text-muted-foreground">• Trusted Intelligence</span>
             )}
           </div>
+
+          <DialogTitle className="font-serif text-2xl sm:text-3xl font-normal text-foreground">
+            {target ? (
+              <>
+                I can help you understand{" "}
+                <span className="italic font-medium text-primary">{target.title}</span>.
+              </>
+            ) : (
+              <>
+                Ask EKA{" "}
+                {!canUseIntelligence && (
+                  <Lock className="inline size-5 text-saffron align-middle" />
+                )}
+              </>
+            )}
+          </DialogTitle>
+
+          <DialogDescription className="mt-1.5 text-xs sm:text-sm text-muted-foreground leading-relaxed">
+            {target ? (
+              target.location ? (
+                <span className="inline-flex items-center gap-1">
+                  <MapPin className="size-3 text-terracotta" />
+                  {target.location} · What would you like to know?
+                </span>
+              ) : (
+                "What would you like to know about this living tradition?"
+              )
+            ) : (
+              "Understand the world, one question at a time."
+            )}
+          </DialogDescription>
+
+          {!canUseIntelligence && (
+            <div className="mt-2.5 rounded-xl border border-primary/30 bg-primary/5 p-2.5 text-xs text-primary font-serif italic">
+              "{CORE_PHILOSOPHY.subscriptionHook}"
+            </div>
+          )}
+        </div>
 
         {/* Query Input Section */}
         <div className="p-6 sm:p-7 space-y-6">
@@ -369,11 +420,16 @@ export function ContextualAskEkaModal({
                   Understand more with EKA AI
                 </span>
                 <p className="text-xs sm:text-sm font-serif text-foreground mt-0.5">
-                  Knowledge is free. Intelligence is paid. Unlock unlimited inquiries, comparisons & primary sources.
+                  Knowledge is free. Intelligence is paid. Unlock unlimited inquiries, comparisons &
+                  primary sources.
                 </p>
               </div>
               <div className="flex items-center gap-2 shrink-0">
-                <Button asChild size="sm" className="rounded-full text-xs bg-primary text-primary-foreground hover:bg-primary/90">
+                <Button
+                  asChild
+                  size="sm"
+                  className="rounded-full text-xs bg-primary text-primary-foreground hover:bg-primary/90"
+                >
                   <Link to="/membership">Get EKA+ (₹299/mo)</Link>
                 </Button>
                 <Button

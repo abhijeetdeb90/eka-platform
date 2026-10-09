@@ -21,6 +21,7 @@ import {
   MapPin,
   Heart,
   CheckCircle2,
+  Radio,
 } from "lucide-react";
 import { toast } from "sonner";
 import { SiteHeader } from "@/components/site/SiteHeader";
@@ -29,7 +30,15 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { RealtimeActivityFeed } from "@/components/community";
+import { cn } from "@/lib/utils";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useProfile } from "@/hooks/useProfile";
 import { track } from "@/lib/analytics";
@@ -135,6 +144,7 @@ function CommunityPage() {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [communityView, setCommunityView] = useState<"stream" | "circles">("stream");
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [newCommunityName, setNewCommunityName] = useState("");
   const [newCommunityDesc, setNewCommunityDesc] = useState("");
@@ -152,17 +162,18 @@ function CommunityPage() {
     },
   });
 
-  const allCommunities = (dbCommunities && dbCommunities.length > 0)
-    ? dbCommunities.map((c) => ({
-        id: c.id,
-        slug: c.slug,
-        name: c.name,
-        description: c.description,
-        category: c.category || "General",
-        memberCount: c.member_count || 12,
-        recentTopic: "Active discussion circle",
-      }))
-    : CURATED_COMMUNITIES;
+  const allCommunities =
+    dbCommunities && dbCommunities.length > 0
+      ? dbCommunities.map((c) => ({
+          id: c.id,
+          slug: c.slug,
+          name: c.name,
+          description: c.description,
+          category: c.category || "General",
+          memberCount: c.member_count || 12,
+          recentTopic: "Active discussion circle",
+        }))
+      : CURATED_COMMUNITIES;
 
   const filteredCommunities = allCommunities.filter((c) => {
     const matchesSearch =
@@ -255,145 +266,192 @@ function CommunityPage() {
             <div className="flex items-center gap-2.5">
               <ShieldCheck className="size-5 text-emerald-600 shrink-0" />
               <span>
-                <strong>Respect-First Governance:</strong> All EKA communities prioritize thoughtful inquiry over outrage. No commercial spam, harassment, or hatred.
+                <strong>Respect-First Governance:</strong> All EKA communities prioritize thoughtful
+                inquiry over outrage. No commercial spam, harassment, or hatred.
               </span>
             </div>
             <Link to="/standards" className="text-primary hover:underline font-medium shrink-0">
               Guidelines →
             </Link>
           </div>
-        </section>
 
-        {/* Search, Filter & Create Bar */}
-        <section className="container-eka max-w-4xl space-y-4">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-            <div className="relative w-full sm:max-w-md">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-              <Input
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search communities by tradition, craft, or place…"
-                className="pl-10 rounded-xl bg-card border-border/80"
-              />
+          {/* View Switcher: Live Stream vs Circles Directory */}
+          <div className="pt-2 max-w-sm mx-auto">
+            <div className="flex items-center justify-center gap-1 p-1 rounded-2xl bg-card border border-border/80 shadow-xs">
+              <button
+                type="button"
+                onClick={() => setCommunityView("stream")}
+                className={cn(
+                  "flex-1 py-2 px-3 text-xs font-medium rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5",
+                  communityView === "stream"
+                    ? "bg-primary text-primary-foreground shadow-xs"
+                    : "text-muted-foreground hover:text-foreground",
+                )}
+              >
+                <Radio
+                  className={cn(
+                    "size-3.5",
+                    communityView === "stream" && "animate-pulse text-amber-200",
+                  )}
+                />
+                <span>Live Activity Stream</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setCommunityView("circles")}
+                className={cn(
+                  "flex-1 py-2 px-3 text-xs font-medium rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5",
+                  communityView === "circles"
+                    ? "bg-primary text-primary-foreground shadow-xs"
+                    : "text-muted-foreground hover:text-foreground",
+                )}
+              >
+                <Users className="size-3.5" />
+                <span>Sanghas & Circles</span>
+              </button>
             </div>
+          </div>
+        </section>
 
-            <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
-              <DialogTrigger asChild>
-                <Button className="rounded-xl bg-gradient-to-r from-terracotta to-saffron text-white shadow-xs shrink-0 w-full sm:w-auto">
-                  <Plus className="mr-1.5 size-4" />
-                  <span>Create a Community</span>
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="rounded-2xl max-w-lg">
-                <DialogHeader>
-                  <DialogTitle className="font-serif text-xl">Create a Living Sangha</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4 pt-2">
-                  <p className="text-xs text-muted-foreground">
-                    A Sangha is a dedicated circle of inquiry and stewardship around a lineage, practice, craft, or place.
-                  </p>
+        {communityView === "stream" ? (
+          <section className="container-eka max-w-4xl">
+            <RealtimeActivityFeed />
+          </section>
+        ) : (
+          <>
+            {/* Search, Filter & Create Bar */}
+            <section className="container-eka max-w-4xl space-y-4">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div className="relative w-full sm:max-w-md">
+                  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                   <Input
-                    value={newCommunityName}
-                    onChange={(e) => setNewCommunityName(e.target.value)}
-                    placeholder="Community Name (e.g., Kashi Heritage Custodians)"
-                    className="rounded-xl"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search communities by tradition, craft, or place…"
+                    className="pl-10 rounded-xl bg-card border-border/80"
                   />
-                  <Textarea
-                    value={newCommunityDesc}
-                    onChange={(e) => setNewCommunityDesc(e.target.value)}
-                    placeholder="What is the shared purpose, lineage, or inquiries of this circle?"
-                    rows={4}
-                    className="rounded-xl"
-                  />
-                  <Button onClick={handleCreateCommunity} className="w-full rounded-xl">
-                    Found Community
-                  </Button>
                 </div>
-              </DialogContent>
-            </Dialog>
-          </div>
-        </section>
 
-        {/* Communities Grid */}
-        <section className="container-eka max-w-4xl space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {filteredCommunities.map((c) => {
-              const isJoined = joinedCommunities.has(c.id);
-              return (
-                <div
-                  key={c.id}
-                  className="group rounded-2xl border border-border/80 bg-card p-5 shadow-calm hover:border-primary/50 transition-all flex flex-col justify-between space-y-4"
-                >
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <Badge variant="outline" className="text-[10px] font-mono uppercase">
-                        {c.category}
-                      </Badge>
-                      <span className="text-xs font-mono text-muted-foreground flex items-center gap-1">
-                        <Users className="size-3" />
-                        {c.memberCount} members
-                      </span>
-                    </div>
-
-                    <h2 className="font-serif text-lg font-bold text-foreground group-hover:text-primary transition-colors">
-                      {c.name}
-                    </h2>
-
-                    <p className="text-xs text-muted-foreground leading-relaxed font-light line-clamp-3">
-                      {c.description}
-                    </p>
-
-                    {c.recentTopic && (
-                      <div className="pt-2 border-t border-border/50 text-[11px] text-muted-foreground flex items-start gap-1.5">
-                        <MessageSquare className="size-3.5 text-primary shrink-0 mt-0.5" />
-                        <span className="line-clamp-1 italic">"{c.recentTopic}"</span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Actions & Connected Links */}
-                  <div className="pt-2 flex items-center justify-between gap-2 border-t border-border/40">
-                    <div className="flex items-center gap-2">
-                      <Link
-                        to="/stories"
-                        className="text-[11px] font-medium text-muted-foreground hover:text-foreground flex items-center gap-1"
-                        title="View Related Stories"
-                      >
-                        <Film className="size-3 text-terracotta" />
-                        <span>Stories</span>
-                      </Link>
-                      <span className="text-muted-foreground/40">·</span>
-                      <Link
-                        to="/learn"
-                        className="text-[11px] font-medium text-muted-foreground hover:text-foreground flex items-center gap-1"
-                        title="View Related Learn Guides"
-                      >
-                        <BookOpen className="size-3 text-saffron" />
-                        <span>Learn</span>
-                      </Link>
-                    </div>
-
-                    <Button
-                      size="sm"
-                      variant={isJoined ? "outline" : "default"}
-                      onClick={() => handleToggleJoin(c.id, c.name)}
-                      className="rounded-xl text-xs h-8 px-3"
-                    >
-                      {isJoined ? (
-                        <>
-                          <CheckCircle2 className="size-3 mr-1 text-emerald-600" />
-                          <span>Joined</span>
-                        </>
-                      ) : (
-                        <span>Join Circle</span>
-                      )}
+                <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button className="rounded-xl bg-gradient-to-r from-terracotta to-saffron text-white shadow-xs shrink-0 w-full sm:w-auto">
+                      <Plus className="mr-1.5 size-4" />
+                      <span>Create a Community</span>
                     </Button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </section>
+                  </DialogTrigger>
+                  <DialogContent className="rounded-2xl max-w-lg">
+                    <DialogHeader>
+                      <DialogTitle className="font-serif text-xl">Create a Living Sangha</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4 pt-2">
+                      <p className="text-xs text-muted-foreground">
+                        A Sangha is a dedicated circle of inquiry and stewardship around a lineage,
+                        practice, craft, or place.
+                      </p>
+                      <Input
+                        value={newCommunityName}
+                        onChange={(e) => setNewCommunityName(e.target.value)}
+                        placeholder="Community Name (e.g., Kashi Heritage Custodians)"
+                        className="rounded-xl"
+                      />
+                      <Textarea
+                        value={newCommunityDesc}
+                        onChange={(e) => setNewCommunityDesc(e.target.value)}
+                        placeholder="What is the shared purpose, lineage, or inquiries of this circle?"
+                        rows={4}
+                        className="rounded-xl"
+                      />
+                      <Button onClick={handleCreateCommunity} className="w-full rounded-xl">
+                        Found Community
+                      </Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </section>
+
+            {/* Communities Grid */}
+            <section className="container-eka max-w-4xl space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {filteredCommunities.map((c) => {
+                  const isJoined = joinedCommunities.has(c.id);
+                  return (
+                    <div
+                      key={c.id}
+                      className="group rounded-2xl border border-border/80 bg-card p-5 shadow-calm hover:border-primary/50 transition-all flex flex-col justify-between space-y-4"
+                    >
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <Badge variant="outline" className="text-[10px] font-mono uppercase">
+                            {c.category}
+                          </Badge>
+                          <span className="text-xs font-mono text-muted-foreground flex items-center gap-1">
+                            <Users className="size-3" />
+                            {c.memberCount} members
+                          </span>
+                        </div>
+
+                        <h2 className="font-serif text-lg font-bold text-foreground group-hover:text-primary transition-colors">
+                          {c.name}
+                        </h2>
+
+                        <p className="text-xs text-muted-foreground leading-relaxed font-light line-clamp-3">
+                          {c.description}
+                        </p>
+
+                        {c.recentTopic && (
+                          <div className="pt-2 border-t border-border/50 text-[11px] text-muted-foreground flex items-start gap-1.5">
+                            <MessageSquare className="size-3.5 text-primary shrink-0 mt-0.5" />
+                            <span className="line-clamp-1 italic">"{c.recentTopic}"</span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Actions & Connected Links */}
+                      <div className="pt-2 flex items-center justify-between gap-2 border-t border-border/40">
+                        <div className="flex items-center gap-2">
+                          <Link
+                            to="/stories"
+                            className="text-[11px] font-medium text-muted-foreground hover:text-foreground flex items-center gap-1"
+                            title="View Related Stories"
+                          >
+                            <Film className="size-3 text-terracotta" />
+                            <span>Stories</span>
+                          </Link>
+                          <span className="text-muted-foreground/40">·</span>
+                          <Link
+                            to="/learn"
+                            className="text-[11px] font-medium text-muted-foreground hover:text-foreground flex items-center gap-1"
+                            title="View Related Learn Guides"
+                          >
+                            <BookOpen className="size-3 text-saffron" />
+                            <span>Learn</span>
+                          </Link>
+                        </div>
+
+                        <Button
+                          size="sm"
+                          variant={isJoined ? "outline" : "default"}
+                          onClick={() => handleToggleJoin(c.id, c.name)}
+                          className="rounded-xl text-xs h-8 px-3"
+                        >
+                          {isJoined ? (
+                            <>
+                              <CheckCircle2 className="size-3 mr-1 text-emerald-600" />
+                              <span>Joined</span>
+                            </>
+                          ) : (
+                            <span>Join Circle</span>
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+          </>
+        )}
       </main>
 
       <SiteFooter />

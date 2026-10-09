@@ -20,7 +20,7 @@ export {
 export const CONSUMER_FOOTER_EXPLORE = [
   { to: "/discover", label: "Discover Traditions" },
   { to: "/stories", label: "1 Billion Stories" },
-  { to: "/learn", label: "Knowledge Codex" },
+  { to: "/discover", label: "Living Knowledge Codex" },
   { to: "/ask", label: "Ask EKA" },
   { to: "/observe", label: "Sacred Calendar" },
 ];

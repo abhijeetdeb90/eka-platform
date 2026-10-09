@@ -63,7 +63,9 @@ export const GOOGLE_DRIVE_ROOT_VAULT_URL = `https://drive.google.com/drive/folde
  * Generates an immutable, non-guessable EKA uniform object identifier.
  * Example output: EKA-MED-202610-8F92A1
  */
-export function generateEkaId(prefix: "MED" | "DOC" | "CRP" | "USR" | "KNW" | "CNT" = "MED"): string {
+export function generateEkaId(
+  prefix: "MED" | "DOC" | "CRP" | "USR" | "KNW" | "CNT" = "MED",
+): string {
   const dateStr = new Date().toISOString().slice(0, 7).replace("-", ""); // YYYYMM
   const randomHex = Math.random().toString(16).substring(2, 8).toUpperCase();
   return `EKA-${prefix}-${dateStr}-${randomHex}`;
@@ -79,7 +81,13 @@ export function resolveAssetMediaUrl(asset: Partial<EkaStorageAsset>): string {
     return asset.cdn_cached_url;
   }
 
-  // 2. If already a direct HTTPS web link
+  // 2. If stored in Cloudflare R2 with file_name or key
+  if (asset.storage_provider === "cloudflare_r2") {
+    const domain = (typeof process !== "undefined" && process.env?.["R2_PUBLIC_DOMAIN"]) || "https://media.eka.earth";
+    return `${domain.replace(/\/$/, "")}/${asset.namespace_id || "02_CONTENT"}/${asset.file_name}`;
+  }
+
+  // 3. If already a direct HTTPS web link
   if (asset.drive_web_content_link) {
     return asset.drive_web_content_link;
   }

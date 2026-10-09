@@ -1,52 +1,59 @@
-import React, { useState, useEffect } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import React, { useEffect } from "react";
+import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
-import {
-  Compass,
-  ArrowRight,
-  Sparkles,
-  Globe,
-  MapPin,
-  BookOpen,
-  Lock,
-  ShieldCheck,
-  Palette,
-  Check,
-} from "lucide-react";
+import { Compass, ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { GlobalCulturalMap } from "@/components/discovery/GlobalCulturalMap";
-import {
-  ContextualAskEkaModal,
-  type ContextualAskEkaTarget,
-} from "@/components/discovery/ContextualAskEkaModal";
-import { IntelligencePaywallModal } from "@/components/discovery/IntelligencePaywallModal";
-import {
-  useMonetizationTier,
-  CORE_PHILOSOPHY,
-  PRODUCT_TIERS,
-} from "@/lib/monetization";
 
 export const Route = createFileRoute("/learn")({
+  beforeLoad: () => {
+    throw redirect({ to: "/discover" });
+  },
   head: () => ({
     meta: [
-      { title: "Learn — Understand the World Through Its Stories | EKA" },
+      { title: "Discover — Cultural Knowledge & Exploration | EKA" },
       {
         name: "description",
         content:
           "Explore cultures, traditions, languages, rituals, places, food, crafts and the people who keep them alive.",
       },
-      { property: "og:title", content: "Learn on EKA — Living Cultural Stories" },
-      {
-        property: "og:description",
-        content:
-          "Learn how people live, celebrate, create and connect. Every place has a story. Every story connects to another.",
-      },
     ],
   }),
-  component: LearnPage,
+  component: LearnRedirectPage,
 });
+
+function LearnRedirectPage() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    navigate({ to: "/discover", replace: true });
+  }, [navigate]);
+
+  return (
+    <div className="min-h-screen bg-sand/20 dark:bg-stone-950 text-foreground flex flex-col justify-between">
+      <SiteHeader />
+      <main className="container-eka py-20 text-center space-y-4 max-w-lg mx-auto">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-terracotta/10 text-terracotta text-xs font-mono">
+          <Compass className="size-3.5" />
+          <span>Merged into EKA Discover</span>
+        </div>
+        <h1 className="font-display text-2xl font-normal">Redirecting to Discover...</h1>
+        <p className="text-xs text-muted-foreground">
+          Learn and Discover have unified into a single cultural exploration experience.
+        </p>
+        <Button
+          onClick={() => navigate({ to: "/discover", replace: true })}
+          className="rounded-xl bg-terracotta text-white text-xs"
+        >
+          <span>Continue to Discover</span>
+          <ArrowRight className="size-3.5 ml-1" />
+        </Button>
+      </main>
+      <SiteFooter />
+    </div>
+  );
+}
+
 
 // Flagship visual learn stories requested in specifications
 const LEARN_VISUAL_STORIES = [
@@ -176,7 +183,10 @@ function LearnPage() {
     >
       <SiteHeader />
 
-      <main id="main-content" className="flex-1 container-eka py-8 sm:py-14 space-y-12 sm:space-y-16">
+      <main
+        id="main-content"
+        className="flex-1 container-eka py-8 sm:py-14 space-y-12 sm:space-y-16"
+      >
         {/* 1. Simple, Human Consumer Header */}
         <section className="text-center space-y-4 max-w-3xl mx-auto">
           <Badge
@@ -219,7 +229,11 @@ function LearnPage() {
 
             <div className="flex items-center gap-2 shrink-0">
               <Link to="/membership">
-                <Button variant="outline" size="sm" className="rounded-full text-xs gap-1 border-primary/40 text-primary hover:bg-primary/5">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="rounded-full text-xs gap-1 border-primary/40 text-primary hover:bg-primary/5"
+                >
                   <Sparkles className="size-3 text-saffron" />
                   <span>See EKA Access Model</span>
                   <ArrowRight className="size-3" />
@@ -233,24 +247,36 @@ function LearnPage() {
               <span className="font-mono text-[10px] uppercase font-bold text-emerald-600 flex items-center gap-1">
                 <Check className="size-3" /> FREE (Active)
               </span>
-              <p className="font-serif text-sm text-foreground">Discover → Read → Explore → Follow</p>
-              <p className="text-[11px] text-muted-foreground">Global map, stories, traditions & places</p>
+              <p className="font-serif text-sm text-foreground">
+                Discover → Read → Explore → Follow
+              </p>
+              <p className="text-[11px] text-muted-foreground">
+                Global map, stories, traditions & places
+              </p>
             </div>
 
             <div className="rounded-2xl border border-primary/40 bg-primary/5 p-3.5 space-y-1">
               <span className="font-mono text-[10px] uppercase font-bold text-primary flex items-center gap-1">
                 <Lock className="size-3 text-saffron" /> EKA+ (₹299/mo)
               </span>
-              <p className="font-serif text-sm text-foreground">Ask → Understand → Compare → Research</p>
-              <p className="text-[11px] text-muted-foreground">EKA AI, comparisons & primary source research</p>
+              <p className="font-serif text-sm text-foreground">
+                Ask → Understand → Compare → Research
+              </p>
+              <p className="text-[11px] text-muted-foreground">
+                EKA AI, comparisons & primary source research
+              </p>
             </div>
 
             <div className="rounded-2xl border border-border/60 bg-background/70 p-3.5 space-y-1">
               <span className="font-mono text-[10px] uppercase font-bold text-muted-foreground flex items-center gap-1">
                 <Palette className="size-3" /> CREATOR (₹799/mo)
               </span>
-              <p className="font-serif text-sm text-foreground">Create → Publish → Analyse → Grow</p>
-              <p className="text-[11px] text-muted-foreground">Dedicated paid workspace for storytellers</p>
+              <p className="font-serif text-sm text-foreground">
+                Create → Publish → Analyse → Grow
+              </p>
+              <p className="text-[11px] text-muted-foreground">
+                Dedicated paid workspace for storytellers
+              </p>
             </div>
           </div>
         </section>
@@ -355,9 +381,7 @@ function LearnPage() {
                     >
                       <Sparkles className="size-3 text-saffron" />
                       <span>Ask EKA</span>
-                      {!canUseIntelligence && (
-                        <Lock className="size-3 text-saffron ml-0.5" />
-                      )}
+                      {!canUseIntelligence && <Lock className="size-3 text-saffron ml-0.5" />}
                       <ArrowRight className="size-3 ml-auto" />
                     </Button>
                     <span className="text-[11px] text-muted-foreground text-center font-serif italic">
@@ -379,7 +403,8 @@ function LearnPage() {
             EKA connects the world's cultures, communities and local knowledge.
           </h3>
           <p className="text-xs sm:text-sm text-muted-foreground max-w-xl mx-auto leading-relaxed">
-            Country → Region → Community → Language → Culture → Tradition → Ritual → Story → Place → People.
+            Country → Region → Community → Language → Culture → Tradition → Ritual → Story → Place →
+            People.
           </p>
           <div className="pt-2 flex flex-wrap justify-center gap-3">
             <Link to="/knowledge">

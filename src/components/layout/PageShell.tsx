@@ -38,7 +38,12 @@ export function PageHeader({
   if (!eyebrow && !title && !subtitle && !action) return null;
 
   return (
-    <header className={cn("grid animate-rise grid-cols-[minmax(0,1fr)_auto] items-end gap-4 pb-6", className)}>
+    <header
+      className={cn(
+        "grid animate-rise grid-cols-[minmax(0,1fr)_auto] items-end gap-4 pb-6",
+        className,
+      )}
+    >
       <div className="min-w-0">
         {eyebrow && (
           <p className="text-xs font-semibold uppercase tracking-[0.26em] text-muted-foreground">
@@ -93,3 +98,5 @@ export function PageShell({
     </div>
   );
 }
+
+export { UnifiedShell, ConsumerShell, ResponsiveShell, EkaShell } from "./UnifiedShell";

@@ -28,7 +28,8 @@ export const EKA_BRAND = {
   primaryLockup: "EKA — The World's Trusted Cultural Intelligence Layer",
   tagline: "Don't just scroll the world. Understand it.",
   supportingContext: "The World's Trusted Cultural Intelligence Layer",
-  supportingStatement: "Understand the world's cultures, living traditions, master crafts, and sacred places through verified human intelligence.",
+  supportingStatement:
+    "Understand the world's cultures, living traditions, master crafts, and sacred places through verified human intelligence.",
   contextStatement:
     "From generational lineages and living rituals to ancient crafts, foodways, oral traditions, classical texts, and festivals — EKA builds the global cultural intelligence layer connecting human knowledge and authentic custodians.",
 } as const;
@@ -45,8 +46,8 @@ export interface NavItem {
 }
 
 /**
- * 8 Primary Pillars of EKA Navigation
- * Standardized across both public and authenticated surfaces.
+ * 6 Primary Pillars of EKA Consumer Navigation (Specification: Section 1 & 20)
+ * HOME · DISCOVER · STORIES · ASK EKA · FEED · MY EKA
  */
 export const PRIMARY_NAV_ITEMS: NavItem[] = [
   {
@@ -55,72 +56,59 @@ export const PRIMARY_NAV_ITEMS: NavItem[] = [
     to: "/",
     exact: true,
     icon: Home,
-    description: "Personalized cultural entry point",
+    description: "Living cultural entry point",
   },
   {
     id: "discover",
     label: "Discover",
     to: "/discover",
     icon: Compass,
-    description: "Find the world — Geographic & cultural exploration map",
+    description: "Explore cultures, traditions, foodways & sacred places",
   },
   {
     id: "stories",
     label: "Stories",
     to: "/stories",
     icon: Film,
-    description: "Experience the world — Vertical cultural reels",
-  },
-  {
-    id: "learn",
-    label: "Learn",
-    to: "/learn",
-    icon: BookOpen,
-    description: "Understand the world — Structured knowledge & explainers",
+    description: "Watch visual reels, carousels & cultural narratives",
   },
   {
     id: "ask",
     label: "Ask EKA",
     to: "/ask",
     icon: HelpCircle,
-    description: "Ask anything & connect knowledge",
+    description: "Questions & universal cultural wisdom",
   },
   {
-    id: "community",
-    label: "Community",
-    to: "/community",
+    id: "feed",
+    label: "Feed",
+    to: "/feed",
     icon: Users,
-    description: "Connect with people — Sanghas & discussions",
-  },
-  {
-    id: "messages",
-    label: "Messages",
-    to: "/messages",
-    icon: MessageSquare,
-    description: "Connect meaningfully — Direct conversations",
+    description: "Social participation, creator reflections & community posts",
   },
   {
     id: "my-eka",
     label: "My EKA",
     to: "/my-eka",
     icon: User,
-    description: "Personalize, save and manage your sanctuary",
+    description: "Your sanctuary, saved traditions & reflections",
   },
 ];
 
 /**
- * Primary Create Action — functions as a contribution action, not a disconnected page
+ * Primary Create Action — contributions to living cultural archive
  */
 export const CREATE_ACTION_ITEM: NavItem = {
   id: "create",
   label: "Create",
   to: "/create",
   icon: Plus,
-  description: "Contribute to the living cultural archive",
+  description: "Contribute post, story or reflection",
 };
 
 /**
  * Mobile Bottom Navigation: Highest frequency consumer touchpoints
+ * HOME · DISCOVER · STORIES · ASK EKA · FEED · MY EKA
  */
 export const MOBILE_PRIMARY_TABS: NavItem[] = [
   {
@@ -153,6 +141,13 @@ export const MOBILE_PRIMARY_TABS: NavItem[] = [
     description: "Ask",
   },
   {
+    id: "feed",
+    label: "Feed",
+    to: "/feed",
+    icon: Users,
+    description: "Feed",
+  },
+  {
     id: "my-eka",
     label: "My EKA",
     to: "/my-eka",
@@ -166,15 +161,8 @@ export const MOBILE_PRIMARY_TABS: NavItem[] = [
  */
 export const MOBILE_MORE_ITEMS: NavItem[] = [
   {
-    id: "learn",
-    label: "Learn",
-    to: "/learn",
-    icon: BookOpen,
-    description: "Cultural explainers, guides & lineages",
-  },
-  {
     id: "community",
-    label: "Community",
+    label: "Community Sanghas",
     to: "/community",
     icon: Users,
     description: "Explore Sanghas, discussions & elders",

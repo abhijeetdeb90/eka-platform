@@ -60,6 +60,7 @@ Use this format for every significant decision.
 - Change: Ratified the complete EKA Agentic Operating System architecture and 5-Tier Capability Execution Matrix across 12 Agent Departments, resolving the distinction between Autonomous LLM Agents, Deterministic Microservices, Orchestrated Workflows, Human-in-the-Loop gates, and Never-Automated Sacred Boundaries.
 - Reason: Prevent runaway LLM cost and non-deterministic hallucination in sacred/cultural domains while formalizing the control plane for phased rollout (MVP 12 agents through Marketplace).
 - Owner: Founder / Principal AI Architect
+
 ## v1.2 — EKA × Google Ecosystem & AI Stack Integration
 
 - Version: v1.2
@@ -80,6 +81,16 @@ Use this format for every significant decision.
 - Owner: Founder / Principal AI Architect & Lead Frontend Engineer
 - Approval/status: APPROVED & IMPLEMENTED
 
+## v1.4 — Production Edge, Storage & Email Integration (Option A)
+
+- Version: v1.4
+- Date: 2026-10-09
+- File: `src/lib/email/resend.ts`, `src/lib/storage/r2.ts`, `src/lib/security/cloudflare-edge.ts`, `src/routes/api/webhooks.resend.ts`, `src/routes/api/email.send.ts`, `src/routes/api/storage.upload-url.ts`, `src/routes/api/storage.confirm.ts`, `docs/05-technology/CLOUDFLARE_EDGE_SECURITY.md`
+- Change: Formally selected and ratified Option A from the preflight architecture audit. Retained existing production-verified Supabase PostgreSQL database (50+ migrations, RLS, functions, and audit ledger) and Supabase Auth as the single source of truth to avoid dual-database race conditions. Integrated Cloudflare Edge (DNS, TLS 1.3, Full Strict SSL, WAF, and Rate Limiting), Cloudflare R2 (S3-compatible zero-egress media storage with short-lived presigned upload URLs and file validation), and Resend (transactional email delivery for onboarding, verification, subscription receipts, and delivery tracking webhooks).
+- Reason: User-approved execution of Option A to establish a lean, scalable production foundation without destroying or duplicating tested database and auth infrastructure.
+- Owner: Founder / Systems Architect
+- Approval/status: APPROVED & IMPLEMENTED
+
 ## Change format
 
 - Version:
@@ -89,5 +100,3 @@ Use this format for every significant decision.
 - Reason:
 - Owner:
 - Approval/status:
-
-
