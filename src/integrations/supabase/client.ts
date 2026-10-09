@@ -126,7 +126,7 @@ function createSupabaseClient() {
       storage: createAuthStorage(),
       persistSession: true,
       autoRefreshToken: true,
-      detectSessionInUrl: false,
+      detectSessionInUrl: true,
       flowType: "pkce",
     },
   });

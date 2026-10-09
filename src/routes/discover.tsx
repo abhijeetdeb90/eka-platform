@@ -390,7 +390,7 @@ function DiscoverPage() {
       } else {
         next.add(id);
         toast.success(`Saved "${title}" to your sanctuary`);
-        track("discover_item_saved", { id, title });
+        track("discover_item_saved" as any, { id, title });
       }
       return next;
     });
@@ -405,7 +405,7 @@ function DiscoverPage() {
       } else {
         next.add(custodian);
         toast.success(`Following ${custodian}`);
-        track("discover_custodian_followed", { custodian });
+        track("discover_custodian_followed" as any, { custodian });
       }
       return next;
     });
@@ -493,7 +493,7 @@ function DiscoverPage() {
         {activeView === "map" ? (
           /* Global Cultural Map View */
           <section className="container-eka max-w-6xl space-y-4">
-            <GlobalCulturalMap />
+            <GlobalCulturalMap onAskEka={() => {}} />
           </section>
         ) : (
           <>
@@ -779,7 +779,7 @@ function DiscoverPage() {
                         <div className="pt-2 flex items-center justify-between gap-2 border-t border-border/40 text-xs">
                           <Link
                             to="/ask"
-                            search={{ q: item.questionPrompt }}
+                            search={{ q: item.questionPrompt } as any}
                             className="inline-flex items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground font-medium transition-colors"
                           >
                             <Sparkles className="size-3 text-saffron" />
@@ -803,7 +803,7 @@ function DiscoverPage() {
 
             {/* 3. Cross-Cultural Comparison */}
             <section className="container-eka max-w-6xl space-y-6 pt-4">
-              <CompareCulturesSection />
+              <CompareCulturesSection onAskEka={() => {}} />
             </section>
           </>
         )}

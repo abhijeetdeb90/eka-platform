@@ -102,7 +102,7 @@ function KnowledgeDetailPage() {
     );
   }
 
-  const trustMeta = getTrustVerificationMeta(object.verificationLevel);
+  const trustMeta = getTrustVerificationMeta(object.verificationLevel || "EKA_RESEARCHED");
 
   const handleAiAsk = (queryToUse?: string) => {
     const q = queryToUse || aiQuery;
@@ -637,7 +637,7 @@ function KnowledgeDetailPage() {
                             {prac.practice} · {prac.community}
                           </p>
                         </div>
-                        <Badge variant="outline" className={`text-[10px] ${meta.badgeColor}`}>
+                        <Badge variant="outline" className={`text-[10px] ${meta.colorClass}`}>
                           {meta.label}
                         </Badge>
                       </div>

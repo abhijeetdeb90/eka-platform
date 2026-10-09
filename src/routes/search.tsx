@@ -126,7 +126,7 @@ function PublicMultilingualSearchPage() {
             </div>
             <Link
               to="/ask"
-              search={{ q: searchTerm || undefined }}
+              search={{ q: searchTerm || "", mode: "auto" } as any}
               className="shrink-0 inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-xs font-medium text-primary-foreground shadow-xs hover:bg-primary/90 transition-all"
             >
               <span>Open Ask EKA</span>
@@ -191,7 +191,7 @@ function PublicMultilingualSearchPage() {
               </Link>
               <Link
                 to="/ask"
-                search={{ q: searchTerm || undefined }}
+                search={{ q: searchTerm || "" } as any}
                 className="inline-flex items-center gap-1 rounded-lg border border-primary/40 bg-primary/10 px-2.5 py-1 text-primary font-medium hover:bg-primary/20"
               >
                 <Sparkles className="size-3" />
@@ -294,7 +294,7 @@ function PublicMultilingualSearchPage() {
                           </Link>
                           <Link
                             to="/ask"
-                            search={{ q: `What is the cultural significance of ${result.title}?` }}
+                            search={{ q: `What is the cultural significance of ${result.title}?` } as any}
                             className="text-saffron hover:underline font-medium"
                           >
                             Ask EKA AI →
@@ -328,7 +328,7 @@ function PublicMultilingualSearchPage() {
                 <div className="flex flex-wrap justify-center gap-3 pt-2">
                   <Link
                     to="/ask"
-                    search={{ q: searchTerm }}
+                    search={{ q: searchTerm } as any}
                   >
                     <Button className="rounded-full text-xs gap-1.5 bg-primary text-primary-foreground hover:bg-primary/90">
                       <Sparkles className="size-3.5" />

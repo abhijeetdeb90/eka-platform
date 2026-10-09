@@ -238,6 +238,7 @@ function MyEkaPage() {
 
                   <Link
                     to="/ask"
+                    search={{ q: "" } as any}
                     className="p-5 rounded-2xl border border-border/70 bg-card hover:border-primary/50 transition-all space-y-2 group"
                   >
                     <div className="flex items-center justify-between">
@@ -400,7 +401,7 @@ function MyEkaPage() {
                     Manage direct conversations with elders, master artisans, and community stewards.
                   </p>
                   <Button asChild size="sm" className="rounded-xl text-xs">
-                    <Link to="/messages">Open Messaging Console</Link>
+                    <Link to={"/messages" as any}>Open Messaging Console</Link>
                   </Button>
                 </div>
               </TabsContent>

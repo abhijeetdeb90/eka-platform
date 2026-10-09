@@ -83,7 +83,7 @@ function CreateArchivePage() {
         title: title.trim(),
         content: contextNote.trim(),
         topic: tradition.trim() || "Cultural Heritage",
-        type: activeKind === "story" ? "experience" : "reflection",
+        type: (activeKind === "story" ? "experience" : "reflection") as any,
         status: "visible",
       });
 

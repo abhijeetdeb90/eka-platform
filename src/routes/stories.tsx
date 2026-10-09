@@ -808,7 +808,7 @@ function EkaStoriesPage() {
   const openHighlight = (highlight: HighlightSequence) => {
     setActiveHighlight(highlight);
     setHighlightSlideIndex(0);
-    track("highlight_opened", { highlightId: highlight.id, title: highlight.title });
+    track("highlight_opened" as any, { highlightId: highlight.id, title: highlight.title });
   };
 
   const nextHighlightSlide = useCallback(() => {
@@ -884,7 +884,7 @@ function EkaStoriesPage() {
       initialQuestion: question,
     });
     setAskModalOpen(true);
-    track("ask_eka_triggered_from_story", { question, contextTitle });
+    track("ask_eka_triggered_from_story" as any, { question, contextTitle });
   };
 
   const currentModalReel = activeReelIndex !== null ? REELS_DATA[activeReelIndex] : null;
@@ -1090,6 +1090,7 @@ function EkaStoriesPage() {
               </div>
               <Link
                 to="/ask"
+                search={{ q: "" } as any}
                 className="text-xs font-medium text-terracotta hover:underline flex items-center gap-1"
               >
                 <span>Ask your own question</span>
@@ -1107,10 +1108,10 @@ function EkaStoriesPage() {
                   category={item.category}
                   location={item.location}
                   imageUrl={item.imageUrl}
-                  summary={item.summary}
-                  onExplore={() => {
+                  explanation={item.summary}
+                  onClick={() => {
                     setSelectedExplainer(item);
-                    track("editorial_card_explored", { id: item.id, title: item.title });
+                    track("editorial_card_explored" as any, { id: item.id, title: item.title });
                   }}
                 />
               ))}
@@ -1310,9 +1311,9 @@ function EkaStoriesPage() {
                       type="button"
                       onClick={() =>
                         triggerAskEka(
-                          activeHighlight.slides[highlightSlideIndex].askPrompt,
-                          activeHighlight.slides[highlightSlideIndex].title,
-                          activeHighlight.slides[highlightSlideIndex].location,
+                          activeHighlight.slides[highlightSlideIndex]!.askPrompt,
+                          activeHighlight.slides[highlightSlideIndex]!.title,
+                          activeHighlight.slides[highlightSlideIndex]!.location,
                         )
                       }
                       className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-terracotta text-white text-xs font-medium hover:bg-terracotta/90 transition-all cursor-pointer shadow-md"

@@ -8,7 +8,7 @@ export const Route = createFileRoute("/ops")({
     const tab = (search as Record<string, unknown>)?.["tab"];
     throw redirect({
       to: "/founder-admin/ops",
-      search: tab ? { tab } : undefined,
+      search: tab ? ({ tab } as any) : undefined,
     });
   },
   component: () => null,

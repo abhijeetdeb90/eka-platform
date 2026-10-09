@@ -83,7 +83,7 @@ function FeedPage() {
                 </Link>
               </Button>
               <Button asChild size="sm" variant="ghost" className="rounded-full text-xs">
-                <Link to="/ask">
+                <Link to="/ask" search={{ q: "" } as any}>
                   <MessageSquare className="mr-1.5 size-3.5" />
                   Ask EKA
                 </Link>

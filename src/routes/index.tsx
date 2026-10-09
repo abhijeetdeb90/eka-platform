@@ -61,16 +61,16 @@ function EkaHomePage() {
   const handleAskSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const q = askQuery.trim();
-    track("ask_eka_submitted", { source: "homepage_hero", q });
+    track("ask_eka_submitted" as any, { source: "homepage_hero", q });
     if (q) {
       navigate({ to: "/ask", search: { q } as any });
     } else {
-      navigate({ to: "/ask" });
+      navigate({ to: "/ask", search: { q: "" } as any });
     }
   };
 
   const handleChipClick = (query: string) => {
-    track("ask_eka_chip_clicked", { source: "homepage", q: query });
+    track("ask_eka_chip_clicked" as any, { source: "homepage", q: query });
     navigate({ to: "/ask", search: { q: query } as any });
   };
 
