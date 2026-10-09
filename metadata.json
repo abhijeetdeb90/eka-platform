@@ -1,0 +1,7 @@
+{
+  "name": "EKA Platform",
+  "description": "A cultural and spiritual intelligence platform connecting communities, traditions, and creators.",
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
