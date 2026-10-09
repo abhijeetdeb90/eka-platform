@@ -40,6 +40,8 @@ import { EkaLogo } from "@/components/brand/Logo";
 import { LanguageSelector } from "@/components/i18n/LanguageSelector";
 import { useLocalization } from "@/lib/i18n";
 import { getContent } from "@/lib/knowledge/multilingual-content";
+import { MetaTags } from "@/components/seo";
+import { EkaBreadcrumb } from "@/components/navigation";
 
 export const Route = createFileRoute("/knowledge/$slug")({
   component: KnowledgeDetailPage,
@@ -62,6 +64,11 @@ function KnowledgeDetailPage() {
   if (!object) {
     return (
       <main className="min-h-screen bg-background py-20 px-4">
+        <MetaTags
+          title="Cultural Entity Not Found"
+          description="The requested cultural knowledge object is either currently being curated or does not exist."
+          noIndex={true}
+        />
         <div className="mx-auto max-w-2xl text-center">
           <h1 className="font-serif text-3xl font-bold text-foreground">
             Cultural Entity Not Found
@@ -140,10 +147,23 @@ function KnowledgeDetailPage() {
       data-testid="eka-knowledge-detail-page"
       className="min-h-screen bg-background text-foreground"
     >
-      {/* Schema.org Structured Data */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdData) }}
+      {/* Dynamic SEO, OpenGraph & Twitter Cards */}
+      <MetaTags
+        title={`${object.entity} — Cultural Context, Lineage & Variations`}
+        description={object.oneLiner || object.summary.slice(0, 155)}
+        ogTitle={`${object.entity} | EKA Cultural Intelligence Archive`}
+        ogDescription={object.summary.slice(0, 200)}
+        ogImage={primaryImage}
+        ogImageAlt={object.entity}
+        ogType="article"
+        canonicalUrl={`/knowledge/${object.slug}`}
+        twitterCard="summary_large_image"
+        twitterTitle={object.entity}
+        twitterDescription={object.oneLiner || object.summary.slice(0, 160)}
+        twitterImage={primaryImage}
+        tradition={object.culturalDimensions.beliefs.religiousContext?.[0] || object.type}
+        keywords={object.culturalDimensions.identity.alternativeNames}
+        structuredData={jsonLdData as any}
       />
 
       {/* Top Navigation & Breadcrumbs Bar */}
@@ -219,6 +239,19 @@ function KnowledgeDetailPage() {
           </div>
         </div>
       </header>
+
+      {/* Breadcrumb Navigation Bar */}
+      <div className="border-b border-border/40 bg-sand/10">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <EkaBreadcrumb
+            items={[
+              { label: "Discover", to: "/discover" },
+              { label: "Knowledge", to: "/discover" },
+              { label: object.entity, active: true },
+            ]}
+          />
+        </div>
+      </div>
 
       {/* Hero Section */}
       <section className="relative overflow-hidden border-b border-border/60 bg-sand/15 py-12 sm:py-16">

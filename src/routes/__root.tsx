@@ -18,6 +18,9 @@ import { SafeNavigationProvider } from "@/components/security/SafeNavigationProv
 import { CookieConsentBanner } from "@/components/common/CookieConsentBanner";
 import { MobileBottomNav } from "@/components/navigation/MobileBottomNav";
 import { LocalizationProvider } from "@/lib/i18n";
+import { CulturalCommandPaletteProvider } from "@/components/search";
+import { GlobalErrorBoundary } from "@/components/error/GlobalErrorBoundary";
+import { registerOfflineShell } from "@/lib/offline-shell";
 
 function NotFoundComponent() {
   return (
@@ -86,21 +89,25 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "EKA — The World's Trusted Cultural Intelligence Layer" },
+      { name: "theme-color", content: "#78350f" },
+      { title: "EKA Platform — The World's Trusted Cultural Intelligence Layer" },
       {
         name: "description",
         content:
-          "One Within. One With All. Don't just scroll the world. Understand it. A universal cultural intelligence platform connecting traditions, living stories, crafts, and sacred places across the globe.",
+          "A cultural and spiritual intelligence platform connecting communities, traditions, and creators. One Within. One With All. Don't just scroll the world. Understand it.",
       },
-      { property: "og:title", content: "EKA — The World's Trusted Cultural Intelligence Layer" },
+      { property: "og:title", content: "EKA Platform — The World's Trusted Cultural Intelligence Layer" },
       {
         property: "og:description",
         content:
-          "One Within. One With All. Don't just scroll the world. Understand it. Cultural discovery, living traditions, and global intelligence.",
+          "A cultural and spiritual intelligence platform connecting communities, traditions, and creators.",
       },
       { property: "og:type", content: "website" },
       { property: "og:image", content: "/brand/eka-banner.jpg" },
-      { property: "og:image:alt", content: "EKA — The World's Trusted Cultural Intelligence Layer" },
+      {
+        property: "og:image:alt",
+        content: "EKA — The World's Trusted Cultural Intelligence Layer",
+      },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:image", content: "/brand/eka-banner.jpg" },
     ],
@@ -119,6 +126,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "alternate icon", href: "/brand/eka-logo.png", type: "image/png" },
       { rel: "shortcut icon", href: "/brand/favicon.svg", type: "image/svg+xml" },
       { rel: "apple-touch-icon", href: "/brand/app-icon.png" },
+      { rel: "manifest", href: "/manifest.webmanifest" },
     ],
   }),
 
@@ -145,6 +153,10 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
+  useEffect(() => {
+    registerOfflineShell();
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <LocalizationProvider>
@@ -159,10 +171,14 @@ function RootComponent() {
 
           {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
           <SafeNavigationProvider>
-            <Outlet />
-            <MobileBottomNav />
-            <Toaster position="top-center" />
-            <CookieConsentBanner />
+            <CulturalCommandPaletteProvider>
+              <GlobalErrorBoundary boundaryName="eka_root_outlet">
+                <Outlet />
+              </GlobalErrorBoundary>
+              <MobileBottomNav />
+              <Toaster position="top-center" />
+              <CookieConsentBanner />
+            </CulturalCommandPaletteProvider>
           </SafeNavigationProvider>
         </SmoothScrollProvider>
       </LocalizationProvider>

@@ -36,6 +36,7 @@ import { useProfile } from "@/hooks/useProfile";
 import { supabase } from "@/integrations/supabase/client";
 import { LanguageSelector } from "@/components/i18n/LanguageSelector";
 import { track } from "@/lib/analytics";
+import { MetaTags } from "@/components/seo";
 
 export const Route = createFileRoute("/my-eka")({
   head: () => ({
@@ -64,6 +65,14 @@ function MyEkaPage() {
 
   return (
     <div className="min-h-screen bg-sand/20 dark:bg-stone-950 text-foreground flex flex-col selection:bg-terracotta/20">
+      <MetaTags
+        title="My EKA — Personal Cultural Sanctuary"
+        description="Manage your personalized cultural archive, saved stories, sacred place bookmarks, wisdom passport, and community connections."
+        ogTitle="My EKA — Personal Sanctuary"
+        ogDescription="Your personal cultural archive and wisdom passport."
+        canonicalUrl="/my-eka"
+        noIndex={true}
+      />
       <SiteHeader />
 
       <main id="main-content" className="flex-1 py-8 sm:py-14 space-y-8">

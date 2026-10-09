@@ -12,4 +12,21 @@ export { PodcastCard, type PodcastCardProps } from "./PodcastCard";
 export { ServiceCard, type ServiceCardProps } from "./ServiceCard";
 export { MarketplaceCard, type MarketplaceCardProps } from "./MarketplaceCard";
 export { StoryCard, type StoryCardProps } from "./StoryCard";
+export {
+  ReelCard,
+  CarouselCard,
+  StaticStoryCard,
+  FeaturedStoryCard,
+  HighlightCard,
+  ShortEditorialCard,
+  type ReelCardProps,
+  type CarouselCardProps,
+  type StaticStoryCardProps,
+  type FeaturedStoryCardProps,
+  type HighlightCardProps,
+  type ShortEditorialCardProps,
+} from "./VisualStoryCards";
+export { QuestionCard, type QuestionCardProps } from "./QuestionCard";
+export { CategoryCard, type CategoryCardProps } from "./CategoryCard";
+export { FeedPostCard, type FeedPostProps } from "./FeedPostCard";
 export * from "./types";

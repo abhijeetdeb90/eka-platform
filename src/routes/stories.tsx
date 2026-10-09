@@ -1,23 +1,25 @@
 // ==============================================================================
-// EKA STORIES: CULTURAL REELS & VISUAL DISCOVERY LAYER
+// EKA STORIES: VISUAL-FIRST STORYTELLING DESTINATION
 // ==============================================================================
-// 1. Full-screen 9:16 Vertical Reels Experience
-// 2. Gesture support: Swipe/Scroll up & down, Tap to pause/play
-// 3. Cultural Knowledge Graph Connected:
-//    STORY → CREATOR → PLACE → CULTURE → KNOWLEDGE → COMMUNITY → MESSAGES
-// 4. Culturally contextual, not generic entertainment.
+// Specification: Sections 3, 4, 5, 6
+// 1. Stories is EKA's visual storytelling destination (NOT a text blog list).
+// 2. Supports:
+//    - REELS (9:16 vertical cards + immersive reel theater modal)
+//    - CAROUSELS (multi-slide visual cards with slide counter)
+//    - STATIC VISUAL STORIES (editorial image, short title, 1-2 lines context)
+//    - HIGHLIGHTS (horizontal circular visual collections at top)
+// 3. Short Editorial Cards for Knowledge/Articles ("Why do people light diyas?", etc.)
+// 4. Mobile-first, scannable, visual cards with Save, Share, Follow actions.
 // ==============================================================================
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
 import {
   Sparkles,
   MapPin,
   BookOpen,
   HelpCircle,
   Users,
-  MessageSquare,
   Share2,
   Volume2,
   VolumeX,
@@ -30,588 +32,1573 @@ import {
   Compass,
   ArrowRight,
   Heart,
-  Lightbulb,
-  HandHeart,
-  ExternalLink,
+  Bookmark,
+  ChevronLeft,
+  ChevronRight,
+  Layers,
+  Filter,
+  Eye,
+  X,
+  CheckCircle2,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { toast } from "sonner";
 import { SiteHeader } from "@/components/site/SiteHeader";
+import { SiteFooter } from "@/components/site/SiteFooter";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { track } from "@/lib/analytics";
-import { fetchReels, REACTIONS, recordView, type Reel } from "@/lib/discover";
+import {
+  StoryCard,
+  ReelCard,
+  CarouselCard,
+  StaticStoryCard,
+  FeaturedStoryCard,
+  HighlightCard,
+  ShortEditorialCard,
+} from "@/components/cards/StoryCard";
 import { ContextualAskEkaModal } from "@/components/discovery/ContextualAskEkaModal";
+import { cn } from "@/lib/utils";
+import { MetaTags } from "@/components/seo";
+import { EkaBreadcrumb } from "@/components/navigation";
 
 export const Route = createFileRoute("/stories")({
   head: () => ({
     meta: [
-      { title: "Stories — Cultural Reels & Living Knowledge | EKA" },
+      { title: "Stories — Visual Cultural Stories & Living Lineages | EKA" },
       {
         name: "description",
         content:
-          "Experience the world through vertical cultural reels. 1 billion people, 1 billion stories — preserving living rituals, crafts, festivals, and sacred places.",
+          "Watch, wonder, understand, and connect with living cultural lineages. Visual reels, carousels, highlights, and short editorial stories across 1 billion people.",
       },
-      { property: "og:title", content: "EKA Stories — Cultural Reels" },
+      { property: "og:title", content: "EKA Stories — Visual Cultural Destination" },
       {
         property: "og:description",
-        content: "Watch, wonder, understand, and connect with living cultural lineages.",
+        content:
+          "1 billion people, 1 billion stories. Experience living rituals, crafts, foodways, and sacred places.",
       },
+      { property: "og:image", content: "/brand/eka-banner.jpg" },
     ],
   }),
-  component: StoriesReelsPage,
+  component: EkaStoriesPage,
 });
 
-interface CulturalReelItem {
+// -----------------------------------------------------------------------------
+// 1. HIGHLIGHT COLLECTIONS DATA (Section 4)
+// -----------------------------------------------------------------------------
+interface HighlightSequence {
   id: string;
   title: string;
-  contextNote: string;
-  tradition: string;
-  category: "festival" | "craft" | "sacred_place" | "ritual" | "food" | "lineage";
-  place: string;
-  country: string;
-  videoUrl?: string;
-  imageUrl: string;
-  creator: {
+  coverImage: string;
+  storyCount: number;
+  slides: {
     id: string;
+    title: string;
+    location: string;
+    caption: string;
+    imageUrl: string;
+    custodian: string;
+    askPrompt: string;
+  }[];
+}
+
+const HIGHLIGHT_COLLECTIONS: HighlightSequence[] = [
+  {
+    id: "diwali",
+    title: "Diwali",
+    coverImage: "/content/ritual-lamp.jpg",
+    storyCount: 4,
+    slides: [
+      {
+        id: "d-1",
+        title: "The Awakening of Inner Jyoti",
+        location: "Ayodhya & Varanasi, India",
+        caption: "Clay diyas lit with mustard oil to signify the return of light and knowledge over darkness.",
+        imageUrl: "/content/ritual-lamp.jpg",
+        custodian: "Vedic Temple Custodians",
+        askPrompt: "Why do people light clay diyas during Diwali?",
+      },
+      {
+        id: "d-2",
+        title: "Kumartuli: Mud, Straw & Reverence",
+        location: "Kolkata, India",
+        caption: "Potter guilds shaping Ganga clay on wooden wheels before the festive dawn.",
+        imageUrl: "/places/kolkata.jpg",
+        custodian: "Kumartuli Potter Artisans",
+        askPrompt: "How are sacred clay deities created sustainably in Kumartuli?",
+      },
+      {
+        id: "d-3",
+        title: "Rangoli: Ephemeral Welcomes",
+        location: "Tamil Nadu, India",
+        caption: "Geometric Kolam patterns drawn with rice flour at dawn to feed ants and invite auspicious presence.",
+        imageUrl: "/content/observe.jpg",
+        custodian: "Generational Matriarchs",
+        askPrompt: "What is the spiritual meaning behind drawing Kolam at sunrise?",
+      },
+    ],
+  },
+  {
+    id: "india",
+    title: "India",
+    coverImage: "/places/varanasi.jpg",
+    storyCount: 5,
+    slides: [
+      {
+        id: "in-1",
+        title: "The 1,200-Year Twilight Flame",
+        location: "Dashashwamedh Ghat, Varanasi",
+        caption: "Seven tiered brass lamps returning fire to the holy river at the exact junction of dusk.",
+        imageUrl: "/places/varanasi.jpg",
+        custodian: "Ganga Seva Nidhi Priests",
+        askPrompt: "Why is Varanasi sacred across millennia?",
+      },
+      {
+        id: "in-2",
+        title: "Majuli Island: Bamboo Spirit Masks",
+        location: "Brahmaputra River, Assam",
+        caption: "Living theatrical masks crafted from river silt and bamboo reeds in 500-year-old satras.",
+        imageUrl: "/brand/eka-banner-sunset.jpg",
+        custodian: "Samaguri Satra Mask Guild",
+        askPrompt: "What is the tradition of Sattriya monastery culture in Majuli?",
+      },
+    ],
+  },
+  {
+    id: "sacred-places",
+    title: "Sacred Places",
+    coverImage: "/places/kyoto.jpg",
+    storyCount: 6,
+    slides: [
+      {
+        id: "sp-1",
+        title: "Torii Gate Alleys of Inari",
+        location: "Kyoto, Japan",
+        caption: "Over 10,000 vermilion torii gates winding up Mount Inari, marking the boundary into sacred realm.",
+        imageUrl: "/places/kyoto.jpg",
+        custodian: "Shinto Shrine Stewards",
+        askPrompt: "What is the spiritual boundary marked by a Torii gate?",
+      },
+      {
+        id: "sp-2",
+        title: "The Stone Terraces of Chouara",
+        location: "Fez Medina, Morocco",
+        caption: "A 1,000-year-old artisanal guild preserving natural botanical dye pits in ancient stone.",
+        imageUrl: "/places/marrakesh.jpg",
+        custodian: "Chouara Artisan Guild",
+        askPrompt: "How do artisans in Fez use natural botanicals to dye textiles?",
+      },
+    ],
+  },
+  {
+    id: "foodways",
+    title: "Foodways",
+    coverImage: "/content/reading-table.jpg",
+    storyCount: 4,
+    slides: [
+      {
+        id: "fw-1",
+        title: "The Fermented Hearth of Tingmo",
+        location: "Dharamshala & Ladakh, India",
+        caption: "Wild yeast sourdough steamed in tiered bamboo baskets to sustain mountain monks during winter meditation.",
+        imageUrl: "/content/reading-table.jpg",
+        custodian: "Tibetan Hearth Custodians",
+        askPrompt: "How did Tibetan foodways evolve for high-altitude monastic life?",
+      },
+      {
+        id: "fw-2",
+        title: "Mole Negro: The 30-Spice Harmony",
+        location: "Oaxaca, Mexico",
+        caption: "Roasted chiles, cacao, and toasted pumpkin seeds simmered over ocote wood embers for three days.",
+        imageUrl: "/content/journey.jpg",
+        custodian: "Zapotec Traditional Cooks",
+        askPrompt: "What is the cultural history of ceremonial Mole in Oaxaca?",
+      },
+    ],
+  },
+  {
+    id: "crafts",
+    title: "Crafts",
+    coverImage: "/content/monastery-corridor.jpg",
+    storyCount: 5,
+    slides: [
+      {
+        id: "cr-1",
+        title: "Aranmula Kannadi: The Mirror of Soul",
+        location: "Kerala, India",
+        caption: "Cast only by one family guild using a secret bronze alloy with zero glass refraction.",
+        imageUrl: "/content/monastery-corridor.jpg",
+        custodian: "Vishwakarma Guild Master Achari",
+        askPrompt: "Why does the Aranmula metal mirror reflect without glass refraction?",
+      },
+      {
+        id: "cr-2",
+        title: "Kintsugi: Gold in the Fractures",
+        location: "Kanazawa, Japan",
+        caption: "Mending shattered ceramics with golden lacquer, honoring imperfection as sacred history.",
+        imageUrl: "/places/kyoto.jpg",
+        custodian: "Urushi Lacquer Masters",
+        askPrompt: "What philosophy underpins the Japanese art of Kintsugi?",
+      },
+    ],
+  },
+  {
+    id: "festivals",
+    title: "Festivals",
+    coverImage: "/places/kolkata.jpg",
+    storyCount: 7,
+    slides: [
+      {
+        id: "fe-1",
+        title: "Uma's Homecoming in Autumn",
+        location: "Kolkata, West Bengal",
+        caption: "Neighborhoods transformed into open-air museum installations for Durga Puja.",
+        imageUrl: "/places/kolkata.jpg",
+        custodian: "Kolkata Cultural Trusts",
+        askPrompt: "Why do Bengalis celebrate Durga Puja differently from other Indian festivals?",
+      },
+      {
+        id: "fe-2",
+        title: "Marigold Trails of Remembrance",
+        location: "Oaxaca & Michoacán, Mexico",
+        caption: "Lighting copal incense and scattering yellow petals to welcome ancestors home.",
+        imageUrl: "/content/observe.jpg",
+        custodian: "Oaxaca Community Elders",
+        askPrompt: "Why are yellow marigolds used during Día de los Muertos?",
+      },
+    ],
+  },
+  {
+    id: "women-culture",
+    title: "Women & Culture",
+    coverImage: "/content/practice.jpg",
+    storyCount: 4,
+    slides: [
+      {
+        id: "wc-1",
+        title: "Mithila Matrilineal Wall Murals",
+        location: "Madhubani, Bihar",
+        caption: "Mothers teaching daughters cosmic deities painted with bamboo twigs and natural mineral pigments.",
+        imageUrl: "/content/practice.jpg",
+        custodian: "Mithila Women Collective",
+        askPrompt: "How is Mithila painting passed down matrilineally?",
+      },
+      {
+        id: "wc-2",
+        title: "Berber Rugs: Woven Matrilineal Codes",
+        location: "High Atlas Mountains, Morocco",
+        caption: "Geometric symbols encoded directly on the loom representing female lineage, fertility, and cosmic protection.",
+        imageUrl: "/places/marrakesh.jpg",
+        custodian: "Beni Ourain Women Weavers",
+        askPrompt: "How do Berber women encode family histories in woven rugs?",
+      },
+    ],
+  },
+  {
+    id: "living-traditions",
+    title: "Living Traditions",
+    coverImage: "/content/today-reflection.jpg",
+    storyCount: 5,
+    slides: [
+      {
+        id: "lt-1",
+        title: "Bhoota Kola: Spirit Oracles",
+        location: "Tulu Nadu, Coastal Karnataka",
+        caption: "Performers entering trances to voice ancestral justice, mediated with areca nut offerings.",
+        imageUrl: "/content/today-reflection.jpg",
+        custodian: "Daivaradhane Lineage Keepers",
+        askPrompt: "What is Bhoota Kola and how does it function as living justice?",
+      },
+      {
+        id: "lt-2",
+        title: "Whirling Dervishes of Konya",
+        location: "Konya, Turkey",
+        caption: "Turning counterclockwise with open palms to bridge divine love into the earthly world.",
+        imageUrl: "/content/monastery-corridor.jpg",
+        custodian: "Mevlevi Sufi Order",
+        askPrompt: "What is the symbolic meaning of the Sema Whirling ceremony?",
+      },
+    ],
+  },
+  {
+    id: "asia",
+    title: "Asia",
+    coverImage: "/places/kyoto.jpg",
+    storyCount: 8,
+    slides: [
+      {
+        id: "as-1",
+        title: "The Whispered Way of Chado",
+        location: "Kyoto, Japan",
+        caption: "Preparing powdered green tea with bamboo whisks inside quiet tatami rooms.",
+        imageUrl: "/places/kyoto.jpg",
+        custodian: "Sen Soukaku, Urasenke Lineage",
+        askPrompt: "What is the philosophical core of the Japanese tea ceremony?",
+      },
+    ],
+  },
+  {
+    id: "africa",
+    title: "Africa",
+    coverImage: "/places/marrakesh.jpg",
+    storyCount: 4,
+    slides: [
+      {
+        id: "af-1",
+        title: "Terraces of Chouara",
+        location: "Fez, Morocco",
+        caption: "Thousand-year guild stone vats dyed with saffron, cedar, and poppy flowers.",
+        imageUrl: "/places/marrakesh.jpg",
+        custodian: "Maâlem Tariq Benjelloun",
+        askPrompt: "How do artisanal guilds operate in Fez?",
+      },
+    ],
+  },
+  {
+    id: "latin-america",
+    title: "Latin America",
+    coverImage: "/content/observe.jpg",
+    storyCount: 5,
+    slides: [
+      {
+        id: "la-1",
+        title: "Golden Petals of Oaxaca",
+        location: "Oaxaca, Mexico",
+        caption: "Carpeted alleys with cempasúchil petals welcoming returning departed souls.",
+        imageUrl: "/content/observe.jpg",
+        custodian: "Doña Elena Morales",
+        askPrompt: "What does death signify in Mesoamerican cultural traditions?",
+      },
+    ],
+  },
+];
+
+// -----------------------------------------------------------------------------
+// 2. REELS DATA (9:16 Visual Reels — Section 5.A)
+// -----------------------------------------------------------------------------
+interface ReelItem {
+  id: string;
+  title: string;
+  duration: string;
+  category: string;
+  location: string;
+  mediaUrl: string;
+  thumbnailUrl: string;
+  contextNote: string;
+  creator: {
     name: string;
     handle: string;
     avatar: string;
-    role: string;
     verified: boolean;
   };
-  learnSlug: string;
-  communitySlug: string;
   curiosityQuestion: string;
-  durationSeconds: number;
-  reactions: Record<string, number>;
+  likesCount: number;
 }
 
-// Curated high-fidelity cultural reels representing unbroken lineages
-const EDITORIAL_CULTURAL_REELS: CulturalReelItem[] = [
+const REELS_DATA: ReelItem[] = [
   {
     id: "reel-kashi-aarti",
     title: "The Twilight Fire Offering of Dashashwamedh",
+    duration: "0:45",
+    category: "Rituals",
+    location: "Varanasi, India",
+    mediaUrl: "/places/varanasi.jpg",
+    thumbnailUrl: "/places/varanasi.jpg",
     contextNote:
       "Every evening for over 1,200 continuous years, seven young priests lift 4.5kg brass tiered lamps in synchrony to return light to the Ganges as living gratitude.",
-    tradition: "Sanatana Dharma / Vedic Rhythms",
-    category: "ritual",
-    place: "Varanasi, Uttar Pradesh",
-    country: "India",
-    imageUrl: "/places/varanasi.jpg",
     creator: {
-      id: "creator-ramakrishna",
       name: "Pt. Ramakrishna Shastry",
       handle: "kashi_lineage",
       avatar: "/brand/ad-founder.jpg",
-      role: "Eighth-Generation Archaka",
       verified: true,
     },
-    learnSlug: "kashi-ganga-aarti",
-    communitySlug: "sacred-geography",
     curiosityQuestion: "Why is fire returned back to the river water at sunset?",
-    durationSeconds: 45,
-    reactions: { appreciate: 1240, respect: 890, learned: 620, inspiring: 430 },
+    likesCount: 1420,
   },
   {
     id: "reel-kyoto-chado",
     title: "Chado: Silence Whispered into Matcha",
+    duration: "1:00",
+    category: "Crafts",
+    location: "Kyoto, Japan",
+    mediaUrl: "/places/kyoto.jpg",
+    thumbnailUrl: "/places/kyoto.jpg",
     contextNote:
       "In a two-mat tearoom in Kyoto, every movement of the bamboo whisk (chasen) reminds master and guest of 'Ichi-go ichi-e' — this exact moment will never recur.",
-    tradition: "Japanese Zen Way of Tea",
-    category: "craft",
-    place: "Kyoto",
-    country: "Japan",
-    imageUrl: "/places/kyoto.jpg",
     creator: {
-      id: "creator-soukaku",
       name: "Master Sen Soukaku",
       handle: "kyoto_chado",
       avatar: "/content/monastery-corridor.jpg",
-      role: "Urasenke Lineage Master",
       verified: true,
     },
-    learnSlug: "japanese-tea-ceremony",
-    communitySlug: "mindful-living",
     curiosityQuestion: "How does preparing a bowl of powdered tea become silent meditation?",
-    durationSeconds: 60,
-    reactions: { appreciate: 980, respect: 750, learned: 810, inspiring: 540 },
+    likesCount: 980,
   },
   {
     id: "reel-oaxaca-altar",
-    title: "Golden Marigold Paths for the Returning Spirits",
+    title: "Golden Marigold Paths for Returning Spirits",
+    duration: "0:52",
+    category: "Festivals",
+    location: "Oaxaca, Mexico",
+    mediaUrl: "/content/observe.jpg",
+    thumbnailUrl: "/content/observe.jpg",
     contextNote:
-      "In Oaxaca, families carpet cobblestone alleys with cempasúchil petals and light copal incense. Rather than grieving loss, death is welcomed home with favorite foods and song.",
-    tradition: "Zapotec-Mesoamerican Remembrance",
-    category: "festival",
-    place: "Oaxaca & Michoacán",
-    country: "Mexico",
-    imageUrl: "/content/observe.jpg",
+      "In Oaxaca, families carpet cobblestone alleys with cempasúchil petals and light copal incense. Death is welcomed home with favorite foods and song.",
     creator: {
-      id: "creator-elena",
       name: "Doña Elena Morales",
       handle: "oaxaca_memoria",
       avatar: "/content/today-reflection.jpg",
-      role: "Community Elder & Weaver",
       verified: true,
     },
-    learnSlug: "dia-de-los-muertos",
-    communitySlug: "living-rituals",
     curiosityQuestion: "Why are yellow marigolds believed to guide departed ancestors?",
-    durationSeconds: 52,
-    reactions: { appreciate: 1430, respect: 910, learned: 740, inspiring: 610 },
+    likesCount: 1140,
   },
   {
     id: "reel-aranmula-mirror",
     title: "Aranmula Kannadi: The Metal That Mirrors Soul",
+    duration: "0:58",
+    category: "Crafts",
+    location: "Kerala, India",
+    mediaUrl: "/content/monastery-corridor.jpg",
+    thumbnailUrl: "/content/monastery-corridor.jpg",
     contextNote:
-      "Cast only by a single family guild in Kerala using an undisclosed alloy of copper and tin, these sacred mirrors produce front-surface reflections without secondary glass refraction.",
-    tradition: "Vishwakarma Sacred Metallurgy",
-    category: "craft",
-    place: "Aranmula, Kerala",
-    country: "India",
-    imageUrl: "/content/monastery-corridor.jpg",
+      "Cast only by a single family guild in Kerala using an undisclosed bronze alloy, producing front-surface reflections without secondary glass refraction.",
     creator: {
-      id: "creator-sudhakaran",
       name: "K. Sudhakaran Achari",
       handle: "aranmula_guild",
       avatar: "/content/observe.jpg",
-      role: "Master Metal Artisan",
       verified: true,
     },
-    learnSlug: "aranmula-sacred-mirrors",
-    communitySlug: "artisan-guilds",
-    curiosityQuestion: "Why is Aranmula metal mirror optical reflection different from ordinary glass?",
-    durationSeconds: 58,
-    reactions: { appreciate: 860, respect: 1120, learned: 940, inspiring: 480 },
+    curiosityQuestion: "Why does the Aranmula metal mirror reflect without glass refraction?",
+    likesCount: 890,
   },
   {
     id: "reel-majuli-masks",
-    title: "Majuli Island: The Bamboo Spirit Masks of Samaguri",
+    title: "Bamboo Spirit Masks of Samaguri Satra",
+    duration: "0:50",
+    category: "Living Cultures",
+    location: "Majuli, Assam",
+    mediaUrl: "/brand/eka-banner-sunset.jpg",
+    thumbnailUrl: "/brand/eka-banner-sunset.jpg",
     contextNote:
       "Crafted from river silt clay, cow dung, and woven split bamboo, Sattriya monastery performers bring sacred epics to life in the world's largest river island.",
-    tradition: "Assamese Sattriya Culture",
-    category: "lineage",
-    place: "Majuli, Assam",
-    country: "India",
-    imageUrl: "/content/reading-table.jpg",
     creator: {
-      id: "creator-prabin",
       name: "Prabin Goswami",
       handle: "majuli_masks",
       avatar: "/places/kolkata.jpg",
-      role: "Sattriya Mask Maker",
       verified: true,
     },
-    learnSlug: "majuli-sattra-culture",
-    communitySlug: "sacred-geography",
-    curiosityQuestion: "How do Assamese masks articulate open jaws and eyes using river reed fibers?",
-    durationSeconds: 50,
-    reactions: { appreciate: 720, respect: 680, learned: 850, inspiring: 410 },
+    curiosityQuestion: "How do Assamese masks articulate open jaws and eyes using river reeds?",
+    likesCount: 760,
   },
   {
     id: "reel-fez-tanneries",
-    title: "The Thousand-Year Terraces of Chouara",
+    title: "Thousand-Year Terraces of Chouara",
+    duration: "1:05",
+    category: "Crafts",
+    location: "Fez, Morocco",
+    mediaUrl: "/places/marrakesh.jpg",
+    thumbnailUrl: "/places/marrakesh.jpg",
     contextNote:
       "Leather dyed using wild saffron, cedar bark, and poppy flowers inside stone vats carved in the 11th century, honoring artisanal kinship across Moroccan guilds.",
-    tradition: "Maghrebi Guild Heritage",
-    category: "craft",
-    place: "Fez",
-    country: "Morocco",
-    imageUrl: "/places/marrakesh.jpg",
     creator: {
-      id: "creator-tariq",
       name: "Maâlem Tariq Benjelloun",
       handle: "fez_artisan",
       avatar: "/content/journey.jpg",
-      role: "Guild Master",
       verified: true,
     },
-    learnSlug: "moroccan-artisan-guilds",
-    communitySlug: "artisan-guilds",
-    curiosityQuestion: "How do natural mineral and botanical dyes achieve sun-fast vibrant pigments?",
-    durationSeconds: 65,
-    reactions: { appreciate: 1150, respect: 830, learned: 790, inspiring: 510 },
+    curiosityQuestion: "How do natural botanical dyes achieve permanent sun-fast vibrant pigments?",
+    likesCount: 1320,
   },
 ];
 
-function StoriesReelsPage() {
+// -----------------------------------------------------------------------------
+// 3. CAROUSEL STORIES DATA (Section 5.B)
+// -----------------------------------------------------------------------------
+interface CarouselItem {
+  id: string;
+  title: string;
+  category: string;
+  slidesCount: number;
+  coverImageUrl: string;
+  location: string;
+  contextOneLiner: string;
+  creator: {
+    name: string;
+    verified: boolean;
+  };
+}
+
+const CAROUSEL_DATA: CarouselItem[] = [
+  {
+    id: "car-durga-sculpture",
+    title: "From Ganga Mud to Divinity: The 4 Rites of Clay",
+    category: "Sacred Crafts",
+    slidesCount: 5,
+    coverImageUrl: "/places/kolkata.jpg",
+    location: "Kumartuli, Kolkata",
+    contextOneLiner: "How straw armatures and sacred clay from riverside brothels become Uma's living presence.",
+    creator: { name: "Kumartuli Artisan Guild", verified: true },
+  },
+  {
+    id: "car-zen-gardens",
+    title: "Raking Stillness: The 15 Stones of Ryoan-ji",
+    category: "Sacred Places",
+    slidesCount: 6,
+    coverImageUrl: "/places/kyoto.jpg",
+    location: "Kyoto, Japan",
+    contextOneLiner: "Why no matter where you sit on the wooden veranda, only 14 stones are visible at once.",
+    creator: { name: "Ryoan-ji Monastic Stewards", verified: true },
+  },
+  {
+    id: "car-bishnoi-blackbucks",
+    title: "The 363 Martyrs & Desert Gazelles of Thar",
+    category: "Living Ecology",
+    slidesCount: 4,
+    coverImageUrl: "/content/observe.jpg",
+    location: "Jodhpur, Rajasthan",
+    contextOneLiner: "The 29 commandments that turn desert villagers into fierce ecological guardians.",
+    creator: { name: "Bishnoi Dharma Sanstha", verified: true },
+  },
+  {
+    id: "car-berber-rugs",
+    title: "The Hidden Mathematical Language of High Atlas Weavers",
+    category: "Master Crafts",
+    slidesCount: 5,
+    coverImageUrl: "/places/marrakesh.jpg",
+    location: "Atlas Mountains, Morocco",
+    contextOneLiner: "How Amazigh matriarchs weave generational genealogies without ever drawing a diagram.",
+    creator: { name: "Doña Elena & Beni Ourain Guild", verified: true },
+  },
+];
+
+// -----------------------------------------------------------------------------
+// 4. SHORT EDITORIAL CARDS DATA (Section 6)
+// -----------------------------------------------------------------------------
+interface EditorialExplainer {
+  id: string;
+  title: string;
+  category: string;
+  location: string;
+  summary: string;
+  imageUrl: string;
+  fullContent: {
+    lead: string;
+    ritualSignificance: string;
+    symbolism: string;
+    modernContinuity: string;
+    custodians: string;
+    askPrompt: string;
+  };
+}
+
+const EDITORIAL_EXPLAINERS: EditorialExplainer[] = [
+  {
+    id: "exp-diyas",
+    title: "WHY DO PEOPLE LIGHT DIYAS?",
+    category: "Tradition",
+    location: "India",
+    summary:
+      "A short explanation of the ritual, symbolism, and cultural context of clay oil lamps returning light over darkness.",
+    imageUrl: "/content/ritual-lamp.jpg",
+    fullContent: {
+      lead: "A diya is a simple shallow lamp carved from earthenware clay, filled with mustard or sesame oil, and lit with a rolled cotton wick. But in Indic thought, it is an altar of living wisdom.",
+      ritualSignificance:
+        "Lighting a diya at twilight (Sandhya) marks the transition between light and darkness. The clay (Prithvi) represents the mortal body, the oil represents worldly attachments, and the flame (Agni) represents pure illumination burning away illusion.",
+      symbolism:
+        "Unlike an electric bulb which projects outward, a flame naturally points upward toward the formless divine, reminding the observer of self-effacing surrender.",
+      modernContinuity:
+        "Across millions of households from Diwali to daily dawn prayer, lighting the lamp is an unbroken gesture of gratitude connecting family memory.",
+      custodians: "Potter guilds of North and South India, temple priests, and generational grandmothers.",
+      askPrompt: "Why do people light clay diyas during Diwali and dawn prayer?",
+    },
+  },
+  {
+    id: "exp-varanasi",
+    title: "WHY IS VARANASI SACRED?",
+    category: "Sacred Places",
+    location: "India",
+    summary:
+      "A concise cultural explanation of the world's oldest continuously inhabited spiritual city where death is celebrated as liberation.",
+    imageUrl: "/places/varanasi.jpg",
+    fullContent: {
+      lead: "Mark Twain wrote that Varanasi is older than history, older than tradition, older even than legend, and looks twice as old as all of them put together.",
+      ritualSignificance:
+        "Perched on the crescent bend of the holy Ganges where the river turns north toward its Himalayan source (Uttara-vahini), Kashi is considered by pilgrims to be the city where Shiva whispers the saving mantra into the ear of the departing soul.",
+      symbolism:
+        "In Varanasi, death is not hidden behind sanitized hospital curtains; Manikarnika and Harishchandra Ghats burn eternal funeral pyres in broad daylight, instructing the living that impermanence is sacred reality.",
+      modernContinuity:
+        "Sanskrit universities, classical Dhrupad music academies, and weaving guilds continue in narrow cobblestone lanes without disruption.",
+      custodians: "The traditional Dom Raja families, boatmen lineages, and Kashi Pandits.",
+      askPrompt: "Why is Varanasi considered sacred across millennia?",
+    },
+  },
+  {
+    id: "exp-tea",
+    title: "THE STORY BEHIND JAPANESE TEA",
+    category: "Craft",
+    location: "Japan",
+    summary:
+      "A visual introduction to Chado (The Way of Tea) and the quiet zen culture surrounding its preparation.",
+    imageUrl: "/places/kyoto.jpg",
+    fullContent: {
+      lead: "In Japan, tea is not a beverage; it is an architecture of undivided attention.",
+      ritualSignificance:
+        "Developed by 16th-century Zen master Sen no Rikyu, Chado requires guests to crawl through a humble low doorway (Nijiriguchi), forcing samurai to remove their swords and enter as equal mortals.",
+      symbolism:
+        "The core tenet 'Ichi-go ichi-e' translates as 'one time, one meeting'. Because the water temperature, the wind outside, and the minds of those present can never be duplicated, this single sip of bitter matcha is sacred.",
+      modernContinuity:
+        "Grandmasters in Kyoto continue decades of training to master the curvature of bamboo spoons and sound of boiling kettle steam.",
+      custodians: "Urasenke, Omotesenke, and Mushakojisenke tea lineage schools.",
+      askPrompt: "What is the story behind the Japanese Tea Ceremony?",
+    },
+  },
+  {
+    id: "exp-langar",
+    title: "WHY DO SIKHS SERVE FREE LANGAR?",
+    category: "Tradition",
+    location: "Punjab, India",
+    summary:
+      "The revolutionary egalitarian kitchen where kings and peasants sit shoulder-to-shoulder on the floor for communal food.",
+    imageUrl: "/content/reading-table.jpg",
+    fullContent: {
+      lead: "Instituted in the 15th century by Guru Nanak, Langar is a radical spiritual institution of universal hospitality.",
+      ritualSignificance:
+        "At a time when medieval India enforced strict caste and purity hierarchies forbidding higher castes from dining with lower castes, the Sikh Gurus mandated that anyone seeking audience must first sit together in Pangat (on the same floor mat) and eat Sangat.",
+      symbolism:
+        "Food served with love (Seva) dissolves ego. No money is accepted; all vegetables are peeled and rotis rolled by volunteers singing sacred verses.",
+      modernContinuity:
+        "At the Golden Temple in Amritsar, over 100,000 hot vegetarian meals are served every single day, 24/7, without exception.",
+      custodians: "Sikh community volunteers and Gurdwara sewadars worldwide.",
+      askPrompt: "What was the social revolution behind Guru Nanak's Langar?",
+    },
+  },
+  {
+    id: "exp-bhoota-kola",
+    title: "WHAT IS BHOOTA KOLA?",
+    category: "Sacred Ritual",
+    location: "Karnataka, India",
+    summary:
+      "A living spirit oracle where dancers enter trances to arbitrate justice and balance between villages and forest deities.",
+    imageUrl: "/content/today-reflection.jpg",
+    fullContent: {
+      lead: "In the coastal belt of Tulu Nadu, Bhoota Kola is not folklore performance; it is real-time community adjudication.",
+      ritualSignificance:
+        "Performers from marginalized hereditary communities adorn elaborate areca palm headgear (Ani), painted faces, and brass ornaments to channel local protector spirits (Daivas like Panjurli and Guliga).",
+      symbolism:
+        "The spirit demands honesty: wealthy landlords and poor farmers must stand before the oracle to resolve property boundaries, ecological disputes, and family discord.",
+      modernContinuity:
+        "Thousands of village groves hold annual night vigils illuminated by torches until dawn.",
+      custodians: "Nalike and Parava hereditary performer families.",
+      askPrompt: "How does Bhoota Kola serve as community justice in Tulu Nadu?",
+    },
+  },
+  {
+    id: "exp-bishnoi",
+    title: "HOW DO THE BISHNOI PROTECT DESERT WILDLIFE?",
+    category: "Living Ecology",
+    location: "Rajasthan, India",
+    summary:
+      "The community that treats trees and wild blackbucks as sacred family, sacrificing lives to protect the desert canopy.",
+    imageUrl: "/content/observe.jpg",
+    fullContent: {
+      lead: "In 1730 CE, 363 Bishnoi women and men hugged Khejri trees and gave their lives when a king's soldiers came to fell the desert forest.",
+      ritualSignificance:
+        "Founded by Guru Jambheshwar in 1485, the Bishnoi follow 29 sacred principles including forbidding the cutting of green trees and hunting of any animal.",
+      symbolism:
+        "Bishnoi mothers have famously breastfed orphaned blackbuck fawns alongside their own infants, exemplifying universal kinship with non-human life.",
+      modernContinuity:
+        "In the harsh Thar desert, Bishnoi villages stand out as lush oases teeming with free-roaming antelopes and ancient trees.",
+      custodians: "Bishnoi village councils and forest wardens.",
+      askPrompt: "What are the 29 principles of Bishnoi sacred ecology?",
+    },
+  },
+];
+
+// -----------------------------------------------------------------------------
+// 5. STATIC VISUAL STORIES DATA (Section 5.C)
+// -----------------------------------------------------------------------------
+interface StaticStoryItem {
+  id: string;
+  title: string;
+  category: string;
+  location: string;
+  imageUrl: string;
+  context: string;
+  creator: {
+    name: string;
+    verified: boolean;
+  };
+}
+
+const STATIC_STORIES_DATA: StaticStoryItem[] = [
+  {
+    id: "stat-kolkata-durga",
+    title: "The Autumn Scent of Shiuli: Uma Returns",
+    category: "Festivals",
+    location: "Kolkata, India",
+    imageUrl: "/places/kolkata.jpg",
+    context: "White kash grass blooming by railway tracks heralds the four days when the Mother Goddess visits as beloved daughter.",
+    creator: { name: "Ananya Mukherjee", verified: true },
+  },
+  {
+    id: "stat-kyoto-bamboo",
+    title: "Wind in the Stalks of Sagano",
+    category: "Sacred Places",
+    location: "Arashiyama, Kyoto",
+    imageUrl: "/places/kyoto.jpg",
+    context: "Designated as one of the '100 Soundscapes of Japan', the creak of towering green bamboo reminds travelers to listen with stillness.",
+    creator: { name: "Kenji Takahashi", verified: true },
+  },
+  {
+    id: "stat-marrakesh-courtyard",
+    title: "The Geometry of Cool Water in Medina",
+    category: "Heritage",
+    location: "Marrakesh, Morocco",
+    imageUrl: "/places/marrakesh.jpg",
+    context: "Zellij ceramic tiles arranged in infinite radial stars around central fountains to keep desert heat outside thick mud-brick walls.",
+    creator: { name: "Fatima Zahra", verified: true },
+  },
+  {
+    id: "stat-varanasi-dawn",
+    title: "Subah-e-Banaras: Dawn Ragas over the River",
+    category: "Rituals",
+    location: "Assi Ghat, Varanasi",
+    imageUrl: "/places/varanasi.jpg",
+    context: "Before the sun rises above the sandy eastern shore, sitarists and vocalists offer music to the river as living salutation.",
+    creator: { name: "Banaras Heritage Circle", verified: true },
+  },
+];
+
+// -----------------------------------------------------------------------------
+// MAIN STORIES COMPONENT
+// -----------------------------------------------------------------------------
+function EkaStoriesPage() {
   const navigate = useNavigate();
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(true);
-  const [isMuted, setIsMuted] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+
+  // Active filter tab: "all" | "reels" | "carousels" | "editorial" | "static"
+  const [activeTab, setActiveTab] = useState<"all" | "reels" | "carousels" | "editorial" | "static">("all");
+
+  // Highlight Viewer Modal State
+  const [activeHighlight, setActiveHighlight] = useState<HighlightSequence | null>(null);
+  const [highlightSlideIndex, setHighlightSlideIndex] = useState(0);
+
+  // Fullscreen Reel Player Modal State
+  const [activeReelIndex, setActiveReelIndex] = useState<number | null>(null);
+  const [isReelPlaying, setIsReelPlaying] = useState(true);
+  const [isReelMuted, setIsReelMuted] = useState(false);
+
+  // Short Editorial Reader Modal State
+  const [selectedExplainer, setSelectedExplainer] = useState<EditorialExplainer | null>(null);
+
+  // Contextual Ask EKA Modal State
+  const [askTarget, setAskTarget] = useState<{ title: string; location?: string; initialQuestion?: string } | null>(null);
   const [askModalOpen, setAskModalOpen] = useState(false);
-  const [createModalOpen, setCreateModalOpen] = useState(false);
-  const [showPlayPulse, setShowPlayPulse] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
 
-  // Fetch database reels with fallback
-  const { data: dbReels } = useQuery({
-    queryKey: ["stories-reels-feed"],
-    queryFn: () => fetchReels(),
-  });
+  // ---------------------------------------------------------------------------
+  // Highlight Story Progression
+  // ---------------------------------------------------------------------------
+  const openHighlight = (highlight: HighlightSequence) => {
+    setActiveHighlight(highlight);
+    setHighlightSlideIndex(0);
+    track("highlight_opened", { highlightId: highlight.id, title: highlight.title });
+  };
 
-  // Filter reels
-  const activeReels = EDITORIAL_CULTURAL_REELS.filter((r) => {
-    if (selectedCategory === "all") return true;
-    return r.category === selectedCategory;
-  });
-
-  const currentReel = activeReels[activeIndex] ?? activeReels[0]!;
-
-  useEffect(() => {
-    track("story_started", {
-      reelId: currentReel.id,
-      title: currentReel.title,
-      place: currentReel.place,
-    });
-  }, [currentReel]);
-
-  const handleNext = useCallback(() => {
-    if (activeIndex < activeReels.length - 1) {
-      setActiveIndex((prev) => prev + 1);
-      track("story_completed", { reelId: currentReel.id });
+  const nextHighlightSlide = useCallback(() => {
+    if (!activeHighlight) return;
+    if (highlightSlideIndex < activeHighlight.slides.length - 1) {
+      setHighlightSlideIndex((prev) => prev + 1);
+    } else {
+      setActiveHighlight(null);
+      setHighlightSlideIndex(0);
+      toast.info("Completed highlight collection");
     }
-  }, [activeIndex, activeReels.length, currentReel.id]);
+  }, [activeHighlight, highlightSlideIndex]);
 
-  const handlePrev = useCallback(() => {
-    if (activeIndex > 0) {
-      setActiveIndex((prev) => prev - 1);
+  const prevHighlightSlide = useCallback(() => {
+    if (highlightSlideIndex > 0) {
+      setHighlightSlideIndex((prev) => prev - 1);
     }
-  }, [activeIndex]);
+  }, [highlightSlideIndex]);
 
-  // Keyboard navigation
+  // Auto-progress for highlight viewer (5 seconds per slide)
   useEffect(() => {
+    if (!activeHighlight) return;
+    const timer = setTimeout(() => {
+      nextHighlightSlide();
+    }, 6000);
+    return () => clearTimeout(timer);
+  }, [activeHighlight, highlightSlideIndex, nextHighlightSlide]);
+
+  // ---------------------------------------------------------------------------
+  // Reel Viewer Actions
+  // ---------------------------------------------------------------------------
+  const openReelTheater = (index: number) => {
+    setActiveReelIndex(index);
+    setIsReelPlaying(true);
+    const reel = REELS_DATA[index];
+    if (reel) {
+      track("story_started", { reelId: reel.id, title: reel.title });
+    }
+  };
+
+  const nextReel = useCallback(() => {
+    if (activeReelIndex !== null && activeReelIndex < REELS_DATA.length - 1) {
+      setActiveReelIndex((prev) => (prev !== null ? prev + 1 : 0));
+    }
+  }, [activeReelIndex]);
+
+  const prevReel = useCallback(() => {
+    if (activeReelIndex !== null && activeReelIndex > 0) {
+      setActiveReelIndex((prev) => (prev !== null ? prev - 1 : 0));
+    }
+  }, [activeReelIndex]);
+
+  // Keyboard navigation for reels modal
+  useEffect(() => {
+    if (activeReelIndex === null) return;
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "ArrowDown" || e.key === "j") handleNext();
-      if (e.key === "ArrowUp" || e.key === "k") handlePrev();
+      if (e.key === "ArrowDown" || e.key === "j") nextReel();
+      if (e.key === "ArrowUp" || e.key === "k") prevReel();
       if (e.key === " ") {
         e.preventDefault();
-        setIsPlaying((p) => !p);
+        setIsReelPlaying((p) => !p);
       }
+      if (e.key === "Escape") setActiveReelIndex(null);
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [handleNext, handlePrev]);
+  }, [activeReelIndex, nextReel, prevReel]);
 
-  const togglePlay = () => {
-    setIsPlaying((p) => !p);
-    setShowPlayPulse(true);
-    setTimeout(() => setShowPlayPulse(false), 600);
+  const triggerAskEka = (question: string, contextTitle: string, loc?: string) => {
+    setAskTarget({
+      title: contextTitle,
+      location: loc,
+      initialQuestion: question,
+    });
+    setAskModalOpen(true);
+    track("ask_eka_triggered_from_story", { question, contextTitle });
   };
 
-  const handleReaction = (type: string) => {
-    toast.success(`Respect noted: ${type}`);
-    track("reel_reaction", { reelId: currentReel.id, type });
-  };
-
-  const handleShare = async () => {
-    const url = window.location.href;
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: currentReel.title,
-          text: currentReel.contextNote,
-          url,
-        });
-      } catch {}
-    } else {
-      await navigator.clipboard.writeText(url);
-      toast.success("Story link copied to clipboard");
-    }
-  };
+  const currentModalReel = activeReelIndex !== null ? REELS_DATA[activeReelIndex] : null;
 
   return (
-    <div className="min-h-screen bg-stone-950 text-white flex flex-col select-none">
+    <div className="min-h-screen bg-sand/20 dark:bg-stone-950 text-foreground flex flex-col font-sans">
+      <MetaTags
+        title="Stories — Visual Cultural Stories & Living Lineages"
+        description="Watch, wonder, understand, and connect with living cultural lineages. Visual reels, carousels, highlights, and short editorial stories across 1 billion people."
+        ogTitle="EKA Stories — Visual Cultural Destination"
+        ogDescription="1 billion people, 1 billion stories. Experience living rituals, crafts, foodways, and sacred places."
+        ogImage="/brand/eka-banner.jpg"
+        canonicalUrl="/stories"
+        twitterCard="summary_large_image"
+        twitterTitle="EKA Stories — Visual Cultural Destination"
+        twitterDescription="Watch, wonder, understand, and connect with living cultural lineages."
+        keywords={["cultural stories", "reels", "carousels", "living lineages", "crafts", "rituals", "indigenous knowledge"]}
+      />
       <SiteHeader />
 
-      {/* Main Reels Theater Canvas */}
-      <main className="flex-1 flex flex-col items-center justify-center relative py-2 sm:py-4 px-2 sm:px-4">
-        {/* Category Filter Pills (Top Floating) */}
-        <div className="z-20 mb-3 flex flex-wrap items-center justify-center gap-1.5 max-w-xl mx-auto">
-          {[
-            { id: "all", label: "All Stories" },
-            { id: "ritual", label: "Rituals" },
-            { id: "festival", label: "Festivals" },
-            { id: "craft", label: "Crafts & Food" },
-            { id: "sacred_place", label: "Sacred Places" },
-            { id: "lineage", label: "Lineages" },
-          ].map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => {
-                setSelectedCategory(cat.id);
-                setActiveIndex(0);
-                track("story_topic_opened", { category: cat.id });
-              }}
-              className={`rounded-full px-3 py-1 text-xs font-mono transition-all ${
-                selectedCategory === cat.id
-                  ? "bg-terracotta text-white font-medium shadow-md shadow-terracotta/30"
-                  : "bg-white/10 text-white/70 hover:bg-white/20 hover:text-white"
-              }`}
-            >
-              {cat.label}
-            </button>
-          ))}
+      {/* Breadcrumb Navigation Bar */}
+      <div className="border-b border-border/40 bg-sand/10">
+        <div className="container-eka">
+          <EkaBreadcrumb
+            items={[
+              { label: "Stories", active: true },
+            ]}
+          />
         </div>
+      </div>
 
-        {/* 9:16 Vertical Reel Frame */}
-        <div
-          ref={containerRef}
-          className="relative w-full max-w-[420px] aspect-[9/16] rounded-3xl overflow-hidden bg-neutral-900 border border-white/15 shadow-2xl flex flex-col justify-between"
-        >
-          {/* Reel Visual Media (Background Canvas) */}
-          <div
-            className="absolute inset-0 w-full h-full cursor-pointer"
-            onClick={togglePlay}
-          >
-            <img
-              src={currentReel.imageUrl}
-              alt={currentReel.title}
-              className={`size-full object-cover transition-transform duration-700 ${
-                isPlaying ? "scale-100" : "scale-[1.02] filter brightness-90"
-              }`}
-            />
-            {/* Dark gradient overlay for typography readability */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/60 pointer-events-none" />
+      <main id="main-content" className="flex-1 space-y-10 sm:space-y-14 py-6 sm:py-10">
+        {/* ==================================================================== */}
+        {/* HERO / KICKER & TITLE */}
+        {/* ==================================================================== */}
+        <section className="container-eka space-y-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-terracotta/10 text-terracotta text-xs font-mono font-medium tracking-wide uppercase mb-2">
+                <Sparkles className="size-3.5" />
+                <span>EKA Visual Storytelling Destination</span>
+              </div>
+              <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-normal tracking-tight text-foreground">
+                Stories of the World
+              </h1>
+              <p className="font-serif text-sm sm:text-base text-muted-foreground max-w-2xl mt-1 leading-relaxed font-light">
+                Watch, wonder, understand, and connect. 1 billion people, 1 billion living stories —
+                crafted by generational custodians, artisans, and elders.
+              </p>
+            </div>
 
-            {/* Play/Pause Pulse Animation */}
-            <AnimatePresence>
-              {showPlayPulse && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.6 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 1.4 }}
-                  className="absolute inset-0 flex items-center justify-center pointer-events-none z-30"
-                >
-                  <div className="size-16 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center border border-white/30 text-white">
-                    {isPlaying ? <Play className="size-8 ml-1" /> : <Pause className="size-8" />}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {/* Quick Reel Theater Launcher Button */}
+            <Button
+              onClick={() => openReelTheater(0)}
+              className="rounded-xl bg-gradient-to-r from-terracotta to-saffron text-white shadow-calm hover:shadow-lift transition-all flex items-center gap-2 self-start sm:self-auto cursor-pointer"
+            >
+              <Play className="size-4 fill-white" />
+              <span>Watch Reels Theater</span>
+            </Button>
+          </div>
+        </section>
+
+        {/* ==================================================================== */}
+        {/* SECTION 4: HORIZONTAL HIGHLIGHTS ROW (Near the Top of Stories) */}
+        {/* ==================================================================== */}
+        <section className="container-eka space-y-3">
+          <div className="flex items-center justify-between border-b border-border/50 pb-2">
+            <div className="flex items-center gap-2">
+              <span className="size-2 rounded-full bg-terracotta animate-pulse" />
+              <h2 className="text-xs font-mono uppercase tracking-wider text-muted-foreground font-semibold">
+                Curated Highlights & Sequences
+              </h2>
+            </div>
+            <span className="text-[11px] text-muted-foreground font-light">
+              Tap a circle to open visual sequence
+            </span>
           </div>
 
-          {/* Top Bar inside Reel: Location + Mute Button */}
-          <div className="relative z-20 flex items-center justify-between p-4">
-            <Link
-              to="/discover"
-              onClick={() =>
-                track("story_location_opened", {
-                  place: currentReel.place,
-                  country: currentReel.country,
-                })
-              }
-              className="inline-flex items-center gap-1.5 rounded-full bg-black/50 backdrop-blur-md px-3 py-1.5 text-xs text-white/90 border border-white/20 hover:bg-black/70 hover:border-white/40 transition-all"
-            >
-              <MapPin className="size-3.5 text-terracotta shrink-0" />
-              <span className="font-medium truncate max-w-[200px]">
-                {currentReel.place}, {currentReel.country}
-              </span>
-            </Link>
+          {/* Horizontal Scrolling Bar */}
+          <div className="flex items-center gap-4 sm:gap-6 overflow-x-auto pb-3 pt-1 scrollbar-none no-scrollbar">
+            {HIGHLIGHT_COLLECTIONS.map((highlight) => (
+              <HighlightCard
+                key={highlight.id}
+                id={highlight.id}
+                title={highlight.title}
+                imageUrl={highlight.coverImage}
+                storyCount={highlight.storyCount}
+                onClick={() => openHighlight(highlight)}
+              />
+            ))}
+          </div>
+        </section>
 
-            <div className="flex items-center gap-2">
+        {/* ==================================================================== */}
+        {/* SECTION 5.D: FEATURED STORY CARD (Hero Showcase) */}
+        {/* ==================================================================== */}
+        <section className="container-eka">
+          <FeaturedStoryCard
+            id="featured-kashi"
+            title="The Twilight Fire Offering of Dashashwamedh"
+            subtitle="Returning Light to the Sacred River for 1,200 Unbroken Years"
+            category="Living Ritual"
+            location="Dashashwamedh Ghat, Varanasi, India"
+            imageUrl="/places/varanasi.jpg"
+            description="Every evening at dusk, seven young priests lift 4.5kg brass tiered lamps in synchrony. The conch shells sound across the water as fire is returned to the river as living gratitude for existence."
+            creator={{
+              name: "Pt. Ramakrishna Shastry",
+              role: "Eighth-Generation Archaka Priest",
+              verified: true,
+            }}
+            ctaLabel="Watch Story Experience"
+            onClick={() => openReelTheater(0)}
+          />
+        </section>
+
+        {/* ==================================================================== */}
+        {/* VIEW FILTER TABS */}
+        {/* ==================================================================== */}
+        <section className="container-eka">
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+            {[
+              { id: "all", label: "All Formats" },
+              { id: "reels", label: "Reels (9:16)" },
+              { id: "carousels", label: "Carousels" },
+              { id: "editorial", label: "Short Explainers" },
+              { id: "static", label: "Static Visuals" },
+            ].map((tab) => (
               <button
-                onClick={() => setIsMuted((m) => !m)}
-                className="size-8 rounded-full bg-black/50 backdrop-blur-md flex items-center justify-center text-white/90 border border-white/20 hover:bg-black/70 transition-all"
-                aria-label={isMuted ? "Unmute" : "Mute"}
+                key={tab.id}
+                type="button"
+                onClick={() => setActiveTab(tab.id as any)}
+                className={cn(
+                  "px-3.5 py-1.5 rounded-full text-xs font-mono transition-all cursor-pointer whitespace-nowrap",
+                  activeTab === tab.id
+                    ? "bg-foreground text-background font-semibold shadow-xs"
+                    : "bg-card border border-border/70 text-muted-foreground hover:text-foreground hover:bg-accent/40",
+                )}
               >
-                {isMuted ? <VolumeX className="size-4" /> : <Volume2 className="size-4" />}
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </section>
+
+        {/* ==================================================================== */}
+        {/* SECTION 5.A: REELS SECTION (Vertical 9:16 Cards) */}
+        {/* ==================================================================== */}
+        {(activeTab === "all" || activeTab === "reels") && (
+          <section className="container-eka space-y-4">
+            <div className="flex items-center justify-between border-b border-border/60 pb-3">
+              <div>
+                <h3 className="font-display text-xl sm:text-2xl font-normal text-foreground">
+                  Cultural Reels
+                </h3>
+                <p className="text-xs text-muted-foreground font-light">
+                  Short, cinematic 9:16 stories from verified cultural custodians.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => openReelTheater(0)}
+                className="text-xs font-medium text-terracotta hover:underline flex items-center gap-1 cursor-pointer"
+              >
+                <span>Play all reels</span>
+                <ArrowRight className="size-3" />
               </button>
             </div>
-          </div>
 
-          {/* Right Action Rail (Connected Cultural Actions) */}
-          <div className="absolute right-3.5 bottom-24 z-20 flex flex-col items-center gap-3.5">
-            {/* Respect Reaction */}
-            <button
-              onClick={() => handleReaction("respect")}
-              className="flex flex-col items-center gap-1 text-white/80 hover:text-white transition-transform active:scale-90"
-              title="Give Respect"
-            >
-              <div className="size-10 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center border border-white/20 hover:border-terracotta">
-                <HandHeart className="size-5 text-saffron" />
+            {/* Responsive Grid of Reels */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+              {REELS_DATA.map((reel, idx) => (
+                <ReelCard
+                  key={reel.id}
+                  id={reel.id}
+                  title={reel.title}
+                  duration={reel.duration}
+                  category={reel.category}
+                  location={reel.location}
+                  mediaUrl={reel.mediaUrl}
+                  thumbnailUrl={reel.thumbnailUrl}
+                  creator={reel.creator}
+                  likesCount={reel.likesCount}
+                  onClick={() => openReelTheater(idx)}
+                />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* ==================================================================== */}
+        {/* SECTION 6: SHORT EDITORIAL CARDS (Converted Knowledge & Articles) */}
+        {/* ==================================================================== */}
+        {(activeTab === "all" || activeTab === "editorial") && (
+          <section className="container-eka space-y-4">
+            <div className="flex items-center justify-between border-b border-border/60 pb-3">
+              <div>
+                <h3 className="font-display text-xl sm:text-2xl font-normal text-foreground">
+                  Editorial Explainers
+                </h3>
+                <p className="text-xs text-muted-foreground font-light">
+                  Direct answers to eternal questions. Concise, scannable, verified.
+                </p>
               </div>
-              <span className="text-[10px] font-mono">
-                {currentReel.reactions.respect ?? 890}
-              </span>
-            </button>
+              <Link
+                to="/ask"
+                className="text-xs font-medium text-terracotta hover:underline flex items-center gap-1"
+              >
+                <span>Ask your own question</span>
+                <ArrowRight className="size-3" />
+              </Link>
+            </div>
 
-            {/* Learned Reaction */}
-            <button
-              onClick={() => handleReaction("learned")}
-              className="flex flex-col items-center gap-1 text-white/80 hover:text-white transition-transform active:scale-90"
-              title="Learned Something"
-            >
-              <div className="size-10 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center border border-white/20 hover:border-emerald-400">
-                <Lightbulb className="size-5 text-emerald-400" />
-              </div>
-              <span className="text-[10px] font-mono">
-                {currentReel.reactions.learned ?? 620}
-              </span>
-            </button>
+            {/* Grid of Short Editorial Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              {EDITORIAL_EXPLAINERS.map((item) => (
+                <ShortEditorialCard
+                  key={item.id}
+                  id={item.id}
+                  title={item.title}
+                  category={item.category}
+                  location={item.location}
+                  imageUrl={item.imageUrl}
+                  summary={item.summary}
+                  onExplore={() => {
+                    setSelectedExplainer(item);
+                    track("editorial_card_explored", { id: item.id, title: item.title });
+                  }}
+                />
+              ))}
+            </div>
+          </section>
+        )}
 
-            {/* Ask EKA Contextual Prompt */}
-            <button
-              onClick={() => setAskModalOpen(true)}
-              className="flex flex-col items-center gap-1 text-white/80 hover:text-white transition-transform active:scale-90"
-              title="Ask EKA Contextual Question"
-            >
-              <div className="size-10 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center border border-white/20 hover:border-primary">
-                <HelpCircle className="size-5 text-primary" />
-              </div>
-              <span className="text-[10px] font-mono">Ask</span>
-            </button>
-
-            {/* Related Community (Sangha) */}
-            <Link
-              to="/community"
-              className="flex flex-col items-center gap-1 text-white/80 hover:text-white transition-transform active:scale-90"
-              title="Join Related Community"
-            >
-              <div className="size-10 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center border border-white/20 hover:border-blue-400">
-                <Users className="size-5 text-blue-400" />
-              </div>
-              <span className="text-[10px] font-mono">Circle</span>
-            </Link>
-
-            {/* Direct Messages / Inquire */}
-            <Link
-              to="/messages"
-              className="flex flex-col items-center gap-1 text-white/80 hover:text-white transition-transform active:scale-90"
-              title="Message Creator / Inquire"
-            >
-              <div className="size-10 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center border border-white/20 hover:border-purple-400">
-                <MessageSquare className="size-5 text-purple-400" />
-              </div>
-              <span className="text-[10px] font-mono">Message</span>
-            </Link>
-
-            {/* Share */}
-            <button
-              onClick={handleShare}
-              className="flex flex-col items-center gap-1 text-white/80 hover:text-white transition-transform active:scale-90"
-              title="Share Story"
-            >
-              <div className="size-10 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center border border-white/20">
-                <Share2 className="size-5 text-white" />
-              </div>
-              <span className="text-[10px] font-mono">Share</span>
-            </button>
-          </div>
-
-          {/* Bottom Contextual Story Overlay */}
-          <div className="relative z-20 p-4 sm:p-5 pr-14 space-y-2.5">
-            {/* Creator Attribution */}
-            <div className="flex items-center gap-2.5">
-              <img
-                src={currentReel.creator.avatar}
-                alt={currentReel.creator.name}
-                className="size-8 rounded-full border border-white/40 object-cover"
-              />
-              <div className="min-w-0">
-                <div className="flex items-center gap-1">
-                  <span className="font-semibold text-xs text-white truncate">
-                    {currentReel.creator.name}
-                  </span>
-                  {currentReel.creator.verified && (
-                    <ShieldCheck className="size-3 text-saffron shrink-0" />
-                  )}
-                </div>
-                <p className="text-[10px] text-white/70 font-mono">
-                  {currentReel.creator.role} · @{currentReel.creator.handle}
+        {/* ==================================================================== */}
+        {/* SECTION 5.B: CAROUSELS SECTION (Multi-Slide Visual Stories) */}
+        {/* ==================================================================== */}
+        {(activeTab === "all" || activeTab === "carousels") && (
+          <section className="container-eka space-y-4">
+            <div className="flex items-center justify-between border-b border-border/60 pb-3">
+              <div>
+                <h3 className="font-display text-xl sm:text-2xl font-normal text-foreground">
+                  Visual Carousels
+                </h3>
+                <p className="text-xs text-muted-foreground font-light">
+                  Step-by-step photographic essays exploring master crafts and sacred places.
                 </p>
               </div>
             </div>
 
-            {/* Reel Title & Tradition */}
-            <div>
-              <Badge
-                variant="outline"
-                className="border-terracotta/60 text-saffron text-[10px] font-mono uppercase tracking-wider mb-1 px-2 py-0 bg-black/40"
-              >
-                {currentReel.tradition}
-              </Badge>
-              <h2 className="font-serif text-base sm:text-lg font-bold text-white leading-snug line-clamp-2">
-                {currentReel.title}
-              </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+              {CAROUSEL_DATA.map((carousel) => (
+                <CarouselCard
+                  key={carousel.id}
+                  id={carousel.id}
+                  title={carousel.title}
+                  category={carousel.category}
+                  slidesCount={carousel.slidesCount}
+                  coverImageUrl={carousel.coverImageUrl}
+                  location={carousel.location}
+                  contextOneLiner={carousel.contextOneLiner}
+                  creator={carousel.creator}
+                  onClick={() => {
+                    triggerAskEka(
+                      `What is the story behind ${carousel.title}?`,
+                      carousel.title,
+                      carousel.location,
+                    );
+                  }}
+                />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* ==================================================================== */}
+        {/* SECTION 5.C: STATIC VISUAL STORIES SECTION */}
+        {/* ==================================================================== */}
+        {(activeTab === "all" || activeTab === "static") && (
+          <section className="container-eka space-y-4">
+            <div className="flex items-center justify-between border-b border-border/60 pb-3">
+              <div>
+                <h3 className="font-display text-xl sm:text-2xl font-normal text-foreground">
+                  Static Visual Moments
+                </h3>
+                <p className="text-xs text-muted-foreground font-light">
+                  Living cultural photography captured by practitioners around the globe.
+                </p>
+              </div>
             </div>
 
-            {/* Cultural Context Note (Not generic entertainment) */}
-            <p className="text-xs text-white/85 font-light leading-relaxed line-clamp-3">
-              {currentReel.contextNote}
-            </p>
-
-            {/* Deep Knowledge Handoff */}
-            <div className="pt-1 flex items-center gap-2">
-              <Link
-                to="/learn"
-                className="inline-flex items-center gap-1 text-xs text-saffron hover:underline font-medium"
-              >
-                <BookOpen className="size-3.5" />
-                <span>Understand deeper knowledge</span>
-                <ArrowRight className="size-3" />
-              </Link>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+              {STATIC_STORIES_DATA.map((story) => (
+                <StaticStoryCard
+                  key={story.id}
+                  id={story.id}
+                  title={story.title}
+                  category={story.category}
+                  location={story.location}
+                  imageUrl={story.imageUrl}
+                  context={story.context}
+                  creator={story.creator}
+                  onClick={() => {
+                    triggerAskEka(
+                      `Tell me about the tradition of ${story.title} in ${story.location}`,
+                      story.title,
+                      story.location,
+                    );
+                  }}
+                />
+              ))}
             </div>
-          </div>
-
-          {/* Progress Timeline Indicator */}
-          <div className="relative z-20 h-1 bg-white/20 w-full overflow-hidden">
-            <motion.div
-              key={currentReel.id}
-              initial={{ width: "0%" }}
-              animate={{ width: isPlaying ? "100%" : "0%" }}
-              transition={{ duration: currentReel.durationSeconds, ease: "linear" }}
-              className="h-full bg-gradient-to-r from-terracotta to-saffron"
-            />
-          </div>
-        </div>
-
-        {/* Desktop Up/Down Navigation Controls */}
-        <div className="hidden sm:flex flex-col gap-2 mt-4">
-          <div className="flex items-center gap-3">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handlePrev}
-              disabled={activeIndex === 0}
-              className="rounded-full border-white/20 bg-white/5 hover:bg-white/15 text-white text-xs h-9"
-            >
-              <ChevronUp className="size-4 mr-1" />
-              <span>Previous (k)</span>
-            </Button>
-            <span className="text-xs font-mono text-white/60">
-              {activeIndex + 1} / {activeReels.length}
-            </span>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleNext}
-              disabled={activeIndex === activeReels.length - 1}
-              className="rounded-full border-white/20 bg-white/5 hover:bg-white/15 text-white text-xs h-9"
-            >
-              <span>Next (j)</span>
-              <ChevronDown className="size-4 ml-1" />
-            </Button>
-          </div>
-        </div>
+          </section>
+        )}
       </main>
 
-      {/* Contextual Ask EKA Modal */}
+      {/* ==================================================================== */}
+      {/* 1. INTERACTIVE HIGHLIGHT VIEWER MODAL (Section 4) */}
+      {/* ==================================================================== */}
+      <AnimatePresence>
+        {activeHighlight && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-2 sm:p-4 select-none backdrop-blur-md"
+            onClick={() => setActiveHighlight(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="relative w-full max-w-[420px] aspect-[9/16] rounded-3xl overflow-hidden bg-neutral-900 shadow-2xl flex flex-col justify-between border border-white/20"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Background Slide Image */}
+              {activeHighlight.slides[highlightSlideIndex] && (
+                <img
+                  src={activeHighlight.slides[highlightSlideIndex].imageUrl}
+                  alt={activeHighlight.slides[highlightSlideIndex].title}
+                  className="absolute inset-0 size-full object-cover transition-all duration-500"
+                />
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-black/70 pointer-events-none" />
+
+              {/* Progress Ticks at Top */}
+              <div className="relative z-10 p-4 space-y-3">
+                <div className="flex items-center gap-1.5 w-full">
+                  {activeHighlight.slides.map((slide, idx) => (
+                    <div
+                      key={slide.id}
+                      className="h-1 flex-1 rounded-full overflow-hidden bg-white/30"
+                    >
+                      <div
+                        className={cn(
+                          "h-full bg-white transition-all duration-300",
+                          idx < highlightSlideIndex && "w-full",
+                          idx === highlightSlideIndex && "w-full animate-[progress_6s_linear]",
+                          idx > highlightSlideIndex && "w-0",
+                        )}
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                {/* Highlight Header */}
+                <div className="flex items-center justify-between text-white">
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono text-xs uppercase tracking-wider text-amber-300 font-bold">
+                      {activeHighlight.title}
+                    </span>
+                    <span className="text-white/40 text-xs">•</span>
+                    <span className="text-xs text-white/80 font-mono">
+                      {highlightSlideIndex + 1}/{activeHighlight.slides.length}
+                    </span>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setActiveHighlight(null)}
+                    className="size-7 rounded-full bg-white/20 hover:bg-white/40 flex items-center justify-center text-white transition-colors cursor-pointer"
+                  >
+                    <X className="size-4" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Tap Left / Right Zones */}
+              <div className="absolute inset-y-16 inset-x-0 z-10 flex">
+                <div
+                  className="w-1/2 h-full cursor-pointer"
+                  onClick={prevHighlightSlide}
+                  title="Previous slide"
+                />
+                <div
+                  className="w-1/2 h-full cursor-pointer"
+                  onClick={nextHighlightSlide}
+                  title="Next slide"
+                />
+              </div>
+
+              {/* Bottom Caption & Ask EKA Trigger */}
+              {activeHighlight.slides[highlightSlideIndex] && (
+                <div className="relative z-20 p-5 space-y-3 text-white">
+                  <div className="flex items-center gap-1.5 text-xs text-amber-300 font-medium">
+                    <MapPin className="size-3.5 shrink-0" />
+                    <span>{activeHighlight.slides[highlightSlideIndex].location}</span>
+                  </div>
+
+                  <h3 className="font-display text-xl sm:text-2xl text-white font-normal leading-snug">
+                    {activeHighlight.slides[highlightSlideIndex].title}
+                  </h3>
+
+                  <p className="text-xs text-white/90 font-light leading-relaxed">
+                    {activeHighlight.slides[highlightSlideIndex].caption}
+                  </p>
+
+                  <div className="pt-2 flex items-center justify-between border-t border-white/20 gap-2">
+                    <span className="text-[11px] text-white/70 truncate">
+                      By {activeHighlight.slides[highlightSlideIndex].custodian}
+                    </span>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        triggerAskEka(
+                          activeHighlight.slides[highlightSlideIndex].askPrompt,
+                          activeHighlight.slides[highlightSlideIndex].title,
+                          activeHighlight.slides[highlightSlideIndex].location,
+                        )
+                      }
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-terracotta text-white text-xs font-medium hover:bg-terracotta/90 transition-all cursor-pointer shadow-md"
+                    >
+                      <HelpCircle className="size-3" />
+                      <span>Ask EKA</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ==================================================================== */}
+      {/* 2. FULLSCREEN REELS THEATER MODAL (Section 3 & 5.A) */}
+      {/* ==================================================================== */}
+      <AnimatePresence>
+        {currentModalReel && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-2 sm:p-4 select-none backdrop-blur-md"
+            onClick={() => setActiveReelIndex(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="relative w-full max-w-[420px] aspect-[9/16] rounded-3xl overflow-hidden bg-neutral-900 shadow-2xl flex flex-col justify-between border border-white/20"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Visual Media */}
+              <img
+                src={currentModalReel.mediaUrl}
+                alt={currentModalReel.title}
+                className={cn(
+                  "absolute inset-0 size-full object-cover transition-transform duration-700",
+                  isReelPlaying ? "scale-100" : "scale-[1.02] filter brightness-90",
+                )}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/25 to-black/60 pointer-events-none" />
+
+              {/* Top Controls */}
+              <div className="relative z-10 p-4 flex items-center justify-between text-white">
+                <div className="flex items-center gap-2">
+                  <span className="font-mono text-xs uppercase tracking-wider text-amber-300 font-bold bg-black/40 px-2.5 py-1 rounded-full backdrop-blur-md border border-white/10">
+                    {currentModalReel.category}
+                  </span>
+                  <span className="text-xs font-mono text-white/80 bg-black/40 px-2 py-0.5 rounded-full border border-white/10">
+                    {activeReelIndex! + 1}/{REELS_DATA.length}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsReelMuted(!isReelMuted)}
+                    className="size-8 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center text-white/90 hover:text-white border border-white/10 cursor-pointer"
+                  >
+                    {isReelMuted ? <VolumeX className="size-4" /> : <Volume2 className="size-4" />}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveReelIndex(null)}
+                    className="size-8 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center text-white/90 hover:text-white border border-white/10 cursor-pointer"
+                  >
+                    <X className="size-4" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Middle Play/Pause Tap Target */}
+              <div
+                className="absolute inset-20 flex items-center justify-center cursor-pointer z-10"
+                onClick={() => setIsReelPlaying(!isReelPlaying)}
+              >
+                {!isReelPlaying && (
+                  <div className="size-14 rounded-full bg-white/30 backdrop-blur-md flex items-center justify-center text-white shadow-xl">
+                    <Play className="size-6 fill-white ml-1" />
+                  </div>
+                )}
+              </div>
+
+              {/* Right Side Up/Down Arrows */}
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 z-20 flex flex-col gap-2">
+                <button
+                  type="button"
+                  disabled={activeReelIndex === 0}
+                  onClick={prevReel}
+                  className="size-9 rounded-full bg-black/50 backdrop-blur-md flex items-center justify-center text-white/80 hover:text-white disabled:opacity-30 border border-white/10 cursor-pointer"
+                  title="Previous Reel"
+                >
+                  <ChevronUp className="size-5" />
+                </button>
+                <button
+                  type="button"
+                  disabled={activeReelIndex === REELS_DATA.length - 1}
+                  onClick={nextReel}
+                  className="size-9 rounded-full bg-black/50 backdrop-blur-md flex items-center justify-center text-white/80 hover:text-white disabled:opacity-30 border border-white/10 cursor-pointer"
+                  title="Next Reel"
+                >
+                  <ChevronDown className="size-5" />
+                </button>
+              </div>
+
+              {/* Bottom Content & Interactive Ask EKA Button */}
+              <div className="relative z-20 p-5 space-y-3 text-white">
+                <div className="flex items-center gap-1.5 text-xs text-amber-300 font-medium">
+                  <MapPin className="size-3.5 shrink-0" />
+                  <span>{currentModalReel.location}</span>
+                </div>
+
+                <h3 className="font-display text-xl sm:text-2xl text-white font-normal leading-snug">
+                  {currentModalReel.title}
+                </h3>
+
+                <p className="text-xs text-white/90 font-light leading-relaxed">
+                  {currentModalReel.contextNote}
+                </p>
+
+                {/* Creator Attribution */}
+                <div className="pt-2 flex items-center justify-between border-t border-white/20 gap-2">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <img
+                      src={currentModalReel.creator.avatar}
+                      alt={currentModalReel.creator.name}
+                      className="size-7 rounded-full object-cover border border-white/30 shrink-0"
+                    />
+                    <div className="min-w-0">
+                      <p className="text-xs font-medium text-white truncate flex items-center gap-1">
+                        <span>{currentModalReel.creator.name}</span>
+                        {currentModalReel.creator.verified && (
+                          <ShieldCheck className="size-3 text-emerald-400 shrink-0" />
+                        )}
+                      </p>
+                      <p className="text-[10px] text-white/70 font-mono">
+                        @{currentModalReel.creator.handle}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Ask EKA Button */}
+                  <button
+                    type="button"
+                    onClick={() =>
+                      triggerAskEka(
+                        currentModalReel.curiosityQuestion,
+                        currentModalReel.title,
+                        currentModalReel.location,
+                      )
+                    }
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-terracotta to-saffron text-white text-xs font-medium shadow-md hover:opacity-95 transition-all shrink-0 cursor-pointer"
+                  >
+                    <HelpCircle className="size-3.5" />
+                    <span>Ask EKA</span>
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ==================================================================== */}
+      {/* 3. SHORT EDITORIAL READER DIALOG (Section 6) */}
+      {/* ==================================================================== */}
+      <Dialog
+        open={!!selectedExplainer}
+        onOpenChange={(open) => !open && setSelectedExplainer(null)}
+      >
+        {selectedExplainer && (
+          <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-2xl max-h-[88vh] overflow-y-auto rounded-3xl border-border bg-card p-6 sm:p-8">
+            <DialogHeader>
+              <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-terracotta font-semibold">
+                <span>{selectedExplainer.category}</span>
+                <span>•</span>
+                <span className="text-muted-foreground">{selectedExplainer.location}</span>
+              </div>
+              <DialogTitle className="mt-2 font-display text-2xl sm:text-3xl text-foreground font-normal leading-tight">
+                {selectedExplainer.title}
+              </DialogTitle>
+              <DialogDescription className="text-xs text-muted-foreground font-light">
+                Verified Epistemic Explainer • Living Cultural Context
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="mt-4 space-y-5 text-foreground">
+              {/* Editorial Visual */}
+              <div className="overflow-hidden rounded-2xl border border-border/70 max-h-72 w-full bg-muted">
+                <img
+                  src={selectedExplainer.imageUrl}
+                  alt={selectedExplainer.title}
+                  className="size-full object-cover"
+                />
+              </div>
+
+              {/* Lead Paragraph */}
+              <p className="font-serif text-base sm:text-lg leading-relaxed text-foreground/90 font-normal">
+                {selectedExplainer.fullContent.lead}
+              </p>
+
+              {/* Key Deep Explanations */}
+              <div className="space-y-4 pt-2 border-t border-border/50">
+                <div className="space-y-1">
+                  <h4 className="font-mono text-xs uppercase tracking-wider text-terracotta font-semibold">
+                    Ritual & Cultural Significance
+                  </h4>
+                  <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed font-light">
+                    {selectedExplainer.fullContent.ritualSignificance}
+                  </p>
+                </div>
+
+                <div className="space-y-1">
+                  <h4 className="font-mono text-xs uppercase tracking-wider text-terracotta font-semibold">
+                    Spiritual & Philosophical Symbolism
+                  </h4>
+                  <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed font-light">
+                    {selectedExplainer.fullContent.symbolism}
+                  </p>
+                </div>
+
+                <div className="space-y-1">
+                  <h4 className="font-mono text-xs uppercase tracking-wider text-terracotta font-semibold">
+                    Living Lineage & Modern Continuity
+                  </h4>
+                  <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed font-light">
+                    {selectedExplainer.fullContent.modernContinuity}
+                  </p>
+                </div>
+              </div>
+
+              {/* Provenance & Custodians */}
+              <div className="rounded-xl border border-border/60 bg-accent/20 p-3.5 flex items-center justify-between text-xs">
+                <span className="text-muted-foreground">
+                  Custodians: <strong className="text-foreground">{selectedExplainer.fullContent.custodians}</strong>
+                </span>
+                <span className="flex items-center gap-1 text-forest font-medium">
+                  <ShieldCheck className="size-3.5" />
+                  <span>Verified</span>
+                </span>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="pt-3 flex flex-wrap items-center justify-between gap-3 border-t border-border/60">
+                <Button
+                  variant="outline"
+                  onClick={() => setSelectedExplainer(null)}
+                  className="rounded-xl text-xs"
+                >
+                  Close Reader
+                </Button>
+
+                <Button
+                  onClick={() => {
+                    setSelectedExplainer(null);
+                    triggerAskEka(
+                      selectedExplainer.fullContent.askPrompt,
+                      selectedExplainer.title,
+                      selectedExplainer.location,
+                    );
+                  }}
+                  className="rounded-xl bg-terracotta hover:bg-terracotta/90 text-white text-xs flex items-center gap-1.5 shadow-calm"
+                >
+                  <HelpCircle className="size-3.5" />
+                  <span>Ask EKA About This</span>
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        )}
+      </Dialog>
+
+      {/* ==================================================================== */}
+      {/* 4. CONTEXTUAL ASK EKA MODAL */}
+      {/* ==================================================================== */}
       <ContextualAskEkaModal
         open={askModalOpen}
         onOpenChange={setAskModalOpen}
-        target={{
-          title: currentReel.title,
-          location: currentReel.place,
-          initialQuestion: currentReel.curiosityQuestion,
-          preloadedSummary: currentReel.contextNote,
-        }}
+        onClose={() => setAskModalOpen(false)}
+        target={askTarget}
       />
+
+      <SiteFooter />
     </div>
   );
 }
