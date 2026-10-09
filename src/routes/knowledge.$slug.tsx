@@ -58,6 +58,19 @@ function KnowledgeDetailPage() {
   const [isSaved, setIsSaved] = useState(false);
   const [isContributionModalOpen, setIsContributionModalOpen] = useState(false);
   const [showTrustBasis, setShowTrustBasis] = useState(false);
+  const [scrollProgress, setScrollProgress] = React.useState(0);
+
+  React.useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (scrollHeight > 0) {
+        setScrollProgress(Number((currentScrollY / scrollHeight).toFixed(4)) * 100);
+      }
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const localizedData = getContent({ entity: slug, language: locale });
 
@@ -168,6 +181,10 @@ function KnowledgeDetailPage() {
 
       {/* Top Navigation & Breadcrumbs Bar */}
       <header className="sticky top-0 z-40 border-b border-border/80 bg-background/90 backdrop-blur-md">
+        <div 
+          className="absolute bottom-0 left-0 h-[2px] bg-terracotta z-50 transition-all duration-75" 
+          style={{ width: `${scrollProgress}%` }} 
+        />
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
           <div className="flex items-center gap-3 sm:gap-4 overflow-hidden">
             <Link to="/" className="flex items-center transition-opacity hover:opacity-90 shrink-0">

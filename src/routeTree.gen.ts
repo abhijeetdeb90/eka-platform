@@ -29,6 +29,7 @@ import { Route as CreateRouteImport } from './routes/create'
 import { Route as CrmRouteImport } from './routes/crm'
 import { Route as DiscoverRouteImport } from './routes/discover'
 import { Route as EnterpriseRouteImport } from './routes/enterprise'
+import { Route as FeedRouteImport } from './routes/feed'
 import { Route as FounderRouteImport } from './routes/founder'
 import { Route as FounderAdminRouteImport } from './routes/founder-admin'
 import { Route as GiveRouteImport } from './routes/give'
@@ -126,11 +127,15 @@ import { Route as AuthenticatedAppThemesRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAppWalletRouteImport } from './routes/_authenticated/app.wallet'
 import { Route as AuthenticatedAppWelcomeRouteImport } from './routes/_authenticated/app.welcome'
 import { Route as AuthenticatedAppWisdomRouteImport } from './routes/_authenticated/app.wisdom'
+import { Route as ApiEmailSendRouteImport } from './routes/api/email.send'
 import { Route as ApiSecurityDataExportRouteImport } from './routes/api/security.data-export'
 import { Route as ApiSecurityEventsRouteImport } from './routes/api/security.events'
 import { Route as ApiSecurityIncidentResponseRouteImport } from './routes/api/security.incident-response'
 import { Route as ApiSecuritySessionsRouteImport } from './routes/api/security.sessions'
+import { Route as ApiStorageConfirmRouteImport } from './routes/api/storage.confirm'
+import { Route as ApiStorageUploadUrlRouteImport } from './routes/api/storage.upload-url'
 import { Route as ApiWebhooksRazorpayRouteImport } from './routes/api/webhooks.razorpay'
+import { Route as ApiWebhooksResendRouteImport } from './routes/api/webhooks.resend'
 import { Route as AuthenticatedAppBrandFinanceRouteImport } from './routes/_authenticated/app.brand.finance'
 import { Route as AuthenticatedAppCreatorDashboardRouteImport } from './routes/_authenticated/app.creator.dashboard'
 import { Route as AuthenticatedAppCreatorEarningsRouteImport } from './routes/_authenticated/app.creator.earnings'
@@ -150,6 +155,7 @@ import { Route as AuthenticatedAppSanghasIndexRouteImport } from './routes/_auth
 import { Route as AuthenticatedAppSanghasSlugRouteImport } from './routes/_authenticated/app.sanghas.$slug'
 import { Route as AuthenticatedAppUUsernameRouteImport } from './routes/_authenticated/app.u.$username'
 import { Route as ApiPublicBillingWebhookRouteImport } from './routes/api/public/billing.webhook'
+import { Route as ApiPublicSearchGroundedRouteImport } from './routes/api/public/search.grounded'
 import { Route as ApiPublicSecurityReportAbuseRouteImport } from './routes/api/public/security.report-abuse'
 import { Route as ApiPublicSecurityVerifyUrlRouteImport } from './routes/api/public/security.verify-url'
 import { Route as AuthenticatedAppMarketBookingIdRouteImport } from './routes/_authenticated/app.market.booking.$id'
@@ -251,6 +257,11 @@ const DiscoverRoute = DiscoverRouteImport.update({
 const EnterpriseRoute = EnterpriseRouteImport.update({
   id: '/enterprise',
   path: '/enterprise',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FeedRoute = FeedRouteImport.update({
+  id: '/feed',
+  path: '/feed',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FounderRoute = FounderRouteImport.update({
@@ -755,6 +766,11 @@ const AuthenticatedAppWisdomRoute = AuthenticatedAppWisdomRouteImport.update({
   path: '/wisdom',
   getParentRoute: () => AuthenticatedAppRoute,
 } as any)
+const ApiEmailSendRoute = ApiEmailSendRouteImport.update({
+  id: '/api/email/send',
+  path: '/api/email/send',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiSecurityDataExportRoute = ApiSecurityDataExportRouteImport.update({
   id: '/api/security/data-export',
   path: '/api/security/data-export',
@@ -776,9 +792,24 @@ const ApiSecuritySessionsRoute = ApiSecuritySessionsRouteImport.update({
   path: '/api/security/sessions',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiStorageConfirmRoute = ApiStorageConfirmRouteImport.update({
+  id: '/api/storage/confirm',
+  path: '/api/storage/confirm',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiStorageUploadUrlRoute = ApiStorageUploadUrlRouteImport.update({
+  id: '/api/storage/upload-url',
+  path: '/api/storage/upload-url',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiWebhooksRazorpayRoute = ApiWebhooksRazorpayRouteImport.update({
   id: '/razorpay',
   path: '/razorpay',
+  getParentRoute: () => ApiWebhooksRoute,
+} as any)
+const ApiWebhooksResendRoute = ApiWebhooksResendRouteImport.update({
+  id: '/resend',
+  path: '/resend',
   getParentRoute: () => ApiWebhooksRoute,
 } as any)
 const AuthenticatedAppBrandFinanceRoute =
@@ -893,6 +924,11 @@ const ApiPublicBillingWebhookRoute = ApiPublicBillingWebhookRouteImport.update({
   path: '/api/public/billing/webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicSearchGroundedRoute = ApiPublicSearchGroundedRouteImport.update({
+  id: '/api/public/search/grounded',
+  path: '/api/public/search/grounded',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicSecurityReportAbuseRoute =
   ApiPublicSecurityReportAbuseRouteImport.update({
     id: '/api/public/security/report-abuse',
@@ -932,6 +968,7 @@ export interface FileRoutesByFullPath {
   '/crm': typeof CrmRoute
   '/discover': typeof DiscoverRoute
   '/enterprise': typeof EnterpriseRoute
+  '/feed': typeof FeedRoute
   '/founder': typeof FounderRouteWithChildren
   '/founder-admin': typeof FounderAdminRouteWithChildren
   '/give': typeof GiveRoute
@@ -1028,11 +1065,15 @@ export interface FileRoutesByFullPath {
   '/app/wallet': typeof AuthenticatedAppWalletRoute
   '/app/welcome': typeof AuthenticatedAppWelcomeRoute
   '/app/wisdom': typeof AuthenticatedAppWisdomRoute
+  '/api/email/send': typeof ApiEmailSendRoute
   '/api/security/data-export': typeof ApiSecurityDataExportRoute
   '/api/security/events': typeof ApiSecurityEventsRoute
   '/api/security/incident-response': typeof ApiSecurityIncidentResponseRoute
   '/api/security/sessions': typeof ApiSecuritySessionsRoute
+  '/api/storage/confirm': typeof ApiStorageConfirmRoute
+  '/api/storage/upload-url': typeof ApiStorageUploadUrlRoute
   '/api/webhooks/razorpay': typeof ApiWebhooksRazorpayRoute
+  '/api/webhooks/resend': typeof ApiWebhooksResendRoute
   '/app/': typeof AuthenticatedAppIndexRoute
   '/app/brand/finance': typeof AuthenticatedAppBrandFinanceRoute
   '/app/creator/dashboard': typeof AuthenticatedAppCreatorDashboardRoute
@@ -1047,6 +1088,7 @@ export interface FileRoutesByFullPath {
   '/app/sanghas/$slug': typeof AuthenticatedAppSanghasSlugRoute
   '/app/u/$username': typeof AuthenticatedAppUUsernameRoute
   '/api/public/billing/webhook': typeof ApiPublicBillingWebhookRoute
+  '/api/public/search/grounded': typeof ApiPublicSearchGroundedRoute
   '/api/public/security/report-abuse': typeof ApiPublicSecurityReportAbuseRoute
   '/api/public/security/verify-url': typeof ApiPublicSecurityVerifyUrlRoute
   '/app/discover/': typeof AuthenticatedAppDiscoverIndexRoute
@@ -1076,6 +1118,7 @@ export interface FileRoutesByTo {
   '/crm': typeof CrmRoute
   '/discover': typeof DiscoverRoute
   '/enterprise': typeof EnterpriseRoute
+  '/feed': typeof FeedRoute
   '/founder': typeof FounderRouteWithChildren
   '/give': typeof GiveRoute
   '/home': typeof HomeRoute
@@ -1170,11 +1213,15 @@ export interface FileRoutesByTo {
   '/app/wallet': typeof AuthenticatedAppWalletRoute
   '/app/welcome': typeof AuthenticatedAppWelcomeRoute
   '/app/wisdom': typeof AuthenticatedAppWisdomRoute
+  '/api/email/send': typeof ApiEmailSendRoute
   '/api/security/data-export': typeof ApiSecurityDataExportRoute
   '/api/security/events': typeof ApiSecurityEventsRoute
   '/api/security/incident-response': typeof ApiSecurityIncidentResponseRoute
   '/api/security/sessions': typeof ApiSecuritySessionsRoute
+  '/api/storage/confirm': typeof ApiStorageConfirmRoute
+  '/api/storage/upload-url': typeof ApiStorageUploadUrlRoute
   '/api/webhooks/razorpay': typeof ApiWebhooksRazorpayRoute
+  '/api/webhooks/resend': typeof ApiWebhooksResendRoute
   '/app': typeof AuthenticatedAppIndexRoute
   '/app/brand/finance': typeof AuthenticatedAppBrandFinanceRoute
   '/app/creator/dashboard': typeof AuthenticatedAppCreatorDashboardRoute
@@ -1189,6 +1236,7 @@ export interface FileRoutesByTo {
   '/app/sanghas/$slug': typeof AuthenticatedAppSanghasSlugRoute
   '/app/u/$username': typeof AuthenticatedAppUUsernameRoute
   '/api/public/billing/webhook': typeof ApiPublicBillingWebhookRoute
+  '/api/public/search/grounded': typeof ApiPublicSearchGroundedRoute
   '/api/public/security/report-abuse': typeof ApiPublicSecurityReportAbuseRoute
   '/api/public/security/verify-url': typeof ApiPublicSecurityVerifyUrlRoute
   '/app/discover': typeof AuthenticatedAppDiscoverIndexRoute
@@ -1221,6 +1269,7 @@ export interface FileRoutesById {
   '/crm': typeof CrmRoute
   '/discover': typeof DiscoverRoute
   '/enterprise': typeof EnterpriseRoute
+  '/feed': typeof FeedRoute
   '/founder': typeof FounderRouteWithChildren
   '/founder-admin': typeof FounderAdminRouteWithChildren
   '/give': typeof GiveRoute
@@ -1317,11 +1366,15 @@ export interface FileRoutesById {
   '/_authenticated/app/wallet': typeof AuthenticatedAppWalletRoute
   '/_authenticated/app/welcome': typeof AuthenticatedAppWelcomeRoute
   '/_authenticated/app/wisdom': typeof AuthenticatedAppWisdomRoute
+  '/api/email/send': typeof ApiEmailSendRoute
   '/api/security/data-export': typeof ApiSecurityDataExportRoute
   '/api/security/events': typeof ApiSecurityEventsRoute
   '/api/security/incident-response': typeof ApiSecurityIncidentResponseRoute
   '/api/security/sessions': typeof ApiSecuritySessionsRoute
+  '/api/storage/confirm': typeof ApiStorageConfirmRoute
+  '/api/storage/upload-url': typeof ApiStorageUploadUrlRoute
   '/api/webhooks/razorpay': typeof ApiWebhooksRazorpayRoute
+  '/api/webhooks/resend': typeof ApiWebhooksResendRoute
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
   '/_authenticated/app/brand/finance': typeof AuthenticatedAppBrandFinanceRoute
   '/_authenticated/app/creator/dashboard': typeof AuthenticatedAppCreatorDashboardRoute
@@ -1336,6 +1389,7 @@ export interface FileRoutesById {
   '/_authenticated/app/sanghas/$slug': typeof AuthenticatedAppSanghasSlugRoute
   '/_authenticated/app/u/$username': typeof AuthenticatedAppUUsernameRoute
   '/api/public/billing/webhook': typeof ApiPublicBillingWebhookRoute
+  '/api/public/search/grounded': typeof ApiPublicSearchGroundedRoute
   '/api/public/security/report-abuse': typeof ApiPublicSecurityReportAbuseRoute
   '/api/public/security/verify-url': typeof ApiPublicSecurityVerifyUrlRoute
   '/_authenticated/app/discover/': typeof AuthenticatedAppDiscoverIndexRoute
@@ -1368,6 +1422,7 @@ export interface FileRouteTypes {
     | '/crm'
     | '/discover'
     | '/enterprise'
+    | '/feed'
     | '/founder'
     | '/founder-admin'
     | '/give'
@@ -1464,11 +1519,15 @@ export interface FileRouteTypes {
     | '/app/wallet'
     | '/app/welcome'
     | '/app/wisdom'
+    | '/api/email/send'
     | '/api/security/data-export'
     | '/api/security/events'
     | '/api/security/incident-response'
     | '/api/security/sessions'
+    | '/api/storage/confirm'
+    | '/api/storage/upload-url'
     | '/api/webhooks/razorpay'
+    | '/api/webhooks/resend'
     | '/app/'
     | '/app/brand/finance'
     | '/app/creator/dashboard'
@@ -1483,6 +1542,7 @@ export interface FileRouteTypes {
     | '/app/sanghas/$slug'
     | '/app/u/$username'
     | '/api/public/billing/webhook'
+    | '/api/public/search/grounded'
     | '/api/public/security/report-abuse'
     | '/api/public/security/verify-url'
     | '/app/discover/'
@@ -1512,6 +1572,7 @@ export interface FileRouteTypes {
     | '/crm'
     | '/discover'
     | '/enterprise'
+    | '/feed'
     | '/founder'
     | '/give'
     | '/home'
@@ -1606,11 +1667,15 @@ export interface FileRouteTypes {
     | '/app/wallet'
     | '/app/welcome'
     | '/app/wisdom'
+    | '/api/email/send'
     | '/api/security/data-export'
     | '/api/security/events'
     | '/api/security/incident-response'
     | '/api/security/sessions'
+    | '/api/storage/confirm'
+    | '/api/storage/upload-url'
     | '/api/webhooks/razorpay'
+    | '/api/webhooks/resend'
     | '/app'
     | '/app/brand/finance'
     | '/app/creator/dashboard'
@@ -1625,6 +1690,7 @@ export interface FileRouteTypes {
     | '/app/sanghas/$slug'
     | '/app/u/$username'
     | '/api/public/billing/webhook'
+    | '/api/public/search/grounded'
     | '/api/public/security/report-abuse'
     | '/api/public/security/verify-url'
     | '/app/discover'
@@ -1656,6 +1722,7 @@ export interface FileRouteTypes {
     | '/crm'
     | '/discover'
     | '/enterprise'
+    | '/feed'
     | '/founder'
     | '/founder-admin'
     | '/give'
@@ -1752,11 +1819,15 @@ export interface FileRouteTypes {
     | '/_authenticated/app/wallet'
     | '/_authenticated/app/welcome'
     | '/_authenticated/app/wisdom'
+    | '/api/email/send'
     | '/api/security/data-export'
     | '/api/security/events'
     | '/api/security/incident-response'
     | '/api/security/sessions'
+    | '/api/storage/confirm'
+    | '/api/storage/upload-url'
     | '/api/webhooks/razorpay'
+    | '/api/webhooks/resend'
     | '/_authenticated/app/'
     | '/_authenticated/app/brand/finance'
     | '/_authenticated/app/creator/dashboard'
@@ -1771,6 +1842,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/sanghas/$slug'
     | '/_authenticated/app/u/$username'
     | '/api/public/billing/webhook'
+    | '/api/public/search/grounded'
     | '/api/public/security/report-abuse'
     | '/api/public/security/verify-url'
     | '/_authenticated/app/discover/'
@@ -1803,6 +1875,7 @@ export interface RootRouteChildren {
   CrmRoute: typeof CrmRoute
   DiscoverRoute: typeof DiscoverRoute
   EnterpriseRoute: typeof EnterpriseRoute
+  FeedRoute: typeof FeedRoute
   FounderRoute: typeof FounderRouteWithChildren
   FounderAdminRoute: typeof FounderAdminRouteWithChildren
   GiveRoute: typeof GiveRoute
@@ -1844,11 +1917,15 @@ export interface RootRouteChildren {
   PeopleUsernameRoute: typeof PeopleUsernameRoute
   KnowledgeIndexRoute: typeof KnowledgeIndexRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
+  ApiEmailSendRoute: typeof ApiEmailSendRoute
   ApiSecurityDataExportRoute: typeof ApiSecurityDataExportRoute
   ApiSecurityEventsRoute: typeof ApiSecurityEventsRoute
   ApiSecurityIncidentResponseRoute: typeof ApiSecurityIncidentResponseRoute
   ApiSecuritySessionsRoute: typeof ApiSecuritySessionsRoute
+  ApiStorageConfirmRoute: typeof ApiStorageConfirmRoute
+  ApiStorageUploadUrlRoute: typeof ApiStorageUploadUrlRoute
   ApiPublicBillingWebhookRoute: typeof ApiPublicBillingWebhookRoute
+  ApiPublicSearchGroundedRoute: typeof ApiPublicSearchGroundedRoute
   ApiPublicSecurityReportAbuseRoute: typeof ApiPublicSecurityReportAbuseRoute
   ApiPublicSecurityVerifyUrlRoute: typeof ApiPublicSecurityVerifyUrlRoute
 }
@@ -1993,6 +2070,13 @@ declare module '@tanstack/react-router' {
       path: '/enterprise'
       fullPath: '/enterprise'
       preLoaderRoute: typeof EnterpriseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/feed': {
+      id: '/feed'
+      path: '/feed'
+      fullPath: '/feed'
+      preLoaderRoute: typeof FeedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/founder': {
@@ -2674,6 +2758,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppWisdomRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
+    '/api/email/send': {
+      id: '/api/email/send'
+      path: '/api/email/send'
+      fullPath: '/api/email/send'
+      preLoaderRoute: typeof ApiEmailSendRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/security/data-export': {
       id: '/api/security/data-export'
       path: '/api/security/data-export'
@@ -2702,11 +2793,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSecuritySessionsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/storage/confirm': {
+      id: '/api/storage/confirm'
+      path: '/api/storage/confirm'
+      fullPath: '/api/storage/confirm'
+      preLoaderRoute: typeof ApiStorageConfirmRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/storage/upload-url': {
+      id: '/api/storage/upload-url'
+      path: '/api/storage/upload-url'
+      fullPath: '/api/storage/upload-url'
+      preLoaderRoute: typeof ApiStorageUploadUrlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/webhooks/razorpay': {
       id: '/api/webhooks/razorpay'
       path: '/razorpay'
       fullPath: '/api/webhooks/razorpay'
       preLoaderRoute: typeof ApiWebhooksRazorpayRouteImport
+      parentRoute: typeof ApiWebhooksRoute
+    }
+    '/api/webhooks/resend': {
+      id: '/api/webhooks/resend'
+      path: '/resend'
+      fullPath: '/api/webhooks/resend'
+      preLoaderRoute: typeof ApiWebhooksResendRouteImport
       parentRoute: typeof ApiWebhooksRoute
     }
     '/_authenticated/app/brand/finance': {
@@ -2840,6 +2952,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/billing/webhook'
       fullPath: '/api/public/billing/webhook'
       preLoaderRoute: typeof ApiPublicBillingWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/search/grounded': {
+      id: '/api/public/search/grounded'
+      path: '/api/public/search/grounded'
+      fullPath: '/api/public/search/grounded'
+      preLoaderRoute: typeof ApiPublicSearchGroundedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/security/report-abuse': {
@@ -3085,10 +3204,12 @@ const FounderAdminRouteWithChildren = FounderAdminRoute._addFileChildren(
 
 interface ApiWebhooksRouteChildren {
   ApiWebhooksRazorpayRoute: typeof ApiWebhooksRazorpayRoute
+  ApiWebhooksResendRoute: typeof ApiWebhooksResendRoute
 }
 
 const ApiWebhooksRouteChildren: ApiWebhooksRouteChildren = {
   ApiWebhooksRazorpayRoute: ApiWebhooksRazorpayRoute,
+  ApiWebhooksResendRoute: ApiWebhooksResendRoute,
 }
 
 const ApiWebhooksRouteWithChildren = ApiWebhooksRoute._addFileChildren(
@@ -3116,6 +3237,7 @@ const rootRouteChildren: RootRouteChildren = {
   CrmRoute: CrmRoute,
   DiscoverRoute: DiscoverRoute,
   EnterpriseRoute: EnterpriseRoute,
+  FeedRoute: FeedRoute,
   FounderRoute: FounderRouteWithChildren,
   FounderAdminRoute: FounderAdminRouteWithChildren,
   GiveRoute: GiveRoute,
@@ -3158,11 +3280,15 @@ const rootRouteChildren: RootRouteChildren = {
   PeopleUsernameRoute: PeopleUsernameRoute,
   KnowledgeIndexRoute: KnowledgeIndexRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
+  ApiEmailSendRoute: ApiEmailSendRoute,
   ApiSecurityDataExportRoute: ApiSecurityDataExportRoute,
   ApiSecurityEventsRoute: ApiSecurityEventsRoute,
   ApiSecurityIncidentResponseRoute: ApiSecurityIncidentResponseRoute,
   ApiSecuritySessionsRoute: ApiSecuritySessionsRoute,
+  ApiStorageConfirmRoute: ApiStorageConfirmRoute,
+  ApiStorageUploadUrlRoute: ApiStorageUploadUrlRoute,
   ApiPublicBillingWebhookRoute: ApiPublicBillingWebhookRoute,
+  ApiPublicSearchGroundedRoute: ApiPublicSearchGroundedRoute,
   ApiPublicSecurityReportAbuseRoute: ApiPublicSecurityReportAbuseRoute,
   ApiPublicSecurityVerifyUrlRoute: ApiPublicSecurityVerifyUrlRoute,
 }

@@ -36,6 +36,7 @@ import {
   Music,
   Shield,
   Users,
+  ArrowUpRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -585,32 +586,31 @@ export function LivingCulturalAtlas({
                     fill={isSelected ? "#FFFFFF" : categoryMeta.accentColor}
                   />
 
-                  {/* Floating Location Label on Hover or Select */}
+                  {/* Floating Location Tooltip on Hover or Select */}
                   {(isSelected || isHovered) && (
-                    <g className="pointer-events-none transition-all duration-300">
-                      <rect
-                        x={px - 44}
-                        y={py - 22}
-                        width="88"
-                        height="14"
-                        rx="7"
-                        fill="#1C1917"
-                        fillOpacity="0.94"
-                        stroke="rgba(255,255,255,0.2)"
-                        strokeWidth="0.5"
-                      />
-                      <text
-                        x={px}
-                        y={py - 13}
-                        fill="#FFFFFF"
-                        fontSize="6.5"
-                        fontFamily="sans-serif"
-                        fontWeight="600"
-                        textAnchor="middle"
-                      >
-                        {obj.title.split("·")[0]?.split("&")[0]?.trim()}
-                      </text>
-                    </g>
+                    <foreignObject
+                      x={px - 60}
+                      y={py - 45}
+                      width="120"
+                      height="40"
+                      className="pointer-events-none transition-all duration-300 overflow-visible"
+                    >
+                      <div className="flex flex-col bg-[#1C1917]/95 rounded-md border border-[#FFFFFF]/20 p-1.5 shadow-xl w-full h-full justify-center pointer-events-auto">
+                        <span className="text-[#FFFFFF] text-[5px] font-bold leading-tight truncate">
+                          {obj.title.split("A")[0]?.split("&")[0]?.trim()}
+                        </span>
+                        <span className="text-muted-foreground text-[4px] leading-tight line-clamp-2 mt-0.5 whitespace-normal">
+                          {obj.oneLiner || obj.summary}
+                        </span>
+                        <a 
+                          href={`/knowledge/${obj.slug}`}
+                          onClick={(e) => { e.stopPropagation(); }}
+                          className="text-[#C25E3E] hover:text-[#D97757] text-[4.5px] font-semibold mt-1 inline-flex items-center gap-0.5"
+                        >
+                          View Details <ArrowUpRight className="w-[4px] h-[4px]" />
+                        </a>
+                      </div>
+                    </foreignObject>
                   )}
                 </g>
               );

@@ -512,17 +512,39 @@ export function RealtimeActivityFeed({
   };
 
   // ---------------------------------------------------------------------------
-  // 6. Filter Filtering
+  // 6. Filter & Sorting
   // ---------------------------------------------------------------------------
+  const [sortOrder, setSortOrder] = useState<"newest" | "trending" | "top-voted">("newest");
+
   const filteredActivities = useMemo(() => {
-    if (selectedFilter === "all") return activities.slice(0, maxItems);
-    return activities.filter((a) => a.type === selectedFilter).slice(0, maxItems);
-  }, [activities, selectedFilter, maxItems]);
+    let result = [...activities];
+    
+    if (selectedFilter !== "all") {
+      result = result.filter((a) => a.type === selectedFilter);
+    }
+    
+    // Sort logic
+    result.sort((a, b) => {
+      if (sortOrder === "newest") {
+        return b.createdAt - a.createdAt;
+      } else if (sortOrder === "top-voted") {
+        return (b.likeCount || 0) - (a.likeCount || 0);
+      } else if (sortOrder === "trending") {
+        // Trending: combination of recent time and high engagement
+        const scoreA = (a.likeCount || 0) + (a.commentCount || 0) * 2 - (Date.now() - a.createdAt) / 100000;
+        const scoreB = (b.likeCount || 0) + (b.commentCount || 0) * 2 - (Date.now() - b.createdAt) / 100000;
+        return scoreB - scoreA;
+      }
+      return 0;
+    });
+
+    return result.slice(0, maxItems);
+  }, [activities, selectedFilter, maxItems, sortOrder]);
 
   return (
     <div className={cn("space-y-6", className)}>
       {/* Editorial Control Bar: Real-time Status & Filter Tabs */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/60 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 border-b border-border/60 pb-4">
         {/* Title and Live Status Indicator */}
         <div className="space-y-1">
           <div className="flex items-center gap-2.5">
@@ -558,8 +580,23 @@ export function RealtimeActivityFeed({
           </p>
         </div>
 
-        {/* Actions: Refresh & Share Reflection */}
-        <div className="flex items-center gap-2 shrink-0">
+        {/* Actions: Sort, Refresh & Share Reflection */}
+        <div className="flex flex-wrap items-center gap-2 shrink-0 mt-2 sm:mt-0">
+          <div className="flex bg-accent/30 rounded-xl p-0.5 border border-border/50">
+            {(["newest", "trending", "top-voted"] as const).map((order) => (
+              <button
+                key={order}
+                onClick={() => setSortOrder(order)}
+                className={cn(
+                  "px-2.5 py-1 text-[11px] font-medium rounded-lg capitalize transition-colors cursor-pointer",
+                  sortOrder === order ? "bg-background text-foreground shadow-xs border border-border/80" : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                {order.replace("-", " ")}
+              </button>
+            ))}
+          </div>
+
           <button
             type="button"
             onClick={() => void fetchDbActivities()}

@@ -25,6 +25,8 @@ import {
   MessageSquare,
   ArrowRight,
   Settings,
+  Bell,
+  TrendingUp,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { Button } from "@/components/ui/button";
@@ -52,6 +54,7 @@ export function ConsumerHeader() {
   const { data: profile } = useProfile();
   const navigate = useNavigate();
   const { t } = useLocalization();
+  const [hasTrendingAlert, setHasTrendingAlert] = useState(true);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -178,6 +181,39 @@ export function ConsumerHeader() {
               ⌘K
             </kbd>
           </button>
+
+          {/* Notification Bell */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button 
+                className="relative flex items-center justify-center size-9 rounded-full border border-transparent hover:bg-accent/50 text-muted-foreground hover:text-foreground transition-all"
+                aria-label="Notifications"
+                onClick={() => setHasTrendingAlert(false)}
+              >
+                <Bell className="size-4" />
+                {hasTrendingAlert && (
+                  <span className="absolute top-2 right-2 size-2 rounded-full bg-terracotta border border-background shadow-xs animate-pulse" />
+                )}
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-72 p-2 shadow-lg rounded-xl">
+              <div className="px-2 py-1.5 mb-1 flex items-center justify-between">
+                <span className="text-xs font-semibold text-foreground">Notifications</span>
+                <span className="text-[10px] text-muted-foreground cursor-pointer hover:underline">Mark all read</span>
+              </div>
+              <DropdownMenuItem asChild>
+                <Link to="/community" className="flex items-start gap-3 p-2 rounded-lg cursor-pointer">
+                  <div className="size-8 rounded-full bg-saffron/10 flex items-center justify-center shrink-0">
+                    <TrendingUp className="size-4 text-saffron" />
+                  </div>
+                  <div className="flex flex-col gap-0.5">
+                    <span className="text-xs font-medium text-foreground">Trending in Sacred Geography</span>
+                    <span className="text-[10px] text-muted-foreground line-clamp-2">The topic "Why do ancient temples align with seasonal solstices?" is trending now.</span>
+                  </div>
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           {/* Language selector */}
           <LanguageSelector variant="header" />
