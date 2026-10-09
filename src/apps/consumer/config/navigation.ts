@@ -22,13 +22,12 @@ export {
 export const CONSUMER_FOOTER_EXPLORE = [
   { to: "/discover", label: "Discover" },
   { to: "/stories", label: "Stories" },
-  { to: "/learn", label: "Learn" },
   { to: "/ask", label: "Ask EKA" },
-  { to: "/community", label: "Communities" },
+  { to: "/feed", label: "Feed" },
 ];
 
 export const CONSUMER_FOOTER_COMMUNITY = [
-  { to: "/community", label: "Communities" },
+  { to: "/feed", label: "Feed" },
   { to: "/standards", label: "Community Standards" },
   { to: "/give", label: "Give & Transparency" },
   { to: "/create", label: "Contribute" },

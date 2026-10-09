@@ -175,6 +175,9 @@ function MyEkaPage() {
                 <TabsTrigger value="overview" className="rounded-xl text-xs">
                   Overview
                 </TabsTrigger>
+                <TabsTrigger value="posts" className="rounded-xl text-xs">
+                  My Posts
+                </TabsTrigger>
                 <TabsTrigger value="stories" className="rounded-xl text-xs">
                   Saved Stories
                 </TabsTrigger>
@@ -268,6 +271,22 @@ function MyEkaPage() {
                       Explore holy confluences, artisan villages, and sacred places.
                     </p>
                   </Link>
+                </div>
+              </TabsContent>
+
+              {/* My Posts */}
+              <TabsContent value="posts" className="space-y-4 pt-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-serif text-lg font-bold">My Posts</h3>
+                </div>
+                <div className="p-6 rounded-2xl border border-dashed border-border text-center space-y-2">
+                  <BookOpen className="size-6 text-muted-foreground mx-auto" />
+                  <p className="text-xs text-muted-foreground">
+                    Your personal cultural posts and reflections.
+                  </p>
+                  <Button asChild size="sm" variant="outline" className="rounded-xl text-xs">
+                    <Link to="/create">Create New Post</Link>
+                  </Button>
                 </div>
               </TabsContent>
 
@@ -441,3 +460,4 @@ function MyEkaPage() {
     </div>
   );
 }
+

@@ -57,6 +57,7 @@ export type AnalyticsEvent =
   | "learn_opened"
   | "ask_query_submitted"
   | "ask_result_opened"
+  | "ask_eka_opened"
   | "community_opened"
   | "message_started"
   | "create_started"

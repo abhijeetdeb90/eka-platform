@@ -162,7 +162,7 @@ export function ConsumerHeader() {
         </div>
 
         {/* ─── RIGHT: Ask EKA pill + Create + Profile ──────────────── */}
-        <div className="hidden items-center gap-2 md:flex shrink-0">
+        <div className="hidden items-center gap-4 md:flex shrink-0">
 
           {/* Ask EKA — persistent search/AI entry */}
           <button
@@ -183,6 +183,7 @@ export function ConsumerHeader() {
           </button>
 
           {/* Notification Bell */}
+          <div className="hidden lg:block shrink-0">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button 
@@ -202,7 +203,7 @@ export function ConsumerHeader() {
                 <span className="text-[10px] text-muted-foreground cursor-pointer hover:underline">Mark all read</span>
               </div>
               <DropdownMenuItem asChild>
-                <Link to="/community" className="flex items-start gap-3 p-2 rounded-lg cursor-pointer">
+                <Link to="/feed" className="flex items-start gap-3 p-2 rounded-lg cursor-pointer">
                   <div className="size-8 rounded-full bg-saffron/10 flex items-center justify-center shrink-0">
                     <TrendingUp className="size-4 text-saffron" />
                   </div>
@@ -214,15 +215,18 @@ export function ConsumerHeader() {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+          </div>
 
           {/* Language selector */}
+          <div className="hidden lg:block shrink-0">
           <LanguageSelector variant="header" />
+          </div>
 
           {/* Create action */}
           <Button
             asChild
             size="sm"
-            className="rounded-xl bg-gradient-to-r from-terracotta to-saffron text-white shadow-calm hover:shadow-lift hover:opacity-95 font-medium px-3.5 py-1.5 text-xs transition-all"
+            className="rounded-xl bg-gradient-to-r from-terracotta to-saffron text-white shadow-calm hover:shadow-lift hover:opacity-95 font-medium px-3.5 py-1.5 text-xs transition-all shrink-0"
             onClick={() => track("create_started", { source: "header" })}
           >
             <Link to={CREATE_ACTION_ITEM.to}>
@@ -583,3 +587,6 @@ export function ConsumerHeader() {
     </header>
   );
 }
+
+
+

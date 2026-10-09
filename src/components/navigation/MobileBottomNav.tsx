@@ -17,10 +17,6 @@ import { cn } from "@/lib/utils";
 import { MOBILE_PRIMARY_TABS } from "@/config/navigation";
 import { track } from "@/lib/analytics";
 
-// Split the 4 tabs (2 left, 2 right) — center is always Ask EKA
-const LEFT_TABS = MOBILE_PRIMARY_TABS.slice(0, 2);   // Home, Discover
-const RIGHT_TABS = MOBILE_PRIMARY_TABS.slice(2, 4);  // Stories, Community
-
 export function MobileBottomNav() {
   const routerState = useRouterState();
   const currentPath = routerState.location.pathname;
@@ -48,14 +44,6 @@ export function MobileBottomNav() {
     track("navigation_clicked", { to, label, surface: "mobile_bottom" });
   };
 
-  const isActive = (item: { to: string; exact?: boolean }) =>
-    item.exact
-      ? currentPath === item.to
-      : currentPath.startsWith(item.to) && item.to !== "/";
-
-  const isAskActive = currentPath.startsWith("/ask") || currentPath.startsWith("/search");
-  const isProfileActive = currentPath.startsWith("/my-eka") || currentPath.startsWith("/messages") || currentPath.startsWith("/app/saved");
-
   return (
     <nav
       aria-label="Mobile Navigation"
@@ -65,12 +53,48 @@ export function MobileBottomNav() {
         className="flex items-end justify-around max-w-md mx-auto px-2"
         style={{ paddingBottom: "max(0.65rem, env(safe-area-inset-bottom))" }}
       >
-        {/* ── Left tabs: Home, Discover ────────────────────────── */}
-        {LEFT_TABS.map((item) => {
-          const active = item.exact
-            ? currentPath === item.to
-            : currentPath.startsWith(item.to);
+        {MOBILE_PRIMARY_TABS.map((item) => {
+          let active = false;
+          if (item.id === "ask") {
+            active = currentPath.startsWith("/ask") || currentPath.startsWith("/search");
+          } else {
+            active = item.exact
+              ? currentPath === item.to
+              : currentPath.startsWith(item.to) && item.to !== "/";
+          }
+          
           const Icon = item.icon;
+          
+          // Special styling for Ask EKA
+          if (item.id === "ask") {
+            return (
+              <div key={item.id} className="flex flex-col items-center -mt-5 pb-1">
+                <Link
+                  to={item.to}
+                  onClick={() => {
+                    triggerHaptic();
+                    track("navigation_clicked", { to: item.to, label: item.label, source: "mobile_fab" });
+                  }}
+                  className={cn(
+                    "flex flex-col items-center justify-center size-14 rounded-full shadow-lift transition-all",
+                    active
+                      ? "bg-terracotta text-white"
+                      : "bg-gradient-to-br from-terracotta to-saffron text-white hover:shadow-xl active:scale-95"
+                  )}
+                  aria-label="Ask EKA"
+                >
+                  <Search className="size-5 stroke-[2]" />
+                </Link>
+                <span className={cn(
+                  "mt-0.5 text-[10px] font-mono tracking-tight",
+                  active ? "text-terracotta font-semibold" : "text-muted-foreground"
+                )}>
+                  {item.label}
+                </span>
+              </div>
+            );
+          }
+
           return (
             <Link
               key={item.id}
@@ -83,7 +107,7 @@ export function MobileBottomNav() {
             >
               {active && (
                 <motion.div
-                  layoutId="active-mobile-pill"
+                  layoutId={`active-mobile-pill-${item.id}`}
                   className="absolute inset-0 bg-terracotta/10 rounded-xl"
                   transition={easings.spring}
                 />
@@ -94,7 +118,7 @@ export function MobileBottomNav() {
               </div>
               {active && (
                 <motion.div
-                  layoutId="active-dot"
+                  layoutId={`active-dot-${item.id}`}
                   className="absolute -bottom-px size-1 rounded-full bg-terracotta"
                   transition={easings.spring}
                 />
@@ -102,101 +126,6 @@ export function MobileBottomNav() {
             </Link>
           );
         })}
-
-        {/* ── Center: Ask EKA Floating Button ─────────────────── */}
-        <div className="flex flex-col items-center -mt-5 pb-1">
-          <Link
-            to="/ask"
-            onClick={() => {
-              triggerHaptic();
-              track("ask_eka_opened", { source: "mobile_fab" });
-            }}
-            className={cn(
-              "flex flex-col items-center justify-center size-14 rounded-full shadow-lift transition-all",
-              isAskActive
-                ? "bg-terracotta text-white"
-                : "bg-gradient-to-br from-terracotta to-saffron text-white hover:shadow-xl active:scale-95"
-            )}
-            aria-label="Ask EKA"
-          >
-            <Search className="size-5 stroke-[2]" />
-          </Link>
-          <span className={cn(
-            "mt-0.5 text-[10px] font-mono tracking-tight",
-            isAskActive ? "text-terracotta font-semibold" : "text-muted-foreground"
-          )}>
-            Ask EKA
-          </span>
-        </div>
-
-        {/* ── Right tabs: Stories, Community ───────────────────── */}
-        {RIGHT_TABS.map((item) => {
-          const active = currentPath.startsWith(item.to);
-          const Icon = item.icon;
-          return (
-            <Link
-              key={item.id}
-              to={item.to}
-              onClick={() => handleTabClick(item.to, item.label)}
-              className={cn(
-                "relative flex flex-col items-center justify-center pt-2 pb-1 px-3 rounded-xl transition-colors select-none min-w-[48px]",
-                active ? "text-terracotta font-medium" : "text-muted-foreground hover:text-foreground"
-              )}
-            >
-              {active && (
-                <motion.div
-                  layoutId="active-mobile-pill-r"
-                  className="absolute inset-0 bg-terracotta/10 rounded-xl"
-                  transition={easings.spring}
-                />
-              )}
-              <div className="relative z-10 flex flex-col items-center gap-0.5">
-                <Icon className={cn("size-5", active ? "stroke-[2.2]" : "stroke-[1.7]")} />
-                <span className="text-[10px] font-mono tracking-tight">{item.label}</span>
-              </div>
-              {active && (
-                <motion.div
-                  layoutId="active-dot-r"
-                  className="absolute -bottom-px size-1 rounded-full bg-terracotta"
-                  transition={easings.spring}
-                />
-              )}
-            </Link>
-          );
-        })}
-
-        {/* ── Profile tab ───────────────────────────────────────── */}
-        <Link
-          to="/my-eka"
-          onClick={() => handleTabClick("/my-eka", "Profile")}
-          className={cn(
-            "relative flex flex-col items-center justify-center pt-2 pb-1 px-3 rounded-xl transition-colors select-none min-w-[48px]",
-            isProfileActive ? "text-terracotta font-medium" : "text-muted-foreground hover:text-foreground"
-          )}
-        >
-          {isProfileActive && (
-            <motion.div
-              layoutId="active-mobile-pill-profile"
-              className="absolute inset-0 bg-terracotta/10 rounded-xl"
-              transition={easings.spring}
-            />
-          )}
-          <div className="relative z-10 flex flex-col items-center gap-0.5">
-            {/* Intentionally use the User icon — Profile sub-items (Messages, Saved) all live here */}
-            {(() => {
-              const ProfileIcon = MOBILE_PRIMARY_TABS[4]!.icon;
-              return <ProfileIcon className={cn("size-5", isProfileActive ? "stroke-[2.2]" : "stroke-[1.7]")} />;
-            })()}
-            <span className="text-[10px] font-mono tracking-tight">Profile</span>
-          </div>
-          {isProfileActive && (
-            <motion.div
-              layoutId="active-dot-profile"
-              className="absolute -bottom-px size-1 rounded-full bg-terracotta"
-              transition={easings.spring}
-            />
-          )}
-        </Link>
       </div>
     </nav>
   );

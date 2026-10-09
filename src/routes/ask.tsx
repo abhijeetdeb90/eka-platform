@@ -245,6 +245,7 @@ function AskEkaPage() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<AskEkaStructuredResponse | null>(null);
   const [saved, setSaved] = useState(false);
+  const [isTrustDrawerOpen, setIsTrustDrawerOpen] = useState(false);
 
   // Sync from URL search param
   useEffect(() => {
@@ -269,6 +270,7 @@ function AskEkaPage() {
         if (isMounted) {
           setResult(res);
           setSaved(false);
+          setIsTrustDrawerOpen(false);
           track("ask_result_opened", { entity: res.primaryEntity.name });
         }
       } catch (err) {
@@ -287,14 +289,14 @@ function AskEkaPage() {
     e.preventDefault();
     if (inputVal.trim()) {
       setActiveQuery(inputVal.trim());
-      void navigate({ to: "/ask", search: { q: inputVal.trim() } });
+      void navigate({ to: "/ask", search: { q: inputVal.trim(), mode: activeMode } as any });
     }
   };
 
   const handleSelectPreset = (preset: string) => {
     setInputVal(preset);
     setActiveQuery(preset);
-    void navigate({ to: "/ask", search: { q: preset } });
+    void navigate({ to: "/ask", search: { q: preset, mode: activeMode } as any });
   };
 
   const handleSaveToPassport = () => {
@@ -426,7 +428,7 @@ function AskEkaPage() {
                     type="text"
                     value={inputVal}
                     onChange={(e) => setInputVal(e.target.value)}
-                    placeholder="Ask: Why do people light diyas? Why is Varanasi sacred? What is Bhoota Kola?…"
+                    placeholder="What are you curious about?"
                     className="border-0 bg-transparent py-6 px-3.5 text-base sm:text-lg shadow-none focus-visible:ring-0 placeholder:text-muted-foreground/60"
                   />
                   <Button
@@ -439,11 +441,20 @@ function AskEkaPage() {
                 </div>
               </form>
 
-              {/* Curated Questions Carousel / Chips */}
-              <div className="space-y-2 pt-1">
-                <p className="text-xs font-mono text-muted-foreground uppercase tracking-wider">
-                  Popular questions:
-                </p>
+              {/* Categorization Rails */}
+              <div className="space-y-3 pt-3">
+                <div className="flex flex-wrap items-center justify-center gap-2 mb-2">
+                  {["Popular", "Curious", "Trending", "By Culture", "By Place", "By Topic"].map((rail, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-mono transition-all border border-border/60 bg-card/70 text-muted-foreground hover:border-primary/50 hover:text-foreground uppercase"
+                    >
+                      <span>{rail}</span>
+                    </button>
+                  ))}
+                </div>
+                
                 <div className="flex flex-wrap justify-center gap-2">
                   {CURATED_CURIOSITIES.map((item, i) => (
                     <button
@@ -476,137 +487,31 @@ function AskEkaPage() {
           </div>
         )}
 
-        {/* 8-PART CANONICAL CULTURAL RESPONSE (for Canon mode) */}
+        {/* REDESIGNED ANSWER LAYOUT (for Canon mode) */}
         {activeMode === "canon" && !loading && result && (
           <section className="container-eka max-w-4xl space-y-8 animate-fadeIn">
-            {/* Header & Verification Ribbon */}
-            <div className="rounded-3xl border border-border/80 bg-card/95 p-6 sm:p-8 shadow-calm space-y-6">
-              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 border-b border-border/60 pb-5">
-                <div>
-                  <div className="flex flex-wrap items-center gap-2 mb-2">
-                    <Badge
-                      variant="outline"
-                      className="border-terracotta/40 text-terracotta text-xs font-mono uppercase bg-terracotta/5"
-                    >
-                      {result.primaryEntity.category} ·{" "}
-                      {result.exploreDeeper.mapLocation || "Cultural Heritage"}
-                    </Badge>
-                    <Badge className="bg-emerald-600/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 text-[11px] font-mono flex items-center gap-1">
-                      <ShieldCheck className="size-3" />
-                      <span>{result.sources.length} Verified Sources</span>
-                    </Badge>
-                  </div>
-                  <h2 className="font-serif text-2xl sm:text-3xl font-bold text-foreground">
-                    {result.primaryEntity.name}
-                  </h2>
-                  <p className="text-xs text-muted-foreground mt-1 font-mono">
-                    Inquiry: "{activeQuery}"
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={handleShare}
-                    className="rounded-xl text-xs gap-1.5"
-                  >
-                    <Share2 className="size-3.5" />
-                    <span className="hidden sm:inline">Share</span>
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant={saved ? "secondary" : "outline"}
-                    onClick={handleSaveToPassport}
-                    className="rounded-xl text-xs gap-1.5"
-                  >
-                    <Bookmark className={`size-3.5 ${saved ? "fill-primary text-primary" : ""}`} />
-                    <span>{saved ? "Saved" : "Save"}</span>
-                  </Button>
-                </div>
+            <div className="rounded-3xl border border-border/80 bg-card/95 p-6 sm:p-8 shadow-calm space-y-6 relative">
+              
+              {/* COMPACT TRUST CUE */}
+              <div className="absolute top-6 right-6">
+                <button
+                  type="button"
+                  onClick={() => setIsTrustDrawerOpen(!isTrustDrawerOpen)}
+                  className="flex items-center gap-2 bg-emerald-600/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 px-3 py-1.5 rounded-full text-[11px] font-mono hover:bg-emerald-600/20 transition-colors"
+                >
+                  <ShieldCheck className="size-3.5" />
+                  <span className="hidden sm:inline">Trust Tier: {result.sources[0]?.verificationLevel || "Verified"}</span>
+                </button>
               </div>
 
-              {/* 1. SIMPLE ANSWER */}
-              <div className="p-4 rounded-2xl bg-amber-500/5 border border-amber-500/20 space-y-1.5">
-                <span className="text-[11px] font-mono uppercase tracking-wider text-amber-700 dark:text-amber-400 font-semibold">
-                  1. Simple Answer
-                </span>
-                <p className="text-base sm:text-lg leading-relaxed text-foreground font-serif">
-                  {result.simpleAnswer}
-                </p>
-              </div>
-
-              {/* 2. CULTURAL CONTEXT */}
-              <div className="space-y-2">
-                <span className="text-xs font-mono uppercase tracking-wider text-muted-foreground font-semibold">
-                  2. Cultural Context & Deeper Origin
-                </span>
-                <p className="text-sm sm:text-base leading-relaxed text-muted-foreground font-light">
-                  {result.culturalContext}
-                </p>
-              </div>
-
-              {/* 3. REGIONAL VARIATIONS */}
-              {result.regionalVariations && result.regionalVariations.length > 0 && (
-                <div className="space-y-3 pt-2 border-t border-border/50">
-                  <div className="flex items-center gap-2">
-                    <Layers className="size-4 text-terracotta" />
-                    <span className="text-xs font-mono uppercase tracking-wider text-foreground font-semibold">
-                      3. Regional Variations across Communities
-                    </span>
-                  </div>
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    {result.regionalVariations.map((v, i) => (
-                      <div
-                        key={i}
-                        className="rounded-2xl border border-border/70 bg-sand/10 p-3.5 text-xs space-y-1.5"
-                      >
-                        <span className="font-semibold text-foreground font-serif">
-                          {v.regionOrGroup}
-                        </span>
-                        <p className="text-muted-foreground leading-relaxed">
-                          <strong>Practice:</strong> {v.distinctPractice}
-                        </p>
-                        <p className="text-muted-foreground/80 italic">
-                          <strong>Meaning:</strong> {v.significance}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* 4. COMMUNITY PERSPECTIVES */}
-              {result.communityPerspectives && result.communityPerspectives.length > 0 && (
-                <div className="space-y-2 pt-2 border-t border-border/50">
-                  <div className="flex items-center gap-2">
-                    <Users className="size-4 text-purple-600" />
-                    <span className="text-xs font-mono uppercase tracking-wider text-foreground font-semibold">
-                      4. Community Perspectives & Living Voices
-                    </span>
-                  </div>
-                  <div className="space-y-2">
-                    {result.communityPerspectives.map((persp, idx) => (
-                      <div
-                        key={idx}
-                        className="p-3 rounded-xl bg-purple-500/5 border border-purple-500/20 text-xs text-foreground/90 italic"
-                      >
-                        "{persp}"
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* 5. SOURCES & PROVENANCE (EKA Trust Standard) */}
-              {result.sources && result.sources.length > 0 && (
-                <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4 space-y-3 pt-4">
+              {/* TRUST DRAWER (Hidden by default) */}
+              {isTrustDrawerOpen && result.sources && result.sources.length > 0 && (
+                <div className="mt-4 mb-6 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-4 space-y-3 animate-fadeIn">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-primary">
-                      <ShieldCheck className="size-4 text-emerald-600" />
-                      <span>5. Verified Sources & Provenance (EKA Trust Standard)</span>
-                    </div>
-                    <span className="text-[10px] font-mono text-muted-foreground">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
+                      Sources & Verification
+                    </span>
+                    <span className="text-[10px] font-mono text-emerald-700/70">
                       {result.sources.length} sources cited
                     </span>
                   </div>
@@ -615,135 +520,157 @@ function AskEkaPage() {
                     {result.sources.map((src, i) => {
                       const meta = getTrustVerificationMeta(src.verificationLevel);
                       return (
-                        <div
-                          key={i}
-                          className="p-3 rounded-xl bg-card border border-border/70 text-xs space-y-1.5"
-                        >
+                        <div key={i} className="p-3 rounded-xl bg-background border border-border/50 text-xs space-y-1.5">
                           <div className="flex items-center justify-between gap-2">
-                            <span className="font-semibold text-foreground truncate">
-                              {src.title}
-                            </span>
-                            <Badge
-                              variant="outline"
-                              className={`text-[9px] font-mono px-1.5 py-0 shrink-0 ${meta.colorClass} ${meta.badgeBorder}`}
-                            >
+                            <span className="font-semibold text-foreground truncate">{src.title}</span>
+                            <Badge variant="outline" className={`text-[9px] font-mono px-1.5 py-0 shrink-0 ${meta.colorClass} ${meta.badgeBorder}`}>
                               {meta.shortLabel}
                             </Badge>
                           </div>
-                          <p className="text-muted-foreground font-mono text-[11px]">
-                            Ref: {src.citation}
-                          </p>
-                          <p className="text-[10px] text-muted-foreground/80 line-clamp-2">
-                            {meta.basis}
-                          </p>
+                          <p className="text-muted-foreground font-mono text-[11px]">Ref: {src.citation}</p>
                         </div>
                       );
                     })}
                   </div>
                 </div>
               )}
-            </div>
 
-            {/* 6. YOU MIGHT ALSO WONDER... (Cultural Discovery Alternative to Infinite Scroll) */}
-            {result.youMightAlsoWonder && result.youMightAlsoWonder.length > 0 && (
-              <div className="rounded-3xl border border-border/80 bg-card p-6 space-y-3 shadow-xs">
-                <div className="flex items-center gap-2">
-                  <Sparkles className="size-4 text-saffron" />
-                  <h3 className="font-serif text-lg font-bold text-foreground">
-                    6. You might also wonder…
-                  </h3>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Follow genuine curiosity to explore connected lineages:
-                </p>
-                <div className="grid gap-2 sm:grid-cols-2">
-                  {result.youMightAlsoWonder.map((q, idx) => (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={() => handleSelectPreset(q)}
-                      className="text-left p-3 rounded-xl border border-border/60 bg-sand/15 hover:border-primary/50 hover:bg-card transition-all text-xs font-serif text-foreground group flex items-start justify-between gap-2"
-                    >
-                      <span className="group-hover:text-primary transition-colors">"{q}"</span>
-                      <ArrowRight className="size-3 text-muted-foreground group-hover:text-primary shrink-0 mt-0.5" />
-                    </button>
-                  ))}
-                </div>
+              {/* 1. QUESTION */}
+              <div>
+                <h2 className="font-serif text-2xl sm:text-3xl font-bold text-foreground pr-32">
+                  {activeQuery}
+                </h2>
               </div>
-            )}
 
-            {/* 7. COMPARE CULTURES ("ONE WITH ALL") */}
-            {result.compareSuggestion && (
-              <div className="rounded-3xl border border-terracotta/30 bg-terracotta/5 p-6 space-y-3 shadow-xs">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Globe className="size-4 text-terracotta" />
-                    <span className="text-xs font-mono uppercase tracking-wider text-terracotta font-semibold">
-                      7. Compare Cultures
+              {/* 2. SHORT ANSWER */}
+              <div className="space-y-2">
+                <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground font-semibold">
+                  Short Answer
+                </span>
+                <p className="text-lg sm:text-xl leading-relaxed text-foreground font-serif">
+                  {result.simpleAnswer}
+                </p>
+              </div>
+
+              {/* 3. WHY IT MATTERS */}
+              <div className="p-4 rounded-2xl bg-amber-500/5 border border-amber-500/20 space-y-1.5">
+                <span className="text-[11px] font-mono uppercase tracking-wider text-amber-700 dark:text-amber-400 font-semibold">
+                  Why It Matters
+                </span>
+                <p className="text-sm sm:text-base leading-relaxed text-foreground font-serif">
+                  {result.whyItMatters}
+                </p>
+              </div>
+
+              {/* 4. CULTURAL CONTEXT */}
+              <div className="space-y-2 pt-2">
+                <span className="text-xs font-mono uppercase tracking-wider text-muted-foreground font-semibold">
+                  Cultural Context
+                </span>
+                <p className="text-sm sm:text-base leading-relaxed text-muted-foreground font-light">
+                  {result.culturalContext}
+                </p>
+              </div>
+
+              {/* 5. RELATED STORIES */}
+              {result.relatedStories && result.relatedStories.length > 0 && (
+                <div className="space-y-2 pt-4 border-t border-border/50">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-mono uppercase tracking-wider text-foreground font-semibold">
+                      Related Stories & Comparisons
                     </span>
+                    <Link to="/discover">
+                      <Button variant="ghost" size="sm" className="h-7 text-xs text-primary">
+                        Explore all →
+                      </Button>
+                    </Link>
                   </div>
-                  <Link to="/discover">
-                    <Button variant="ghost" size="sm" className="h-7 text-xs text-primary">
-                      <span>Explore all comparisons →</span>
-                    </Button>
-                  </Link>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {result.relatedStories.map((story, i) => (
+                      <div key={i} className="rounded-xl border border-terracotta/30 bg-terracotta/5 p-4 text-sm">
+                        <h4 className="font-serif font-bold text-foreground mb-1">
+                          {story.title}
+                        </h4>
+                        <span className="text-muted-foreground">{story.culture}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <h4 className="font-serif text-base font-bold text-foreground">
-                  {result.compareSuggestion.comparisonTitle}
-                </h4>
-                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                  {result.compareSuggestion.insight}
-                </p>
-              </div>
-            )}
+              )}
 
-            {/* 8. EXPLORE DEEPER (Connected Knowledge Object Ecosystem) */}
-            <div className="rounded-3xl border border-border/80 bg-card p-6 space-y-4 shadow-xs">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Compass className="size-4 text-primary" />
-                  <h3 className="font-serif text-base font-bold text-foreground">
-                    8. Explore Deeper in the EKA Archive
-                  </h3>
+              {/* 6. RELATED PLACES */}
+              {result.regionalVariations && result.regionalVariations.length > 0 && (
+                <div className="space-y-3 pt-4 border-t border-border/50">
+                  <span className="text-xs font-mono uppercase tracking-wider text-foreground font-semibold">
+                    Related Places & Variations
+                  </span>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {result.regionalVariations.map((v, i) => (
+                      <div key={i} className="rounded-xl border border-border/70 bg-sand/10 p-3.5 text-xs space-y-1.5">
+                        <div className="flex items-center gap-1.5 font-semibold text-foreground font-serif">
+                          <MapPin className="size-3.5 text-terracotta" />
+                          {v.regionOrGroup}
+                        </div>
+                        <p className="text-muted-foreground leading-relaxed">{v.distinctPractice}</p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <Link
-                  to="/knowledge/$slug"
-                  params={{ slug: result.exploreDeeper.knowledgeSlug }}
-                  className="text-xs text-primary font-medium hover:underline flex items-center gap-1"
-                >
-                  <span>Open Canonical Knowledge Object</span>
-                  <ExternalLink className="size-3" />
-                </Link>
-              </div>
+              )}
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
-                <Link
-                  to="/knowledge/$slug"
-                  params={{ slug: result.exploreDeeper.knowledgeSlug }}
-                  className="p-3.5 rounded-2xl border border-border/70 bg-sand/15 hover:border-primary/50 transition-all space-y-1 block"
-                >
-                  <BookOpen className="size-4 text-primary" />
-                  <p className="font-serif text-xs font-bold text-foreground">Knowledge Object</p>
-                  <p className="text-[11px] text-muted-foreground">Full 10 dimensions & lineage</p>
-                </Link>
+              {/* 7. RELATED PEOPLE / CUSTODIANS */}
+              {result.communityPerspectives && result.communityPerspectives.length > 0 && (
+                <div className="space-y-3 pt-4 border-t border-border/50">
+                  <span className="text-xs font-mono uppercase tracking-wider text-foreground font-semibold">
+                    Related People & Custodians
+                  </span>
+                  <div className="space-y-2">
+                    {result.communityPerspectives.map((persp, idx) => (
+                      <div key={idx} className="p-3.5 rounded-xl bg-purple-500/5 border border-purple-500/20 text-xs text-foreground/90 italic flex gap-2">
+                        <Users className="size-4 text-purple-600 shrink-0 mt-0.5" />
+                        "{persp}"
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
-                <Link
-                  to="/discover"
-                  className="p-3.5 rounded-2xl border border-border/70 bg-sand/15 hover:border-primary/50 transition-all space-y-1 block"
-                >
-                  <MapPin className="size-4 text-blue-500" />
-                  <p className="font-serif text-xs font-bold text-foreground">Cultural Map</p>
-                  <p className="text-[11px] text-muted-foreground">Locate sacred geography</p>
-                </Link>
+              {/* 8. RELATED QUESTIONS */}
+              {result.youMightAlsoWonder && result.youMightAlsoWonder.length > 0 && (
+                <div className="space-y-3 pt-4 border-t border-border/50">
+                  <span className="text-xs font-mono uppercase tracking-wider text-foreground font-semibold">
+                    Related Questions
+                  </span>
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    {result.youMightAlsoWonder.map((q, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => handleSelectPreset(q)}
+                        className="text-left p-3.5 rounded-xl border border-border/60 bg-sand/15 hover:border-primary/50 transition-all text-xs font-serif text-foreground flex items-center justify-between gap-2 group"
+                      >
+                        <span className="group-hover:text-primary transition-colors">"{q}"</span>
+                        <ArrowRight className="size-3 text-muted-foreground group-hover:text-primary shrink-0" />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
 
-                <Link
-                  to="/stories"
-                  className="p-3.5 rounded-2xl border border-border/70 bg-sand/15 hover:border-primary/50 transition-all space-y-1 block"
-                >
-                  <Film className="size-4 text-terracotta" />
-                  <p className="font-serif text-xs font-bold text-foreground">Visual Stories</p>
-                  <p className="text-[11px] text-muted-foreground">9:16 vertical field reels</p>
-                </Link>
+              {/* 9. ACTIONS: Save / Share / Ask another */}
+              <div className="flex flex-wrap items-center gap-3 pt-6 border-t border-border/50">
+                <Button variant={saved ? "secondary" : "outline"} onClick={handleSaveToPassport} className="rounded-xl text-xs gap-1.5 h-9">
+                  <Bookmark className={`size-3.5 ${saved ? "fill-primary text-primary" : ""}`} />
+                  <span>{saved ? "Saved" : "Save"}</span>
+                </Button>
+                <Button variant="outline" onClick={handleShare} className="rounded-xl text-xs gap-1.5 h-9">
+                  <Share2 className="size-3.5" />
+                  <span>Share</span>
+                </Button>
+                <Button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="rounded-xl text-xs gap-1.5 h-9 bg-gradient-to-r from-terracotta to-saffron text-white border-0 hover:opacity-90">
+                  <Search className="size-3.5" />
+                  <span>Ask Another</span>
+                </Button>
               </div>
             </div>
           </section>

@@ -170,6 +170,10 @@ Please search the web for up-to-date, verified context and synthesize a clear, d
               queryLower.includes(item.entity.toLowerCase()),
           ) || CANONICAL_KNOWLEDGE_OBJECTS[0];
 
+          if (!matchedObject) {
+            throw new Error("Canonical knowledge unavailable");
+          }
+
           const matchedCorpus = CULTURAL_KNOWLEDGE_CORPUS.find(
             (item) =>
               item.title.toLowerCase().includes(queryLower) ||

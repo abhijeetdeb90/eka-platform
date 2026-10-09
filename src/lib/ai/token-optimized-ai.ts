@@ -237,11 +237,11 @@ export interface AskEkaStructuredResponse {
     era?: string;
   }>;
   youMightAlsoWonder: string[];
-  compareSuggestion: {
-    comparisonTitle: string;
-    relatedCulture: string;
-    insight: string;
-  };
+  whyItMatters: string;
+  relatedStories: Array<{
+    title: string;
+    culture: string;
+  }>;
   exploreDeeper: {
     knowledgeSlug: string;
     mapLocation?: string;
@@ -406,11 +406,13 @@ Provide a structured JSON object with the following exact keys:
   "youMightAlsoWonder": [
     "2-3 intuitive follow-up questions that spark genuine curiosity (e.g. Why is X connected to Y?)"
   ],
-  "compareSuggestion": {
-    "comparisonTitle": "Culture A vs Culture B",
-    "relatedCulture": "e.g. Japanese tea ceremony, Songkran, etc.",
-    "insight": "1 sentence showing the shared human question beneath different forms."
-  }
+  "whyItMatters": "1-2 sentences explaining why this matters today and how it connects deeply with human heritage.",
+  "relatedStories": [
+    {
+      "title": "Title of a related story or comparison (e.g. Culture A vs Culture B)",
+      "culture": "The related culture (e.g. Japanese tea ceremony)"
+    }
+  ]
 }`;
 
   // Step 5: CONTEXT GUARD (Section 33.1, 33.14)
@@ -534,12 +536,13 @@ Provide a structured JSON object with the following exact keys:
     communityPerspectives: structuredData?.communityPerspectives || fallbackPerspectives,
     sources: structuredData?.sources || fallbackSources,
     youMightAlsoWonder: structuredData?.youMightAlsoWonder || fallbackCuriosities,
-    compareSuggestion: structuredData?.compareSuggestion || {
-      comparisonTitle: `${primaryCandidate.entity} across World Traditions`,
-      relatedCulture: "Global agrarian and solstice customs",
-      insight:
-        "Humanity shares identical questions of light, threshold, and gratitude across different cultural grammars.",
-    },
+    whyItMatters: structuredData?.whyItMatters || "It connects deeply with human heritage and communal identity.",
+    relatedStories: structuredData?.relatedStories || [
+      {
+        title: `${primaryCandidate.entity} across World Traditions`,
+        culture: "Global agrarian and solstice customs"
+      }
+    ],
     exploreDeeper: {
       knowledgeSlug: primaryCandidate.slug,
       mapLocation: primaryCandidate.culturalDimensions.identity.regions[0],

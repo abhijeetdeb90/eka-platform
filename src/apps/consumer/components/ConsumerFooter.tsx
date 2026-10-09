@@ -64,13 +64,13 @@ export function ConsumerFooter() {
                 </ul>
               </div>
 
-              {/* Community Column */}
+              {/* For Column */}
               <div>
                 <h4 className="font-display text-xs font-bold uppercase tracking-[0.16em] text-foreground">
-                  {FOOTER_IA_CONFIG.community?.title || "Community"}
+                  {FOOTER_IA_CONFIG.for?.title || "For"}
                 </h4>
                 <ul className="mt-4 space-y-2.5 text-xs">
-                  {FOOTER_IA_CONFIG.community?.links.map((l) => (
+                  {FOOTER_IA_CONFIG.for?.links.map((l) => (
                     <li key={l.label}>
                       <Link
                         to={l.to as any}
@@ -83,13 +83,13 @@ export function ConsumerFooter() {
                 </ul>
               </div>
 
-              {/* Trust & Safety Column */}
+              {/* Trust Column */}
               <div>
                 <h4 className="font-display text-xs font-bold uppercase tracking-[0.16em] text-foreground">
-                  {FOOTER_IA_CONFIG.trustAndSafety?.title || "Trust & Safety"}
+                  {FOOTER_IA_CONFIG.trust?.title || "Trust"}
                 </h4>
                 <ul className="mt-4 space-y-2.5 text-xs">
-                  {FOOTER_IA_CONFIG.trustAndSafety?.links.map((l) => (
+                  {FOOTER_IA_CONFIG.trust?.links.map((l) => (
                     <li key={l.label}>
                       <Link
                         to={l.to as any}

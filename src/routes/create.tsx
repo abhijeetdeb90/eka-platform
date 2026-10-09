@@ -10,16 +10,12 @@ import { useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import {
   Film,
-  BookOpen,
+  Image as ImageIcon,
+  MessageSquare,
   MapPin,
-  Users,
-  Calendar,
   Sparkles,
   ShieldCheck,
-  Plus,
   ArrowRight,
-  Upload,
-  CheckCircle2,
 } from "lucide-react";
 import { toast } from "sonner";
 import { SiteHeader } from "@/components/site/SiteHeader";
@@ -46,18 +42,17 @@ export const Route = createFileRoute("/create")({
   component: CreateArchivePage,
 });
 
-type ContributionKind = "story" | "documentation" | "place" | "sangha" | "experience";
+type ContributionKind = "post" | "carousel" | "video";
 
 function CreateArchivePage() {
   const navigate = useNavigate();
   const { data: profile } = useProfile();
 
-  const [activeKind, setActiveKind] = useState<ContributionKind>("story");
-  const [title, setTitle] = useState("");
-  const [contextNote, setContextNote] = useState("");
-  const [tradition, setTradition] = useState("");
+  const [activeKind, setActiveKind] = useState<ContributionKind>("post");
+  const [caption, setCaption] = useState("");
+  const [culture, setCulture] = useState("");
   const [place, setPlace] = useState("");
-  const [sourceRef, setSourceRef] = useState("");
+  const [topic, setTopic] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -68,22 +63,21 @@ function CreateArchivePage() {
       return;
     }
 
-    if (!title.trim() || !contextNote.trim()) {
-      toast.error("Please provide a title and context note for your contribution");
+    if (!caption.trim()) {
+      toast.error("Please provide a caption for your contribution");
       return;
     }
 
     setSubmitting(true);
-    track("create_started", { kind: activeKind, title });
+    track("create_started", { kind: activeKind });
 
     try {
-      // Record contribution into posts table
       const { data, error } = await supabase.from("posts").insert({
         author_id: profile.id,
-        title: title.trim(),
-        content: contextNote.trim(),
-        topic: tradition.trim() || "Cultural Heritage",
-        type: (activeKind === "story" ? "experience" : "reflection") as any,
+        content: caption.trim(),
+        topic: topic.trim() || "Cultural Heritage",
+        tradition: culture.trim(),
+        type: activeKind,
         status: "visible",
       });
 
@@ -91,12 +85,11 @@ function CreateArchivePage() {
         toast.error("Could not archive contribution: " + error.message);
       } else {
         toast.success("Preserved in the EKA Living Archive! Thank you for stewardship.");
-        setTitle("");
-        setContextNote("");
-        setTradition("");
+        setCaption("");
+        setCulture("");
         setPlace("");
-        setSourceRef("");
-        void navigate({ to: "/stories" });
+        setTopic("");
+        void navigate({ to: "/my-eka" });
       }
     } catch {
       toast.error("An error occurred while preserving this contribution.");
@@ -140,38 +133,26 @@ function CreateArchivePage() {
           </div>
         </section>
 
-        {/* Contribution Type Selector (5 Pathways) */}
-        <section className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+        {/* Contribution Type Selector */}
+        <section className="grid grid-cols-3 gap-4 max-w-2xl mx-auto">
           {[
             {
-              id: "story" as const,
-              label: "Cultural Reel / Story",
+              id: "post" as const,
+              label: "Post",
+              icon: MessageSquare,
+              desc: "Share a cultural reflection",
+            },
+            {
+              id: "carousel" as const,
+              label: "Carousel",
+              icon: ImageIcon,
+              desc: "Share multiple images",
+            },
+            {
+              id: "video" as const,
+              label: "Video",
               icon: Film,
-              desc: "Vertical video or photo with living context",
-            },
-            {
-              id: "documentation" as const,
-              label: "Cultural Documentation",
-              icon: BookOpen,
-              desc: "In-depth ritual, history, or philosophy",
-            },
-            {
-              id: "place" as const,
-              label: "Sacred Place",
-              icon: MapPin,
-              desc: "Temple, monastery, grove, or geography",
-            },
-            {
-              id: "sangha" as const,
-              label: "Community / Sangha",
-              icon: Users,
-              desc: "Found a circle of inquiry or lineage",
-            },
-            {
-              id: "experience" as const,
-              label: "Cultural Experience",
-              icon: Calendar,
-              desc: "Artisan workshop or festival gathering",
+              desc: "Share a video clip",
             },
           ].map((item) => {
             const Icon = item.icon;
@@ -181,22 +162,22 @@ function CreateArchivePage() {
                 key={item.id}
                 type="button"
                 onClick={() => setActiveKind(item.id)}
-                className={`p-3.5 rounded-2xl border text-left flex flex-col justify-between transition-all ${
+                className={`p-4 rounded-2xl border text-left flex flex-col justify-between transition-all ${
                   isSelected
                     ? "border-primary bg-primary/10 shadow-xs ring-1 ring-primary"
                     : "border-border/70 bg-card hover:bg-accent/40 hover:border-primary/40"
                 }`}
               >
                 <Icon
-                  className={`size-5 mb-2 ${
+                  className={`size-6 mb-3 ${
                     isSelected ? "text-primary" : "text-muted-foreground"
                   }`}
                 />
                 <div>
-                  <h3 className="font-serif font-bold text-xs text-foreground">
+                  <h3 className="font-serif font-bold text-sm text-foreground">
                     {item.label}
                   </h3>
-                  <p className="text-[10px] text-muted-foreground leading-snug mt-0.5 line-clamp-2">
+                  <p className="text-[11px] text-muted-foreground leading-snug mt-1 line-clamp-2">
                     {item.desc}
                   </p>
                 </div>
@@ -206,16 +187,17 @@ function CreateArchivePage() {
         </section>
 
         {/* Contribution Form */}
-        <section className="rounded-3xl border border-border/80 bg-card p-6 sm:p-8 shadow-calm space-y-6">
+        <section className="rounded-3xl border border-border/80 bg-card p-6 sm:p-8 shadow-calm space-y-6 max-w-2xl mx-auto">
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-1.5">
               <label className="text-xs font-semibold uppercase tracking-wider text-foreground">
-                Title of Tradition or Cultural Practice *
+                Caption *
               </label>
-              <Input
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="e.g., The Twilight Fire Offering of Dashashwamedh Ghat"
+              <Textarea
+                value={caption}
+                onChange={(e) => setCaption(e.target.value)}
+                placeholder="Share your reflection, story, or cultural insight..."
+                rows={4}
                 className="rounded-xl bg-background"
                 required
               />
@@ -224,51 +206,40 @@ function CreateArchivePage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold uppercase tracking-wider text-foreground">
-                  Cultural Lineage or Tradition
+                  Culture / Lineage
                 </label>
                 <Input
-                  value={tradition}
-                  onChange={(e) => setTradition(e.target.value)}
-                  placeholder="e.g., Sanatana Dharma, Zen, Zapotec, Celtic"
+                  value={culture}
+                  onChange={(e) => setCulture(e.target.value)}
+                  placeholder="e.g., Sanatana Dharma, Zen"
                   className="rounded-xl bg-background"
                 />
               </div>
 
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold uppercase tracking-wider text-foreground">
-                  Geographic Place & Region
+                  Place
                 </label>
-                <Input
-                  value={place}
-                  onChange={(e) => setPlace(e.target.value)}
-                  placeholder="e.g., Varanasi, Uttar Pradesh, India"
-                  className="rounded-xl bg-background"
-                />
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-2.5 size-4 text-muted-foreground" />
+                  <Input
+                    value={place}
+                    onChange={(e) => setPlace(e.target.value)}
+                    placeholder="e.g., Varanasi, India"
+                    className="pl-9 rounded-xl bg-background"
+                  />
+                </div>
               </div>
             </div>
 
             <div className="space-y-1.5">
               <label className="text-xs font-semibold uppercase tracking-wider text-foreground">
-                Cultural Context Note & Meaning *
-              </label>
-              <Textarea
-                value={contextNote}
-                onChange={(e) => setContextNote(e.target.value)}
-                placeholder="Why is this practice done? Who are the lineage keepers? What human meaning does it carry? Provide respectful, accurate context."
-                rows={5}
-                className="rounded-xl bg-background"
-                required
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold uppercase tracking-wider text-foreground">
-                Primary Source, Elder Attestation or Reference
+                Topic
               </label>
               <Input
-                value={sourceRef}
-                onChange={(e) => setSourceRef(e.target.value)}
-                placeholder="e.g., Oral transmission from Pandit Ramakrishna / Rigveda 10.129"
+                value={topic}
+                onChange={(e) => setTopic(e.target.value)}
+                placeholder="e.g., Rituals, Artisan Craft, Philosophy"
                 className="rounded-xl bg-background"
               />
             </div>
@@ -283,7 +254,7 @@ function CreateArchivePage() {
                 disabled={submitting}
                 className="w-full sm:w-auto rounded-xl px-7 bg-gradient-to-r from-terracotta to-saffron text-white font-medium shadow-calm hover:shadow-lift"
               >
-                <span>{submitting ? "Preserving…" : "Preserve in Archive"}</span>
+                <span>{submitting ? "Publishing…" : "Publish"}</span>
                 <ArrowRight className="ml-1.5 size-4" />
               </Button>
             </div>
@@ -295,3 +266,4 @@ function CreateArchivePage() {
     </div>
   );
 }
+

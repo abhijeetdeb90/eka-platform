@@ -787,7 +787,7 @@ function DiscoverPage() {
                           </Link>
 
                           <Link
-                            to={item.relatedStoryLink}
+                            to={item.relatedStoryLink as any}
                             className="inline-flex items-center gap-1 font-medium text-xs text-primary hover:underline group-hover:translate-x-0.5 transition-transform"
                           >
                             <span>Explore Context</span>

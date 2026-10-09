@@ -19,9 +19,7 @@ export interface EkaBreadcrumbProps {
 const ROUTE_NAME_MAP: Record<string, string> = {
   discover: "Discover",
   stories: "Stories",
-  learn: "Learn",
   ask: "Ask EKA",
-  community: "Community",
   knowledge: "Cultural Knowledge",
   junction: "Cultural Atlas",
   creator: "Creators",

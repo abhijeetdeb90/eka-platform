@@ -79,19 +79,26 @@ export const PRIMARY_NAV_ITEMS: NavItem[] = [
     description: "Watch & understand",
   },
   {
-    id: "learn",
-    label: "Learn",
-    to: "/learn",
-    icon: BookOpen,
-    description: "Go deeper",
+    id: "ask",
+    label: "Ask EKA",
+    to: "/ask",
+    icon: Search,
+    description: "Understand something",
   },
   {
-    id: "community",
-    label: "Community",
-    to: "/community",
+    id: "feed",
+    label: "Feed",
+    to: "/feed",
     icon: Users,
-    description: "People who share something worth preserving",
+    description: "Community updates",
   },
+  {
+    id: "my-eka",
+    label: "My EKA",
+    to: "/my-eka",
+    icon: User,
+    description: "Your EKA sanctuary",
+  }
 ];
 
 /**
@@ -158,7 +165,6 @@ export const MOBILE_PRIMARY_TABS: NavItem[] = [
     icon: Compass,
     description: "Discover",
   },
-  // center slot reserved for floating Ask EKA button
   {
     id: "stories",
     label: "Stories",
@@ -167,18 +173,18 @@ export const MOBILE_PRIMARY_TABS: NavItem[] = [
     description: "Stories",
   },
   {
-    id: "community",
-    label: "Community",
-    to: "/community",
-    icon: Users,
-    description: "Community",
+    id: "ask",
+    label: "Ask EKA",
+    to: "/ask",
+    icon: Search,
+    description: "Ask EKA",
   },
   {
-    id: "profile",
-    label: "Profile",
-    to: "/my-eka",
-    icon: User,
-    description: "Profile",
+    id: "feed",
+    label: "Feed",
+    to: "/feed",
+    icon: Users,
+    description: "Feed",
   },
 ];
 
@@ -186,13 +192,6 @@ export const MOBILE_PRIMARY_TABS: NavItem[] = [
  * Secondary Mobile Drawer Items
  */
 export const MOBILE_MORE_ITEMS: NavItem[] = [
-  {
-    id: "learn",
-    label: "Learn",
-    to: "/learn",
-    icon: BookOpen,
-    description: "Guides, explainers & deep dives",
-  },
   {
     id: "messages",
     label: "Messages",
@@ -226,15 +225,13 @@ export const FOOTER_IA_CONFIG: Record<string, FooterSection> = {
     links: [
       { to: "/discover", label: "Discover" },
       { to: "/stories", label: "Stories" },
-      { to: "/learn", label: "Learn" },
-      { to: "/community", label: "Communities" },
+      { to: "/feed", label: "Feed" },
     ],
   },
   for: {
     title: "For",
     links: [
       { to: "/create", label: "Creators" },
-      { to: "/community", label: "Communities" },
       { to: "/membership", label: "Membership" },
       { to: "/give", label: "Stewardship" },
     ],

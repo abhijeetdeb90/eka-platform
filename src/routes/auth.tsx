@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { EkaLogo } from "@/components/brand/Logo";
 import { track } from "@/lib/analytics";
 import { applyJoinAnswers, loadAnswers } from "@/lib/join";
+import { type InvestorDemoRole, startInvestorDemoSession } from "@/lib/auth/demo-session";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
