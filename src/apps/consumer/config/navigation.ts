@@ -10,6 +10,8 @@ export type { NavItem as ConsumerNavLink } from "@/config/navigation";
 export {
   PRIMARY_NAV_ITEMS as CONSUMER_PRIMARY_NAV,
   CREATE_ACTION_ITEM,
+  ASK_EKA_ITEM,
+  PROFILE_NAV_ITEMS,
   MOBILE_PRIMARY_TABS,
   MOBILE_MORE_ITEMS,
   FOOTER_IA_CONFIG,
@@ -18,25 +20,25 @@ export {
 
 // Legacy compatibility aliases for existing footer consumers
 export const CONSUMER_FOOTER_EXPLORE = [
-  { to: "/discover", label: "Discover Traditions" },
-  { to: "/stories", label: "1 Billion Stories" },
-  { to: "/learn", label: "Knowledge Codex" },
+  { to: "/discover", label: "Discover" },
+  { to: "/stories", label: "Stories" },
+  { to: "/learn", label: "Learn" },
   { to: "/ask", label: "Ask EKA" },
-  { to: "/observe", label: "Sacred Calendar" },
+  { to: "/community", label: "Communities" },
 ];
 
 export const CONSUMER_FOOTER_COMMUNITY = [
-  { to: "/community", label: "Living Communities" },
+  { to: "/community", label: "Communities" },
   { to: "/standards", label: "Community Standards" },
   { to: "/give", label: "Give & Transparency" },
-  { to: "/create", label: "Contribute to Archive" },
-  { to: "/membership", label: "Sanctuary Membership" },
+  { to: "/create", label: "Contribute" },
+  { to: "/membership", label: "Membership" },
 ];
 
 export const CONSUMER_FOOTER_LEGAL = [
-  { to: "/privacy", label: "Privacy Policy (DPDP)" },
+  { to: "/privacy", label: "Privacy Policy" },
   { to: "/terms", label: "Terms & Conditions" },
-  { to: "/refund", label: "Refund & Cancellation" },
+  { to: "/refund", label: "Refund Policy" },
   { to: "/copyright", label: "Copyright & IP" },
   { to: "/cookies", label: "Cookie Preferences" },
 ];

@@ -3,7 +3,14 @@
 // ==============================================================================
 // Single source of truth for all navigation across desktop, mobile, sidebar,
 // topbar, and footer discovery.
-// Core loop: Discover → Stories → Learn → Ask EKA → Community → Create → My EKA
+//
+// Desktop IA:  [EKA BETA]  Home | Discover | Stories | Learn | Community
+//              Right side: Search | Create | Profile
+//
+// Mobile IA:   Home · Discover · Stories · Community · Profile
+//              Central floating: Ask EKA
+//
+// Persistent:  Ask EKA (search + AI entry — accessible everywhere)
 // ==============================================================================
 
 import type { LucideIcon } from "lucide-react";
@@ -12,25 +19,26 @@ import {
   Compass,
   Film,
   BookOpen,
-  HelpCircle,
   Users,
   MessageSquare,
   User,
   Plus,
+  Search,
 } from "lucide-react";
 
 export const EKA_BRAND = {
   name: "EKA",
-  positioning: "The World's Trusted Cultural Intelligence Layer",
-  primaryHook: "Don't just scroll the world. Understand it.",
-  philosophicalCore: "One Within. One With All.",
+  tagline: "Understand the world.",
+  heroStatement: "A billion stories. One world to understand.",
+  subStatement: "Don't just scroll the world. Understand it.",
+  philosophy: "One Within. One With All.",
+  // Consumer-facing (what users see in UI)
+  consumerPositioning: "Understand the world.",
+  // Investor/B2B (kept out of consumer UI)
+  investorPositioning: "Cultural Intelligence Infrastructure",
   productPromise: "Connect. Communicate. Build Community. Earn.",
-  primaryLockup: "EKA — The World's Trusted Cultural Intelligence Layer",
-  tagline: "Don't just scroll the world. Understand it.",
-  supportingContext: "The World's Trusted Cultural Intelligence Layer",
-  supportingStatement: "Understand the world's cultures, living traditions, master crafts, and sacred places through verified human intelligence.",
-  contextStatement:
-    "From generational lineages and living rituals to ancient crafts, foodways, oral traditions, classical texts, and festivals — EKA builds the global cultural intelligence layer connecting human knowledge and authentic custodians.",
+  supportingStatement:
+    "Explore places. Meet people. Understand traditions. Ask why.",
 } as const;
 
 export interface NavItem {
@@ -39,14 +47,13 @@ export interface NavItem {
   to: string;
   exact?: boolean;
   icon: LucideIcon;
-  actionText?: string;
   description: string;
   badge?: string;
 }
 
 /**
- * 8 Primary Pillars of EKA Navigation
- * Standardized across both public and authenticated surfaces.
+ * 5 Primary Desktop Navigation Pillars
+ * Displayed center-left in the desktop header.
  */
 export const PRIMARY_NAV_ITEMS: NavItem[] = [
   {
@@ -55,72 +62,85 @@ export const PRIMARY_NAV_ITEMS: NavItem[] = [
     to: "/",
     exact: true,
     icon: Home,
-    description: "Personalized cultural entry point",
+    description: "Your cultural starting point",
   },
   {
     id: "discover",
     label: "Discover",
     to: "/discover",
     icon: Compass,
-    description: "Find the world — Geographic & cultural exploration map",
+    description: "Explore the world map",
   },
   {
     id: "stories",
     label: "Stories",
     to: "/stories",
     icon: Film,
-    description: "Experience the world — Vertical cultural reels",
+    description: "Watch & understand",
   },
   {
     id: "learn",
     label: "Learn",
     to: "/learn",
     icon: BookOpen,
-    description: "Understand the world — Structured knowledge & explainers",
-  },
-  {
-    id: "ask",
-    label: "Ask EKA",
-    to: "/ask",
-    icon: HelpCircle,
-    description: "Ask anything & connect knowledge",
+    description: "Go deeper",
   },
   {
     id: "community",
     label: "Community",
     to: "/community",
     icon: Users,
-    description: "Connect with people — Sanghas & discussions",
-  },
-  {
-    id: "messages",
-    label: "Messages",
-    to: "/messages",
-    icon: MessageSquare,
-    description: "Connect meaningfully — Direct conversations",
-  },
-  {
-    id: "my-eka",
-    label: "My EKA",
-    to: "/my-eka",
-    icon: User,
-    description: "Personalize, save and manage your sanctuary",
+    description: "People who share something worth preserving",
   },
 ];
 
 /**
- * Primary Create Action — functions as a contribution action, not a disconnected page
+ * Primary Create Action
  */
 export const CREATE_ACTION_ITEM: NavItem = {
   id: "create",
   label: "Create",
   to: "/create",
   icon: Plus,
-  description: "Contribute to the living cultural archive",
+  description: "Contribute to the living archive",
 };
 
 /**
- * Mobile Bottom Navigation: Highest frequency consumer touchpoints
+ * Ask EKA — persistent AI/search entry point
+ * Lives in the header search area; also floats on mobile.
+ */
+export const ASK_EKA_ITEM: NavItem = {
+  id: "ask",
+  label: "Ask EKA",
+  to: "/ask",
+  icon: Search,
+  description: "Understand something",
+};
+
+/**
+ * Profile sub-items — shown inside Profile dropdown
+ * Routes are preserved; access points simply moved.
+ */
+export const PROFILE_NAV_ITEMS: NavItem[] = [
+  {
+    id: "my-eka",
+    label: "My Profile",
+    to: "/my-eka",
+    icon: User,
+    description: "Your EKA sanctuary",
+  },
+  {
+    id: "messages",
+    label: "Messages",
+    to: "/messages",
+    icon: MessageSquare,
+    description: "Direct conversations",
+  },
+];
+
+/**
+ * Mobile Bottom Navigation: 5 primary tabs
+ * Ask EKA is a floating central action, not a tab.
  */
 export const MOBILE_PRIMARY_TABS: NavItem[] = [
   {
@@ -138,6 +158,7 @@ export const MOBILE_PRIMARY_TABS: NavItem[] = [
     icon: Compass,
     description: "Discover",
   },
+  // center slot reserved for floating Ask EKA button
   {
     id: "stories",
     label: "Stories",
@@ -146,18 +167,18 @@ export const MOBILE_PRIMARY_TABS: NavItem[] = [
     description: "Stories",
   },
   {
-    id: "ask",
-    label: "Ask EKA",
-    to: "/ask",
-    icon: HelpCircle,
-    description: "Ask",
+    id: "community",
+    label: "Community",
+    to: "/community",
+    icon: Users,
+    description: "Community",
   },
   {
-    id: "my-eka",
-    label: "My EKA",
+    id: "profile",
+    label: "Profile",
     to: "/my-eka",
     icon: User,
-    description: "My EKA",
+    description: "Profile",
   },
 ];
 
@@ -170,28 +191,21 @@ export const MOBILE_MORE_ITEMS: NavItem[] = [
     label: "Learn",
     to: "/learn",
     icon: BookOpen,
-    description: "Cultural explainers, guides & lineages",
-  },
-  {
-    id: "community",
-    label: "Community",
-    to: "/community",
-    icon: Users,
-    description: "Explore Sanghas, discussions & elders",
+    description: "Guides, explainers & deep dives",
   },
   {
     id: "messages",
     label: "Messages",
     to: "/messages",
     icon: MessageSquare,
-    description: "Direct conversations & inquiries",
+    description: "Direct conversations",
   },
   {
     id: "create",
-    label: "Contribute Story",
+    label: "Contribute",
     to: "/create",
     icon: Plus,
-    description: "Contribute to the living cultural archive",
+    description: "Add to the living archive",
   },
 ];
 
@@ -210,39 +224,35 @@ export const FOOTER_IA_CONFIG: Record<string, FooterSection> = {
   explore: {
     title: "Explore",
     links: [
-      { to: "/discover", label: "Explore Culture & Places" },
-      { to: "/stories", label: "1 Billion Stories" },
-      { to: "/learn", label: "Knowledge Codex & Guides" },
-      { to: "/ask", label: "Ask EKA (Universal Wisdom)" },
-      { to: "/discover#cultural-map", label: "Cultural Intelligence Map" },
-      { to: "/search", label: "Multilingual Search" },
+      { to: "/discover", label: "Discover" },
+      { to: "/stories", label: "Stories" },
+      { to: "/learn", label: "Learn" },
+      { to: "/community", label: "Communities" },
     ],
   },
-  community: {
-    title: "Community",
+  for: {
+    title: "For",
     links: [
-      { to: "/community", label: "Discover Sanghas" },
-      { to: "/create", label: "Contribute to Archive" },
-      { to: "/standards", label: "Community Standards" },
-      { to: "/give", label: "Stewardship & Grants" },
+      { to: "/create", label: "Creators" },
+      { to: "/community", label: "Communities" },
+      { to: "/membership", label: "Membership" },
+      { to: "/give", label: "Stewardship" },
     ],
   },
-  trustAndSafety: {
-    title: "Trust & Safety",
+  trust: {
+    title: "Trust",
     links: [
-      { to: "/standards", label: "How EKA Works" },
-      { to: "/standards", label: "Verification & Provenance" },
-      { to: "/privacy", label: "Privacy Policy (DPDP 2023)" },
-      { to: "/terms", label: "Terms of Service" },
-      { to: "/refund", label: "Refund Policy" },
+      { to: "/standards", label: "Verification" },
+      { to: "/privacy", label: "Privacy" },
+      { to: "/standards", label: "Safety" },
     ],
   },
   company: {
     title: "Company",
     links: [
-      { to: "/", label: "About EKA" },
-      { to: "/stories", label: "Living Archive Vision" },
-      { to: "mailto:contact@eka.earth", label: "Contact Us" },
+      { to: "/", label: "About" },
+      { to: "mailto:contact@eka.earth", label: "Contact" },
+      { to: "/terms", label: "Terms" },
     ],
   },
 };
