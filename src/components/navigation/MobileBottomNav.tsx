@@ -15,9 +15,11 @@ import { Search } from "lucide-react";
 import { easings } from "@/lib/tokens/motion";
 import { cn } from "@/lib/utils";
 import { MOBILE_PRIMARY_TABS } from "@/config/navigation";
+import { useProfile } from "@/hooks/useProfile";
 import { track } from "@/lib/analytics";
 
 export function MobileBottomNav() {
+  const { data: profile } = useProfile();
   const routerState = useRouterState();
   const currentPath = routerState.location.pathname;
 
@@ -53,7 +55,7 @@ export function MobileBottomNav() {
         className="flex items-end justify-around max-w-md mx-auto px-2"
         style={{ paddingBottom: "max(0.65rem, env(safe-area-inset-bottom))" }}
       >
-        {MOBILE_PRIMARY_TABS.map((item) => {
+        {MOBILE_PRIMARY_TABS.filter(t => profile ? true : ["home", "discover"].includes(t.id)).map((item) => {
           let active = false;
           if (item.id === "ask") {
             active = currentPath.startsWith("/ask") || currentPath.startsWith("/search");
