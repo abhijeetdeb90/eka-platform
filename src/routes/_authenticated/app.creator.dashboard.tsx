@@ -1,10 +1,11 @@
 ﻿import { useState, useEffect } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { AppScreen } from "@/components/layout/AppScreen";
+import { AppScreen } from "@/components/app/AppScreen";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useAuth } from "@/hooks/useAuth";
+import { useMonetizationTier } from "@/lib/monetization";
+import { useProfile } from "@/hooks/useProfile";
 import { Lock, ArrowUpRight, FileText, Video, Image as ImageIcon, Edit, Trash2, ShieldCheck, BarChart3, Eye, Heart, Bookmark } from "lucide-react";
 import { toast } from "sonner";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -15,7 +16,8 @@ export const Route = createFileRoute("/_authenticated/app/creator/dashboard")({
 });
 
 function CreatorStudioDashboard() {
-  const { session, tier, setTier } = useAuth();
+  const { tier, setTier } = useMonetizationTier();
+  const { data: profile } = useProfile();
   const queryClient = useQueryClient();
   const isCreator = tier === "creator";
   const canUseCreatorStudio = isCreator; // Currently unrestricted in demo if bypassed
@@ -23,17 +25,17 @@ function CreatorStudioDashboard() {
   const { data: userPosts, isLoading } = useQuery({
     queryKey: ["creator-posts"],
     queryFn: async () => {
-      if (!session?.user?.id) return [];
+      if (!profile?.id) return [];
       const { data, error } = await supabase
         .from("posts")
         .select("*")
-        .eq("author_id", session.user.id)
+        .eq("author_id", profile.id)
         .order("created_at", { ascending: false });
       
       if (error) throw error;
       return data;
     },
-    enabled: !!session?.user?.id && canUseCreatorStudio
+    enabled: !!profile?.id && canUseCreatorStudio
   });
 
   const deletePostMutation = useMutation({
@@ -97,8 +99,8 @@ function CreatorStudioDashboard() {
     }
   };
 
-  const publishedCount = userPosts?.filter(c => c.status === "published").length || 0;
-  const draftsCount = userPosts?.filter(c => c.status === "draft").length || 0;
+  const publishedCount = userPosts?.filter((c: any) => c.status === "published").length || 0;
+  const draftsCount = userPosts?.filter((c: any) => c.status === "draft").length || 0;
   
   // Mock aggregated analytics based on post count to make it feel alive
   const totalViews = (publishedCount * 1245) + (userPosts?.length || 0) * 80;
@@ -192,7 +194,7 @@ function CreatorStudioDashboard() {
                   </Button>
                 </div>
               ) : (
-                userPosts.map((item) => (
+                userPosts.map((item: any) => (
                   <div key={item.id} className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-muted/50 transition-colors">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2 flex-wrap">
