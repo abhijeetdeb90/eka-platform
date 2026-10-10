@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   FileText,
@@ -35,12 +35,12 @@ export function CreatorDashboardPage() {
       <AppScreen eyebrow="Creator Studio" title="Professional Workspace">
         <div className="rounded-3xl border border-border/80 bg-card p-8 sm:p-12 shadow-calm space-y-6 text-center">
           <Badge variant="outline" className="border-terracotta/40 text-terracotta text-xs font-mono uppercase gap-1.5">
-            <Lock className="size-3" /> Paid Workspace · Creator Tier
+            <Lock className="size-3" /> Paid Workspace Â· Creator Tier
           </Badge>
 
           <div className="space-y-2 max-w-2xl mx-auto">
             <h1 className="font-serif text-3xl sm:text-4xl text-foreground font-normal">
-              Creator Studio — Professional Workspace
+              Creator Studio â€” Professional Workspace
             </h1>
             <p className="text-sm text-muted-foreground leading-relaxed pt-2">
               Creator Studio is a dedicated workspace for cultural storytellers to manage their content, track analytics, and manage monetization.
@@ -50,7 +50,7 @@ export function CreatorDashboardPage() {
           <div className="pt-6 border-t border-border/60 flex flex-col sm:flex-row items-center justify-center gap-3">
             <Button asChild size="lg" className="w-full sm:w-auto rounded-full bg-primary text-primary-foreground">
               <Link to="/membership">
-                <span>Unlock Creator Studio (₹799/month)</span>
+                <span>Unlock Creator Studio (â‚¹799/month)</span>
                 <ArrowUpRight className="size-4 ml-1.5" />
               </Link>
             </Button>
@@ -146,7 +146,7 @@ export function CreatorDashboardPage() {
                           {item.type === "Carousel" && <ImageIcon className="size-3" />}
                           {item.type}
                         </span>
-                        <span>•</span>
+                        <span>â€¢</span>
                         <span>Updated: {item.date}</span>
                       </div>
                     </div>
@@ -202,3 +202,4 @@ export function CreatorDashboardPage() {
     </AppScreen>
   );
 }
+
