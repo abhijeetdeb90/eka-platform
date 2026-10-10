@@ -1,5 +1,5 @@
 // ==============================================================================
-// EKA CONSUMER PLATFORM — VISUAL-FIRST HOMEPAGE
+// EKA CONSUMER PLATFORM - HOMEPAGE (MARKETING VS SOCIAL FEED)
 // ==============================================================================
 
 import React, { useState } from "react";
@@ -12,20 +12,19 @@ import { HomeStoriesSection } from "@/components/home/HomeStoriesSection";
 import { DiscoveryJourney } from "@/components/home/DiscoveryJourney";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Sparkles } from "lucide-react";
+import { Search, Sparkles, Home, Compass, Film, MessageSquare, Bell, Bookmark, User as UserIcon, Settings, PlusCircle, CheckCircle2 } from "lucide-react";
 import { track } from "@/lib/analytics";
 import { useProfile } from "@/hooks/useProfile";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useQuery } from "@tanstack/react-query";
+import { FeedPost } from "@/components/feed/FeedPost";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "EKA — Understand the world." },
-      {
-        name: "description",
-        content: "Don't just scroll the world. Understand it.",
-      },
+      { title: "EKA - Understand the world." },
+      { name: "description", content: "Don't just scroll the world. Understand it." },
     ],
   }),
   component: EkaHomePage,
@@ -45,7 +44,7 @@ function DailyReflection() {
           "What is a tradition you carry that no one else in your life does?"
         </h3>
         <Link to="/feed" className="text-sm font-medium text-terracotta hover:underline">
-          Join the conversation →
+          Join the conversation ?
         </Link>
       </div>
     </section>
@@ -70,32 +69,6 @@ function RecommendedForYou() {
     </section>
   );
 }
-
-function FeedPreview() {
-  return (
-    <section className="container-eka mt-14 mb-10">
-      <h2 className="font-serif text-2xl sm:text-3xl font-normal text-foreground mb-6">From the Community</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        {[1, 2].map(i => (
-          <div key={i} className="p-6 rounded-2xl border border-border/60 bg-card/40 hover:border-border/80 transition-colors">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="size-10 rounded-full bg-accent/60" />
-              <div>
-                <p className="text-sm font-medium">Cultural Steward</p>
-                <p className="text-xs text-muted-foreground">2 hours ago</p>
-              </div>
-            </div>
-            <p className="text-sm text-foreground/90 leading-relaxed mb-4">
-              Just experienced the most incredible local festival. The colors, the sounds, the history behind it all points to a deep understanding of seasonal cycles. 
-            </p>
-            <Link to="/feed" className="text-xs font-semibold text-terracotta hover:underline">Read full story</Link>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
 
 function HomeLoginForm() {
   const [email, setEmail] = useState("");
@@ -147,8 +120,7 @@ function HomeLoginForm() {
   );
 }
 
-function EkaHomePage() {
-  const { data: profile } = useProfile();
+function EkaLandingPage({ profile }: { profile: any }) {
   const [askQuery, setAskQuery] = useState("");
   const navigate = useNavigate();
 
@@ -169,127 +141,314 @@ function EkaHomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col selection:bg-terracotta/20">
-      <SiteHeader />
-
-      <main id="main-content" className="flex-1 pb-20">
-
-        {/* 1. HERO */}
-        <section className="container-eka pt-8 pb-4">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            <div className="lg:col-span-5 flex flex-col justify-center">
-              <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground leading-[1.1]">
-                Don't just scroll the world.<br/>
-                <span className="text-terracotta">Understand it.</span>
-              </h1>
-              <p className="mt-5 text-base sm:text-lg text-muted-foreground font-light max-w-lg leading-relaxed">
-                A billion stories. One world to understand. Explore places, meet people, and uncover the traditions that shape us.
-              </p>
-              
-              {profile ? (
-                <div className="mt-8 flex flex-wrap gap-4">
-                  <Link to="/discover" className="inline-flex items-center justify-center rounded-full bg-foreground text-background px-8 py-3.5 text-sm font-semibold hover:bg-foreground/90 transition-all shadow-md hover:shadow-lg active:scale-95">
-                    Discover
-                  </Link>
-                  <Link to="/ask" search={{ q: "", mode: "canon" }} className="inline-flex items-center justify-center rounded-full border border-border bg-card/60 px-8 py-3.5 text-sm font-semibold hover:bg-accent transition-all active:scale-95">
-                    Ask EKA
-                  </Link>
-                </div>
-              ) : (
-                <HomeLoginForm />
-              )}
-            </div>
-            <div className="lg:col-span-7 h-[580px] sm:h-[620px] rounded-3xl overflow-hidden shadow-2xl">
-              <EKADynamicBanner className="h-full w-full object-cover" />
-            </div>
-          </div>
-        </section>
-
-        {/* Daily Reflection */}
-        <DailyReflection />
-
-        {/* Highlights / Recommended */}
-        <RecommendedForYou />
-
-        {/* Trending Stories */}
-        <div className="mt-14">
-          <HomeStoriesSection />
-        </div>
-
-        {/* Discover Cards (Living World Visual) */}
-        <section className="container-eka mt-14">
-          <div className="mb-6">
-            <p className="font-mono text-[10px] uppercase tracking-widest text-terracotta font-semibold">
-              DISCOVER
+    <main id="main-content" className="flex-1 pb-20">
+      {/* 1. HERO */}
+      <section className="container-eka pt-8 pb-4">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div className="lg:col-span-5 flex flex-col justify-center">
+            <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground leading-[1.1]">
+              Don't just scroll the world.<br/>
+              <span className="text-terracotta">Understand it.</span>
+            </h1>
+            <p className="mt-5 text-base sm:text-lg text-muted-foreground font-light max-w-lg leading-relaxed">
+              A billion stories. One world to understand. Explore places, meet people, and uncover the traditions that shape us.
             </p>
-            <h2 className="font-serif text-2xl sm:text-3xl font-normal text-foreground mt-2">
-              The world is full of stories.
-            </h2>
-            <p className="text-sm text-muted-foreground mt-2 max-w-xl">
-              Explore places. Every point is a living tradition waiting to be understood.
-            </p>
-          </div>
-          <LivingWorldVisual />
-        </section>
-
-        {/* Ask EKA Preview */}
-        <section className="container-eka mt-16">
-          <div className="rounded-3xl border border-border/80 bg-card/60 p-8 shadow-sm">
-            <h2 className="font-serif text-2xl sm:text-3xl font-normal text-foreground mb-6">
-              Understand something.
-            </h2>
-            <form onSubmit={handleAskSubmit} className="flex gap-3 max-w-2xl">
-              <div className="relative flex-1">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-muted-foreground/60 pointer-events-none" />
-                <Input
-                  value={askQuery}
-                  onChange={(e) => setAskQuery(e.target.value)}
-                  placeholder="Why do people light diyas? What is Bhoota Kola?"
-                  className="rounded-full bg-background/95 text-base shadow-sm h-14 pl-12 pr-4 border-border/80 focus-visible:ring-terracotta/30"
-                />
+            
+            {profile ? (
+              <div className="mt-8 flex flex-wrap gap-4">
+                <Link to="/discover" className="inline-flex items-center justify-center rounded-full bg-foreground text-background px-8 py-3.5 text-sm font-semibold hover:bg-foreground/90 transition-all shadow-md hover:shadow-lg active:scale-95">
+                  Discover
+                </Link>
+                <Link to="/ask" search={{ q: "", mode: "canon" }} className="inline-flex items-center justify-center rounded-full border border-border bg-card/60 px-8 py-3.5 text-sm font-semibold hover:bg-accent transition-all active:scale-95">
+                  Ask EKA
+                </Link>
               </div>
-              <Button
-                type="submit"
-                className="rounded-full px-8 h-14 bg-foreground text-background hover:bg-foreground/90 shrink-0 text-sm font-semibold"
-              >
-                Ask EKA
-              </Button>
-            </form>
-            <div className="flex flex-wrap items-center gap-2.5 mt-5">
-              {[
-                "Why do people light diyas?",
-                "Why is Varanasi sacred?",
-                "What is Bhoota Kola?",
-                "Why do Japanese bow?",
-                "Holi vs. Songkran",
-              ].map((chip) => (
-                <button
-                  key={chip}
-                  type="button"
-                  onClick={() => handleChipClick(chip)}
-                  className="rounded-full bg-accent/50 border border-border/60 hover:border-terracotta/30 px-4 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-all"
-                >
-                  {chip}
-                </button>
-              ))}
+            ) : (
+              <HomeLoginForm />
+            )}
+          </div>
+          <div className="lg:col-span-7 h-[580px] sm:h-[620px] rounded-3xl overflow-hidden shadow-2xl">
+            <EKADynamicBanner className="h-full w-full object-cover" />
+          </div>
+        </div>
+      </section>
+
+      {/* Daily Reflection */}
+      <DailyReflection />
+
+      {/* Highlights / Recommended */}
+      <RecommendedForYou />
+
+      {/* Trending Stories */}
+      <div className="mt-14">
+        <HomeStoriesSection />
+      </div>
+
+      {/* Discover Cards (Living World Visual) */}
+      <section className="container-eka mt-14">
+        <div className="mb-6">
+          <p className="font-mono text-[10px] uppercase tracking-widest text-terracotta font-semibold">
+            DISCOVER
+          </p>
+          <h2 className="font-serif text-2xl sm:text-3xl font-normal text-foreground mt-2">
+            The world is full of stories.
+          </h2>
+          <p className="text-sm text-muted-foreground mt-2 max-w-xl">
+            Explore places. Every point is a living tradition waiting to be understood.
+          </p>
+        </div>
+        <LivingWorldVisual />
+      </section>
+
+      {/* Ask EKA Preview */}
+      <section className="container-eka mt-16">
+        <div className="rounded-3xl border border-border/80 bg-card/60 p-8 shadow-sm">
+          <h2 className="font-serif text-2xl sm:text-3xl font-normal text-foreground mb-6">
+            Understand something.
+          </h2>
+          <form onSubmit={handleAskSubmit} className="flex gap-3 max-w-2xl">
+            <div className="relative flex-1">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-muted-foreground/60 pointer-events-none" />
+              <Input
+                value={askQuery}
+                onChange={(e) => setAskQuery(e.target.value)}
+                placeholder="Why do people light diyas? What is Bhoota Kola?"
+                className="rounded-full bg-background/95 text-base shadow-sm h-14 pl-12 pr-4 border-border/80 focus-visible:ring-terracotta/30"
+              />
             </div>
+            <Button
+              type="submit"
+              className="rounded-full px-8 h-14 bg-foreground text-background hover:bg-foreground/90 shrink-0 text-sm font-semibold"
+            >
+              Ask EKA
+            </Button>
+          </form>
+          <div className="flex flex-wrap items-center gap-2.5 mt-5">
+            {[
+              "Why do people light diyas?",
+              "Why is Varanasi sacred?",
+              "What is Bhoota Kola?",
+              "Why do Japanese bow?",
+              "Holi vs. Songkran",
+            ].map((chip) => (
+              <button
+                key={chip}
+                type="button"
+                onClick={() => handleChipClick(chip)}
+                className="rounded-full bg-accent/50 border border-border/60 hover:border-terracotta/30 px-4 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-all"
+              >
+                {chip}
+              </button>
+            ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Feed Preview */}
-        <FeedPreview />
+      {/* Continue Exploring (Discovery Journey) */}
+      <div className="mt-16">
+        <div className="container-eka mb-6">
+          <h2 className="font-serif text-2xl sm:text-3xl font-normal text-foreground">Continue Exploring</h2>
+        </div>
+        <DiscoveryJourney />
+      </div>
+    </main>
+  );
+}
 
-        {/* Continue Exploring (Discovery Journey) */}
-        <div className="mt-16">
-          <div className="container-eka mb-6">
-            <h2 className="font-serif text-2xl sm:text-3xl font-normal text-foreground">Continue Exploring</h2>
+function SocialLeftNav() {
+  const navItems = [
+    { name: "Home", to: "/", icon: Home },
+    { name: "Search", to: "/ask", search: { q: "", mode: "canon" }, icon: Search },
+    { name: "Explore", to: "/discover", icon: Compass },
+    { name: "Cultural Reels", to: "/stories", icon: Film },
+    { name: "Messages", to: "/", icon: MessageSquare, disabled: true },
+    { name: "Notifications", to: "/", icon: Bell, disabled: true },
+    { name: "Create", to: "/app/create", icon: PlusCircle },
+    { name: "Saved", to: "/app/me", icon: Bookmark },
+    { name: "Profile", to: "/app/me", icon: UserIcon },
+  ];
+
+  return (
+    <div className="w-64 flex-shrink-0 hidden lg:block sticky top-24 self-start">
+      <nav className="flex flex-col gap-2">
+        {navItems.map((item) => (
+          <Link
+            key={item.name}
+            to={item.to}
+            search={item.search as any}
+            className={`flex items-center gap-4 p-3 rounded-xl hover:bg-accent/50 transition-colors ${item.disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+            onClick={(e) => {
+              if (item.disabled) {
+                e.preventDefault();
+                toast.info("Coming soon!");
+              }
+            }}
+          >
+            <item.icon className="size-6 text-foreground" />
+            <span className="font-medium text-[15px]">{item.name}</span>
+          </Link>
+        ))}
+      </nav>
+    </div>
+  );
+}
+
+function SocialRightSidebar() {
+  const suggestions = [
+    { name: "Cultural Steward", role: "Varanasi, India", img: "https://images.unsplash.com/photo-1534120247760-c44c3e4a62f1?auto=format&fit=crop&w=150&q=80" },
+    { name: "Heritage Archive", role: "Living Traditions", img: "https://images.unsplash.com/photo-1620802051790-2ab14e3fb45c?auto=format&fit=crop&w=150&q=80" },
+    { name: "Tea Master Sen", role: "Kyoto, Japan", img: "https://images.unsplash.com/photo-1542282088-fe8426682b8f?auto=format&fit=crop&w=150&q=80" }
+  ];
+
+  return (
+    <div className="w-[300px] flex-shrink-0 hidden xl:block sticky top-24 self-start pl-6 border-l border-border/40">
+      <h3 className="font-semibold text-sm text-muted-foreground mb-4">Suggested Custodians</h3>
+      <div className="flex flex-col gap-4">
+        {suggestions.map((s, i) => (
+          <div key={i} className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <img src={s.img} alt={s.name} className="size-10 rounded-full object-cover" />
+              <div>
+                <p className="font-medium text-sm leading-none">{s.name}</p>
+                <p className="text-xs text-muted-foreground mt-1">{s.role}</p>
+              </div>
+            </div>
+            <button className="text-xs font-semibold text-terracotta hover:text-terracotta/80">Follow</button>
           </div>
-          <DiscoveryJourney />
+        ))}
+      </div>
+      
+      <div className="mt-8 pt-6 border-t border-border/40">
+        <h3 className="font-semibold text-sm text-muted-foreground mb-4">Curated Collections</h3>
+        <div className="flex flex-wrap gap-2">
+          {["Textiles", "Sacred Spaces", "Culinary Heritage", "Vedic Wisdom"].map(c => (
+            <span key={c} className="text-xs bg-accent/60 px-2.5 py-1 rounded-md text-foreground">{c}</span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function EkaSocialFeed() {
+  const { data: posts, isLoading } = useQuery({
+    queryKey: ["social-feed-posts"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("posts")
+        .select(`
+          *,
+          author:profiles(id, display_name, account_type, avatar_url)
+        `)
+        .eq("status", "published")
+        .order("created_at", { ascending: false })
+        .limit(15);
+      
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  // Mock stories
+  const stories = [
+    { id: 1, user: "Your Story", img: "", isSelf: true },
+    { id: 2, user: "Steward", img: "https://images.unsplash.com/photo-1534120247760-c44c3e4a62f1?auto=format&fit=crop&w=150&q=80" },
+    { id: 3, user: "Heritage", img: "https://images.unsplash.com/photo-1620802051790-2ab14e3fb45c?auto=format&fit=crop&w=150&q=80" },
+    { id: 4, user: "Culture", img: "https://images.unsplash.com/photo-1542282088-fe8426682b8f?auto=format&fit=crop&w=150&q=80" },
+    { id: 5, user: "Traditions", img: "https://images.unsplash.com/photo-1582560469792-5645e7f1f3a2?auto=format&fit=crop&w=150&q=80" },
+  ];
+
+  return (
+    <div className="flex-1 w-full max-w-[1200px] mx-auto flex px-4 sm:px-6 md:py-8 gap-8">
+      {/* Left Navigation */}
+      <SocialLeftNav />
+
+      {/* Main Center Feed */}
+      <main className="flex-1 max-w-[600px] w-full mx-auto pb-20">
+        
+        {/* Horizontal Stories */}
+        <div className="flex items-center gap-4 overflow-x-auto pb-4 mb-6 scrollbar-hide">
+          {stories.map(s => (
+            <div key={s.id} className="flex flex-col items-center gap-1.5 flex-shrink-0 cursor-pointer">
+              <div className={`relative rounded-full p-0.5 ${s.isSelf ? 'border-border/50' : 'bg-gradient-to-tr from-saffron to-terracotta'}`}>
+                <div className="size-16 rounded-full bg-background border-2 border-background overflow-hidden relative flex items-center justify-center">
+                  {s.img ? (
+                    <img src={s.img} alt={s.user} className="size-full object-cover" />
+                  ) : (
+                    <UserIcon className="size-8 text-muted-foreground/40" />
+                  )}
+                  {s.isSelf && (
+                    <div className="absolute bottom-0 right-0 bg-terracotta text-white rounded-full size-5 flex items-center justify-center border-2 border-background">
+                      <PlusCircle className="size-3" />
+                    </div>
+                  )}
+                </div>
+              </div>
+              <span className="text-[11px] font-medium text-foreground w-16 truncate text-center">{s.user}</span>
+            </div>
+          ))}
         </div>
 
+        {/* Vertical Feed */}
+        <div className="space-y-6">
+          {isLoading ? (
+            <div className="p-8 text-center text-muted-foreground animate-pulse flex flex-col gap-4">
+              <div className="h-64 bg-accent/50 rounded-2xl"></div>
+              <div className="h-64 bg-accent/50 rounded-2xl"></div>
+            </div>
+          ) : posts && posts.length > 0 ? (
+            posts.map((post: any) => (
+              <FeedPost 
+                key={post.id}
+                id={post.id}
+                avatar={post.author?.avatar_url || ""}
+                name={post.author?.display_name || "Unknown"}
+                identity={post.author?.account_type || "Contributor"}
+                time={new Date(post.created_at).toLocaleDateString()}
+                location={post.tradition || undefined}
+                verifiedHuman={true}
+                content={
+                  <div className="space-y-3">
+                    {post.topic && <p className="font-bold">{post.topic}</p>}
+                    <p className="whitespace-pre-wrap">{post.content}</p>
+                    {post.media_url && (
+                      post.type === "video" ? (
+                        <video src={post.media_url} controls className="w-full rounded-xl mt-3 max-h-[60vh] bg-black" />
+                      ) : (
+                        <img src={post.media_url} alt="Post media" className="w-full rounded-xl mt-3 max-h-[60vh] object-cover bg-black/5" />
+                      )
+                    )}
+                  </div>
+                }
+              />
+            ))
+          ) : (
+            <div className="p-8 text-center text-muted-foreground border border-dashed rounded-3xl">
+              No posts yet. <Link to="/app/create" className="text-terracotta hover:underline">Create a post</Link> to get started.
+            </div>
+          )}
+        </div>
       </main>
 
-      <SiteFooter />
+      {/* Right Sidebar */}
+      <SocialRightSidebar />
+    </div>
+  );
+}
+
+function EkaHomePage() {
+  const { data: profile, isLoading } = useProfile();
+
+  return (
+    <div className="min-h-screen bg-background text-foreground flex flex-col selection:bg-terracotta/20">
+      <SiteHeader />
+      
+      {!isLoading && (
+        profile ? <EkaSocialFeed /> : <EkaLandingPage profile={profile} />
+      )}
+
+      {/* Only show footer on landing page to maintain endless scroll feel on social */}
+      {!profile && !isLoading && <SiteFooter />}
     </div>
   );
 }
