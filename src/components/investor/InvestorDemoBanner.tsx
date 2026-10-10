@@ -53,9 +53,9 @@ export function InvestorDemoBanner() {
     startInvestorDemoSession(newRole);
     toast.success(`Switched to Investor Demo role: ${newRole.toUpperCase()}`);
     if (newRole === "admin") {
-      navigate({ to: "/investor/admin" });
+      navigate({ to: "/founder-admin" });
     } else if (newRole === "enterprise") {
-      navigate({ to: "/investor/enterprise" });
+      navigate({ to: "/brands-enterprise" });
     } else {
       navigate({ to: "/" });
     }

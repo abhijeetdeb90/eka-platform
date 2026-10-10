@@ -2,20 +2,27 @@ import React from "react";
 import { Link } from "@tanstack/react-router";
 import { Share2, ArrowRight, Network, Sparkles, MapPin, Hammer, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useLiveKnowledgeEdges } from "@/hooks/useLiveKnowledgeEdges";
 import type { LinkedGraphNode } from "@/lib/knowledge/knowledge-object";
 
 interface KnowledgeGraphVisualizerProps {
+  sourceEntityId?: string;
   nodes: LinkedGraphNode[];
   currentEntityName: string;
   className?: string;
 }
 
 export function KnowledgeGraphVisualizer({
+  sourceEntityId,
   nodes,
   currentEntityName,
   className = "",
 }: KnowledgeGraphVisualizerProps) {
-  if (!nodes || nodes.length === 0) return null;
+  const { data: liveEdges } = useLiveKnowledgeEdges(sourceEntityId);
+
+  const hasLocalNodes = nodes && nodes.length > 0;
+  const hasLiveEdges = liveEdges && liveEdges.length > 0;
+  if (!hasLocalNodes && !hasLiveEdges) return null;
 
   const getNodeIcon = (type: LinkedGraphNode["targetType"]) => {
     switch (type) {
@@ -49,7 +56,7 @@ export function KnowledgeGraphVisualizer({
               Cultural Knowledge Graph Connections
             </h3>
             <Badge variant="outline" className="text-xs">
-              {nodes.length} Connected Nodes
+              {nodes?.length || 0} Connected Nodes
             </Badge>
           </div>
           <p className="mt-1 text-sm text-muted-foreground">
@@ -60,7 +67,7 @@ export function KnowledgeGraphVisualizer({
       </div>
 
       <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {nodes.map((node, idx) => (
+        {(nodes || []).map((node, idx) => (
           <Link
             key={node.targetId || idx}
             to={`/knowledge/${node.targetSlug}` as any}

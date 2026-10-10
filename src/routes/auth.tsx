@@ -117,8 +117,8 @@ function AuthPage() {
         `Welcome to EKA. Investor Demo Mode activated (${demoRole.toUpperCase()}).`
       );
       setBusy(false);
-      if (demoRole === "admin") navigate({ to: "/investor/admin" as any });
-      else if (demoRole === "enterprise") navigate({ to: "/investor/enterprise" as any });
+      if (demoRole === "admin") navigate({ to: "/founder-admin" });
+      else if (demoRole === "enterprise") navigate({ to: "/brands-enterprise" });
       else navigate({ to: next || "/app" });
       return;
     }

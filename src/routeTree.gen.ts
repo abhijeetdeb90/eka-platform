@@ -36,6 +36,7 @@ import { Route as FounderAdminRouteImport } from './routes/founder-admin'
 import { Route as GiveRouteImport } from './routes/give'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as InsightsRouteImport } from './routes/insights'
+import { Route as InvestorRouteImport } from './routes/investor'
 import { Route as JoinRouteImport } from './routes/join'
 import { Route as JourneyRouteImport } from './routes/journey'
 import { Route as JunctionRouteImport } from './routes/junction'
@@ -89,6 +90,8 @@ import { Route as FounderAdminRiskRouteImport } from './routes/founder-admin.ris
 import { Route as FounderAdminStudioRouteImport } from './routes/founder-admin.studio'
 import { Route as FounderAdminSystemRouteImport } from './routes/founder-admin.system'
 import { Route as FounderAdRouteImport } from './routes/founder.ad'
+import { Route as InvestorAdminRouteImport } from './routes/investor.admin'
+import { Route as InvestorEnterpriseRouteImport } from './routes/investor.enterprise'
 import { Route as KnowledgeIndexRouteImport } from './routes/knowledge.index'
 import { Route as KnowledgeSlugRouteImport } from './routes/knowledge.$slug'
 import { Route as PassportSlugRouteImport } from './routes/passport.$slug'
@@ -296,6 +299,11 @@ const HomeRoute = HomeRouteImport.update({
 const InsightsRoute = InsightsRouteImport.update({
   id: '/insights',
   path: '/insights',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InvestorRoute = InvestorRouteImport.update({
+  id: '/investor',
+  path: '/investor',
   getParentRoute: () => rootRouteImport,
 } as any)
 const JoinRoute = JoinRouteImport.update({
@@ -566,6 +574,16 @@ const FounderAdRoute = FounderAdRouteImport.update({
   id: '/ad',
   path: '/ad',
   getParentRoute: () => FounderRoute,
+} as any)
+const InvestorAdminRoute = InvestorAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => InvestorRoute,
+} as any)
+const InvestorEnterpriseRoute = InvestorEnterpriseRouteImport.update({
+  id: '/enterprise',
+  path: '/enterprise',
+  getParentRoute: () => InvestorRoute,
 } as any)
 const KnowledgeIndexRoute = KnowledgeIndexRouteImport.update({
   id: '/knowledge/',
@@ -1000,6 +1018,7 @@ export interface FileRoutesByFullPath {
   '/give': typeof GiveRoute
   '/home': typeof HomeRoute
   '/insights': typeof InsightsRoute
+  '/investor': typeof InvestorRouteWithChildren
   '/join': typeof JoinRoute
   '/journey': typeof JourneyRoute
   '/junction': typeof JunctionRoute
@@ -1051,6 +1070,8 @@ export interface FileRoutesByFullPath {
   '/founder-admin/studio': typeof FounderAdminStudioRoute
   '/founder-admin/system': typeof FounderAdminSystemRoute
   '/founder/ad': typeof FounderAdRoute
+  '/investor/admin': typeof InvestorAdminRoute
+  '/investor/enterprise': typeof InvestorEnterpriseRoute
   '/knowledge/$slug': typeof KnowledgeSlugRoute
   '/passport/$slug': typeof PassportSlugRoute
   '/people/$username': typeof PeopleUsernameRoute
@@ -1153,6 +1174,7 @@ export interface FileRoutesByTo {
   '/give': typeof GiveRoute
   '/home': typeof HomeRoute
   '/insights': typeof InsightsRoute
+  '/investor': typeof InvestorRouteWithChildren
   '/join': typeof JoinRoute
   '/journey': typeof JourneyRoute
   '/junction': typeof JunctionRoute
@@ -1203,6 +1225,8 @@ export interface FileRoutesByTo {
   '/founder-admin/studio': typeof FounderAdminStudioRoute
   '/founder-admin/system': typeof FounderAdminSystemRoute
   '/founder/ad': typeof FounderAdRoute
+  '/investor/admin': typeof InvestorAdminRoute
+  '/investor/enterprise': typeof InvestorEnterpriseRoute
   '/knowledge/$slug': typeof KnowledgeSlugRoute
   '/passport/$slug': typeof PassportSlugRoute
   '/people/$username': typeof PeopleUsernameRoute
@@ -1309,6 +1333,7 @@ export interface FileRoutesById {
   '/give': typeof GiveRoute
   '/home': typeof HomeRoute
   '/insights': typeof InsightsRoute
+  '/investor': typeof InvestorRouteWithChildren
   '/join': typeof JoinRoute
   '/journey': typeof JourneyRoute
   '/junction': typeof JunctionRoute
@@ -1360,6 +1385,8 @@ export interface FileRoutesById {
   '/founder-admin/studio': typeof FounderAdminStudioRoute
   '/founder-admin/system': typeof FounderAdminSystemRoute
   '/founder/ad': typeof FounderAdRoute
+  '/investor/admin': typeof InvestorAdminRoute
+  '/investor/enterprise': typeof InvestorEnterpriseRoute
   '/knowledge/$slug': typeof KnowledgeSlugRoute
   '/passport/$slug': typeof PassportSlugRoute
   '/people/$username': typeof PeopleUsernameRoute
@@ -1466,6 +1493,7 @@ export interface FileRouteTypes {
     | '/give'
     | '/home'
     | '/insights'
+    | '/investor'
     | '/join'
     | '/journey'
     | '/junction'
@@ -1517,6 +1545,8 @@ export interface FileRouteTypes {
     | '/founder-admin/studio'
     | '/founder-admin/system'
     | '/founder/ad'
+    | '/investor/admin'
+    | '/investor/enterprise'
     | '/knowledge/$slug'
     | '/passport/$slug'
     | '/people/$username'
@@ -1619,6 +1649,7 @@ export interface FileRouteTypes {
     | '/give'
     | '/home'
     | '/insights'
+    | '/investor'
     | '/join'
     | '/journey'
     | '/junction'
@@ -1669,6 +1700,8 @@ export interface FileRouteTypes {
     | '/founder-admin/studio'
     | '/founder-admin/system'
     | '/founder/ad'
+    | '/investor/admin'
+    | '/investor/enterprise'
     | '/knowledge/$slug'
     | '/passport/$slug'
     | '/people/$username'
@@ -1774,6 +1807,7 @@ export interface FileRouteTypes {
     | '/give'
     | '/home'
     | '/insights'
+    | '/investor'
     | '/join'
     | '/journey'
     | '/junction'
@@ -1825,6 +1859,8 @@ export interface FileRouteTypes {
     | '/founder-admin/studio'
     | '/founder-admin/system'
     | '/founder/ad'
+    | '/investor/admin'
+    | '/investor/enterprise'
     | '/knowledge/$slug'
     | '/passport/$slug'
     | '/people/$username'
@@ -1931,6 +1967,7 @@ export interface RootRouteChildren {
   GiveRoute: typeof GiveRoute
   HomeRoute: typeof HomeRoute
   InsightsRoute: typeof InsightsRoute
+  InvestorRoute: typeof InvestorRouteWithChildren
   JoinRoute: typeof JoinRoute
   JourneyRoute: typeof JourneyRoute
   JunctionRoute: typeof JunctionRoute
@@ -2171,6 +2208,13 @@ declare module '@tanstack/react-router' {
       path: '/insights'
       fullPath: '/insights'
       preLoaderRoute: typeof InsightsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/investor': {
+      id: '/investor'
+      path: '/investor'
+      fullPath: '/investor'
+      preLoaderRoute: typeof InvestorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/join': {
@@ -2543,6 +2587,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/founder/ad'
       preLoaderRoute: typeof FounderAdRouteImport
       parentRoute: typeof FounderRoute
+    }
+    '/investor/admin': {
+      id: '/investor/admin'
+      path: '/admin'
+      fullPath: '/investor/admin'
+      preLoaderRoute: typeof InvestorAdminRouteImport
+      parentRoute: typeof InvestorRoute
+    }
+    '/investor/enterprise': {
+      id: '/investor/enterprise'
+      path: '/enterprise'
+      fullPath: '/investor/enterprise'
+      preLoaderRoute: typeof InvestorEnterpriseRouteImport
+      parentRoute: typeof InvestorRoute
     }
     '/knowledge/': {
       id: '/knowledge/'
@@ -3285,6 +3343,20 @@ const FounderAdminRouteWithChildren = FounderAdminRoute._addFileChildren(
   FounderAdminRouteChildren,
 )
 
+interface InvestorRouteChildren {
+  InvestorAdminRoute: typeof InvestorAdminRoute
+  InvestorEnterpriseRoute: typeof InvestorEnterpriseRoute
+}
+
+const InvestorRouteChildren: InvestorRouteChildren = {
+  InvestorAdminRoute: InvestorAdminRoute,
+  InvestorEnterpriseRoute: InvestorEnterpriseRoute,
+}
+
+const InvestorRouteWithChildren = InvestorRoute._addFileChildren(
+  InvestorRouteChildren,
+)
+
 interface ApiWebhooksRouteChildren {
   ApiWebhooksRazorpayRoute: typeof ApiWebhooksRazorpayRoute
   ApiWebhooksResendRoute: typeof ApiWebhooksResendRoute
@@ -3327,6 +3399,7 @@ const rootRouteChildren: RootRouteChildren = {
   GiveRoute: GiveRoute,
   HomeRoute: HomeRoute,
   InsightsRoute: InsightsRoute,
+  InvestorRoute: InvestorRouteWithChildren,
   JoinRoute: JoinRoute,
   JourneyRoute: JourneyRoute,
   JunctionRoute: JunctionRoute,

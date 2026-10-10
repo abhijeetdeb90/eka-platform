@@ -60,12 +60,31 @@ function AuthCallbackPage() {
     processedRef.current = true;
 
     async function handleCallback() {
+      let errorParam = search.error;
+      let errorDescParam = search.error_description;
+      let codeParam = search.code;
+
+      if (typeof window !== "undefined" && window.location.hash) {
+        try {
+          const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+          if (!errorParam && hashParams.get("error")) {
+            errorParam = hashParams.get("error") || undefined;
+          }
+          if (!errorDescParam && hashParams.get("error_description")) {
+            errorDescParam = hashParams.get("error_description") || undefined;
+          }
+          if (!codeParam && hashParams.get("code")) {
+            codeParam = hashParams.get("code") || undefined;
+          }
+        } catch {}
+      }
+
       // 1. Check if OAuth provider returned an error
-      if (search.error || search.error_description) {
-        console.warn("[AuthCallback] OAuth error received:", search.error, search.error_description);
+      if (errorParam || errorDescParam) {
+        console.warn("[AuthCallback] OAuth error received:", errorParam, errorDescParam);
         const desc =
-          search.error_description ||
-          search.error ||
+          errorDescParam ||
+          errorParam ||
           "Authentication was canceled or denied by the provider.";
         setErrorMessage(desc);
         return;
@@ -84,9 +103,9 @@ function AuthCallbackPage() {
         }
 
         // 3. PKCE Authorization Code Exchange
-        if (search.code) {
+        if (codeParam) {
           setStatusText("Exchanging security tokens with EKA...");
-          const { data, error } = await supabase.auth.exchangeCodeForSession(search.code);
+          const { data, error } = await supabase.auth.exchangeCodeForSession(codeParam);
 
           // Even if exchange returned an error (e.g. code was processed concurrently), check session again
           if (error) {

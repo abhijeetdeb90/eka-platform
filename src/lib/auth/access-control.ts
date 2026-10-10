@@ -9,6 +9,7 @@
 
 import { redirect } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
+import { getInvestorDemoSession } from "@/lib/auth/demo-session";
 
 export type EkaRole =
   | "consumer"
@@ -35,6 +36,16 @@ export async function getSessionAndRoles(): Promise<{
   try {
     if (typeof window === "undefined") {
       return { userId: null, roles: [], isAuthenticated: false };
+    }
+
+    // 0. Check investor presentation demo session (safe, read-only sandboxed role)
+    const demo = getInvestorDemoSession();
+    if (demo && demo.active) {
+      return {
+        userId: demo.userId,
+        roles: demo.roles,
+        isAuthenticated: true,
+      };
     }
 
     // 1. Fast local session check via getSession

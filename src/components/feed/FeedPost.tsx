@@ -1,6 +1,7 @@
 ﻿import React from "react";
 import { Heart, MessageCircle, Share2, Bookmark, UserPlus, MapPin, ShieldCheck, CheckCircle2, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ConnectedKnowledgeCard } from "@/components/knowledge/ConnectedKnowledgeCard";
 
 export interface FeedPostProps {
   id: string;
@@ -12,9 +13,10 @@ export interface FeedPostProps {
   content: React.ReactNode;
   verifiedHuman?: boolean;
   trustTier?: "verified_custodian" | "cultural_expert" | "contributor" | "none";
+  topic?: string;
 }
 
-export function FeedPost({ avatar, name, identity, time, location, content, verifiedHuman, trustTier = "none" }: FeedPostProps) {
+export function FeedPost({ avatar, name, identity, time, location, content, verifiedHuman, trustTier = "none", topic }: FeedPostProps) {
   return (
     <article className="rounded-3xl border border-border/80 bg-card p-5 sm:p-6 shadow-calm space-y-4">
       {/* Header */}
@@ -54,7 +56,7 @@ export function FeedPost({ avatar, name, identity, time, location, content, veri
             </div>
             <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
               <span>{identity}</span>
-              <span>•</span>
+              <span>â€¢</span>
               <span>{time}</span>
             </div>
             {location && (
@@ -77,6 +79,8 @@ export function FeedPost({ avatar, name, identity, time, location, content, veri
       <div className="text-sm leading-relaxed text-foreground/90 font-serif">
         {content}
       </div>
+
+      {topic && <ConnectedKnowledgeCard topic={topic} />}
 
       {/* Action Bar */}
       <div className="flex items-center justify-between pt-2 border-t border-border/40">
@@ -104,3 +108,5 @@ export function FeedPost({ avatar, name, identity, time, location, content, veri
     </article>
   );
 }
+
+
