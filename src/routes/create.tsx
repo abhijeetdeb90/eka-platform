@@ -54,6 +54,14 @@ function CreateArchivePage() {
   const [place, setPlace] = useState("");
   const [topic, setTopic] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [uploadStatus, setUploadStatus] = useState("");
+  const [file, setFile] = useState<File | null>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setFile(e.target.files[0]);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,10 +76,80 @@ function CreateArchivePage() {
       return;
     }
 
+    if ((activeKind === "carousel" || activeKind === "video") && !file) {
+      toast.error(`Please provide a media file for your ${activeKind}`);
+      return;
+    }
+
     setSubmitting(true);
+    setUploadStatus("Starting...");
     track("create_started", { kind: activeKind });
 
+    let media_url: string | null = null;
+    let uploadedFilePath: string | null = null;
+
     try {
+      if (file) {
+        const isVideo = activeKind === "video";
+        const validImageTypes = ["image/jpeg", "image/png", "image/webp"];
+        const validVideoTypes = ["video/mp4", "video/webm", "video/quicktime"];
+        
+        if (isVideo && !validVideoTypes.includes(file.type)) {
+          toast.error("Please upload a valid video file (.mp4, .webm, .mov)");
+          setSubmitting(false);
+          setUploadStatus("");
+          return;
+        }
+        if (!isVideo && !validImageTypes.includes(file.type)) {
+          toast.error("Please upload a valid image file (.jpg, .png, .webp)");
+          setSubmitting(false);
+          setUploadStatus("");
+          return;
+        }
+        
+        const maxSize = isVideo ? 50 * 1024 * 1024 : 10 * 1024 * 1024;
+        if (file.size > maxSize) {
+          toast.error(`File is too large (max ${isVideo ? '50MB' : '10MB'})`);
+          setSubmitting(false);
+          setUploadStatus("");
+          return;
+        }
+
+        const fileExt = file.name.split('.').pop();
+        const filePath = `${profile.id}/${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+        uploadedFilePath = filePath;
+
+        setUploadStatus("Uploading media...");
+        
+        let attempt = 0;
+        let lastError = null;
+        while (attempt < 3) {
+          const { error } = await supabase.storage
+            .from("post-media")
+            .upload(filePath, file);
+            
+          lastError = error;
+          if (!error) break;
+          
+          attempt++;
+          if (attempt < 3) {
+            setUploadStatus(`Retrying upload (attempt ${attempt + 1})...`);
+            await new Promise(r => setTimeout(r, 1000 * attempt));
+          }
+        }
+
+        if (lastError) {
+          throw new Error("Upload failed: " + lastError.message);
+        }
+
+        const { data: publicUrlData } = supabase.storage
+          .from("post-media")
+          .getPublicUrl(filePath);
+
+        media_url = publicUrlData.publicUrl;
+      }
+
+      setUploadStatus("Saving post...");
       const { data, error } = await supabase.from("posts").insert({
         author_id: profile.id,
         content: caption.trim(),
@@ -79,22 +157,28 @@ function CreateArchivePage() {
         tradition: culture.trim(),
         type: activeKind,
         status: "visible",
+        media_url: media_url,
       });
 
       if (error) {
-        toast.error("Could not archive contribution: " + error.message);
+        if (uploadedFilePath) {
+          await supabase.storage.from("post-media").remove([uploadedFilePath]);
+        }
+        throw new Error("Could not archive contribution: " + error.message);
       } else {
         toast.success("Preserved in the EKA Living Archive! Thank you for stewardship.");
         setCaption("");
         setCulture("");
         setPlace("");
         setTopic("");
+        setFile(null);
         void navigate({ to: "/my-eka" });
       }
-    } catch {
-      toast.error("An error occurred while preserving this contribution.");
+    } catch (err: any) {
+      toast.error(err.message || "An error occurred while preserving this contribution.");
     } finally {
       setSubmitting(false);
+      setUploadStatus("");
     }
   };
 
@@ -191,6 +275,19 @@ function CreateArchivePage() {
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-1.5">
               <label className="text-xs font-semibold uppercase tracking-wider text-foreground">
+                Media File {activeKind !== "post" && "*"}
+              </label>
+              <Input
+                type="file"
+                accept={activeKind === "video" ? "video/*" : "image/*"}
+                onChange={handleFileChange}
+                className="rounded-xl bg-background file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer"
+                required={activeKind !== "post"}
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold uppercase tracking-wider text-foreground">
                 Caption *
               </label>
               <Textarea
@@ -254,7 +351,7 @@ function CreateArchivePage() {
                 disabled={submitting}
                 className="w-full sm:w-auto rounded-xl px-7 bg-gradient-to-r from-terracotta to-saffron text-white font-medium shadow-calm hover:shadow-lift"
               >
-                <span>{submitting ? "Publishing…" : "Publish"}</span>
+                <span>{submitting ? uploadStatus || "Publishing…" : "Publish"}</span>
                 <ArrowRight className="ml-1.5 size-4" />
               </Button>
             </div>

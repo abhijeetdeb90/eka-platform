@@ -28,6 +28,7 @@ import circleCommunion from "@/assets/brand/eka-circle-communion.jpg";
 import journeyImage from "@/assets/journey.jpg";
 import giveImage from "@/assets/give.jpg";
 import { toast } from "sonner";
+import { RazorpayCheckoutButton } from "@/components/checkout/RazorpayCheckoutButton";
 
 export const Route = createFileRoute("/membership")({
   head: () => ({
@@ -297,9 +298,15 @@ function MembershipPage() {
                 </div>
               </div>
               <div className="pt-8">
-                <Button asChild variant="outline" className="w-full rounded-full">
-                  <Link to="/discover">{PRODUCT_TIERS.free.ctaLabel}</Link>
-                </Button>
+                {tier === "free" ? (
+                  <Button disabled className="w-full rounded-full bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/10" variant="secondary">
+                    Current Plan
+                  </Button>
+                ) : (
+                  <Button asChild variant="outline" className="w-full rounded-full">
+                    <Link to="/discover">{PRODUCT_TIERS.free.ctaLabel}</Link>
+                  </Button>
+                )}
               </div>
             </div>
 
@@ -343,16 +350,31 @@ function MembershipPage() {
                 </div>
               </div>
               <div className="pt-8 space-y-2">
-                <Button asChild className="w-full rounded-full bg-primary text-primary-foreground hover:bg-primary/90">
-                  <Link to="/auth">{PRODUCT_TIERS.plus.ctaLabel}</Link>
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleSimulate("plus")}
-                  className="w-full text-xs text-muted-foreground"
-                >
-                  Simulate EKA+ Active Preview
+                {tier === "plus" ? (
+                  <Button disabled className="w-full rounded-full bg-primary/20 text-primary hover:bg-primary/20" variant="secondary">
+                    Current Plan
+                  </Button>
+                ) : tier === "creator" ? (
+                  <Button disabled className="w-full rounded-full bg-primary/20 text-primary hover:bg-primary/20" variant="secondary">
+                    Included in Creator Plan
+                  </Button>
+                ) : import.meta.env.VITE_RAZORPAY_KEY_ID ? (
+                  <RazorpayCheckoutButton
+                    amount={29900}
+                    currency="INR"
+                    planName={PRODUCT_TIERS.plus.name}
+                    description="Monthly access to EKA contextual intelligence & AI"
+                    className="w-full rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
+                    label="Subscribe ₹299 / month"
+                    onSuccess={() => handleSimulate("plus")}
+                  />
+                ) : (
+                  <Button disabled className="w-full rounded-full bg-muted text-muted-foreground" variant="secondary">
+                    Checkout Unavailable
+                  </Button>
+                )}
+                <Button asChild variant="ghost" size="sm" className="w-full text-xs text-muted-foreground">
+                  <Link to="/checkout">Order details & invoices</Link>
                 </Button>
               </div>
             </div>
@@ -392,16 +414,27 @@ function MembershipPage() {
                 </div>
               </div>
               <div className="pt-8 space-y-2">
-                <Button asChild variant="outline" className="w-full rounded-full border-terracotta/40 text-terracotta hover:bg-terracotta/5">
-                  <Link to="/app/creator">{PRODUCT_TIERS.creator.ctaLabel}</Link>
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleSimulate("creator")}
-                  className="w-full text-xs text-muted-foreground"
-                >
-                  Simulate Creator Studio Preview
+                {tier === "creator" ? (
+                  <Button disabled className="w-full rounded-full bg-terracotta/20 text-terracotta hover:bg-terracotta/20" variant="secondary">
+                    Current Plan
+                  </Button>
+                ) : import.meta.env.VITE_RAZORPAY_KEY_ID ? (
+                  <RazorpayCheckoutButton
+                    amount={79900}
+                    currency="INR"
+                    planName={PRODUCT_TIERS.creator.name}
+                    description="Monthly access to professional Creator Studio workspace & settlement ledger"
+                    className="w-full rounded-full bg-terracotta text-white hover:bg-terracotta/90"
+                    label="Join Creator Studio ₹799 / month"
+                    onSuccess={() => handleSimulate("creator")}
+                  />
+                ) : (
+                  <Button disabled className="w-full rounded-full bg-muted text-muted-foreground" variant="secondary">
+                    Checkout Unavailable
+                  </Button>
+                )}
+                <Button asChild variant="ghost" size="sm" className="w-full text-xs text-muted-foreground">
+                  <Link to="/checkout">Order details & invoices</Link>
                 </Button>
               </div>
             </div>
