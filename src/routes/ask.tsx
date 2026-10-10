@@ -237,8 +237,8 @@ function AskEkaPage() {
   const navigate = useNavigate();
   const { locale, t } = useLocalization();
 
-  const [inputVal, setInputVal] = useState(q || "Why do people light diyas?");
-  const [activeQuery, setActiveQuery] = useState(q || "Why do people light diyas?");
+  const [inputVal, setInputVal] = useState(q || "");
+  const [activeQuery, setActiveQuery] = useState(q || "");
   const [activeMode, setActiveMode] = useState<"canon" | "grounded">(
     mode === "grounded" ? "grounded" : "canon",
   );
@@ -389,7 +389,7 @@ function AskEkaPage() {
                     : "bg-card/70 border border-border/70 text-muted-foreground hover:text-foreground"
                 }`}
               >
-                Canonical Knowledge Graph
+                Cultural Lineages
               </button>
               <button
                 type="button"
@@ -404,7 +404,7 @@ function AskEkaPage() {
                 }`}
               >
                 <ShieldCheck className="size-3.5" />
-                <span>Google Search Grounded (Live)</span>
+                <span>Web Grounded</span>
               </button>
             </div>
           </div>

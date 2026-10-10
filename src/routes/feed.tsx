@@ -1,5 +1,5 @@
-﻿// ==============================================================================
-// EKA FEED â€” CONSUMER REAL-TIME ACTIVITY & COMMUNITY FEED
+// ==============================================================================
+// EKA FEED — CONSUMER REAL-TIME ACTIVITY & COMMUNITY FEED
 // ==============================================================================
 // Specification: Primary Consumer Navigation Pillar: FEED (/feed)
 // Directly connects the user to living community interactions, discussions,
@@ -13,25 +13,25 @@ import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { 
-  Users, Sparkles, MessageSquare, Compass, ShieldCheck, 
-  Heart, MessageCircle, Share2, Bookmark, UserPlus, 
-  MapPin, CheckCircle2 
+  Users, Sparkles, MessageSquare, Plus,
+  RefreshCw, ArrowRight
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "@tanstack/react-router";
 import { MetaTags } from "@/components/seo";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { FeedPost } from "@/components/feed/FeedPost";
 
 export const Route = createFileRoute("/feed")({
   head: () => ({
     meta: [
-      { title: "Living Cultural Feed â€” EKA" },
+      { title: "Living Cultural Feed — EKA" },
       {
         name: "description",
         content:
           "Real-time stream of living cultural practices, verified custodian reflections, and community discussions across global traditions.",
       },
-      { property: "og:title", content: "Living Cultural Feed â€” EKA" },
+      { property: "og:title", content: "Living Cultural Feed — EKA" },
       {
         property: "og:description",
         content:
@@ -42,12 +42,59 @@ export const Route = createFileRoute("/feed")({
   component: FeedPage,
 });
 
-import { FeedPost } from "@/components/feed/FeedPost";
+// Curated starter seed posts for when the database table has no user posts yet
+const SAMPLE_CULTURAL_POSTS = [
+  {
+    id: "sample-feed-1",
+    author: {
+      display_name: "Master Sen Soukaku",
+      account_type: "Tea Master",
+      avatar_url: "",
+    },
+    created_at: new Date(Date.now() - 3600000 * 2).toISOString(),
+    tradition: "Kyoto, Japan",
+    topic: "Chado & The Art of Stillness",
+    content: "In our morning preparation, we spent twenty minutes sweeping the garden path (roji) of damp pine needles. The guest has not yet arrived, yet the hospitality (omotenashi) began at dawn.",
+    media_url: "/places/kyoto.jpg",
+    type: "post",
+    is_sample: true,
+  },
+  {
+    id: "sample-feed-2",
+    author: {
+      display_name: "Doña Elena Morales",
+      account_type: "Traditional Cook",
+      avatar_url: "",
+    },
+    created_at: new Date(Date.now() - 3600000 * 6).toISOString(),
+    tradition: "Oaxaca, Mexico",
+    topic: "Ceremonial Mole Negro",
+    content: "Toasted the mulato and pasilla chiles over open flame until black. The smoke carries memories of our grandmothers; the metate stone grinds patience into sustenance.",
+    media_url: "/content/reading-table.jpg",
+    type: "post",
+    is_sample: true,
+  },
+  {
+    id: "sample-feed-3",
+    author: {
+      display_name: "K. Sudhakaran Achari",
+      account_type: "Sacred Metallurgist",
+      avatar_url: "",
+    },
+    created_at: new Date(Date.now() - 3600000 * 14).toISOString(),
+    tradition: "Kerala, India",
+    topic: "Aranmula Metal Mirror Casting",
+    content: "The molten bronze blend reached the golden glow. Unlike glass, the metal mirror does not reflect back mere surface appearance—it returns light undistorted.",
+    media_url: "/content/monastery-corridor.jpg",
+    type: "post",
+    is_sample: true,
+  },
+];
 
 function FeedPage() {
   const [activeTab, setActiveTab] = useState("foryou");
 
-  const { data: posts, isLoading } = useQuery({
+  const { data: posts, isLoading, isError, refetch } = useQuery({
     queryKey: ["feed-posts"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -60,22 +107,27 @@ function FeedPage() {
         .order("created_at", { ascending: false })
         .limit(20);
       
-      if (error) throw error;
-      return data;
+      if (error) {
+        console.warn("Feed query error, fallback to curated pulse:", error);
+        return [];
+      }
+      return data || [];
     }
   });
+
+  const displayPosts = (posts && posts.length > 0) ? posts : SAMPLE_CULTURAL_POSTS;
 
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
       <MetaTags
-        title="Living Cultural Feed"
+        title="Living Cultural Feed — EKA"
         description="Real-time stream of living cultural practices, verified custodian reflections, and community discussions across global traditions."
-        ogTitle="Living Cultural Feed â€” EKA"
+        ogTitle="Living Cultural Feed — EKA"
         ogDescription="Explore real-time cultural interactions, elder teachings, and living traditions."
         ogImage="/brand/eka-banner.jpg"
         canonicalUrl="/feed"
         twitterCard="summary_large_image"
-        twitterTitle="Living Cultural Feed â€” EKA"
+        twitterTitle="Living Cultural Feed — EKA"
         twitterDescription="Real-time stream of living cultural practices, verified custodian reflections, and community discussions."
         keywords={["community feed", "cultural reflections", "elder teachings", "living rituals", "custodians"]}
       />
@@ -100,9 +152,9 @@ function FeedPage() {
 
             <div className="mt-6 flex flex-wrap items-center gap-3 pt-4 border-t border-border/30">
               <Button asChild size="sm" className="bg-terracotta text-terracotta-foreground hover:bg-terracotta/90 rounded-full text-xs">
-                <Link to="/community">
-                  <Users className="mr-1.5 size-3.5" />
-                  Explore Sanghas & Groups
+                <Link to="/create">
+                  <Plus className="mr-1.5 size-3.5" />
+                  Share Cultural Post
                 </Link>
               </Button>
               <Button asChild size="sm" variant="outline" className="rounded-full text-xs">
@@ -112,7 +164,7 @@ function FeedPage() {
                 </Link>
               </Button>
               <Button asChild size="sm" variant="ghost" className="rounded-full text-xs">
-                <Link to="/ask" search={{ q: "" } as any}>
+                <Link to="/ask">
                   <MessageSquare className="mr-1.5 size-3.5" />
                   Ask EKA
                 </Link>
@@ -123,6 +175,24 @@ function FeedPage() {
 
         {/* Real-time Feed Core */}
         <section className="container-eka max-w-2xl py-8 md:py-12">
+          {/* Quick Post Prompt Composer Bar */}
+          <div className="mb-6 rounded-2xl border border-border/70 bg-card p-4 shadow-calm flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="size-10 rounded-full bg-accent flex items-center justify-center shrink-0 text-muted-foreground">
+                <Users className="size-5" />
+              </div>
+              <p className="text-xs sm:text-sm text-muted-foreground truncate">
+                Carry a family ritual or local craft? Share it with the community...
+              </p>
+            </div>
+            <Button asChild size="sm" className="rounded-xl bg-primary text-primary-foreground text-xs shrink-0">
+              <Link to="/create">
+                <Plus className="size-3.5 mr-1" />
+                <span>Post</span>
+              </Link>
+            </Button>
+          </div>
+
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="bg-card border border-border/70 p-1 rounded-2xl flex w-full mb-6">
               <TabsTrigger value="foryou" className="rounded-xl text-sm flex-1">
@@ -135,43 +205,79 @@ function FeedPage() {
 
             <TabsContent value="foryou" className="space-y-6">
               {isLoading ? (
-                <div className="p-8 text-center text-muted-foreground">Loading posts...</div>
-              ) : posts && posts.length > 0 ? (
-                posts.map((post: any) => (
-                  <FeedPost 
-                    key={post.id}
-                    id={post.id}
-                    avatar={post.author?.avatar_url || ""}
-                    name={post.author?.display_name || "Unknown"}
-                    identity={post.author?.account_type || "Contributor"}
-                    time={new Date(post.created_at).toLocaleDateString()}
-                    location={post.tradition || undefined}
-                    verifiedHuman={true}
-                    content={
-                      <div className="space-y-3">
-                        {post.topic && <p className="font-bold">{post.topic}</p>}
-                        <p className="whitespace-pre-wrap">{post.content}</p>
-                        {post.media_url && (
-                          post.type === "video" ? (
-                            <video src={post.media_url} controls className="w-full rounded-xl mt-3 max-h-[60vh] bg-black" />
-                          ) : (
-                            <img src={post.media_url} alt="Post media" className="w-full rounded-xl mt-3 max-h-[60vh] object-cover bg-black/5" />
-                          )
-                        )}
+                <div className="space-y-4">
+                  {[1, 2].map((i) => (
+                    <div key={i} className="rounded-3xl border border-border/80 bg-card p-6 shadow-calm space-y-4 animate-pulse">
+                      <div className="flex items-center gap-3">
+                        <div className="size-10 rounded-full bg-accent" />
+                        <div className="space-y-1.5 flex-1">
+                          <div className="h-4 w-28 bg-accent rounded" />
+                          <div className="h-3 w-40 bg-accent/60 rounded" />
+                        </div>
                       </div>
-                    }
-                  />
-                ))
-              ) : (
-                <div className="p-8 text-center text-muted-foreground border border-dashed rounded-3xl">
-                  No posts yet. Be the first to contribute to the living archive!
+                      <div className="space-y-2">
+                        <div className="h-4 w-full bg-accent rounded" />
+                        <div className="h-4 w-3/4 bg-accent rounded" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : isError ? (
+                <div className="p-8 text-center text-muted-foreground border border-dashed rounded-3xl space-y-3">
+                  <p>Could not refresh live posts from the server.</p>
+                  <Button variant="outline" size="sm" onClick={() => refetch()} className="rounded-xl">
+                    <RefreshCw className="size-3.5 mr-1.5" />
+                    <span>Try again</span>
+                  </Button>
+                </div>
+              ) : displayPosts.map((post: any) => (
+                <FeedPost 
+                  key={post.id}
+                  id={post.id}
+                  avatar={post.author?.avatar_url || ""}
+                  name={post.author?.display_name || "Unknown"}
+                  identity={post.author?.account_type || "Contributor"}
+                  time={new Date(post.created_at).toLocaleDateString()}
+                  location={post.tradition || undefined}
+                  verifiedHuman={true}
+                  topic={post.topic || undefined}
+                  content={
+                    <div className="space-y-3">
+                      {post.topic && <p className="font-bold text-foreground font-sans">{post.topic}</p>}
+                      <p className="whitespace-pre-wrap">{post.content}</p>
+                      {post.media_url && (
+                        post.type === "video" ? (
+                          <video src={post.media_url} controls className="w-full rounded-xl mt-3 max-h-[60vh] bg-black" />
+                        ) : (
+                          <img src={post.media_url} alt="Post media" className="w-full rounded-xl mt-3 max-h-[60vh] object-cover bg-black/5" />
+                        )
+                      )}
+                    </div>
+                  }
+                />
+              ))}
+
+              {posts && posts.length === 0 && (
+                <div className="p-6 text-center text-xs text-muted-foreground border border-dashed rounded-2xl bg-card/40 flex flex-col sm:flex-row items-center justify-between gap-3">
+                  <span>Showing initial living archive reflections. Be the first to publish a new post!</span>
+                  <Button asChild size="sm" variant="outline" className="rounded-xl text-xs shrink-0">
+                    <Link to="/create">
+                      <span>Create Post</span>
+                      <ArrowRight className="size-3 ml-1" />
+                    </Link>
+                  </Button>
                 </div>
               )}
             </TabsContent>
             
             <TabsContent value="following" className="space-y-6">
-              <div className="p-8 text-center text-muted-foreground border border-dashed rounded-3xl">
-                Follow custodians to see their updates here.
+              <div className="p-8 text-center text-muted-foreground border border-dashed rounded-3xl space-y-3">
+                <p>Follow custodians and cultural practitioners to see their updates here.</p>
+                <Button asChild size="sm" variant="outline" className="rounded-xl">
+                  <Link to="/discover">
+                    <span>Explore Custodians in Discover</span>
+                  </Link>
+                </Button>
               </div>
             </TabsContent>
           </Tabs>
@@ -182,7 +288,3 @@ function FeedPage() {
     </div>
   );
 }
-
-
-
-

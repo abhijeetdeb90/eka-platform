@@ -143,7 +143,7 @@ export function ConsumerHeader() {
             aria-label="Main Navigation"
           >
             <div className="flex items-center gap-0.5">
-              {PRIMARY_NAV_ITEMS.filter(l => profile ? true : ["home", "discover"].includes(l.id)).map((l) => {
+              {PRIMARY_NAV_ITEMS.map((l) => {
                 return (
                   <Link
                     key={l.to}
@@ -165,8 +165,7 @@ export function ConsumerHeader() {
         <div className="hidden items-center gap-4 md:flex shrink-0">
 
           {/* Ask EKA — persistent search/AI entry */}
-          {profile && (
-<button
+          <button
             onClick={() => {
               setSearchOpen(true);
               setTimeout(() => searchInputRef.current?.focus(), 50);
@@ -181,7 +180,7 @@ export function ConsumerHeader() {
             <kbd className="hidden xl:inline ml-2 rounded border border-border/60 bg-background/60 px-1.5 py-0.5 text-[10px] font-mono text-muted-foreground/70">
               ⌘K
             </kbd>
-          </button>)}
+          </button>
 
           {/* Notification Bell */}
           {profile && (
@@ -225,8 +224,7 @@ export function ConsumerHeader() {
           </div>
 
           {/* Create action */}
-          {profile && (
-<Button
+          <Button
             asChild
             size="sm"
             className="rounded-xl bg-gradient-to-r from-terracotta to-saffron text-white shadow-calm hover:shadow-lift hover:opacity-95 font-medium px-3.5 py-1.5 text-xs transition-all shrink-0"
@@ -236,7 +234,7 @@ export function ConsumerHeader() {
               <Plus className="size-3.5 mr-1 stroke-[2.5]" />
               <span>Create</span>
             </Link>
-          </Button>)}
+          </Button>
 
           {/* Profile dropdown — contains My EKA + Messages + Settings */}
           <DropdownMenu>
@@ -468,7 +466,7 @@ export function ConsumerHeader() {
 
               {/* 5 Primary Nav items */}
               <div className="grid grid-cols-1 gap-0.5 py-1">
-                {PRIMARY_NAV_ITEMS.filter(l => profile ? true : ["home", "discover"].includes(l.id)).map((l, i) => {
+                {PRIMARY_NAV_ITEMS.map((l, i) => {
                   const Icon = l.icon;
                   return (
                     <motion.div

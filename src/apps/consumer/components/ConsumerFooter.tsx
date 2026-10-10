@@ -6,7 +6,7 @@
 // Zero internal tools, zero investor leaks, zero enterprise dashboard exposure.
 // ==============================================================================
 
-import { Link } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
 import { ArrowUp, ShieldCheck } from "lucide-react";
 import { EkaLogo } from "@/components/brand/Logo";
 import { LanguageSelector } from "@/components/i18n/LanguageSelector";
@@ -39,7 +39,7 @@ export function ConsumerFooter() {
               </p>
               <div className="flex items-center gap-2 pt-2 text-xs text-muted-foreground">
                 <ShieldCheck className="size-4 text-emerald-600 shrink-0" />
-                <span>Digital Personal Data Protection (DPDP) Act, 2023 Compliant</span>
+                <span>Respecting Personal Privacy & Cultural Heritage Rights</span>
               </div>
             </div>
 

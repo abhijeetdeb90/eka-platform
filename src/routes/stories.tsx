@@ -416,7 +416,7 @@ const REELS_DATA: ReelItem[] = [
     creator: {
       name: "Pt. Ramakrishna Shastry",
       handle: "kashi_lineage",
-      avatar: "/brand/ad-founder.jpg",
+      avatar: "",
       verified: true,
     },
     curiosityQuestion: "Why is fire returned back to the river water at sunset?",
@@ -435,7 +435,7 @@ const REELS_DATA: ReelItem[] = [
     creator: {
       name: "Master Sen Soukaku",
       handle: "kyoto_chado",
-      avatar: "/content/monastery-corridor.jpg",
+      avatar: "",
       verified: true,
     },
     curiosityQuestion: "How does preparing a bowl of powdered tea become silent meditation?",
@@ -454,7 +454,7 @@ const REELS_DATA: ReelItem[] = [
     creator: {
       name: "Doña Elena Morales",
       handle: "oaxaca_memoria",
-      avatar: "/content/today-reflection.jpg",
+      avatar: "",
       verified: true,
     },
     curiosityQuestion: "Why are yellow marigolds believed to guide departed ancestors?",
@@ -473,7 +473,7 @@ const REELS_DATA: ReelItem[] = [
     creator: {
       name: "K. Sudhakaran Achari",
       handle: "aranmula_guild",
-      avatar: "/content/observe.jpg",
+      avatar: "",
       verified: true,
     },
     curiosityQuestion: "Why does the Aranmula metal mirror reflect without glass refraction?",
@@ -492,7 +492,7 @@ const REELS_DATA: ReelItem[] = [
     creator: {
       name: "Prabin Goswami",
       handle: "majuli_masks",
-      avatar: "/places/kolkata.jpg",
+      avatar: "",
       verified: true,
     },
     curiosityQuestion: "How do Assamese masks articulate open jaws and eyes using river reeds?",
@@ -511,7 +511,7 @@ const REELS_DATA: ReelItem[] = [
     creator: {
       name: "Maâlem Tariq Benjelloun",
       handle: "fez_artisan",
-      avatar: "/content/journey.jpg",
+      avatar: "",
       verified: true,
     },
     curiosityQuestion: "How do natural botanical dyes achieve permanent sun-fast vibrant pigments?",

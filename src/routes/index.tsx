@@ -44,7 +44,7 @@ function DailyReflection() {
           "What is a tradition you carry that no one else in your life does?"
         </h3>
         <Link to="/feed" className="text-sm font-medium text-terracotta hover:underline">
-          Join the conversation ?
+          Join the conversation →
         </Link>
       </div>
     </section>

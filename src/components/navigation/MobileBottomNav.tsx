@@ -55,7 +55,7 @@ export function MobileBottomNav() {
         className="flex items-end justify-around max-w-md mx-auto px-2"
         style={{ paddingBottom: "max(0.65rem, env(safe-area-inset-bottom))" }}
       >
-        {MOBILE_PRIMARY_TABS.filter(t => profile ? true : ["home", "discover"].includes(t.id)).map((item) => {
+        {MOBILE_PRIMARY_TABS.map((item) => {
           let active = false;
           if (item.id === "ask") {
             active = currentPath.startsWith("/ask") || currentPath.startsWith("/search");

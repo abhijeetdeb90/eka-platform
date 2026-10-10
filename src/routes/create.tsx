@@ -7,7 +7,7 @@
 // ==============================================================================
 
 import { useState } from "react";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, redirect } from "@tanstack/react-router";
 import {
   Film,
   Image as ImageIcon,
@@ -29,6 +29,17 @@ import { supabase } from "@/integrations/supabase/client";
 import { track } from "@/lib/analytics";
 
 export const Route = createFileRoute("/create")({
+  ssr: false,
+  beforeLoad: async () => {
+    if (typeof window === "undefined") return;
+    const { data } = await supabase.auth.getSession();
+    if (!data.session?.user) {
+      throw redirect({
+        to: "/auth",
+        search: { next: "/create" },
+      });
+    }
+  },
   head: () => ({
     meta: [
       { title: "Create — Contribute to the Living Cultural Archive | EKA" },
@@ -208,7 +219,7 @@ function CreateArchivePage() {
             <div className="flex items-center gap-2">
               <ShieldCheck className="size-4 text-emerald-600 shrink-0" />
               <span>
-                <strong>Attribution Guarantee:</strong> Your contributions are preserved in your name, verified with community elders, and protected from commercial AI scrapping.
+                <strong>Attribution Guarantee:</strong> Shared with attribution in your name. You retain ownership and can edit or delete your posts at any time.
               </span>
             </div>
             <Link to="/standards" className="text-primary hover:underline font-medium shrink-0">
@@ -308,7 +319,7 @@ function CreateArchivePage() {
                 <Input
                   value={culture}
                   onChange={(e) => setCulture(e.target.value)}
-                  placeholder="e.g., Sanatana Dharma, Zen"
+                  placeholder="e.g., Bengali, Oaxaca, Zen, Celtic, family tradition"
                   className="rounded-xl bg-background"
                 />
               </div>
@@ -336,14 +347,14 @@ function CreateArchivePage() {
               <Input
                 value={topic}
                 onChange={(e) => setTopic(e.target.value)}
-                placeholder="e.g., Rituals, Artisan Craft, Philosophy"
+                placeholder="e.g., Family Recipe, Artisan Craft, Local Festival, Daily Life"
                 className="rounded-xl bg-background"
               />
             </div>
 
             <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-border/60">
               <span className="text-xs text-muted-foreground font-light">
-                Contributions are permanently preserved in the EKA Living Cultural Archive.
+                Shared with the EKA community with author attribution and deletion rights.
               </span>
 
               <Button

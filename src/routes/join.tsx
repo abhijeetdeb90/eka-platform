@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, redirect } from "@tanstack/react-router";
 import { ArrowLeft, Camera, Info, ShieldCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -26,6 +26,9 @@ import {
 
 export const Route = createFileRoute("/join")({
   ssr: false,
+  beforeLoad: () => {
+    throw redirect({ to: "/auth" });
+  },
   head: () => ({
     meta: [
       { title: "Join EKA — A Few Questions Before You Begin" },

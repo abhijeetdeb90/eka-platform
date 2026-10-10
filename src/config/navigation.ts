@@ -239,15 +239,15 @@ export const FOOTER_IA_CONFIG: Record<string, FooterSection> = {
   trust: {
     title: "Trust",
     links: [
-      { to: "/standards", label: "Verification" },
+      { to: "/standards#verification", label: "Verification" },
       { to: "/privacy", label: "Privacy" },
-      { to: "/standards", label: "Safety" },
+      { to: "/standards#safety", label: "Safety" },
     ],
   },
   company: {
     title: "Company",
     links: [
-      { to: "/", label: "About" },
+      { to: "/about", label: "About" },
       { to: "mailto:contact@eka.earth", label: "Contact" },
       { to: "/terms", label: "Terms" },
     ],

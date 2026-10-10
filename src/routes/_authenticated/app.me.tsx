@@ -1,14 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { AppScreen } from "@/components/app/AppScreen";
-import { ProfileView } from "@/components/app/ProfileView";
-import { useProfile } from "@/hooks/useProfile";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated/app/me")({
-  component: MyProfile,
+  beforeLoad: () => {
+    throw redirect({ to: "/my-eka" });
+  },
+  component: () => null,
 });
-
-function MyProfile() {
-  const { data: profile } = useProfile();
-  if (!profile) return <AppScreen title="Profile">Loading…</AppScreen>;
-  return <ProfileView profile={profile} isSelf />;
-}

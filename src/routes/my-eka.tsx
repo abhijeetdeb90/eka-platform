@@ -1,4 +1,4 @@
-﻿// ==============================================================================
+// ==============================================================================
 // MY EKA â€” USER'S PERSONAL SANCTUARY LAYER
 // ==============================================================================
 
@@ -26,7 +26,7 @@ import { EmptyState } from "@/components/app/AppScreen";
 export const Route = createFileRoute("/my-eka")({
   head: () => ({
     meta: [
-      { title: "My EKA â€” Personal Sanctuary & Archive | EKA" },
+      { title: "My EKA — Personal Sanctuary & Archive | EKA" },
       {
         name: "description",
         content: "Manage your personal cultural profile.",
@@ -91,9 +91,9 @@ function MyEkaPage() {
   return (
     <div className="min-h-screen bg-sand/20 dark:bg-stone-950 text-foreground flex flex-col selection:bg-terracotta/20">
       <MetaTags
-        title="My EKA â€” Personal Cultural Sanctuary"
+        title="My EKA — Personal Cultural Sanctuary"
         description="Manage your personalized cultural archive."
-        ogTitle="My EKA â€” Personal Sanctuary"
+        ogTitle="My EKA — Personal Sanctuary"
         ogDescription="Your personal cultural archive."
         canonicalUrl="/my-eka"
         noIndex={true}
@@ -121,7 +121,11 @@ function MyEkaPage() {
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
                       <h1 className="font-serif text-2xl sm:text-3xl font-bold text-foreground flex items-center gap-2">
-                        {profile.display_name || profile.username || "Seeker"}`n                          <span className="inline-flex items-center gap-1 rounded-full bg-amber-100/50 px-2 py-0.5 text-xs font-semibold text-amber-800 border border-amber-200/50 font-sans" title="Verified Cultural Custodian">`n                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-award fill-amber-500 text-amber-600"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>`n                            Custodian`n                          </span>
+                        {profile.display_name || profile.username || "Seeker"}
+                        <span className="inline-flex items-center gap-1 rounded-full bg-amber-100/50 px-2 py-0.5 text-xs font-semibold text-amber-800 border border-amber-200/50 font-sans" title="Verified Cultural Custodian">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-award fill-amber-500 text-amber-600"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
+                          Custodian
+                        </span>
                       </h1>
                     </div>
                     <p className="text-xs sm:text-sm font-mono text-muted-foreground">

@@ -75,7 +75,7 @@ function StandardsPage() {
         </section>
 
         {/* The Human-First Community Rule */}
-        <section className="mt-8 rounded-2xl border border-primary/40 bg-sand/20 p-6 sm:p-8 shadow-calm">
+        <section id="safety" className="mt-8 rounded-2xl border border-primary/40 bg-sand/20 p-6 sm:p-8 shadow-calm">
           <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.24em] text-terracotta">
             <UserCheck className="size-4" />
             <span>Foundational Sanctuary Standard</span>
