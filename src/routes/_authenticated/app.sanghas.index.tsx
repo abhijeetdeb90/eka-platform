@@ -64,6 +64,7 @@ function Sanghas() {
         slug,
         name: name.trim(),
         description: description.trim(),
+        category: "General",
         created_by: auth.user.id,
       })
       .select("id")

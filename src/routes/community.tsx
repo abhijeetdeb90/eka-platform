@@ -6,7 +6,7 @@
 // Sangha is a community TYPE, not the universal terminology.
 // ==============================================================================
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -29,6 +29,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { supabase } from "@/integrations/supabase/client";
 import { useProfile } from "@/hooks/useProfile";
 import { track } from "@/lib/analytics";
+import { toggleMembership } from "@/lib/api";
 
 export const Route = createFileRoute("/community")({
   head: () => ({
@@ -49,81 +50,9 @@ export const Route = createFileRoute("/community")({
   component: CommunityPage,
 });
 
-interface CommunityItem {
-  id: string;
-  slug: string;
-  name: string;
-  description: string;
-  category: string;
-  memberCount: number;
-  recentTopic?: string;
-}
-
-const CURATED_COMMUNITIES: CommunityItem[] = [
-  {
-    id: "c-sacred-geo",
-    slug: "sacred-geography",
-    name: "Sacred Geography & Confluences",
-    description:
-      "Pilgrims, explorers, and custodians documenting sacred rivers, holy peaks, monastic caves, and ancient wayfinding routes.",
-    category: "Places & Pilgrimage",
-    memberCount: 1420,
-    recentTopic: "Why do ancient temples align with seasonal solstices?",
-  },
-  {
-    id: "c-artisan-guilds",
-    slug: "artisan-guilds",
-    name: "Living Crafts & Master Guilds",
-    description:
-      "Master artisans, weavers, metal smiths, and potters preserving generational handmade traditions without industrial dilution.",
-    category: "Crafts & Lineages",
-    memberCount: 980,
-    recentTopic: "Natural indigo fermentation vs synthetic chemical dyes",
-  },
-  {
-    id: "c-mindful-living",
-    slug: "mindful-living",
-    name: "Contemplation & Quiet Rhythms",
-    description:
-      "Practitioners exploring silence, meditation, breathing practices, and evening gratitude across Zen, Advaita, and monastic paths.",
-    category: "Faith",
-    memberCount: 2310,
-    recentTopic: "The practice of reading one page twice in silence",
-  },
-  {
-    id: "c-indic-wisdom",
-    slug: "indic-wisdom",
-    name: "Vedic, Buddhist & Indic Lore",
-    description:
-      "Scholars and seekers discussing primary texts, chants, Upanishadic inquiries, and seasonal fasting calendars.",
-    category: "Philosophy & Texts",
-    memberCount: 1840,
-    recentTopic: "Understanding the five sheaths (Pancha Kosha) in daily life",
-  },
-  {
-    id: "c-earth-keepers",
-    slug: "earth-keepers",
-    name: "Indigenous Earth Custodians",
-    description:
-      "Community elders sharing oral genealogies, sacred grove preservation, seed keeping, and ecological ceremonies.",
-    category: "Local Life",
-    memberCount: 1120,
-    recentTopic: "How sacred groves protect groundwater during droughts",
-  },
-  {
-    id: "c-foodways",
-    slug: "foodways",
-    name: "Food & Culinary Traditions",
-    description:
-      "Home cooks, chefs, and food historians documenting heirloom recipes, fermentation knowledge, and harvest festivals.",
-    category: "Food",
-    memberCount: 3240,
-    recentTopic: "Why does every culture have a dumpling?",
-  },
-];
-
 const CATEGORY_FILTERS = [
   { id: "all", label: "All" },
+  { id: "joined", label: "My Communities" },
   { id: "Traditions", label: "Traditions" },
   { id: "Crafts & Lineages", label: "Crafts" },
   { id: "Places & Pilgrimage", label: "Places" },
@@ -144,7 +73,6 @@ function CommunityPage() {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [newCommunityName, setNewCommunityName] = useState("");
   const [newCommunityDesc, setNewCommunityDesc] = useState("");
-  const [joinedCommunities, setJoinedCommunities] = useState<Set<string>>(new Set());
 
   const { data: dbCommunities } = useQuery({
     queryKey: ["all-communities-public"],
@@ -157,50 +85,71 @@ function CommunityPage() {
     },
   });
 
-  const allCommunities = (dbCommunities && dbCommunities.length > 0)
-    ? dbCommunities.map((c) => ({
-        id: c.id,
-        slug: c.slug,
-        name: c.name,
-        description: c.description,
-        category: c.category || "General",
-        memberCount: c.member_count || 12,
-        recentTopic: "Active discussion",
-      }))
-    : CURATED_COMMUNITIES;
+  const { data: userMemberships } = useQuery({
+    queryKey: ["user-community-memberships", profile?.id],
+    enabled: !!profile?.id,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("community_members")
+        .select("community_id")
+        .eq("user_id", profile!.id);
+      return new Set((data || []).map((m) => m.community_id));
+    },
+  });
+
+  const allCommunities = (dbCommunities || []).map((c) => ({
+    id: c.id,
+    slug: c.slug,
+    name: c.name,
+    description: c.description,
+    category: c.category || "General",
+    memberCount: c.member_count || 0,
+  }));
+
+  const joinedCommunities = userMemberships || new Set();
 
   const filteredCommunities = allCommunities.filter((c) => {
     const matchesSearch =
       c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       c.description.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCat = selectedCategory === "all" || c.category === selectedCategory;
+    
+    let matchesCat = false;
+    if (selectedCategory === "all") {
+      matchesCat = true;
+    } else if (selectedCategory === "joined") {
+      matchesCat = joinedCommunities.has(c.id);
+    } else {
+      matchesCat = c.category === selectedCategory;
+    }
+
     return matchesSearch && matchesCat;
   });
 
-  const handleToggleJoin = (id: string, name: string) => {
+  const handleToggleJoin = async (id: string, name: string) => {
     if (!profile) {
       toast.info("Please sign in to join communities");
-      void navigate({ to: "/auth" });
+      void navigate({ to: "/auth", search: { next: "/community" } as any });
       return;
     }
-    setJoinedCommunities((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-        toast.info(`Left ${name}`);
-      } else {
-        next.add(id);
-        toast.success(`Welcome to ${name}!`);
-        track("community_join", { communityId: id, name });
-      }
-      return next;
-    });
+    
+    const isJoined = joinedCommunities.has(id);
+    await toggleMembership(id, isJoined);
+    
+    if (isJoined) {
+      toast.info(`Left ${name}`);
+    } else {
+      toast.success(`Welcome to ${name}!`);
+      track("community_join", { communityId: id, name });
+    }
+    
+    void queryClient.invalidateQueries({ queryKey: ["user-community-memberships", profile.id] });
+    void queryClient.invalidateQueries({ queryKey: ["all-communities-public"] });
   };
 
   const handleCreateCommunity = async () => {
     if (!profile) {
       toast.info("Please sign in to create a community");
-      void navigate({ to: "/auth" });
+      void navigate({ to: "/auth", search: { next: "/community" } as any });
       return;
     }
     if (!newCommunityName.trim()) {
@@ -212,20 +161,29 @@ function CommunityPage() {
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-|-$/g, "");
-    const { error } = await supabase.from("communities").insert({
+    
+    const { data: created, error } = await supabase.from("communities").insert({
       slug,
       name: newCommunityName.trim(),
       description: newCommunityDesc.trim(),
+      category: "General",
       created_by: profile.id,
-    });
-    if (error) {
-      toast.error("Could not create community: " + error.message);
+    }).select("id").single();
+    
+    if (error || !created) {
+      toast.error("Could not create community: " + (error?.message || "Invalid input"));
     } else {
+      await supabase.from("community_members").insert({
+        community_id: created.id,
+        user_id: profile.id,
+        role: "owner"
+      });
       toast.success("Community created!");
       setCreateDialogOpen(false);
       setNewCommunityName("");
       setNewCommunityDesc("");
       void queryClient.invalidateQueries({ queryKey: ["all-communities-public"] });
+      void queryClient.invalidateQueries({ queryKey: ["user-community-memberships", profile.id] });
     }
   };
 
@@ -337,7 +295,7 @@ function CommunityPage() {
                   key={c.id}
                   className="group rounded-2xl border border-border/70 bg-card p-5 hover:border-border hover:shadow-xs transition-all flex flex-col justify-between gap-4"
                 >
-                  <div className="space-y-2.5">
+                  <Link to="/app/sanghas/$slug" params={{ slug: c.slug }} className="block space-y-2.5">
                     <div className="flex items-center justify-between">
                       <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground border border-border/60 rounded-full px-2.5 py-0.5">
                         {c.category}
@@ -355,24 +313,13 @@ function CommunityPage() {
                     <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
                       {c.description}
                     </p>
-
-                    {c.recentTopic && (
-                      <div className="pt-2 border-t border-border/40 text-[11px] text-muted-foreground flex items-start gap-1.5">
-                        <MessageSquare className="size-3.5 text-primary/50 shrink-0 mt-0.5" />
-                        <span className="line-clamp-1 italic">"{c.recentTopic}"</span>
-                      </div>
-                    )}
-                  </div>
+                  </Link>
 
                   <div className="flex items-center justify-between gap-2 pt-2 border-t border-border/40">
                     <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
-                      <Link to="/stories" className="hover:text-foreground flex items-center gap-1 transition-colors">
-                        <Film className="size-3 text-terracotta" />
-                        Stories
-                      </Link>
-                      <Link to="/learn" className="hover:text-foreground flex items-center gap-1 transition-colors">
-                        <BookOpen className="size-3 text-saffron" />
-                        Learn
+                      <Link to="/app/sanghas/$slug" params={{ slug: c.slug }} className="hover:text-foreground flex items-center gap-1 transition-colors">
+                        <MessageSquare className="size-3 text-primary/60" />
+                        Discussions
                       </Link>
                     </div>
 
