@@ -1,5 +1,5 @@
-// ==============================================================================
-// EKA FEED — CONSUMER REAL-TIME ACTIVITY & COMMUNITY FEED
+﻿// ==============================================================================
+// EKA FEED â€” CONSUMER REAL-TIME ACTIVITY & COMMUNITY FEED
 // ==============================================================================
 // Specification: Primary Consumer Navigation Pillar: FEED (/feed)
 // Directly connects the user to living community interactions, discussions,
@@ -25,13 +25,13 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 export const Route = createFileRoute("/feed")({
   head: () => ({
     meta: [
-      { title: "Living Cultural Feed — EKA" },
+      { title: "Living Cultural Feed â€” EKA" },
       {
         name: "description",
         content:
           "Real-time stream of living cultural practices, verified custodian reflections, and community discussions across global traditions.",
       },
-      { property: "og:title", content: "Living Cultural Feed — EKA" },
+      { property: "og:title", content: "Living Cultural Feed â€” EKA" },
       {
         property: "og:description",
         content:
@@ -70,12 +70,12 @@ function FeedPage() {
       <MetaTags
         title="Living Cultural Feed"
         description="Real-time stream of living cultural practices, verified custodian reflections, and community discussions across global traditions."
-        ogTitle="Living Cultural Feed — EKA"
+        ogTitle="Living Cultural Feed â€” EKA"
         ogDescription="Explore real-time cultural interactions, elder teachings, and living traditions."
         ogImage="/brand/eka-banner.jpg"
         canonicalUrl="/feed"
         twitterCard="summary_large_image"
-        twitterTitle="Living Cultural Feed — EKA"
+        twitterTitle="Living Cultural Feed â€” EKA"
         twitterDescription="Real-time stream of living cultural practices, verified custodian reflections, and community discussions."
         keywords={["community feed", "cultural reflections", "elder teachings", "living rituals", "custodians"]}
       />
@@ -182,6 +182,7 @@ function FeedPage() {
     </div>
   );
 }
+
 
 
 

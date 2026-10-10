@@ -1,4 +1,4 @@
-import React from "react";
+ï»¿import React from "react";
 import { Heart, MessageCircle, Share2, Bookmark, UserPlus, MapPin, ShieldCheck, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -47,11 +47,11 @@ export function FeedPost({ avatar, name, identity, time, location, content, veri
             </div>
             <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
               <span className="font-medium text-terracotta">{identity}</span>
-              <span>•</span>
+              <span>â€¢</span>
               <span>{time}</span>
               {location && (
                 <>
-                  <span>•</span>
+                  <span>â€¢</span>
                   <span className="flex items-center gap-0.5">
                     <MapPin className="size-3" />
                     {location}
@@ -105,3 +105,4 @@ export function FeedPost({ avatar, name, identity, time, location, content, veri
     </article>
   );
 }
+

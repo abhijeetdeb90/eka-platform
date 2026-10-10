@@ -15,6 +15,7 @@ import {
 } from "@/lib/monetization";
 import { track } from "@/lib/analytics";
 import { useSubscription } from "@/hooks/useProfile";
+import { useRazorpayCheckout } from "@/lib/payments/useRazorpayCheckout";
 
 export const Route = createFileRoute("/_authenticated/app/plus")({
   component: MembershipPage,
@@ -26,6 +27,7 @@ function MembershipPage() {
   const navigate = useNavigate();
   const theme = currentTheme();
   const { tier, setTier } = useMonetizationTier();
+  const { openCheckout, loading: checkoutLoading } = useRazorpayCheckout();
 
   const joinPlan = async (plan: "plus" | "creator") => {
     track("subscription_cta_click", { plan });
@@ -35,24 +37,41 @@ function MembershipPage() {
       return;
     }
     const priceCents = plan === "creator" ? 79900 : 29900;
-    const { error } = await supabase.from("subscriptions").upsert(
-      {
+    const planName = plan === "creator" ? "Creator Studio Professional" : "EKA+ Intelligence";
+
+    openCheckout({
+      amount: priceCents,
+      currency: "INR",
+      name: planName,
+      description: `Monthly subscription to ${planName}`,
+      prefill: {
+        email: auth.user.email,
+        name: auth.user.user_metadata?.full_name || auth.user.user_metadata?.name || "",
+      },
+      notes: {
         user_id: auth.user.id,
         plan,
-        status: "active",
-        price_cents: priceCents,
-        currency: "INR",
       },
-      { onConflict: "user_id,plan" },
-    );
-    if (error) {
-      toast.error("We couldn't start that just now.");
-      return;
-    }
-    setTier(plan);
-    track("subscription_purchase", { plan });
-    await queryClient.invalidateQueries({ queryKey: ["subscription"] });
-    toast.success(`Your ${PRODUCT_TIERS[plan].name} membership is active!`);
+      onSuccess: async (rzpResponse) => {
+        const { error } = await supabase.from("subscriptions").upsert(
+          {
+            user_id: auth.user.id,
+            plan,
+            status: "active",
+            price_cents: priceCents,
+            currency: "INR",
+          },
+          { onConflict: "user_id,plan" },
+        );
+        if (error) {
+          console.error("[Subscription upsert error]", error);
+        }
+        setTier(plan);
+        track("subscription_purchase", { plan, payment_id: rzpResponse.razorpay_payment_id });
+        await queryClient.invalidateQueries({ queryKey: ["subscription"] });
+        toast.success(`Your ${PRODUCT_TIERS[plan].name} membership is active!`);
+      },
+    });
   };
 
   const active = subscription?.status === "active" || subscription?.status === "trialing" || tier !== "free";
@@ -142,10 +161,11 @@ function MembershipPage() {
           </div>
           <Button
             size="sm"
+            disabled={checkoutLoading}
             onClick={() => joinPlan("plus")}
             className="w-full rounded-full text-xs mt-2 bg-primary text-primary-foreground hover:bg-primary/90"
           >
-            {tier === "plus" ? "Active Plan" : "Get EKA+ (₹299/mo)"}
+            {checkoutLoading ? "Opening Checkout..." : tier === "plus" ? "Active Plan" : "Get EKA+ (₹299/mo)"}
           </Button>
         </div>
 
@@ -183,10 +203,11 @@ function MembershipPage() {
           <Button
             size="sm"
             variant="outline"
+            disabled={checkoutLoading}
             onClick={() => joinPlan("creator")}
             className="w-full rounded-full text-xs mt-2 border-terracotta/40 text-terracotta hover:bg-terracotta/5"
           >
-            {tier === "creator" ? "Active Workspace" : "Enter Creator (₹799/mo)"}
+            {checkoutLoading ? "Opening Checkout..." : tier === "creator" ? "Active Workspace" : "Enter Creator (₹799/mo)"}
           </Button>
         </div>
       </div>

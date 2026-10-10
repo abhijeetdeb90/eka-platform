@@ -21,6 +21,7 @@ import { Route as BrandsRouteImport } from './routes/brands'
 import { Route as BrandsEnterpriseRouteImport } from './routes/brands-enterprise'
 import { Route as BusinessRouteImport } from './routes/business'
 import { Route as CampaignsRouteImport } from './routes/campaigns'
+import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as CommunityRouteImport } from './routes/community'
 import { Route as ContentRouteImport } from './routes/content'
 import { Route as CookiesRouteImport } from './routes/cookies'
@@ -60,6 +61,7 @@ import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } fr
 import { Route as AuthenticatedAppRouteImport } from './routes/_authenticated/app'
 import { Route as AuthenticatedStudioRouteImport } from './routes/_authenticated/studio'
 import { Route as ApiAuditRouteImport } from './routes/api/audit'
+import { Route as ApiCreateOrderRouteImport } from './routes/api/create-order'
 import { Route as ApiCreatorEarningsRouteImport } from './routes/api/creator-earnings'
 import { Route as ApiFinanceRouteImport } from './routes/api/finance'
 import { Route as ApiPaymentsRouteImport } from './routes/api/payments'
@@ -67,6 +69,7 @@ import { Route as ApiPayoutsRouteImport } from './routes/api/payouts'
 import { Route as ApiReconciliationRouteImport } from './routes/api/reconciliation'
 import { Route as ApiRefundsRouteImport } from './routes/api/refunds'
 import { Route as ApiSubscriptionsRouteImport } from './routes/api/subscriptions'
+import { Route as ApiVerifyPaymentRouteImport } from './routes/api/verify-payment'
 import { Route as ApiWebhooksRouteImport } from './routes/api/webhooks'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as BrandsEnterpriseIndexRouteImport } from './routes/brands-enterprise.index'
@@ -217,6 +220,11 @@ const BusinessRoute = BusinessRouteImport.update({
 const CampaignsRoute = CampaignsRouteImport.update({
   id: '/campaigns',
   path: '/campaigns',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CheckoutRoute = CheckoutRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CommunityRoute = CommunityRouteImport.update({
@@ -415,6 +423,11 @@ const ApiAuditRoute = ApiAuditRouteImport.update({
   path: '/api/audit',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCreateOrderRoute = ApiCreateOrderRouteImport.update({
+  id: '/api/create-order',
+  path: '/api/create-order',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiCreatorEarningsRoute = ApiCreatorEarningsRouteImport.update({
   id: '/api/creator-earnings',
   path: '/api/creator-earnings',
@@ -448,6 +461,11 @@ const ApiRefundsRoute = ApiRefundsRouteImport.update({
 const ApiSubscriptionsRoute = ApiSubscriptionsRouteImport.update({
   id: '/api/subscriptions',
   path: '/api/subscriptions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiVerifyPaymentRoute = ApiVerifyPaymentRouteImport.update({
+  id: '/api/verify-payment',
+  path: '/api/verify-payment',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiWebhooksRoute = ApiWebhooksRouteImport.update({
@@ -960,6 +978,7 @@ export interface FileRoutesByFullPath {
   '/brands-enterprise': typeof BrandsEnterpriseRouteWithChildren
   '/business': typeof BusinessRoute
   '/campaigns': typeof CampaignsRoute
+  '/checkout': typeof CheckoutRoute
   '/community': typeof CommunityRoute
   '/content': typeof ContentRoute
   '/cookies': typeof CookiesRoute
@@ -999,6 +1018,7 @@ export interface FileRoutesByFullPath {
   '/app': typeof AuthenticatedAppRouteWithChildren
   '/studio': typeof AuthenticatedStudioRoute
   '/api/audit': typeof ApiAuditRoute
+  '/api/create-order': typeof ApiCreateOrderRoute
   '/api/creator-earnings': typeof ApiCreatorEarningsRoute
   '/api/finance': typeof ApiFinanceRoute
   '/api/payments': typeof ApiPaymentsRoute
@@ -1006,6 +1026,7 @@ export interface FileRoutesByFullPath {
   '/api/reconciliation': typeof ApiReconciliationRoute
   '/api/refunds': typeof ApiRefundsRoute
   '/api/subscriptions': typeof ApiSubscriptionsRoute
+  '/api/verify-payment': typeof ApiVerifyPaymentRoute
   '/api/webhooks': typeof ApiWebhooksRouteWithChildren
   '/auth/callback': typeof AuthCallbackRoute
   '/brands-enterprise/agent': typeof BrandsEnterpriseAgentRoute
@@ -1110,6 +1131,7 @@ export interface FileRoutesByTo {
   '/brands': typeof BrandsRoute
   '/business': typeof BusinessRoute
   '/campaigns': typeof CampaignsRoute
+  '/checkout': typeof CheckoutRoute
   '/community': typeof CommunityRoute
   '/content': typeof ContentRoute
   '/cookies': typeof CookiesRoute
@@ -1147,6 +1169,7 @@ export interface FileRoutesByTo {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/studio': typeof AuthenticatedStudioRoute
   '/api/audit': typeof ApiAuditRoute
+  '/api/create-order': typeof ApiCreateOrderRoute
   '/api/creator-earnings': typeof ApiCreatorEarningsRoute
   '/api/finance': typeof ApiFinanceRoute
   '/api/payments': typeof ApiPaymentsRoute
@@ -1154,6 +1177,7 @@ export interface FileRoutesByTo {
   '/api/reconciliation': typeof ApiReconciliationRoute
   '/api/refunds': typeof ApiRefundsRoute
   '/api/subscriptions': typeof ApiSubscriptionsRoute
+  '/api/verify-payment': typeof ApiVerifyPaymentRoute
   '/api/webhooks': typeof ApiWebhooksRouteWithChildren
   '/auth/callback': typeof AuthCallbackRoute
   '/brands-enterprise/agent': typeof BrandsEnterpriseAgentRoute
@@ -1261,6 +1285,7 @@ export interface FileRoutesById {
   '/brands-enterprise': typeof BrandsEnterpriseRouteWithChildren
   '/business': typeof BusinessRoute
   '/campaigns': typeof CampaignsRoute
+  '/checkout': typeof CheckoutRoute
   '/community': typeof CommunityRoute
   '/content': typeof ContentRoute
   '/cookies': typeof CookiesRoute
@@ -1300,6 +1325,7 @@ export interface FileRoutesById {
   '/_authenticated/app': typeof AuthenticatedAppRouteWithChildren
   '/_authenticated/studio': typeof AuthenticatedStudioRoute
   '/api/audit': typeof ApiAuditRoute
+  '/api/create-order': typeof ApiCreateOrderRoute
   '/api/creator-earnings': typeof ApiCreatorEarningsRoute
   '/api/finance': typeof ApiFinanceRoute
   '/api/payments': typeof ApiPaymentsRoute
@@ -1307,6 +1333,7 @@ export interface FileRoutesById {
   '/api/reconciliation': typeof ApiReconciliationRoute
   '/api/refunds': typeof ApiRefundsRoute
   '/api/subscriptions': typeof ApiSubscriptionsRoute
+  '/api/verify-payment': typeof ApiVerifyPaymentRoute
   '/api/webhooks': typeof ApiWebhooksRouteWithChildren
   '/auth/callback': typeof AuthCallbackRoute
   '/brands-enterprise/agent': typeof BrandsEnterpriseAgentRoute
@@ -1414,6 +1441,7 @@ export interface FileRouteTypes {
     | '/brands-enterprise'
     | '/business'
     | '/campaigns'
+    | '/checkout'
     | '/community'
     | '/content'
     | '/cookies'
@@ -1453,6 +1481,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/studio'
     | '/api/audit'
+    | '/api/create-order'
     | '/api/creator-earnings'
     | '/api/finance'
     | '/api/payments'
@@ -1460,6 +1489,7 @@ export interface FileRouteTypes {
     | '/api/reconciliation'
     | '/api/refunds'
     | '/api/subscriptions'
+    | '/api/verify-payment'
     | '/api/webhooks'
     | '/auth/callback'
     | '/brands-enterprise/agent'
@@ -1564,6 +1594,7 @@ export interface FileRouteTypes {
     | '/brands'
     | '/business'
     | '/campaigns'
+    | '/checkout'
     | '/community'
     | '/content'
     | '/cookies'
@@ -1601,6 +1632,7 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/studio'
     | '/api/audit'
+    | '/api/create-order'
     | '/api/creator-earnings'
     | '/api/finance'
     | '/api/payments'
@@ -1608,6 +1640,7 @@ export interface FileRouteTypes {
     | '/api/reconciliation'
     | '/api/refunds'
     | '/api/subscriptions'
+    | '/api/verify-payment'
     | '/api/webhooks'
     | '/auth/callback'
     | '/brands-enterprise/agent'
@@ -1714,6 +1747,7 @@ export interface FileRouteTypes {
     | '/brands-enterprise'
     | '/business'
     | '/campaigns'
+    | '/checkout'
     | '/community'
     | '/content'
     | '/cookies'
@@ -1753,6 +1787,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app'
     | '/_authenticated/studio'
     | '/api/audit'
+    | '/api/create-order'
     | '/api/creator-earnings'
     | '/api/finance'
     | '/api/payments'
@@ -1760,6 +1795,7 @@ export interface FileRouteTypes {
     | '/api/reconciliation'
     | '/api/refunds'
     | '/api/subscriptions'
+    | '/api/verify-payment'
     | '/api/webhooks'
     | '/auth/callback'
     | '/brands-enterprise/agent'
@@ -1867,6 +1903,7 @@ export interface RootRouteChildren {
   BrandsEnterpriseRoute: typeof BrandsEnterpriseRouteWithChildren
   BusinessRoute: typeof BusinessRoute
   CampaignsRoute: typeof CampaignsRoute
+  CheckoutRoute: typeof CheckoutRoute
   CommunityRoute: typeof CommunityRoute
   ContentRoute: typeof ContentRoute
   CookiesRoute: typeof CookiesRoute
@@ -1904,6 +1941,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   ApiAuditRoute: typeof ApiAuditRoute
+  ApiCreateOrderRoute: typeof ApiCreateOrderRoute
   ApiCreatorEarningsRoute: typeof ApiCreatorEarningsRoute
   ApiFinanceRoute: typeof ApiFinanceRoute
   ApiPaymentsRoute: typeof ApiPaymentsRoute
@@ -1911,6 +1949,7 @@ export interface RootRouteChildren {
   ApiReconciliationRoute: typeof ApiReconciliationRoute
   ApiRefundsRoute: typeof ApiRefundsRoute
   ApiSubscriptionsRoute: typeof ApiSubscriptionsRoute
+  ApiVerifyPaymentRoute: typeof ApiVerifyPaymentRoute
   ApiWebhooksRoute: typeof ApiWebhooksRouteWithChildren
   KnowledgeSlugRoute: typeof KnowledgeSlugRoute
   PassportSlugRoute: typeof PassportSlugRoute
@@ -2014,6 +2053,13 @@ declare module '@tanstack/react-router' {
       path: '/campaigns'
       fullPath: '/campaigns'
       preLoaderRoute: typeof CampaignsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checkout': {
+      id: '/checkout'
+      path: '/checkout'
+      fullPath: '/checkout'
+      preLoaderRoute: typeof CheckoutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/community': {
@@ -2289,6 +2335,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuditRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/create-order': {
+      id: '/api/create-order'
+      path: '/api/create-order'
+      fullPath: '/api/create-order'
+      preLoaderRoute: typeof ApiCreateOrderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/creator-earnings': {
       id: '/api/creator-earnings'
       path: '/api/creator-earnings'
@@ -2336,6 +2389,13 @@ declare module '@tanstack/react-router' {
       path: '/api/subscriptions'
       fullPath: '/api/subscriptions'
       preLoaderRoute: typeof ApiSubscriptionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/verify-payment': {
+      id: '/api/verify-payment'
+      path: '/api/verify-payment'
+      fullPath: '/api/verify-payment'
+      preLoaderRoute: typeof ApiVerifyPaymentRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/webhooks': {
@@ -3229,6 +3289,7 @@ const rootRouteChildren: RootRouteChildren = {
   BrandsEnterpriseRoute: BrandsEnterpriseRouteWithChildren,
   BusinessRoute: BusinessRoute,
   CampaignsRoute: CampaignsRoute,
+  CheckoutRoute: CheckoutRoute,
   CommunityRoute: CommunityRoute,
   ContentRoute: ContentRoute,
   CookiesRoute: CookiesRoute,
@@ -3267,6 +3328,7 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
   ApiAuditRoute: ApiAuditRoute,
+  ApiCreateOrderRoute: ApiCreateOrderRoute,
   ApiCreatorEarningsRoute: ApiCreatorEarningsRoute,
   ApiFinanceRoute: ApiFinanceRoute,
   ApiPaymentsRoute: ApiPaymentsRoute,
@@ -3274,6 +3336,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiReconciliationRoute: ApiReconciliationRoute,
   ApiRefundsRoute: ApiRefundsRoute,
   ApiSubscriptionsRoute: ApiSubscriptionsRoute,
+  ApiVerifyPaymentRoute: ApiVerifyPaymentRoute,
   ApiWebhooksRoute: ApiWebhooksRouteWithChildren,
   KnowledgeSlugRoute: KnowledgeSlugRoute,
   PassportSlugRoute: PassportSlugRoute,
