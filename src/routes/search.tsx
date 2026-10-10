@@ -32,7 +32,7 @@ import { useLocalization } from "@/lib/i18n";
 import { multilingualSearch, type MultilingualSearchResult } from "@/lib/knowledge/multilingual-search";
 
 export const Route = createFileRoute("/search")({
-  validateSearch: (search: Record<string, unknown>) => ({
+  validateSearch: (search: Record<string, unknown>): { q?: string } => ({
     q: (search["q"] as string) ?? "",
   }),
   head: () => ({
@@ -62,10 +62,10 @@ function PublicMultilingualSearchPage() {
   const navigate = useNavigate();
   const { locale, localeInfo, t } = useLocalization();
 
-  const [searchTerm, setSearchTerm] = useState(q);
+  const [searchTerm, setSearchTerm] = useState(q || "");
 
   useEffect(() => {
-    setSearchTerm(q);
+    setSearchTerm(q || "");
   }, [q]);
 
   // Sync debounced search param to URL

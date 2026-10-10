@@ -53,7 +53,7 @@ import { EkaBreadcrumb } from "@/components/navigation";
 import { GroundedCulturalSearch } from "@/components/search";
 
 export const Route = createFileRoute("/ask")({
-  validateSearch: (search: Record<string, unknown>) => ({
+  validateSearch: (search: Record<string, unknown>): { q?: string; mode?: string } => ({
     q: (search["q"] as string) ?? "",
     mode: (search["mode"] as string) ?? "canon",
   }),

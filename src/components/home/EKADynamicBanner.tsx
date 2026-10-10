@@ -36,13 +36,12 @@ export function EKADynamicBanner({
 
   // Check reduced motion preference
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-      setPrefersReducedMotion(mediaQuery.matches);
-      const listener = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
-      mediaQuery.addEventListener("change", listener);
-      return () => mediaQuery.removeEventListener("change", listener);
-    }
+    if (typeof window === "undefined") return;
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setPrefersReducedMotion(mediaQuery.matches);
+    const listener = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
+    mediaQuery.addEventListener("change", listener);
+    return () => mediaQuery.removeEventListener("change", listener);
   }, []);
 
   const currentBanner = banners[currentIndex] ?? banners[0]!;

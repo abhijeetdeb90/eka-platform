@@ -71,7 +71,7 @@ function CreateArchivePage() {
       return;
     }
 
-    if (!caption.trim()) {
+    if (!caption.trim() && !file) {
       toast.error("Please provide a caption for your contribution");
       return;
     }
@@ -288,7 +288,7 @@ function CreateArchivePage() {
 
             <div className="space-y-1.5">
               <label className="text-xs font-semibold uppercase tracking-wider text-foreground">
-                Caption *
+                Caption
               </label>
               <Textarea
                 value={caption}
@@ -363,4 +363,6 @@ function CreateArchivePage() {
     </div>
   );
 }
+
+
 

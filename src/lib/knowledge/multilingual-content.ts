@@ -9,8 +9,8 @@
 import type { SupportedLocale, RegionalContext } from "@/lib/i18n/types";
 import {
   getKnowledgeObjectBySlug,
-  type EkaKnowledgeObject,
 } from "./knowledge-graph";
+import type { EkaKnowledgeObject } from "./knowledge-object";
 
 export type TranslationStatus =
   | "draft"

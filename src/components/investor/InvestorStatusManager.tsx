@@ -134,7 +134,7 @@ export function InvestorStatusManager() {
       // Asynchronously attempt to sync to backend Supabase table if present
       const targetProduct = updated.find((p) => p.id === productId);
       if (targetProduct) {
-        supabase
+        (supabase as any)
           .from("investor_product_registry")
           .update({
             status: targetProduct.status,
@@ -146,7 +146,7 @@ export function InvestorStatusManager() {
             last_verified: targetProduct.lastVerified,
           })
           .eq("id", productId)
-          .then(({ error }) => {
+          .then(({ error }: { error?: any }) => {
             if (error) console.info("[InvestorStatus] Local override saved. Supabase sync deferred:", error.message);
           });
       }

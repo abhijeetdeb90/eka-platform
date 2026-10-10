@@ -16,7 +16,7 @@ function InsightsPage() {
     queryKey: ["public-insights"],
     queryFn: async () => {
       // Fetch from knowledge_objects first
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from("knowledge_objects")
         .select(`*`)
         .eq("status", "published")
@@ -63,7 +63,7 @@ function InsightsPage() {
           <div className="text-neutral-500 py-10">No insights published yet. Check back soon.</div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {insights.map((item: Record<string, any>) => (
+            {insights.map((item: any) => (
               <InsightCard key={item.id} item={item} />
             ))}
           </div>
@@ -74,7 +74,7 @@ function InsightsPage() {
   );
 }
 
-function InsightCard({ item }: { item: Record<string, any> }) {
+function InsightCard({ item }: { item: any }) {
   // Extracting real data from db fields
   const authorName = item.created_by || item.author_id || "EKA Editorial";
   const category = item.category || item.type || item.topic || "Perspective";

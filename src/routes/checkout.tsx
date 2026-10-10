@@ -89,8 +89,8 @@ function CheckoutPage() {
     signature: string;
   } | null>(null);
 
-  const currentPlan =
-    CHECKOUT_PLANS.find((p) => p.id === selectedPlanId) || CHECKOUT_PLANS[1];
+  const currentPlan: PlanOption =
+    CHECKOUT_PLANS.find((p) => p.id === selectedPlanId) || (CHECKOUT_PLANS[1] as PlanOption);
 
   const inrTotal = (currentPlan.amountPaise / 100).toFixed(2);
   const baseAmount = ((currentPlan.amountPaise / 1.18) / 100).toFixed(2);

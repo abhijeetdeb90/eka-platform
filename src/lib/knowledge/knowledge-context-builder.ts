@@ -142,7 +142,7 @@ export async function buildEkaAiContext(
 
   try {
     // Attempt selective Supabase lookup
-    const { data: dbObjects, error } = await supabase
+    const { data: dbObjects, error } = await (supabase as any)
       .from("knowledge_objects")
       .select("id, slug, title, summary, description, type, category, tradition, geography, sources, primary_references, regional_variations, verification_status, confidence, provenance")
       .limit(10);
@@ -257,7 +257,7 @@ export async function buildEkaAiContext(
   if (communityPerspectives.length > 0) {
     promptLines.push(
       `LIVING REGIONAL VARIATIONS:`,
-      ...communityPerspectives.map((p) => `- [${p.region}] ${p.practice}: ${p.significance}`),
+      ...communityPerspectives.map((p: any) => `- [${p.region}] ${p.practice}: ${p.significance}`),
       ``,
     );
   }

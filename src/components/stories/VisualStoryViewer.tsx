@@ -100,7 +100,7 @@ export function VisualStoryViewer({
               <Sparkles className="size-3 mr-1 text-saffron inline" />
               {getTemplateLabel(story.template)}
             </Badge>
-            <Badge variant="outline" className={`text-xs ${trustMeta.badgeColor}`}>
+            <Badge variant="outline" className={`text-xs ${trustMeta.colorClass} ${trustMeta.badgeBg} ${trustMeta.badgeBorder}`}>
               <ShieldCheck className="size-3 mr-1 inline" />
               {trustMeta.label}
             </Badge>

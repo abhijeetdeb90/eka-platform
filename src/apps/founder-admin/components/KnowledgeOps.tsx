@@ -802,7 +802,7 @@ export function KnowledgeOps() {
                               <td className="py-2.5 font-mono text-[11px]">{req.model}</td>
                               <td className="py-2.5 font-mono font-medium text-foreground">{req.estimatedInputTokens.toLocaleString()}</td>
                               <td className="py-2.5 font-mono text-muted-foreground">{req.outputTokens.toLocaleString()}</td>
-                              <td className="py-2.5">{req.retrievedKnowledgeObjectsCount} objects ({req.retrievedSourcesCount} sources)</td>
+                              <td className="py-2.5">{req.retrievedKnowledgeObjects.length} objects ({req.retrievedSourcesCount} sources)</td>
                               <td className="py-2.5 font-mono text-muted-foreground">{req.latencyMs}ms</td>
                               <td className="py-2.5">
                                 <Badge variant="outline" className="text-emerald-700 bg-emerald-500/10 border-emerald-500/30 text-[10px]">
@@ -949,7 +949,7 @@ export function KnowledgeOps() {
                         </thead>
                         <tbody className="divide-y divide-border/40">
                           {allObjects.map((obj) => {
-                            const meta = getTrustVerificationMeta(obj.verificationLevel);
+                            const meta = getTrustVerificationMeta(obj.verificationLevel || "EKA_RESEARCHED");
                             return (
                               <tr key={obj.id} className="py-2">
                                 <td className="py-2.5">
@@ -964,7 +964,7 @@ export function KnowledgeOps() {
                                 </td>
                                 <td className="py-2.5 font-mono text-muted-foreground">{obj.type}</td>
                                 <td className="py-2.5">
-                                  <Badge variant="outline" className={`text-[10px] ${meta.badgeColor}`}>
+                                  <Badge variant="outline" className={`text-[10px] ${meta.colorClass} ${meta.badgeBg} ${meta.badgeBorder}`}>
                                     {meta.label}
                                   </Badge>
                                 </td>

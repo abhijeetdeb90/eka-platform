@@ -11,8 +11,8 @@
 import type { SupportedLocale } from "@/lib/i18n/types";
 import {
   getAllKnowledgeObjects,
-  type EkaKnowledgeObject,
 } from "./knowledge-graph";
+import type { EkaKnowledgeObject } from "./knowledge-object";
 import { getContent, CULTURAL_TRANSLATIONS_MAP } from "./multilingual-content";
 
 export interface MultilingualSearchResult {

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+﻿import { useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { ChevronLeft, ChevronRight, Film, ImagePlus, Layers, Loader2, Plus, X } from "lucide-react";
@@ -47,7 +47,7 @@ export function Composer({
   const [aspect, setAspect] = useState<AspectKey>("original");
   const [uploading, setUploading] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
-  const isVideo = files.length === 1 && isVideoFile(files[0]);
+  const isVideo = files.length === 1 && Boolean(files[0] && isVideoFile(files[0]));
 
   useEffect(() => {
     if (files.length === 0) {
@@ -146,7 +146,9 @@ export function Composer({
   });
 
   const submit = async () => {
-    if (!content.trim() || busy) return;
+    const hasText = content.trim().length > 0;
+    const hasMedia = files.length > 0;
+    if (!(hasText || hasMedia) || busy) return;
     setBusy(true);
     const { data: auth } = await supabase.auth.getUser();
     if (!auth.user) {
@@ -158,7 +160,7 @@ export function Composer({
     if (files.length > 0) {
       setUploading(true);
       try {
-        if (isVideo) {
+        if (isVideo && files[0]) {
           const upload = files[0];
           const ext = upload.name.split(".").pop()?.toLowerCase() || "mp4";
           const path = `${auth.user.id}/${crypto.randomUUID()}.${ext}`;
@@ -180,7 +182,7 @@ export function Composer({
               return toStoredMedia(path);
             }),
           );
-          mediaValue = uploadedPaths.length > 1 ? JSON.stringify(uploadedPaths) : uploadedPaths[0];
+          mediaValue = uploadedPaths.length > 1 ? JSON.stringify(uploadedPaths) : (uploadedPaths[0] ?? null);
         }
       } catch {
         setUploading(false);
@@ -253,7 +255,7 @@ export function Composer({
         aria-describedby="composer-hint"
         value={content}
         onChange={(e) => setContent(e.target.value)}
-        placeholder="Begin anywhere — a line, a question, something you noticed…"
+        placeholder="Begin anywhere Ã¢â‚¬â€ a line, a question, something you noticedÃ¢â‚¬Â¦"
         rows={3}
         className="mt-4 resize-none border-0 bg-transparent px-0 text-[16px] leading-relaxed shadow-none focus-visible:ring-0"
       />
@@ -471,11 +473,11 @@ export function Composer({
         {files.length > 0 ? (
           <span className="truncate text-xs text-muted-foreground">
             {isVideo
-              ? files[0].name
-              : `${files.length} photo${files.length > 1 ? "s" : ""} selected · Free for all seekers`}
+              ? files[0]?.name || "Video"
+              : `${files.length} photo${files.length > 1 ? "s" : ""} selected Â· Free for all seekers`}
           </span>
         ) : (
-          <span className="text-xs text-muted-foreground">Photos to 10 MB · Video to 50 MB · Carousels up to 10 photos</span>
+          <span className="text-xs text-muted-foreground">Photos to 10 MB Ã‚Â· Video to 50 MB Ã‚Â· Carousels up to 10 photos</span>
         )}
       </div>
 
@@ -487,7 +489,7 @@ export function Composer({
           id="composer-topic"
           value={topic}
           onChange={(e) => setTopic(e.target.value)}
-          placeholder="Topic (optional) — silence, grief, gratitude…"
+          placeholder="Topic (optional) Ã¢â‚¬â€ silence, grief, gratitudeÃ¢â‚¬Â¦"
         />
       </div>
 
@@ -516,11 +518,11 @@ export function Composer({
         <p className="text-xs text-muted-foreground">
           {POST_TYPES.find((t) => t.value === type)?.hint}
         </p>
-        <Button onClick={submit} disabled={busy || !content.trim()}>
+        <Button onClick={submit} disabled={busy || !(content.trim() || files.length > 0)}>
           {(uploading || busy) && (
             <Loader2 aria-hidden="true" className="mr-2 size-4 animate-spin" />
           )}
-          {uploading ? "Uploading…" : busy ? "Posting…" : "Post"}
+          {uploading ? "UploadingÃ¢â‚¬Â¦" : busy ? "PostingÃ¢â‚¬Â¦" : "Post"}
         </Button>
       </div>
       <p aria-live="polite" className="sr-only">
@@ -529,3 +531,5 @@ export function Composer({
     </div>
   );
 }
+
+

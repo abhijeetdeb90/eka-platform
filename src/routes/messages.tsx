@@ -38,7 +38,7 @@ import { useProfile } from "@/hooks/useProfile";
 import { track } from "@/lib/analytics";
 
 export const Route = createFileRoute("/messages")({
-  validateSearch: (search: Record<string, unknown>) => ({
+  validateSearch: (search: Record<string, unknown>): { recipient?: string; context?: string } => ({
     recipient: (search["recipient"] as string) ?? "",
     context: (search["context"] as string) ?? "",
   }),

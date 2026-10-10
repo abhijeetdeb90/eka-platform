@@ -140,7 +140,7 @@ export function FeedPostCard({
               {author.verified && (
                 <ShieldCheck
                   className="size-3.5 text-forest shrink-0"
-                  title="Verified Lineage Custodian"
+                  aria-label="Verified Lineage Custodian"
                 />
               )}
               {author.isSelf && (

@@ -827,7 +827,7 @@ export function RealtimeActivityFeed({
                       {item.author.verified && (
                         <ShieldCheck
                           className="size-3 text-forest shrink-0"
-                          title="Verified Lineage Custodian"
+                          aria-label="Verified Lineage Custodian"
                         />
                       )}
                     </p>

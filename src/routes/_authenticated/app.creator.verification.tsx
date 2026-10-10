@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { AppScreen } from "@/components/app/AppScreen";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
@@ -28,7 +28,7 @@ function VerificationPage() {
     try {
       const formData = new FormData(e.currentTarget);
       
-      const { error } = await supabase.from('custodian_lineages').insert({
+      const { error } = await (supabase as any).from('custodian_lineages').insert({
         user_id: profile.id,
         lineage_name: formData.get('lineage_name'),
         expertise_domain: formData.get('expertise_domain'),

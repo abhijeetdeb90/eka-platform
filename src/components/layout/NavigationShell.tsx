@@ -335,13 +335,13 @@ export function NavigationShell({
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild className="rounded-xl text-xs cursor-pointer">
-                      <Link to="/bookmarks" className="flex items-center gap-2">
+                      <Link to={"/bookmarks" as any} className="flex items-center gap-2">
                         <Bookmark className="size-3.5 text-saffron" />
                         <span>Saved Inquiries</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild className="rounded-xl text-xs cursor-pointer">
-                      <Link to="/settings" className="flex items-center gap-2">
+                      <Link to="/app/settings" className="flex items-center gap-2">
                         <Settings className="size-3.5 text-muted-foreground" />
                         <span>Settings</span>
                       </Link>
@@ -363,7 +363,7 @@ export function NavigationShell({
                   size="sm"
                   className="rounded-xl border-border/80 text-xs px-2.5 sm:px-3 h-8 hover:bg-terracotta/5 hover:text-terracotta hover:border-terracotta/40 transition-colors"
                 >
-                  <Link to="/login" className="flex items-center gap-1.5">
+                  <Link to="/auth" className="flex items-center gap-1.5">
                     <LogIn className="size-3.5 text-terracotta" />
                     <span>Sign In</span>
                   </Link>

@@ -71,20 +71,20 @@ export function LocalizationProvider({ children }: { children: ReactNode }) {
         } = await supabase.auth.getSession();
         if (!session?.user) return;
 
-        const { data: profile } = await supabase
+        const { data: profile } = await (supabase as any)
           .from("profiles")
-          .select("preferred_language, preferred_region, language")
+          .select("preferred_language, preferred_region, language, region")
           .eq("id", session.user.id)
           .single();
 
         if (profile && isMounted) {
-          const profileLocale = profile.preferred_language || profile.language;
+          const profileLocale = (profile.preferred_language || profile.language) as string | undefined;
           if (profileLocale && profileLocale in SUPPORTED_LOCALES) {
             // Only adopt profile preference if user hasn't explicitly set localStorage in this session
             const stored = typeof window !== "undefined" ? window.localStorage.getItem("eka_locale") : null;
             if (!stored) {
               setLocaleState(profileLocale as SupportedLocale);
-              setRegionState(inferRegionalContext(profileLocale as SupportedLocale, profile.preferred_region));
+              setRegionState(inferRegionalContext(profileLocale as SupportedLocale, profile.preferred_region || profile.region));
             }
           }
         }

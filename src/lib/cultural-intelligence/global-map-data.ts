@@ -23,7 +23,7 @@ export interface CulturalStoryItem {
   wonderQuestion: string;
   summary: string;
   imageUrl: string;
-  category: "festival" | "tradition" | "craft" | "sacred_place" | "ritual" | "food";
+  category: "festival" | "tradition" | "craft" | "sacred_place" | "ritual" | "food" | "community" | "story";
   curiosityPrompt: string;
 }
 
@@ -54,7 +54,7 @@ export interface MapHotspotMarker {
   name: string;
   country: string;
   region: EkaRegion;
-  type: "story" | "festival" | "tradition" | "sacred_place" | "craft" | "community";
+  type: "story" | "festival" | "tradition" | "sacred_place" | "craft" | "community" | "ritual" | "food";
   wonderQuestion: string;
   storyId: string;
   countryId: string;

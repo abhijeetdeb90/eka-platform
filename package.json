@@ -12,7 +12,7 @@
     "build": "node scripts/generate-sitemap.mjs && vite build",
     "build:dev": "node scripts/generate-sitemap.mjs && vite build --mode development",
     "build:vercel": "node scripts/generate-sitemap.mjs && vite build",
-    "deploy:vercel": "vercel deploy --prebuilt --prod",
+    "deploy:vercel": "npx vercel deploy --prebuilt --prod",
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",

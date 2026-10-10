@@ -572,7 +572,7 @@ export async function askEkaKnowledge(
       context: {
         originRegion: tokenResult.exploreDeeper.mapLocation || "Pan-Asian & Global Heritage",
         historicalEra: "Living Cultural Continuum",
-        corePhilosophy: tokenResult.compareSuggestion.insight,
+        corePhilosophy: (tokenResult as any).compareSuggestion?.insight || tokenResult.whyItMatters,
         preservationStatus: "vibrant",
         custodianCommunities: tokenResult.communityPerspectives,
         seasonalTiming: "Cyclical & Living Traditions",
@@ -582,7 +582,7 @@ export async function askEkaKnowledge(
         summary: tokenResult.simpleAnswer,
         deepExplanation: tokenResult.culturalContext,
         nuanceNotes: tokenResult.provenanceBasis,
-        philosophicalUnderpinning: tokenResult.compareSuggestion.insight,
+        philosophicalUnderpinning: (tokenResult as any).compareSuggestion?.insight || tokenResult.whyItMatters,
         poweredBy: tokenResult.poweredBy,
       },
       crossCulturalGraph: {

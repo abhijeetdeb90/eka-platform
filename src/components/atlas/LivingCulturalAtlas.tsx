@@ -327,7 +327,7 @@ export function LivingCulturalAtlas({
                 >
                   Subcontinent Overview
                 </button>
-                {ATLAS_VIEWBOX_PRESETS.india.subregions?.map((sub) => (
+                {ATLAS_VIEWBOX_PRESETS.india?.subregions?.map((sub) => (
                   <button
                     key={sub.id}
                     type="button"
@@ -600,7 +600,7 @@ export function LivingCulturalAtlas({
                           {obj.title.split("A")[0]?.split("&")[0]?.trim()}
                         </span>
                         <span className="text-muted-foreground text-[4px] leading-tight line-clamp-2 mt-0.5 whitespace-normal">
-                          {obj.oneLiner || obj.summary}
+                          {obj.oneLiner || (obj as any).summary}
                         </span>
                         <a 
                           href={`/knowledge/${obj.slug}`}
@@ -712,7 +712,7 @@ export function LivingCulturalAtlas({
           <div className="absolute top-4 right-4 z-20 flex flex-col items-center gap-1.5 bg-background/85 dark:bg-card/85 backdrop-blur-md p-1 rounded-2xl border border-border/70 shadow-xs">
             <button
               type="button"
-              onClick={() => handleSelectRegion(currentRegion === "india" ? "world" : "india")}
+              onClick={() => handleSelectRegion(currentRegion === "india" ? "all" : "india")}
               title={currentRegion === "india" ? "Zoom out to World" : "Zoom into India"}
               className="size-7 rounded-xl hover:bg-accent text-foreground flex items-center justify-center text-xs transition-colors cursor-pointer"
               aria-label="Toggle India focus"
@@ -721,7 +721,7 @@ export function LivingCulturalAtlas({
             </button>
             <button
               type="button"
-              onClick={() => handleSelectRegion("world")}
+              onClick={() => handleSelectRegion("all")}
               title="Reset to World View"
               className="size-7 rounded-xl hover:bg-accent text-muted-foreground hover:text-foreground flex items-center justify-center transition-colors cursor-pointer"
               aria-label="Reset zoom"

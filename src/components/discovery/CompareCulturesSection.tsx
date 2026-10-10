@@ -395,7 +395,7 @@ export function CompareCulturesSection({
                     className="rounded-xl border border-border/60 bg-sand/20 p-3 space-y-1.5 text-xs"
                   >
                     <div className="flex items-center justify-between">
-                      <Badge variant="outline" className={`text-[10px] ${meta.badgeColor}`}>
+                      <Badge variant="outline" className={`text-[10px] ${meta.colorClass} ${meta.badgeBg} ${meta.badgeBorder}`}>
                         {meta.label}
                       </Badge>
                     </div>

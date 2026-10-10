@@ -372,7 +372,7 @@ export interface SensitiveWorkflowFlags {
     | "community_identity_claim"
     | "historical_controversy"
   >;
-  reviewStatus: "approved" | "pending_review" | "quarantined";
+  reviewStatus?: "approved" | "pending_review" | "quarantined";
   reviewerNotes?: string;
 }
 

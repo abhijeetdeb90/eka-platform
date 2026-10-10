@@ -31,7 +31,7 @@ export function ConsumerFooter() {
             <div className="space-y-4 sm:col-span-2 md:col-span-3 lg:col-span-6 xl:col-span-4 pr-0 xl:pr-8">
               <EkaLogo size="lg" withTagline />
               <p className="text-sm font-medium text-foreground/90">
-                {EKA_BRAND.supportingContext}
+                {EKA_BRAND.supportingStatement}
               </p>
               <p className="text-xs leading-relaxed text-muted-foreground font-light">
                 Built on provenance, verified human traditions, ethical stewardship, and the open

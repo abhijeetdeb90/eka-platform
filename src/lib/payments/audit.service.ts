@@ -84,6 +84,23 @@ export class AuditService {
     return entry;
   }
 
+  async recordEvent(params: {
+    actor_id: string;
+    action: string;
+    entity_type: string;
+    entity_id: string;
+    metadata?: Record<string, unknown>;
+  }): Promise<AuditLogEntry> {
+    return this.logAction({
+      actor_id: params.actor_id,
+      actor_type: params.actor_id.includes("system") || params.actor_id.includes("webhook") ? "system" : "user",
+      action: params.action,
+      entity_type: params.entity_type,
+      entity_id: params.entity_id,
+      new_state: params.metadata,
+    });
+  }
+
   async queryLogs(filters?: {
     entity_id?: string;
     entity_type?: string;

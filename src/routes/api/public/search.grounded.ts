@@ -180,13 +180,13 @@ Please search the web for up-to-date, verified context and synthesize a clear, d
               item.summary.toLowerCase().includes(queryLower),
           );
 
-          const synthesizedAnswer = `${matchedObject.entity}: Living Cultural Continuity\n\n${matchedObject.summary}\n\nCultural Significance:\n${matchedObject.oneLiner || "Observed through living ritual, seasonal transition, and community gathering."}\n\nKey Lineage Context:\nDocumented across verified regional custodians with primary sources in ${matchedObject.sourcePassport?.primaryTradition || "historical archives"}.`;
+          const synthesizedAnswer = `${matchedObject.entity}: Living Cultural Continuity\n\n${matchedObject.summary}\n\nCultural Significance:\n${matchedObject.oneLiner || "Observed through living ritual, seasonal transition, and community gathering."}\n\nKey Lineage Context:\nDocumented across verified regional custodians with primary sources in historical archives.`;
 
           const fallbackSources = [
             ...(matchedObject.sourcePassport?.sourcesList?.map((s) => ({
               title: s.title || `${matchedObject.entity} Canonical Record`,
-              uri: s.url || `https://eka.earth/knowledge/${matchedObject.slug}`,
-              domain: s.publisher || "eka.earth",
+              uri: s.citationOrUrl || `https://eka.earth/knowledge/${matchedObject.slug}`,
+              domain: s.type || "eka.earth",
             })) || []),
             {
               title: "EKA Living Cultural Knowledge Graph",

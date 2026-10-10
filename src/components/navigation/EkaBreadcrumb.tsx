@@ -35,8 +35,9 @@ const ROUTE_NAME_MAP: Record<string, string> = {
 };
 
 function formatSlug(slug: string): string {
-  if (ROUTE_NAME_MAP[slug.toLowerCase()]) {
-    return ROUTE_NAME_MAP[slug.toLowerCase()];
+  const mapped = ROUTE_NAME_MAP[slug.toLowerCase()];
+  if (mapped) {
+    return mapped;
   }
   return slug
     .split("-")

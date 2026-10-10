@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { MapPin, Users, Calendar, Sparkles, Network } from 'lucide-react';
@@ -10,7 +10,7 @@ export function ConnectedKnowledgeCard({ sourceId, topic }: { sourceId?: string;
     queryFn: async () => {
       // If we have an ID, search edges directly. Otherwise, do a text-based lookup.
       if (sourceId) {
-        const { data } = await supabase
+        const { data } = await (supabase as any)
           .from('knowledge_edges')
           .select('*, target_entity_id, relationship_type, target_entity_type')
           .eq('source_entity_id', sourceId)

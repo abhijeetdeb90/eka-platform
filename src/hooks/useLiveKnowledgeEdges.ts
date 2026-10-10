@@ -1,4 +1,4 @@
-﻿import { useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
 export function useLiveKnowledgeEdges(sourceEntityId: string | undefined) {
@@ -7,7 +7,7 @@ export function useLiveKnowledgeEdges(sourceEntityId: string | undefined) {
     queryFn: async () => {
       if (!sourceEntityId) return [];
       
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('knowledge_edges')
         .select('*')
         .eq('source_entity_id', sourceEntityId);

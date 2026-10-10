@@ -1,4 +1,4 @@
-﻿// ==============================================================================
+// ==============================================================================
 // EKA CONSUMER PLATFORM - HOMEPAGE (MARKETING VS SOCIAL FEED)
 // ==============================================================================
 
@@ -437,18 +437,16 @@ function EkaSocialFeed() {
 }
 
 function EkaHomePage() {
-  const { data: profile, isLoading } = useProfile();
+  const { data: profile } = useProfile();
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col selection:bg-terracotta/20">
       <SiteHeader />
       
-      {!isLoading && (
-        profile ? <EkaSocialFeed /> : <EkaLandingPage profile={profile} />
-      )}
+      {profile ? <EkaSocialFeed /> : <EkaLandingPage profile={profile} />}
 
       {/* Only show footer on landing page to maintain endless scroll feel on social */}
-      {!profile && !isLoading && <SiteFooter />}
+      {!profile && <SiteFooter />}
     </div>
   );
 }

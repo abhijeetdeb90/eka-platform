@@ -210,7 +210,7 @@ export async function retrieveRelevantCorpusQuestions(
 
   // 1. Try querying Supabase question_corpus table
   try {
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from("question_corpus")
       .select("*")
       .limit(20);

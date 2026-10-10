@@ -467,7 +467,7 @@ export async function recordTokenTelemetry(entry: TokenLogEntry): Promise<void> 
 
   // Asynchronously insert to Supabase ai_token_logs table
   try {
-    const { error } = await supabase.from("ai_token_logs").insert({
+    const { error } = await (supabase as any).from("ai_token_logs").insert({
       request_id: entry.requestId,
       model: entry.model,
       task_type: entry.taskType,
@@ -521,7 +521,7 @@ export async function getAiContextHealthMetrics(): Promise<{
   let logs: TokenLogEntry[] = [...IN_MEMORY_TOKEN_LOGS];
 
   try {
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from("ai_token_logs")
       .select("*")
       .order("created_at", { ascending: false })
