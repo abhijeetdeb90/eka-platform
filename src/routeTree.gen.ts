@@ -142,6 +142,7 @@ import { Route as ApiWebhooksResendRouteImport } from './routes/api/webhooks.res
 import { Route as AuthenticatedAppBrandFinanceRouteImport } from './routes/_authenticated/app.brand.finance'
 import { Route as AuthenticatedAppCreatorDashboardRouteImport } from './routes/_authenticated/app.creator.dashboard'
 import { Route as AuthenticatedAppCreatorEarningsRouteImport } from './routes/_authenticated/app.creator.earnings'
+import { Route as AuthenticatedAppCreatorVerificationRouteImport } from './routes/_authenticated/app.creator.verification'
 import { Route as AuthenticatedAppDiscoverIndexRouteImport } from './routes/_authenticated/app.discover.index'
 import { Route as AuthenticatedAppDiscoverSlugRouteImport } from './routes/_authenticated/app.discover.$slug'
 import { Route as AuthenticatedAppEpisodesIndexRouteImport } from './routes/_authenticated/app.episodes.index'
@@ -848,6 +849,12 @@ const AuthenticatedAppCreatorEarningsRoute =
     path: '/earnings',
     getParentRoute: () => AuthenticatedAppCreatorRoute,
   } as any)
+const AuthenticatedAppCreatorVerificationRoute =
+  AuthenticatedAppCreatorVerificationRouteImport.update({
+    id: '/verification',
+    path: '/verification',
+    getParentRoute: () => AuthenticatedAppCreatorRoute,
+  } as any)
 const AuthenticatedAppDiscoverIndexRoute =
   AuthenticatedAppDiscoverIndexRouteImport.update({
     id: '/discover/',
@@ -1099,6 +1106,7 @@ export interface FileRoutesByFullPath {
   '/app/brand/finance': typeof AuthenticatedAppBrandFinanceRoute
   '/app/creator/dashboard': typeof AuthenticatedAppCreatorDashboardRoute
   '/app/creator/earnings': typeof AuthenticatedAppCreatorEarningsRoute
+  '/app/creator/verification': typeof AuthenticatedAppCreatorVerificationRoute
   '/app/discover/$slug': typeof AuthenticatedAppDiscoverSlugRoute
   '/app/episodes/$id': typeof AuthenticatedAppEpisodesIdRoute
   '/app/journeys/$slug': typeof AuthenticatedAppJourneysSlugRoute
@@ -1250,6 +1258,7 @@ export interface FileRoutesByTo {
   '/app/brand/finance': typeof AuthenticatedAppBrandFinanceRoute
   '/app/creator/dashboard': typeof AuthenticatedAppCreatorDashboardRoute
   '/app/creator/earnings': typeof AuthenticatedAppCreatorEarningsRoute
+  '/app/creator/verification': typeof AuthenticatedAppCreatorVerificationRoute
   '/app/discover/$slug': typeof AuthenticatedAppDiscoverSlugRoute
   '/app/episodes/$id': typeof AuthenticatedAppEpisodesIdRoute
   '/app/journeys/$slug': typeof AuthenticatedAppJourneysSlugRoute
@@ -1406,6 +1415,7 @@ export interface FileRoutesById {
   '/_authenticated/app/brand/finance': typeof AuthenticatedAppBrandFinanceRoute
   '/_authenticated/app/creator/dashboard': typeof AuthenticatedAppCreatorDashboardRoute
   '/_authenticated/app/creator/earnings': typeof AuthenticatedAppCreatorEarningsRoute
+  '/_authenticated/app/creator/verification': typeof AuthenticatedAppCreatorVerificationRoute
   '/_authenticated/app/discover/$slug': typeof AuthenticatedAppDiscoverSlugRoute
   '/_authenticated/app/episodes/$id': typeof AuthenticatedAppEpisodesIdRoute
   '/_authenticated/app/journeys/$slug': typeof AuthenticatedAppJourneysSlugRoute
@@ -1562,6 +1572,7 @@ export interface FileRouteTypes {
     | '/app/brand/finance'
     | '/app/creator/dashboard'
     | '/app/creator/earnings'
+    | '/app/creator/verification'
     | '/app/discover/$slug'
     | '/app/episodes/$id'
     | '/app/journeys/$slug'
@@ -1713,6 +1724,7 @@ export interface FileRouteTypes {
     | '/app/brand/finance'
     | '/app/creator/dashboard'
     | '/app/creator/earnings'
+    | '/app/creator/verification'
     | '/app/discover/$slug'
     | '/app/episodes/$id'
     | '/app/journeys/$slug'
@@ -1868,6 +1880,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/brand/finance'
     | '/_authenticated/app/creator/dashboard'
     | '/_authenticated/app/creator/earnings'
+    | '/_authenticated/app/creator/verification'
     | '/_authenticated/app/discover/$slug'
     | '/_authenticated/app/episodes/$id'
     | '/_authenticated/app/journeys/$slug'
@@ -2902,6 +2915,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppCreatorEarningsRouteImport
       parentRoute: typeof AuthenticatedAppCreatorRoute
     }
+    '/_authenticated/app/creator/verification': {
+      id: '/_authenticated/app/creator/verification'
+      path: '/verification'
+      fullPath: '/app/creator/verification'
+      preLoaderRoute: typeof AuthenticatedAppCreatorVerificationRouteImport
+      parentRoute: typeof AuthenticatedAppCreatorRoute
+    }
     '/_authenticated/app/discover/': {
       id: '/_authenticated/app/discover/'
       path: '/discover'
@@ -3048,6 +3068,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedAppCreatorRouteChildren {
   AuthenticatedAppCreatorDashboardRoute: typeof AuthenticatedAppCreatorDashboardRoute
   AuthenticatedAppCreatorEarningsRoute: typeof AuthenticatedAppCreatorEarningsRoute
+  AuthenticatedAppCreatorVerificationRoute: typeof AuthenticatedAppCreatorVerificationRoute
 }
 
 const AuthenticatedAppCreatorRouteChildren: AuthenticatedAppCreatorRouteChildren =
@@ -3055,6 +3076,8 @@ const AuthenticatedAppCreatorRouteChildren: AuthenticatedAppCreatorRouteChildren
     AuthenticatedAppCreatorDashboardRoute:
       AuthenticatedAppCreatorDashboardRoute,
     AuthenticatedAppCreatorEarningsRoute: AuthenticatedAppCreatorEarningsRoute,
+    AuthenticatedAppCreatorVerificationRoute:
+      AuthenticatedAppCreatorVerificationRoute,
   }
 
 const AuthenticatedAppCreatorRouteWithChildren =
