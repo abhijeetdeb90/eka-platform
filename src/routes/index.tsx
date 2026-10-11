@@ -14,6 +14,7 @@ import { StitchHumanPrinciples } from "@/components/home/StitchHumanPrinciples";
 import { StitchKeepersAndCovenant } from "@/components/home/StitchKeepersAndCovenant";
 import { StitchEditorialHero } from "@/components/home/StitchEditorialHero";
 import { StitchOralChantsSection } from "@/components/stories/StitchOralChantsSection";
+import { StitchLivingDiscoveryHome } from "@/components/home/StitchLivingDiscoveryHome";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Sparkles, Home, Compass, Film, MessageSquare, Bell, Bookmark, User as UserIcon, Settings, PlusCircle, CheckCircle2 } from "lucide-react";
@@ -125,117 +126,19 @@ function HomeLoginForm() {
 }
 
 function EkaLandingPage({ profile }: { profile: any }) {
-  const [askQuery, setAskQuery] = useState("");
-  const navigate = useNavigate();
-
-  const handleAskSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const q = askQuery.trim();
-    track("ask_query_submitted", { source: "homepage_hero", q });
-    if (q) {
-      navigate({ to: "/ask", search: { q, mode: "canon" } });
-    } else {
-      navigate({ to: "/ask", search: { q: "", mode: "canon" } });
-    }
-  };
-
-  const handleChipClick = (query: string) => {
-    track("search_submitted", { source: "homepage", q: query });
-    navigate({ to: "/ask", search: { q: query, mode: "canon" } });
-  };
-
   return (
     <main id="main-content" className="flex-1 pb-20">
-      {/* 1. STITCH EDITORIAL HERO & TRUST OVERLAY */}
-      <StitchEditorialHero profile={profile} loginForm={<HomeLoginForm />} />
-
-      {/* Daily Reflection */}
-      <DailyReflection />
-
-      {/* Highlights / Recommended */}
-      <RecommendedForYou />
-
-      {/* Trending Stories */}
-      <div className="mt-14">
-        <HomeStoriesSection />
-      </div>
+      {/* Stitch Living Cultural Discovery Flagship Experience */}
+      <StitchLivingDiscoveryHome profile={profile} loginForm={<HomeLoginForm />} />
 
       {/* Stitch Oral Chants & Sound Lore Archive */}
       <StitchOralChantsSection />
-
-      {/* Discover Cards (Living World Visual) */}
-      <section className="container-eka mt-14">
-        <div className="mb-6">
-          <p className="font-mono text-[10px] uppercase tracking-widest text-terracotta font-semibold">
-            DISCOVER
-          </p>
-          <h2 className="font-serif text-2xl sm:text-3xl font-normal text-foreground mt-2">
-            The world is full of stories.
-          </h2>
-          <p className="text-sm text-muted-foreground mt-2 max-w-xl">
-            Explore places. Every point is a living tradition waiting to be understood.
-          </p>
-        </div>
-        <LivingWorldVisual />
-      </section>
-
-      {/* Ask EKA Preview */}
-      <section className="container-eka mt-16">
-        <div className="rounded-3xl border border-border/80 bg-card/60 p-8 shadow-sm">
-          <h2 className="font-serif text-2xl sm:text-3xl font-normal text-foreground mb-6">
-            Understand something.
-          </h2>
-          <form onSubmit={handleAskSubmit} className="flex gap-3 max-w-2xl">
-            <div className="relative flex-1">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-muted-foreground/60 pointer-events-none" />
-              <Input
-                value={askQuery}
-                onChange={(e) => setAskQuery(e.target.value)}
-                placeholder="Why do people light diyas? What is Bhoota Kola?"
-                className="rounded-full bg-background/95 text-base shadow-sm h-14 pl-12 pr-4 border-border/80 focus-visible:ring-terracotta/30"
-              />
-            </div>
-            <Button
-              type="submit"
-              className="rounded-full px-8 h-14 bg-foreground text-background hover:bg-foreground/90 shrink-0 text-sm font-semibold"
-            >
-              Ask EKA
-            </Button>
-          </form>
-          <div className="flex flex-wrap items-center gap-2.5 mt-5">
-            {[
-              "Why do people light diyas?",
-              "Why is Varanasi sacred?",
-              "What is Bhoota Kola?",
-              "Why do Japanese bow?",
-              "Holi vs. Songkran",
-            ].map((chip) => (
-              <button
-                key={chip}
-                type="button"
-                onClick={() => handleChipClick(chip)}
-                className="rounded-full bg-accent/50 border border-border/60 hover:border-terracotta/30 px-4 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-all"
-              >
-                {chip}
-              </button>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* Stitch Human Covenant & Strategic Principles */}
       <StitchHumanPrinciples />
 
       {/* Stitch Keepers of Living Memory, Founding Philosophy & Trust Standards */}
       <StitchKeepersAndCovenant />
-
-      {/* Continue Exploring (Discovery Journey) */}
-      <div className="mt-16">
-        <div className="container-eka mb-6">
-          <h2 className="font-serif text-2xl sm:text-3xl font-normal text-foreground">Continue Exploring</h2>
-        </div>
-        <DiscoveryJourney />
-      </div>
     </main>
   );
 }
