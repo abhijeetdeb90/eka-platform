@@ -131,6 +131,18 @@ function MyEkaPage() {
                     <p className="text-xs sm:text-sm font-mono text-muted-foreground">
                       @{profile.username || "sanctuary_seeker"}
                     </p>
+                    {profile.bio && (
+                      <p className="text-xs text-muted-foreground/90 italic pt-1 max-w-md">
+                        "{profile.bio}"
+                      </p>
+                    )}
+                    <div className="pt-2 flex flex-wrap items-center gap-2 text-[10px] font-mono uppercase tracking-wider text-muted-foreground">
+                      <span className="bg-accent/60 px-2.5 py-0.5 rounded-full font-semibold text-terracotta">
+                        {profile.account_type || "Cultural Steward"}
+                      </span>
+                      <span>•</span>
+                      <span>Living Human Custody Archive</span>
+                    </div>
                   </div>
                 </div>
 

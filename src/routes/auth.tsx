@@ -286,10 +286,12 @@ function AuthPage() {
         <Link to="/">
           <EkaLogo />
         </Link>
-        <h1 className="mt-8 text-3xl leading-snug">
-          {mode === "signup" ? "Join EKA" : "Welcome back"}
+        <h1 className="mt-8 text-3xl font-serif text-foreground leading-snug">
+          {mode === "signup" ? "Join the Living Archive" : "Welcome Back"}
         </h1>
-        <p className="mt-2 text-sm text-muted-foreground">One Within. One With All.</p>
+        <p className="mt-2 text-xs sm:text-sm text-muted-foreground">
+          A sanctuary where human beings listen to human beings. One Within. One With All.
+        </p>
 
         {mode === "signup" &&
           (joinAnswers.standardsAccepted ? (

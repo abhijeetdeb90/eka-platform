@@ -45,6 +45,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { toast } from "sonner";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
+import { StitchOralChantsSection } from "@/components/stories/StitchOralChantsSection";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -1072,6 +1073,13 @@ function EkaStoriesPage() {
               ))}
             </div>
           </section>
+        )}
+
+        {/* ==================================================================== */}
+        {/* STITCH DESIGN: FORMAT A - SACRED ORAL CHANTS & FIELD RECORDINGS */}
+        {/* ==================================================================== */}
+        {(activeTab === "all" || activeTab === "reels") && (
+          <StitchOralChantsSection />
         )}
 
         {/* ==================================================================== */}
