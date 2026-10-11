@@ -12,6 +12,8 @@ import { HomeStoriesSection } from "@/components/home/HomeStoriesSection";
 import { DiscoveryJourney } from "@/components/home/DiscoveryJourney";
 import { StitchHumanPrinciples } from "@/components/home/StitchHumanPrinciples";
 import { StitchKeepersAndCovenant } from "@/components/home/StitchKeepersAndCovenant";
+import { StitchEditorialHero } from "@/components/home/StitchEditorialHero";
+import { StitchOralChantsSection } from "@/components/stories/StitchOralChantsSection";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Sparkles, Home, Compass, Film, MessageSquare, Bell, Bookmark, User as UserIcon, Settings, PlusCircle, CheckCircle2 } from "lucide-react";
@@ -144,36 +146,8 @@ function EkaLandingPage({ profile }: { profile: any }) {
 
   return (
     <main id="main-content" className="flex-1 pb-20">
-      {/* 1. HERO */}
-      <section className="container-eka pt-8 pb-4">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-          <div className="lg:col-span-5 flex flex-col justify-center">
-            <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground leading-[1.1]">
-              Don't just scroll the world.<br/>
-              <span className="text-terracotta">Understand it.</span>
-            </h1>
-            <p className="mt-5 text-base sm:text-lg text-muted-foreground font-light max-w-lg leading-relaxed">
-              A billion stories. One world to understand. Explore places, meet people, and uncover the traditions that shape us.
-            </p>
-            
-            {profile ? (
-              <div className="mt-8 flex flex-wrap gap-4">
-                <Link to="/discover" className="inline-flex items-center justify-center rounded-full bg-foreground text-background px-8 py-3.5 text-sm font-semibold hover:bg-foreground/90 transition-all shadow-md hover:shadow-lg active:scale-95">
-                  Discover
-                </Link>
-                <Link to="/ask" search={{ q: "", mode: "canon" }} className="inline-flex items-center justify-center rounded-full border border-border bg-card/60 px-8 py-3.5 text-sm font-semibold hover:bg-accent transition-all active:scale-95">
-                  Ask EKA
-                </Link>
-              </div>
-            ) : (
-              <HomeLoginForm />
-            )}
-          </div>
-          <div className="lg:col-span-7 h-[580px] sm:h-[620px] rounded-3xl overflow-hidden shadow-2xl">
-            <EKADynamicBanner className="h-full w-full object-cover" />
-          </div>
-        </div>
-      </section>
+      {/* 1. STITCH EDITORIAL HERO & TRUST OVERLAY */}
+      <StitchEditorialHero profile={profile} loginForm={<HomeLoginForm />} />
 
       {/* Daily Reflection */}
       <DailyReflection />
@@ -185,6 +159,9 @@ function EkaLandingPage({ profile }: { profile: any }) {
       <div className="mt-14">
         <HomeStoriesSection />
       </div>
+
+      {/* Stitch Oral Chants & Sound Lore Archive */}
+      <StitchOralChantsSection />
 
       {/* Discover Cards (Living World Visual) */}
       <section className="container-eka mt-14">
