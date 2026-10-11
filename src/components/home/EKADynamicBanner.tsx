@@ -73,7 +73,8 @@ export function EKADynamicBanner({
       if (onExploreWorld) {
         onExploreWorld();
       } else {
-        const el = document.getElementById(route.slice(1));
+        const targetId = route.slice(1);
+        const el = document.getElementById(targetId) || document.getElementById("discover-categories");
         if (el) {
           el.scrollIntoView({ behavior: "smooth" });
         }
@@ -126,24 +127,24 @@ export function EKADynamicBanner({
       <div className="relative z-10 flex flex-col justify-between flex-1 p-6 sm:p-10 lg:p-12 min-h-[580px] sm:min-h-[620px]">
         {/* Top Header Row in Banner */}
         <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap">
             <Link to="/" className="inline-flex items-center gap-2 group">
               <EkaLogo
                 markClassName="size-7"
                 className="text-white"
-                textClassName="text-white"
+                textClassName="text-white font-serif text-xl tracking-[0.2em] font-bold"
                 withTagline={false}
               />
             </Link>
-            <span className="hidden sm:inline-block text-[11px] font-mono tracking-widest text-amber-200/80 uppercase">
-              • One Within. One With All.
+            <span className="inline-block text-[10px] sm:text-xs font-mono tracking-widest text-amber-300 font-semibold uppercase">
+              • ONE WITHIN. ONE WITH ALL.
             </span>
           </div>
 
           {/* Location Badge */}
           {currentBanner.location && (
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-[11px] font-mono text-white/90">
-              <MapPin className="size-3 text-saffron shrink-0" />
+            <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/20 text-xs font-mono text-white/90 shadow-sm shrink-0">
+              <MapPin className="size-3 text-amber-300 shrink-0" />
               <span className="truncate max-w-[140px] sm:max-w-none">{currentBanner.location}</span>
             </div>
           )}
@@ -153,11 +154,11 @@ export function EKADynamicBanner({
         <div className="my-auto py-6 sm:py-8 max-w-2xl space-y-5">
           {/* Permanent Core Anchor */}
           <div className="space-y-2">
-            <h1 className="font-display font-serif text-4xl sm:text-6xl lg:text-7xl font-normal leading-[1.05] tracking-tight text-white drop-shadow-md">
+            <h1 className="font-serif text-5xl sm:text-7xl lg:text-8xl font-normal leading-[1.02] tracking-tight text-white drop-shadow-md">
               ONE WORLD. <br />
               BILLIONS OF STORIES.
             </h1>
-            <p className="font-display italic text-lg sm:text-2xl text-amber-200/90 font-light">
+            <p className="font-serif italic text-2xl sm:text-3xl text-amber-200/90 font-light">
               One Within. One With All.
             </p>
           </div>
@@ -170,15 +171,15 @@ export function EKADynamicBanner({
               animate={prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
               exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -10 }}
               transition={{ duration: 0.45, ease: "easeOut" }}
-              className="p-4 sm:p-5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 text-white/95 max-w-xl shadow-calm space-y-2.5"
+              className="p-5 sm:p-6 rounded-2xl bg-black/50 backdrop-blur-md border border-white/20 text-white/95 max-w-xl shadow-lg space-y-2.5"
             >
               <div className="flex items-center justify-between gap-3">
-                <span className="text-[10px] font-mono uppercase tracking-widest text-amber-300 font-semibold flex items-center gap-1.5">
-                  <Sparkles className="size-3 text-saffron animate-pulse" />
+                <span className="text-[10px] sm:text-[11px] font-mono uppercase tracking-widest text-amber-300 font-bold flex items-center gap-1.5">
+                  <Sparkles className="size-3.5 text-amber-300 shrink-0 animate-pulse" />
                   {currentBanner.eyebrow}
                   {currentBanner.festival && ` • ${currentBanner.festival}`}
                 </span>
-                <span className="text-[10px] font-mono text-white/60">
+                <span className="text-[10px] sm:text-[11px] font-mono text-white/60">
                   {currentBanner.location}
                 </span>
               </div>

@@ -128,6 +128,11 @@ function HomeLoginForm() {
 function EkaLandingPage({ profile }: { profile: any }) {
   return (
     <main id="main-content" className="flex-1 pb-20">
+      {/* Flagship Cinematic Editorial Banner: ONE WORLD. BILLIONS OF STORIES. */}
+      <section className="container-eka pt-4 sm:pt-6 pb-2">
+        <EKADynamicBanner />
+      </section>
+
       {/* Stitch Living Cultural Discovery Flagship Experience */}
       <StitchLivingDiscoveryHome profile={profile} loginForm={<HomeLoginForm />} />
 
