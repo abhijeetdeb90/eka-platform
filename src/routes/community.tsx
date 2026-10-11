@@ -367,10 +367,10 @@ function CommunityPage() {
                   Community Covenant & Protection
                 </span>
                 <h3 className="font-serif text-2xl sm:text-3xl font-normal text-foreground mt-1 mb-3">
-                  A Sanctuary Protected by Human Stewards
+                  Community Standards & Respectful Dialogue
                 </h3>
                 <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                  Every circle on EKA is safeguarded by hereditary practitioners and community elders. We do not tolerate hate speech, commercial spam, algorithmic manipulation, or uncredited cultural appropriation.
+                  Circles on EKA are hosted and moderated by community members under our shared cultural charter. We do not tolerate hate speech, commercial spam, synthetic manipulation, or uncredited cultural appropriation.
                 </p>
               </div>
               <div className="md:col-span-4 flex flex-col sm:flex-row md:flex-col gap-3 justify-end">

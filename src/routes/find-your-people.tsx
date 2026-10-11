@@ -41,28 +41,22 @@ export const Route = createFileRoute("/find-your-people")({
 
 // Curated active inquiries inspired by Stitch design
 const ACTIVE_CONVERSATIONS = [
-    {
+  {
     id: "conv-1",
     tag: "Sacred Foodways",
     question: "How do you keep sourdough and kanji starters alive during tropical monsoon shifts?",
-    participants: 14,
-    responses: 38,
     activeRegion: "Kerala & coastal Karnataka",
   },
   {
     id: "conv-2",
     tag: "Oral Poetry & Chants",
     question: "Do the metric rhythms of Baul songs alter when translated across dialects?",
-    participants: 22,
-    responses: 51,
     activeRegion: "Bengal & Sylhet diaspora",
   },
   {
     id: "conv-3",
     tag: "Vernacular Architecture",
     question: "Restoring sloped mud-lime courtyards before winter frost: which lime putty binders endure?",
-    participants: 9,
-    responses: 27,
     activeRegion: "Himachal & Ladakh",
   },
 ];
@@ -73,28 +67,28 @@ const REGIONAL_HEARTHS = [
     city: "Kolkata & Bengal Delta",
     descriptor: "Clay pots, river hymns, old printing presses & adda lore",
     image: "https://images.unsplash.com/photo-1558431382-27e303142255?auto=format&fit=crop&w=500&q=80",
-    members: 420,
+    theme: "Living Adda & River Craft",
     circleSlug: "bengal-delta-adda",
   },
   {
     city: "Kyoto & Kansai",
     descriptor: "Cedar courtyard machiyas, woodblock carving & tea hearths",
     image: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=500&q=80",
-    members: 310,
+    theme: "Tea Craft & Woodblock Lore",
     circleSlug: "kyoto-machiya-guild",
   },
   {
     city: "Oaxaca & Central Valleys",
     descriptor: "Cochineal vats, botanical dyes, clay ovens & zapotec weaving",
     image: "https://images.unsplash.com/photo-1512816943410-14e606b83e85?auto=format&fit=crop&w=500&q=80",
-    members: 265,
+    theme: "Natural Dye & Weaver Guild",
     circleSlug: "oaxaca-weavers-circle",
   },
   {
     city: "London & Global Diaspora",
     descriptor: "Spice shelf archives, immigrant dialects & kitchen memory",
     image: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=500&q=80",
-    members: 580,
+    theme: "Diaspora Culinary Memory",
     circleSlug: "diaspora-kitchen-lore",
   },
 ];
@@ -213,7 +207,7 @@ function FindYourPeoplePage() {
 
                 <div className="mt-6 pt-3 border-t border-border/40 flex items-center justify-between">
                   <span className="text-[11px] text-muted-foreground">
-                    {conv.participants} custodians • {conv.responses} notes
+                    Open Inquiry • Community Discussion
                   </span>
                   <Link
                     to="/feed"
@@ -238,58 +232,70 @@ function FindYourPeoplePage() {
                 Stewards Resonating With Your Path
               </h2>
             </div>
-            <span className="text-xs text-muted-foreground">Verified Human Lineages</span>
+            <span className="text-xs text-muted-foreground">Community Members & Contributors</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {realProfiles && realProfiles.length > 0 ? (
-              realProfiles.map((p) => (
-                <div
-                  key={p.id}
-                  className="rounded-2xl border border-border/80 bg-card p-5 flex flex-col justify-between hover:shadow-xs hover:border-terracotta/40 transition-all"
-                >
-                  <div>
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="size-12 rounded-full bg-accent/60 overflow-hidden flex items-center justify-center font-serif text-lg text-foreground font-semibold">
-                        {p.avatar_url ? (
-                          <img src={p.avatar_url} alt={p.display_name} className="size-full object-cover" />
-                        ) : (
-                          (p.display_name || p.username || "U")[0].toUpperCase()
-                        )}
+              realProfiles.map((p) => {
+                const isVerified = p.account_type === "verified_custodian" || p.account_type === "expert";
+                return (
+                  <div
+                    key={p.id}
+                    className="rounded-2xl border border-border/80 bg-card p-5 flex flex-col justify-between hover:shadow-xs hover:border-terracotta/40 transition-all"
+                  >
+                    <div>
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="size-12 rounded-full bg-accent/60 overflow-hidden flex items-center justify-center font-serif text-lg text-foreground font-semibold">
+                          {p.avatar_url ? (
+                            <img src={p.avatar_url} alt={p.display_name} className="size-full object-cover" />
+                          ) : (
+                            (p.display_name || p.username || "U")[0].toUpperCase()
+                          )}
+                        </div>
+                        <div>
+                          <h3 className="font-serif text-sm font-semibold text-foreground leading-tight">
+                            {p.display_name || p.username || "EKA Member"}
+                          </h3>
+                          <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider">
+                            {p.account_type || "Member"}
+                          </span>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="font-serif text-sm font-semibold text-foreground leading-tight">
-                          {p.display_name || p.username || "EKA Steward"}
-                        </h3>
-                        <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider">
-                          {p.account_type || "Custodian"}
-                        </span>
-                      </div>
+                      <p className="text-xs text-muted-foreground leading-relaxed line-clamp-3 mb-4">
+                        {p.bio || "Preserving living traditions and engaging in thoughtful cross-cultural dialogues on EKA."}
+                      </p>
                     </div>
-                    <p className="text-xs text-muted-foreground leading-relaxed line-clamp-3 mb-4">
-                      {p.bio || "Preserving living traditions and engaging in thoughtful cross-cultural dialogues on EKA."}
-                    </p>
-                  </div>
 
-                  <div className="pt-3 border-t border-border/40 flex items-center justify-between">
-                    <span className="text-[11px] text-emerald-600 flex items-center gap-1 font-medium">
-                      <ShieldCheck className="size-3.5" />
-                      Verified
-                    </span>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="rounded-xl text-xs h-7 px-3 border-border/80 hover:bg-terracotta hover:text-white hover:border-terracotta"
-                      onClick={() => handleOpenInquiry(p.display_name || p.username || "Steward", "Direct", "Living Traditions")}
-                    >
-                      Inquire
-                    </Button>
+                    <div className="pt-3 border-t border-border/40 flex items-center justify-between">
+                      {isVerified ? (
+                        <span className="text-[11px] text-emerald-600 flex items-center gap-1 font-medium">
+                          <ShieldCheck className="size-3.5" />
+                          Verified
+                        </span>
+                      ) : (
+                        <span className="text-[11px] text-muted-foreground">
+                          Community Member
+                        </span>
+                      )}
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="rounded-xl text-xs h-7 px-3 border-border/80 hover:bg-terracotta hover:text-white hover:border-terracotta"
+                        onClick={() => handleOpenInquiry(p.display_name || p.username || "Member", "Direct", "Living Traditions")}
+                      >
+                        Inquire
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              ))
+                );
+              })
             ) : (
-              <div className="col-span-full py-10 text-center text-muted-foreground text-sm">
-                Loading community keepers...
+              <div className="col-span-full py-12 text-center text-muted-foreground text-sm border border-dashed border-border/60 rounded-2xl bg-card/40">
+                <p className="font-serif text-base text-foreground mb-1">No community members found yet</p>
+                <p className="text-xs max-w-md mx-auto">
+                  Be the first to join and represent your living cultural heritage, dialect, or craft.
+                </p>
               </div>
             )}
           </div>
@@ -307,7 +313,7 @@ function FindYourPeoplePage() {
               </h2>
             </div>
             <Link to="/community" className="text-xs font-semibold text-terracotta hover:underline">
-              Browse all 80+ Hearth Circles
+              Browse All Cultural Communities
             </Link>
           </div>
 
@@ -325,7 +331,7 @@ function FindYourPeoplePage() {
                     loading="lazy"
                   />
                   <span className="absolute top-2 left-2 px-2 py-0.5 rounded font-mono text-[9px] uppercase tracking-wider bg-background/90 backdrop-blur-md text-foreground font-semibold">
-                    {h.members} Stewards
+                    {h.theme}
                   </span>
                 </div>
                 <div className="p-4 flex-1 flex flex-col justify-between">

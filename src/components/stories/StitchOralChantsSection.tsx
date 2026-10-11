@@ -23,10 +23,10 @@ const ORAL_CHANTS_DATA: OralChant[] = [
     tradition: "Lost-Wax Bronze Metallurgy",
     region: "Aranmula, Kerala",
     duration: "4:12",
-    practitioner: "S. Janardhanan Achari",
-    lineage: "Hereditary Guild Lineage (8th Gen)",
+    practitioner: "Vishwakarma Artisan Tradition",
+    lineage: "Oral Metallurgical Chants",
     audioSample: "Rhythmic oral proportions chanted during copper-tin crucible pour at dawn.",
-    summary: "The secret 70:30 bell-metal alloy ratio is never committed to parchment; it is recited exclusively in Sanskrit-Malayalam metre while melting ore.",
+    summary: "The secret bell-metal alloy ratio is traditionally preserved in Sanskrit-Malayalam metre recited while melting ore in Kerala craft clusters.",
     image: "https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=500&q=80",
   },
   {
@@ -35,10 +35,10 @@ const ORAL_CHANTS_DATA: OralChant[] = [
     tradition: "Caucasian Highland Polyphony",
     region: "Mestia, Svaneti, Georgia",
     duration: "3:45",
-    practitioner: "Guram Chartolani",
-    lineage: "Svan Highland Elder Choir",
+    practitioner: "Svaneti Folk Ensemble",
+    lineage: "Highland Polyphonic Chants",
     audioSample: "Unaccompanied three-voice acoustic dissonances recorded inside stone defense towers.",
-    summary: "Pre-Christian solstice chants preserved in untranslated medieval Svan dialect, sung to protect high-altitude rye seed harvests.",
+    summary: "Pre-Christian solstice chants preserved in untranslated medieval Svan dialect, sung during high-altitude rye seed ceremonies.",
     image: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=500&q=80",
   },
   {
@@ -47,8 +47,8 @@ const ORAL_CHANTS_DATA: OralChant[] = [
     tradition: "Chishti Sufi Zikr",
     region: "Delhi, India",
     duration: "5:20",
-    practitioner: "Ustad Meraj Nizami Lineage",
-    lineage: "750-year Shrine Qawwal Lineage",
+    practitioner: "Nizamuddin Dargah Shrine Tradition",
+    lineage: "Shrine Qawwali Heritage",
     audioSample: "Hand-pumped harmonium and syncopated clapping building into meditative trance.",
     summary: "Thirteenth-century Persian verses by Amir Khusrau sung in the open courtyard on Thursday twilights, fostering shared interfaith sanctuary.",
     image: "https://images.unsplash.com/photo-1512816943410-14e606b83e85?auto=format&fit=crop&w=500&q=80",
@@ -79,14 +79,14 @@ export function StitchOralChantsSection() {
             Sacred Oral Chants & Field Recordings
           </h2>
           <p className="text-xs sm:text-sm text-muted-foreground max-w-2xl mt-1">
-            High-fidelity recordings of lineage chants, workshop verses, and ancestral meters that were never meant to be flattened into silent text.
+            Audio recordings of lineage chants, workshop verses, and ancestral meters that were never meant to be flattened into silent text.
           </p>
         </div>
         <Link
           to="/stories"
           className="text-xs font-semibold text-terracotta hover:underline flex items-center gap-1 shrink-0"
         >
-          <span>View all 120+ recordings</span>
+          <span>Explore Audio Archives</span>
           <ArrowRight className="size-3" />
         </Link>
       </div>
@@ -163,9 +163,9 @@ export function StitchOralChantsSection() {
 
               <div className="p-5 pt-0">
                 <div className="pt-3 border-t border-border/40 flex items-center justify-between text-xs">
-                  <span className="text-[11px] text-emerald-600 flex items-center gap-1 font-medium">
+                  <span className="text-[11px] text-muted-foreground flex items-center gap-1 font-medium">
                     <Award className="size-3.5" />
-                    Verified Custodian
+                    Archival Audio Sample
                   </span>
                   <button
                     type="button"

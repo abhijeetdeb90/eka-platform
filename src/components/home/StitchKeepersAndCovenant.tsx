@@ -3,105 +3,109 @@ import { Link } from "@tanstack/react-router";
 import { ShieldCheck, ArrowRight, UserCheck, EyeOff, FileText } from "lucide-react";
 
 export function StitchKeepersAndCovenant() {
-  const stewards = [
+  const traditions = [
     {
-      name: "Pt. Ramakrishna Shastry",
-      role: "Vedic Chanting Master",
+      title: "Rigvedic Oral Chanting",
+      category: "Oral Intangible Heritage",
       region: "Varanasi, India",
       image: "https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=400&q=80",
-      tradition: "Rigvedic Oral Recitation (43rd Gen)",
-      quote: "Breath and tone carry what paper cannot record.",
+      discipline: "Metric Recitation & Vedic Phonetics",
+      quote: "Breath, pitch, and accent carry what paper alone cannot preserve.",
+      status: "UNESCO Recognized",
     },
     {
-      name: "Sen Soshitsu",
-      role: "Chado Tea Master",
+      title: "Chadō (The Way of Tea)",
+      category: "Aesthetic & Living Philosophy",
       region: "Kyoto, Japan",
       image: "https://images.unsplash.com/photo-1542282088-fe8426682b8f?auto=format&fit=crop&w=400&q=80",
-      tradition: "Urasenke Way of Tea",
-      quote: "One time, one meeting — cherishing each human encounter.",
+      discipline: "Ritual Preparation & Hospitality",
+      quote: "Ichi-go ichi-e: Cherishing each encounter as an unrepeatable moment.",
+      status: "Living Heritage",
     },
     {
-      name: "Doña Elena Quintero",
-      role: "Natural Dye Weaver",
+      title: "Zapotec Natural Dye Weaving",
+      category: "Artisan Guild Heritage",
       region: "Oaxaca, Mexico",
       image: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=400&q=80",
-      tradition: "Zapotec Cochineal & Indigo Guild",
-      quote: "The wool remembers every river and every grandmother's recipe.",
+      discipline: "Cochineal & Handloom Weaving",
+      quote: "The wool carries generational memory through wild botanical dyes.",
+      status: "Community Tradition",
     },
     {
-      name: "Lalla Fatima Zahra",
-      role: "Spice Lore Custodian",
-      region: "Fez, Morocco",
+      title: "North African Spice Alchemy",
+      category: "Culinary & Herbal Traditions",
+      region: "Fez & Marrakesh, Morocco",
       image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80",
-      tradition: "Heirloom Ras el Hanout Lineage",
-      quote: "A kitchen is not a recipe book; it is a shared hearth of memory.",
+      discipline: "Heirloom Ras el Hanout Craft",
+      quote: "The communal hearth is not just cooking; it is shared cultural memory.",
+      status: "Living Culinary Lore",
     },
   ];
 
   return (
     <section className="container-eka mt-20">
-      {/* SECTION 4: MEET THE KEEPERS */}
+      {/* SECTION 4: LIVING TRADITIONS SPOTLIGHT */}
       <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
         <div>
           <span className="font-mono text-[10px] uppercase text-terracotta font-semibold tracking-widest">
-            Living Guardianship
+            Living Heritage
           </span>
           <h2 className="font-serif text-3xl sm:text-4xl font-normal text-foreground tracking-tight mt-1">
-            Meet the Keepers of Living Memory
+            Spotlight on Living Cultural Traditions
           </h2>
           <p className="text-xs sm:text-sm text-muted-foreground max-w-2xl mt-2">
-            Not creators chasing viral volatility, but master practitioners, oral bards, and family matriarchs safeguarding irreplaceable human lineages.
+            Explore documented living heritages, master craft disciplines, and community traditions preserved across generations.
           </p>
         </div>
         <Link
-          to="/community"
+          to="/discover"
           className="inline-flex items-center gap-1.5 text-xs font-semibold text-terracotta hover:underline shrink-0"
         >
-          <span>Explore All Stewards</span>
+          <span>Explore All Traditions</span>
           <ArrowRight className="size-3.5" />
         </Link>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        {stewards.map((s) => (
+        {traditions.map((t) => (
           <div
-            key={s.name}
+            key={t.title}
             className="group rounded-2xl border border-border/80 bg-card overflow-hidden shadow-xs hover:shadow-calm hover:border-terracotta/40 transition-all flex flex-col justify-between"
           >
             <div className="aspect-[4/3] w-full overflow-hidden bg-accent/40 relative">
               <img
-                src={s.image}
-                alt={s.name}
+                src={t.image}
+                alt={t.title}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 loading="lazy"
               />
               <span className="absolute bottom-2 left-2 bg-background/90 backdrop-blur-md px-2 py-0.5 rounded text-[10px] font-mono uppercase tracking-wider text-foreground">
-                {s.region}
+                {t.region}
               </span>
             </div>
             <div className="p-4 flex-1 flex flex-col justify-between">
               <div>
                 <span className="font-mono text-[10px] uppercase tracking-wider text-terracotta font-semibold">
-                  {s.tradition}
+                  {t.category}
                 </span>
                 <h3 className="font-serif text-base font-semibold text-foreground mt-0.5">
-                  {s.name}
+                  {t.title}
                 </h3>
-                <p className="text-xs text-muted-foreground mt-0.5 mb-2">{s.role}</p>
+                <p className="text-xs text-muted-foreground mt-0.5 mb-2">{t.discipline}</p>
                 <p className="text-xs italic text-muted-foreground/80 leading-relaxed border-l-2 border-terracotta/30 pl-2">
-                  "{s.quote}"
+                  "{t.quote}"
                 </p>
               </div>
               <div className="mt-4 pt-3 border-t border-border/40 flex items-center justify-between text-xs">
                 <span className="text-[11px] text-muted-foreground flex items-center gap-1">
-                  <ShieldCheck className="size-3.5 text-emerald-600" />
-                  Verified Lineage
+                  <ShieldCheck className="size-3.5 text-muted-foreground" />
+                  {t.status}
                 </span>
                 <Link
-                  to="/community"
+                  to="/discover"
                   className="text-terracotta hover:underline font-medium text-[11px]"
                 >
-                  View Lore
+                  Explore
                 </Link>
               </div>
             </div>
@@ -167,14 +171,14 @@ export function StitchKeepersAndCovenant() {
                 <UserCheck className="size-5" />
               </div>
               <h4 className="font-serif text-base font-semibold text-foreground mb-2">
-                Human Identity Verification
+                Authentic Human Community
               </h4>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Members are real human participants. Contributor lineages undergo peer and community review before carrying epistemic badges.
+                Built for real people connecting across cultures. We prioritize authentic member contributions over synthetic content farms and algorithmic engagement bait.
               </p>
             </div>
             <span className="mt-4 text-[10px] font-mono uppercase tracking-wider text-emerald-600 font-semibold">
-              Zero Synthetic Accounts
+              Human-Centered Platform
             </span>
           </div>
 
@@ -184,14 +188,14 @@ export function StitchKeepersAndCovenant() {
                 <ShieldCheck className="size-5" />
               </div>
               <h4 className="font-serif text-base font-semibold text-foreground mb-2">
-                Hereditary Custodian Sovereign Lore
+                Cultural Attribution & Rights
               </h4>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Traditional knowledge belongs to the practitioners. Custodians retain complete copyright, attribution, and licensing rights over sacred recordings.
+                Traditional knowledge belongs to its practitioners. Contributors maintain attribution, copyright, and sovereignty over their shared recordings and cultural stories.
               </p>
             </div>
             <span className="mt-4 text-[10px] font-mono uppercase tracking-wider text-terracotta font-semibold">
-              Custody Sovereignty
+              Author Sovereignty
             </span>
           </div>
 
@@ -201,10 +205,10 @@ export function StitchKeepersAndCovenant() {
                 <EyeOff className="size-5" />
               </div>
               <h4 className="font-serif text-base font-semibold text-foreground mb-2">
-                Data Dignity & Zero Ad Tracking
+                Data Dignity & Privacy
               </h4>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                We never monetize your attention with behavioral advertising or trade cultural browsing habits with data brokers.
+                We do not monetize your curiosity with behavioral ad tracking or selling browsing data. Your cultural exploration remains private and dignified.
               </p>
             </div>
             <span className="mt-4 text-[10px] font-mono uppercase tracking-wider text-muted-foreground font-semibold">
