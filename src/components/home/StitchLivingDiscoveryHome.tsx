@@ -116,8 +116,8 @@ export function StitchLivingDiscoveryHome({ profile, loginForm }: StitchLivingDi
       duration: "0:45 Reel",
       location: "Varanasi, India",
       title: "The Twilight Fire Offering of Dashashwamedh",
-      custodian: "Pt. Ramakrishna Shastry",
-      avatarLetter: "R",
+      custodian: "Varanasi Aarti Tradition",
+      avatarLetter: "V",
       image:
         "https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&w=800&q=80",
     },
@@ -125,8 +125,8 @@ export function StitchLivingDiscoveryHome({ profile, loginForm }: StitchLivingDi
       duration: "1:00 Reel",
       location: "Kyoto, Japan",
       title: "Chado: Silence Whispered into Matcha",
-      custodian: "Master Sen Soukaku",
-      avatarLetter: "S",
+      custodian: "Kyoto Chado Heritage",
+      avatarLetter: "K",
       image:
         "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=800&q=80",
     },
@@ -134,8 +134,8 @@ export function StitchLivingDiscoveryHome({ profile, loginForm }: StitchLivingDi
       duration: "1:15 Reel",
       location: "Kolkata, India",
       title: "Kolkata Pujo: The Art of Living Community Shrines",
-      custodian: "Subhadra Sen",
-      avatarLetter: "S",
+      custodian: "Kumortuli Artisan Guild",
+      avatarLetter: "K",
       image:
         "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80",
     },
@@ -143,8 +143,8 @@ export function StitchLivingDiscoveryHome({ profile, loginForm }: StitchLivingDi
       duration: "1:05 Reel",
       location: "Fez, Morocco",
       title: "Thousand-Year Terraces of Chouara",
-      custodian: "Maâlem Tariq Benjelloun",
-      avatarLetter: "T",
+      custodian: "Chouara Tannery Heritage",
+      avatarLetter: "C",
       image:
         "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?auto=format&fit=crop&w=800&q=80",
     },
@@ -301,10 +301,10 @@ export function StitchLivingDiscoveryHome({ profile, loginForm }: StitchLivingDi
                 </div>
                 <div>
                   <p className="font-serif text-base font-semibold text-[#1e1b19] dark:text-foreground">
-                    Human Provenance
+                    Human-Centered
                   </p>
                   <p className="text-xs text-[#59413a] dark:text-muted-foreground mt-1 leading-relaxed">
-                    Zero bots. No synthetic distortions. Grounded in authentic elder lineage.
+                    No bot accounts. No synthetic engagement. Rooted in real human traditions and community inquiry.
                   </p>
                 </div>
               </div>
@@ -581,59 +581,59 @@ export function StitchLivingDiscoveryHome({ profile, loginForm }: StitchLivingDi
       </section>
 
       {/* =========================================================================
-          SECTION 5: VERIFIED CUSTODIANS & CULTURAL PROVENANCE
+          SECTION 5: DOCUMENTED TRADITIONS & LIVING CRAFTS
           ========================================================================= */}
       <section className="w-full max-w-[1240px] mx-auto px-4 sm:px-8 py-16 space-y-10" id="custodians">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ffdbd0] text-[#832600] font-mono text-[10px] font-bold uppercase mb-2">
-              <ShieldCheck className="size-3.5" />
-              <span>100% Real Human Heritage • Zero Synthetic Fakes</span>
+              <BookOpen className="size-3.5" />
+              <span>Documented Lineages & Craft Heritage</span>
             </div>
             <h2 className="font-serif text-3xl sm:text-4xl text-[#1e1b19] dark:text-foreground tracking-tight">
-              People make culture living
+              Living Traditions in Focus
             </h2>
             <p className="text-sm sm:text-base text-[#59413a] dark:text-muted-foreground max-w-2xl mt-1">
-              EKA is built around real community elders and certified guild artisans. We verify oral lineages at the root, ensuring custodians control how their knowledge is shared.
+              EKA highlights living traditions, craft guilds, and regional memories. We connect people through verified cultural context and authentic human sharing.
             </p>
           </div>
           <Link
-            to={profile ? "/create" : "/membership"}
+            to={profile ? "/create" : "/join"}
             className="px-6 py-3 rounded-full bg-[#c2410c] hover:bg-[#9b2f00] text-white text-xs sm:text-sm font-semibold transition-colors flex items-center gap-2 self-start md:self-auto shadow-sm active:scale-95"
           >
             <PlusCircle className="size-4" />
-            <span>Register as Custodian</span>
+            <span>Share a Living Tradition</span>
           </Link>
         </div>
 
-        {/* 3 Verified Custodians */}
+        {/* 3 Documented Traditions */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[
             {
-              type: "Ecological Lineage",
-              badge: "Verified",
-              name: "Bishnoi Community Stewards",
+              type: "Ecological Tradition",
+              badge: "Documented",
+              name: "Bishnoi Community Lineage",
               place: "Thar Desert, Rajasthan, India",
-              desc: "For 500 years, keeping 29 sacred tenets that forbid felling green trees and protect wild blackbucks and gazelles with their own lives.",
-              meta: "Lineage: 1485 CE • 84 Villages",
+              desc: "Carrying 29 tenets established by Guru Jambheshwar in 1485 that protect indigenous khejri trees and desert wildlife.",
+              meta: "Documented tradition since 1485 CE",
               link: "/community",
             },
             {
-              type: "Sacred Metallurgy Guild",
-              badge: "GI Certified",
-              name: "Aranmula Vishwakarma Masters",
+              type: "Metallurgy Craft",
+              badge: "GI Recognized",
+              name: "Aranmula Metal Mirror Craft",
               place: "Pamba River Valley, Kerala, India",
-              desc: "Eight remaining families casting GI-certified reflective bronze mirrors using secret copper-tin alloy formulas handed down verbally.",
-              meta: "8 Guild Families • GI 2004",
+              desc: "Traditional casting of front-surface reflective bronze mirrors using specialized copper-tin metallurgy recognized under Geographical Indication.",
+              meta: "Official GI Status (GI 2004)",
               link: "/discover?topic=crafts",
             },
             {
-              type: "Monastic Mask Guild",
-              badge: "Verified",
-              name: "Majuli Sattriya Mask Makers",
+              type: "Monastic Mask Craft",
+              badge: "Satra Lineage",
+              name: "Majuli Sattriya Mask Tradition",
               place: "Brahmaputra Island, Assam, India",
-              desc: "Crafting sacred theatre masks from river clay, bamboo, and cow dung in living river-island monasteries since the 15th-century Bhakti revival.",
-              meta: "Samaguri Satra • 6 Generations",
+              desc: "Sacred theatre masks fashioned from bamboo, clay, and cloth in river-island monasteries preserving medieval Bhakti traditions.",
+              meta: "Living Satra Heritage",
               link: "/community",
             },
           ].map((cust, idx) => (
@@ -837,7 +837,7 @@ export function StitchLivingDiscoveryHome({ profile, loginForm }: StitchLivingDi
 
             <div className="space-y-2">
               <span className="font-mono text-[10px] uppercase font-bold text-[#59413a] dark:text-muted-foreground">
-                Living Synthesis • Verified Human Sources
+                Cultural Context • Documented Traditions
               </span>
               <p className="text-sm text-[#1e1b19] dark:text-foreground/90 leading-relaxed">
                 In Vedic cosmology and folk practice across the Indian subcontinent, dusk (Sandhya) marks the threshold between solar diurnal order and nightly dissolution. Fire (Agni) is the sole earthly element whose flame always climbs vertically regardless of angle, symbolizing consciousness offering itself back upward to its universal source.
@@ -846,7 +846,7 @@ export function StitchLivingDiscoveryHome({ profile, loginForm }: StitchLivingDi
 
             <div className="flex items-center justify-between pt-2 text-xs text-[#59413a] dark:text-muted-foreground border-t border-[#f4ece8] dark:border-border">
               <span className="truncate max-w-[240px]">
-                Verified by: Pt. R. Shastry • Varanasi Sanskrit University
+                Reference: Indic Ritual Traditions & Classical Texts
               </span>
               <button
                 onClick={() => {
