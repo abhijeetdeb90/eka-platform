@@ -3,8 +3,8 @@ import { ArrowLeft, Heart, Compass, Users, Sparkles, BookOpen, Globe2, ShieldChe
 import { Button } from "@/components/ui/button";
 import { EkaLogo } from "@/components/brand/Logo";
 import { MetaTags } from "@/components/seo";
-import { ConsumerHeader } from "@/apps/consumer/components/ConsumerHeader";
-import { ConsumerFooter } from "@/apps/consumer/components/ConsumerFooter";
+import { SiteHeader } from "@/components/site/SiteHeader";
+import { SiteFooter } from "@/components/site/SiteFooter";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -37,7 +37,7 @@ function AboutPage() {
         canonicalUrl="/about"
       />
 
-      <ConsumerHeader />
+      <SiteHeader />
 
       <main className="flex-1 container-eka max-w-4xl py-12 sm:py-16 space-y-12">
         <div className="space-y-4">
@@ -120,7 +120,7 @@ function AboutPage() {
         </div>
       </main>
 
-      <ConsumerFooter />
+      <SiteFooter />
     </div>
   );
 }

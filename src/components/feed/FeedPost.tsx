@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { Heart, MessageCircle, Share2, Bookmark, UserPlus, MapPin, ShieldCheck, CheckCircle2, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ConnectedKnowledgeCard } from "@/components/knowledge/ConnectedKnowledgeCard";
@@ -56,7 +56,7 @@ export function FeedPost({ avatar, name, identity, time, location, content, veri
             </div>
             <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
               <span>{identity}</span>
-              <span>â€¢</span>
+              <span>•</span>
               <span>{time}</span>
             </div>
             {location && (

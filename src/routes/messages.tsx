@@ -239,7 +239,7 @@ function MessagesPage() {
 
           <div className="rounded-xl border border-primary/20 bg-primary/5 px-3.5 py-1.5 flex items-center gap-2 text-xs text-muted-foreground">
             <Lock className="size-3.5 text-primary" />
-            <span>End-to-end respectful discourse · DPDP Compliant</span>
+            <span>End-to-end respectful discourse · DPDP Privacy Aligned</span>
           </div>
         </div>
 

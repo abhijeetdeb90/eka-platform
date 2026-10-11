@@ -992,9 +992,9 @@ function EkaStoriesPage() {
             imageUrl="/places/varanasi.jpg"
             description="Every evening at dusk, seven young priests lift 4.5kg brass tiered lamps in synchrony. The conch shells sound across the water as fire is returned to the river as living gratitude for existence."
             creator={{
-              name: "Pt. Ramakrishna Shastry",
-              role: "Eighth-Generation Archaka Priest",
-              verified: true,
+              name: "Varanasi Ganga Aarti Tradition",
+              role: "Public Living Ritual (Documented)",
+              verified: false,
             }}
             ctaLabel="Watch Story Experience"
             onClick={() => openReelTheater(0)}

@@ -312,7 +312,7 @@ function InvestorGatewayPage() {
           </p>
           <div className="flex items-center justify-center gap-2 text-xs">
             <ShieldCheck className="size-4 text-emerald-600" />
-            <span>Digital Personal Data Protection (DPDP) Act, 2023 Compliant</span>
+            <span>Designed in accordance with the Digital Personal Data Protection (DPDP) Act, 2023</span>
           </div>
         </div>
       </footer>

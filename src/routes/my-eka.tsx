@@ -1,5 +1,5 @@
 // ==============================================================================
-// MY EKA â€” USER'S PERSONAL SANCTUARY LAYER
+// MY EKA — USER'S PERSONAL SANCTUARY LAYER
 // ==============================================================================
 
 import { useState } from "react";

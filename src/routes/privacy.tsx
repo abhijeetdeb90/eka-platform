@@ -111,7 +111,7 @@ function PrivacyPolicyPage() {
                 <a href="mailto:grievance@eka.earth" className="text-terracotta underline">
                   grievance@eka.earth
                 </a>
-                )
+                {" "}· During beta preview: inquiries can also be submitted directly via in-app settings or support)
               </p>
             </div>
           </section>

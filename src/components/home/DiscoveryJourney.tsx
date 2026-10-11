@@ -614,11 +614,11 @@ export function DiscoveryJourney() {
           <div className="flex items-center gap-2">
             <span className="text-[11px] font-mono uppercase tracking-widest text-forest font-semibold flex items-center gap-1.5">
               <Users className="size-3.5" />
-              Living Custodians
+              Living Traditions
             </span>
             <span className="text-border">•</span>
             <span className="text-[10px] font-mono uppercase text-muted-foreground">
-              100% Real Human Heritage
+              Documented Public Cultural Lineages
             </span>
           </div>
           <h2 className="font-display font-serif text-2xl sm:text-4xl font-normal mt-1">
@@ -664,7 +664,7 @@ export function DiscoveryJourney() {
               </div>
 
               <div className="pt-3 border-t border-border/60 flex items-center justify-between text-[11px] font-mono">
-                <span className="text-muted-foreground">Verified Stewardship</span>
+                <span className="text-muted-foreground">Public Documentation</span>
                 <Link
                   to="/discover"
                   className="text-terracotta hover:underline inline-flex items-center gap-1"

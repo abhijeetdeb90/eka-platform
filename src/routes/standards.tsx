@@ -244,9 +244,9 @@ function StandardsPage() {
           </p>
         </section>
 
-        <section className="mt-8 rounded-2xl border border-border bg-card p-6">
+        <section id="verification" className="mt-8 rounded-2xl border border-border bg-card p-6">
           <h2 className="flex items-center gap-2 font-display text-xl">
-            <BookOpen className="size-5 text-primary" aria-hidden /> The 5-Tier Epistemic Canon
+            <BookOpen className="size-5 text-primary" aria-hidden /> Verification & The 5-Tier Epistemic Canon
           </h2>
           <p className="mt-3 text-sm text-muted-foreground">
             To prevent distortion, every piece of cultural knowledge in EKA is classified along two axes: <strong>Epistemic Type</strong> and <strong>Verification Level (L0 to L5)</strong>, supplemented by explicit provenance flags:

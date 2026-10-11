@@ -42,19 +42,19 @@ export const Route = createFileRoute("/feed")({
   component: FeedPage,
 });
 
-// Curated starter seed posts for when the database table has no user posts yet
+// Curated demo starter seed posts labeled transparently per EKA editorial standards
 const SAMPLE_CULTURAL_POSTS = [
   {
     id: "sample-feed-1",
     author: {
-      display_name: "Master Sen Soukaku",
-      account_type: "Tea Master",
+      display_name: "Kyoto Chado Documentation",
+      account_type: "Demo · Cultural Archive",
       avatar_url: "",
     },
     created_at: new Date(Date.now() - 3600000 * 2).toISOString(),
     tradition: "Kyoto, Japan",
     topic: "Chado & The Art of Stillness",
-    content: "In our morning preparation, we spent twenty minutes sweeping the garden path (roji) of damp pine needles. The guest has not yet arrived, yet the hospitality (omotenashi) began at dawn.",
+    content: "In morning tea room preparation, twenty minutes are dedicated to sweeping the garden path (roji) of damp pine needles. The guest has not yet arrived, yet the hospitality (omotenashi) began at dawn.",
     media_url: "/places/kyoto.jpg",
     type: "post",
     is_sample: true,
@@ -62,14 +62,14 @@ const SAMPLE_CULTURAL_POSTS = [
   {
     id: "sample-feed-2",
     author: {
-      display_name: "Doña Elena Morales",
-      account_type: "Traditional Cook",
+      display_name: "Oaxaca Culinary Documentation",
+      account_type: "Demo · Cultural Archive",
       avatar_url: "",
     },
     created_at: new Date(Date.now() - 3600000 * 6).toISOString(),
     tradition: "Oaxaca, Mexico",
     topic: "Ceremonial Mole Negro",
-    content: "Toasted the mulato and pasilla chiles over open flame until black. The smoke carries memories of our grandmothers; the metate stone grinds patience into sustenance.",
+    content: "Toasting mulato and pasilla chiles over open flame until black. The smoke carries memories of regional hearths; the volcanic stone metate grinds patience into sustenance.",
     media_url: "/content/reading-table.jpg",
     type: "post",
     is_sample: true,
@@ -77,14 +77,14 @@ const SAMPLE_CULTURAL_POSTS = [
   {
     id: "sample-feed-3",
     author: {
-      display_name: "K. Sudhakaran Achari",
-      account_type: "Sacred Metallurgist",
+      display_name: "Aranmula Heritage Documentation",
+      account_type: "Demo · Cultural Archive",
       avatar_url: "",
     },
     created_at: new Date(Date.now() - 3600000 * 14).toISOString(),
     tradition: "Kerala, India",
     topic: "Aranmula Metal Mirror Casting",
-    content: "The molten bronze blend reached the golden glow. Unlike glass, the metal mirror does not reflect back mere surface appearance—it returns light undistorted.",
+    content: "The molten bronze alloy reaches a precise golden glow. Unlike glass, the metal mirror does not reflect back mere surface refraction—it returns light undistorted.",
     media_url: "/content/monastery-corridor.jpg",
     type: "post",
     is_sample: true,
@@ -239,7 +239,7 @@ function FeedPage() {
                   identity={post.author?.account_type || "Contributor"}
                   time={new Date(post.created_at).toLocaleDateString()}
                   location={post.tradition || undefined}
-                  verifiedHuman={true}
+                  verifiedHuman={!post.is_sample}
                   topic={post.topic || undefined}
                   content={
                     <div className="space-y-3">
