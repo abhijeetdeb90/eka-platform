@@ -32,6 +32,7 @@ import { Route as CrmRouteImport } from './routes/crm'
 import { Route as DiscoverRouteImport } from './routes/discover'
 import { Route as EnterpriseRouteImport } from './routes/enterprise'
 import { Route as FeedRouteImport } from './routes/feed'
+import { Route as FindYourPeopleRouteImport } from './routes/find-your-people'
 import { Route as FounderRouteImport } from './routes/founder'
 import { Route as FounderAdminRouteImport } from './routes/founder-admin'
 import { Route as GiveRouteImport } from './routes/give'
@@ -280,6 +281,11 @@ const EnterpriseRoute = EnterpriseRouteImport.update({
 const FeedRoute = FeedRouteImport.update({
   id: '/feed',
   path: '/feed',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FindYourPeopleRoute = FindYourPeopleRouteImport.update({
+  id: '/find-your-people',
+  path: '/find-your-people',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FounderRoute = FounderRouteImport.update({
@@ -1020,6 +1026,7 @@ export interface FileRoutesByFullPath {
   '/discover': typeof DiscoverRoute
   '/enterprise': typeof EnterpriseRoute
   '/feed': typeof FeedRoute
+  '/find-your-people': typeof FindYourPeopleRoute
   '/founder': typeof FounderRouteWithChildren
   '/founder-admin': typeof FounderAdminRouteWithChildren
   '/give': typeof GiveRoute
@@ -1178,6 +1185,7 @@ export interface FileRoutesByTo {
   '/discover': typeof DiscoverRoute
   '/enterprise': typeof EnterpriseRoute
   '/feed': typeof FeedRoute
+  '/find-your-people': typeof FindYourPeopleRoute
   '/founder': typeof FounderRouteWithChildren
   '/give': typeof GiveRoute
   '/home': typeof HomeRoute
@@ -1337,6 +1345,7 @@ export interface FileRoutesById {
   '/discover': typeof DiscoverRoute
   '/enterprise': typeof EnterpriseRoute
   '/feed': typeof FeedRoute
+  '/find-your-people': typeof FindYourPeopleRoute
   '/founder': typeof FounderRouteWithChildren
   '/founder-admin': typeof FounderAdminRouteWithChildren
   '/give': typeof GiveRoute
@@ -1498,6 +1507,7 @@ export interface FileRouteTypes {
     | '/discover'
     | '/enterprise'
     | '/feed'
+    | '/find-your-people'
     | '/founder'
     | '/founder-admin'
     | '/give'
@@ -1656,6 +1666,7 @@ export interface FileRouteTypes {
     | '/discover'
     | '/enterprise'
     | '/feed'
+    | '/find-your-people'
     | '/founder'
     | '/give'
     | '/home'
@@ -1814,6 +1825,7 @@ export interface FileRouteTypes {
     | '/discover'
     | '/enterprise'
     | '/feed'
+    | '/find-your-people'
     | '/founder'
     | '/founder-admin'
     | '/give'
@@ -1975,6 +1987,7 @@ export interface RootRouteChildren {
   DiscoverRoute: typeof DiscoverRoute
   EnterpriseRoute: typeof EnterpriseRoute
   FeedRoute: typeof FeedRoute
+  FindYourPeopleRoute: typeof FindYourPeopleRoute
   FounderRoute: typeof FounderRouteWithChildren
   FounderAdminRoute: typeof FounderAdminRouteWithChildren
   GiveRoute: typeof GiveRoute
@@ -2193,6 +2206,13 @@ declare module '@tanstack/react-router' {
       path: '/feed'
       fullPath: '/feed'
       preLoaderRoute: typeof FeedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/find-your-people': {
+      id: '/find-your-people'
+      path: '/find-your-people'
+      fullPath: '/find-your-people'
+      preLoaderRoute: typeof FindYourPeopleRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/founder': {
@@ -3415,6 +3435,7 @@ const rootRouteChildren: RootRouteChildren = {
   DiscoverRoute: DiscoverRoute,
   EnterpriseRoute: EnterpriseRoute,
   FeedRoute: FeedRoute,
+  FindYourPeopleRoute: FindYourPeopleRoute,
   FounderRoute: FounderRouteWithChildren,
   FounderAdminRoute: FounderAdminRouteWithChildren,
   GiveRoute: GiveRoute,

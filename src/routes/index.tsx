@@ -10,6 +10,8 @@ import { EKADynamicBanner } from "@/components/home/EKADynamicBanner";
 import { LivingWorldVisual } from "@/components/home/LivingWorldVisual";
 import { HomeStoriesSection } from "@/components/home/HomeStoriesSection";
 import { DiscoveryJourney } from "@/components/home/DiscoveryJourney";
+import { StitchHumanPrinciples } from "@/components/home/StitchHumanPrinciples";
+import { StitchKeepersAndCovenant } from "@/components/home/StitchKeepersAndCovenant";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Sparkles, Home, Compass, Film, MessageSquare, Bell, Bookmark, User as UserIcon, Settings, PlusCircle, CheckCircle2 } from "lucide-react";
@@ -243,6 +245,12 @@ function EkaLandingPage({ profile }: { profile: any }) {
           </div>
         </div>
       </section>
+
+      {/* Stitch Human Covenant & Strategic Principles */}
+      <StitchHumanPrinciples />
+
+      {/* Stitch Keepers of Living Memory, Founding Philosophy & Trust Standards */}
+      <StitchKeepersAndCovenant />
 
       {/* Continue Exploring (Discovery Journey) */}
       <div className="mt-16">

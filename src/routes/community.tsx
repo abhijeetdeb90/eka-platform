@@ -193,25 +193,31 @@ function CommunityPage() {
 
       <main id="main-content" className="flex-1 py-8 sm:py-12 space-y-8">
 
-        {/* ── Page Header ── */}
-        <section className="container-eka max-w-3xl">
-          <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-terracotta font-semibold mb-3">
-            COMMUNITIES
-          </p>
-          <h1 className="font-serif text-3xl sm:text-4xl font-normal text-foreground leading-tight">
-            People who share something worth preserving.
-          </h1>
-          <p className="mt-3 text-sm text-muted-foreground max-w-xl">
-            Join groups built around traditions, crafts, places, languages, food, faith, and local life.
-          </p>
-          <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
-            <ShieldCheck className="size-4 text-emerald-600 shrink-0" />
-            <span>
-              Respect-first. No spam or outrage.{" "}
-              <Link to="/standards" className="text-foreground hover:underline underline-offset-2">
-                Community guidelines →
+        {/* ── Page Header (Stitch Living Hearths Discovery) ── */}
+        <section className="container-eka">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-border/60">
+            <div className="max-w-3xl">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent/70 text-terracotta font-mono text-[10px] uppercase tracking-wider font-semibold mb-3">
+                <ShieldCheck className="size-3.5" />
+                Living Guilds & Hearth Circles
+              </div>
+              <h1 className="font-serif text-3xl sm:text-5xl font-normal text-foreground leading-[1.15]">
+                Hearths of Living Practice
+              </h1>
+              <p className="mt-3 text-sm sm:text-base text-muted-foreground leading-relaxed max-w-2xl">
+                Gather around heirloom foodways, lost-wax metallurgy, untranslatable poetry, and courtyard architecture. Stewarded by verified human practitioners.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2 self-start md:self-end">
+              <Link
+                to="/find-your-people"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-accent/60 hover:bg-accent text-xs font-semibold text-foreground transition-colors"
+              >
+                <Users className="size-3.5 text-terracotta" />
+                <span>Find Your People</span>
               </Link>
-            </span>
+            </div>
           </div>
         </section>
 
@@ -350,6 +356,39 @@ function CommunityPage() {
               <p className="text-sm">No communities found. Try a different search or category.</p>
             </div>
           )}
+        </section>
+
+        {/* ── Stitch Community Charter & Moderation Pledge ── */}
+        <section className="container-eka">
+          <div className="rounded-3xl bg-sand/30 dark:bg-card/50 border border-border/80 p-8 sm:p-10">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+              <div className="md:col-span-8">
+                <span className="font-mono text-[10px] uppercase text-terracotta font-semibold tracking-widest">
+                  Community Covenant & Protection
+                </span>
+                <h3 className="font-serif text-2xl sm:text-3xl font-normal text-foreground mt-1 mb-3">
+                  A Sanctuary Protected by Human Stewards
+                </h3>
+                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                  Every circle on EKA is safeguarded by hereditary practitioners and community elders. We do not tolerate hate speech, commercial spam, algorithmic manipulation, or uncredited cultural appropriation.
+                </p>
+              </div>
+              <div className="md:col-span-4 flex flex-col sm:flex-row md:flex-col gap-3 justify-end">
+                <Link
+                  to="/standards"
+                  className="inline-flex items-center justify-center rounded-xl bg-card border border-border/80 hover:bg-accent px-4 py-2.5 text-xs font-semibold text-foreground transition-colors"
+                >
+                  <span>Read Community Charter</span>
+                </Link>
+                <Link
+                  to="/find-your-people"
+                  className="inline-flex items-center justify-center rounded-xl bg-terracotta hover:bg-terracotta/90 text-white px-4 py-2.5 text-xs font-semibold transition-colors shadow-xs"
+                >
+                  <span>Find Your Circle</span>
+                </Link>
+              </div>
+            </div>
+          </div>
         </section>
       </main>
 

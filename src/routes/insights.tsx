@@ -43,13 +43,20 @@ function InsightsPage() {
   });
 
   return (
-    <div className="min-h-screen bg-neutral-50 flex flex-col font-sans">
+    <div className="min-h-screen bg-background text-foreground flex flex-col font-sans selection:bg-terracotta/20">
       <SiteHeader />
-      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
-        <div className="mb-12 text-center md:text-left">
-          <h1 className="text-4xl font-serif text-neutral-900 mb-4">EKA Insights & Perspectives</h1>
-          <p className="text-lg text-neutral-600 max-w-2xl">
-            Explore cultural stories, deep dives, and expert perspectives grounded in verified history and heritage.
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full space-y-12">
+        {/* Stitch Editorial Insights Hero Header */}
+        <div className="border-b border-border/60 pb-8">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent/70 text-terracotta font-mono text-[10px] uppercase tracking-wider font-semibold mb-3">
+            <BookOpen className="size-3.5" />
+            Founding Philosophy & Living Lore
+          </div>
+          <h1 className="text-3xl sm:text-5xl font-serif text-foreground tracking-tight leading-[1.15] mb-3">
+            EKA Insights & Cultural Perspectives
+          </h1>
+          <p className="text-sm sm:text-base text-muted-foreground max-w-3xl leading-relaxed">
+            Founding essays, philosophical treatises, and field contemplations on human connection, living heritage, and the ethics of memory in an algorithmic age.
           </p>
         </div>
 
