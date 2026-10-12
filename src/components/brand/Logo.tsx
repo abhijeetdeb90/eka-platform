@@ -39,7 +39,7 @@ const SIZE_PRESETS = {
  */
 export function EkaMark({
   className,
-  useVector = true,
+  useVector = false,
   size = "md",
 }: {
   className?: string;
@@ -52,12 +52,12 @@ export function EkaMark({
   if (!useVector && !imageError) {
     return (
       <img
-        src={ekaLogoImg || "/brand/logo-symbol.svg"}
+        src={ekaLogoImg || "/brand/eka-logo.png"}
         alt="EKA Cultural Meridian Emblem"
         loading="eager"
         onError={() => setImageError(true)}
         className={cn(
-          "rounded-full object-contain shrink-0 drop-shadow-xs select-none transition-transform duration-500 hover:scale-105",
+          "rounded-full object-contain shrink-0 select-none transition-transform duration-500 hover:scale-105",
           sizeClass,
           className
         )}
@@ -111,7 +111,7 @@ export function EkaLogo({
   withTagline = false,
   withBeta = false,
   taglineText = "Cultural Intelligence",
-  useVector = true,
+  useVector = false,
   size = "md",
 }: EkaLogoProps) {
   const currentSize = SIZE_PRESETS[size];

@@ -182,7 +182,7 @@ export function CompareCulturesSection() {
         </div>
 
         {/* Featured Question Box */}
-        <div className="rounded-2xl bg-[#F5F3EF] border border-[#E2CED9]/70 p-6 sm:p-10 text-center mb-8 shadow-xs">
+        <div className="rounded-2xl bg-[#FAFAFA] border border-[#E8E2D9] p-6 sm:p-10 text-center mb-8 shadow-xs">
           <span className="text-[11px] font-mono tracking-widest text-[#C45C26] uppercase font-bold block mb-2">
             THE UNIVERSAL HUMAN QUESTION
           </span>
@@ -203,7 +203,7 @@ export function CompareCulturesSection() {
             >
               <div>
                 <div className="flex items-center justify-between text-[11px] font-mono font-semibold text-[#5C5C5C] mb-2">
-                  <span className="bg-[#FAF7F2] px-2 py-0.5 rounded border border-[#E8E2D9]">
+                  <span className="bg-white px-2 py-0.5 rounded border border-[#E8E2D9]">
                     {card.countryCode}
                   </span>
                   <span className="truncate max-w-[120px]">{card.region}</span>

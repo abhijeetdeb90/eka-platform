@@ -161,9 +161,15 @@ function CreateArchivePage() {
       }
 
       setUploadStatus("Saving post...");
+      const trimmedCaption = caption.trim();
+      const trimmedPlace = place.trim();
+      const finalContent = trimmedPlace
+        ? `${trimmedCaption}\n\n📍 ${trimmedPlace}`
+        : trimmedCaption;
+
       const { data, error } = await supabase.from("posts").insert({
         author_id: profile.id,
-        content: caption.trim(),
+        content: finalContent,
         topic: topic.trim() || "Cultural Heritage",
         tradition: culture.trim(),
         type: activeKind,
@@ -194,7 +200,7 @@ function CreateArchivePage() {
   };
 
   return (
-    <div className="min-h-screen bg-sand/20 dark:bg-stone-950 text-foreground flex flex-col selection:bg-terracotta/20">
+    <div className="min-h-screen bg-white text-foreground flex flex-col selection:bg-terracotta/20">
       <SiteHeader />
 
       <main id="main-content" className="flex-1 py-8 sm:py-14 space-y-8 max-w-4xl container-eka">

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 
 export function TwoDoorwaysSection() {
   return (
-    <section className="section-container border-b border-[#E8E2D9] py-16 px-4 sm:px-6 bg-[#FAF7F2]">
+    <section className="section-container border-b border-[#E8E2D9] py-16 px-4 sm:px-6 bg-white">
       <div className="mx-auto max-w-[1120px]">
         <div className="text-center max-w-2xl mx-auto mb-10">
           <span className="text-[11px] font-mono tracking-widest text-[#C45C26] uppercase font-bold block mb-2">

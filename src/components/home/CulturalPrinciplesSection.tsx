@@ -65,7 +65,7 @@ export function CulturalPrinciplesSection() {
             return (
               <div
                 key={idx}
-                className="rounded-2xl border border-[#E8E2D9] bg-[#FAF7F2] p-6 flex flex-col justify-between hover:border-[#C45C26]/40 transition-colors shadow-xs"
+                className="rounded-2xl border border-[#E8E2D9] bg-[#FAFAFA] p-6 flex flex-col justify-between hover:border-[#C45C26]/40 transition-colors shadow-xs"
               >
                 <div>
                   <div className="size-10 rounded-xl bg-white flex items-center justify-center text-[#C45C26] shadow-2xs mb-4 border border-[#E8E2D9]">

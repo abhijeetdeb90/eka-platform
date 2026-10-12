@@ -67,7 +67,7 @@ export function EkaHomePage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#FAF7F2] text-[#1A1A1A] flex flex-col font-sans selection:bg-[#C45C26]/20">
+    <div className="min-h-screen bg-white text-[#1A1A1A] flex flex-col font-sans selection:bg-[#C45C26]/20">
       <SiteHeader />
 
       <main className="flex-1">
@@ -92,7 +92,7 @@ export function EkaHomePage() {
         <ExploreByCulturalCategory className="border-b border-[#E8E2D9] bg-white" />
 
         {/* 4. Explore Places & Practices + Daily Living Reflection */}
-        <section className="py-10 sm:py-16 px-4 sm:px-6 bg-[#FAF7F2]">
+        <section className="py-10 sm:py-16 px-4 sm:px-6 bg-[#FAFAFA] border-b border-[#E8E2D9]">
           <div className="mx-auto max-w-[1120px]">
             {/* Main Discovery Columns Grid: 2/3 Content, 1/3 Daily Reflection Widget */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -304,7 +304,7 @@ export function EkaHomePage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="rounded-xl border border-[#E8E2D9] bg-[#FAF7F2] p-6 space-y-3">
+              <div className="rounded-xl border border-[#E8E2D9] bg-[#FAFAFA] p-6 space-y-3">
                 <span className="font-mono text-xs font-semibold text-[#C45C26]">01</span>
                 <h3 className="font-serif text-lg font-medium text-[#1A1A1A]">Watch & Discover</h3>
                 <p className="text-sm text-[#5C5C5C] leading-relaxed">
@@ -312,7 +312,7 @@ export function EkaHomePage() {
                 </p>
               </div>
 
-              <div className="rounded-xl border border-[#E8E2D9] bg-[#FAF7F2] p-6 space-y-3">
+              <div className="rounded-xl border border-[#E8E2D9] bg-[#FAFAFA] p-6 space-y-3">
                 <span className="font-mono text-xs font-semibold text-[#C45C26]">02</span>
                 <h3 className="font-serif text-lg font-medium text-[#1A1A1A]">Inquire with Context</h3>
                 <p className="text-sm text-[#5C5C5C] leading-relaxed">
@@ -320,7 +320,7 @@ export function EkaHomePage() {
                 </p>
               </div>
 
-              <div className="rounded-xl border border-[#E8E2D9] bg-[#FAF7F2] p-6 space-y-3">
+              <div className="rounded-xl border border-[#E8E2D9] bg-[#FAFAFA] p-6 space-y-3">
                 <span className="font-mono text-xs font-semibold text-[#C45C26]">03</span>
                 <h3 className="font-serif text-lg font-medium text-[#1A1A1A]">Contribute & Connect</h3>
                 <p className="text-sm text-[#5C5C5C] leading-relaxed">

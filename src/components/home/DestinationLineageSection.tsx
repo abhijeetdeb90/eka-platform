@@ -82,7 +82,7 @@ export function DestinationLineageSection() {
           {DESTINATIONS.map((dest, idx) => (
             <div
               key={idx}
-              className="rounded-2xl border border-[#E8E2D9] bg-[#FAF7F2] p-5 shadow-xs flex flex-col justify-between"
+              className="rounded-2xl border border-[#E8E2D9] bg-[#FAFAFA] p-5 shadow-xs flex flex-col justify-between"
             >
               <div>
                 <h3 className="font-serif text-sm font-medium text-[#1A1A1A] pb-2.5 mb-3 border-b border-[#E8E2D9]">
@@ -116,7 +116,7 @@ export function DestinationLineageSection() {
                 key={idx}
                 to="/discover"
                 search={{ q: cat.query } as any}
-                className="px-3.5 py-1.5 rounded-full bg-[#FAF7F2] border border-[#E8E2D9] text-xs font-medium text-[#1A1A1A] hover:bg-[#C45C26] hover:text-white hover:border-[#C45C26] transition-colors"
+                className="px-3.5 py-1.5 rounded-full bg-[#FAFAFA] border border-[#E8E2D9] text-xs font-medium text-[#1A1A1A] hover:bg-[#C45C26] hover:text-white hover:border-[#C45C26] transition-colors"
               >
                 {cat.label}
               </Link>

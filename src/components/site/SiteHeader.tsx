@@ -27,7 +27,7 @@ export function SiteHeader() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 h-16 w-full border-b border-[#E8E2D9] bg-[#FAF7F2]/90 backdrop-blur-md">
+    <header className="sticky top-0 z-50 h-16 w-full border-b border-[#E8E2D9] bg-white/95 backdrop-blur-md">
       <div className="mx-auto flex h-full max-w-[1120px] items-center justify-between px-4 sm:px-6">
         {/* Brand: Logo + BETA pill */}
         <div className="flex items-center gap-3">
@@ -126,7 +126,7 @@ export function SiteHeader() {
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-b border-[#E8E2D9] bg-[#FAF7F2] px-4 py-4 space-y-3">
+        <div className="md:hidden border-b border-[#E8E2D9] bg-white px-4 py-4 space-y-3 shadow-md">
           <nav className="flex flex-col gap-1">
             {navLinks.map((link) => (
               <Link

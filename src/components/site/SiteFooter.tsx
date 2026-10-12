@@ -10,6 +10,7 @@
 
 import { Link } from "@tanstack/react-router";
 import { Globe, ArrowUp, ChevronDown } from "lucide-react";
+import { EkaLogo } from "@/components/brand/Logo";
 
 export function SiteFooter() {
   const currentYear = new Date().getFullYear();
@@ -21,7 +22,7 @@ export function SiteFooter() {
   };
 
   return (
-    <footer className="border-t border-[#E8E2D9] bg-[#F5F3EF] text-[#2D2B2A] py-12 sm:py-16 px-4 sm:px-8 font-sans">
+    <footer className="border-t border-[#E8E2D9] bg-[#FAFAFA] text-[#2D2B2A] py-12 sm:py-16 px-4 sm:px-8 font-sans">
       <div className="mx-auto max-w-[1200px]">
         {/* Top Grid: Brand & Mission + Links */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 pb-12">
@@ -30,26 +31,14 @@ export function SiteFooter() {
           <div className="lg:col-span-5 space-y-5">
             {/* Logo */}
             <div className="flex items-center gap-3">
-              <svg
-                width="32"
-                height="32"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.25"
-                className="text-[#C45C26]"
-              >
-                <circle cx="12" cy="12" r="10" />
-                <path d="M12 2L12 22M2 12L22 12M4.93 4.93L19.07 19.07M4.93 19.07L19.07 4.93" />
-              </svg>
-              <div>
-                <h2 className="font-serif text-2xl font-medium tracking-[0.15em] text-[#1A1A1A]">
-                  E K A
-                </h2>
-                <span className="text-[10px] font-mono tracking-widest text-[#5E5C5A] uppercase block">
-                  CULTURAL INTELLIGENCE
-                </span>
-              </div>
+              <EkaLogo
+                size="md"
+                withTagline={true}
+                taglineText="CULTURAL INTELLIGENCE"
+                className="text-[#1A1A1A]"
+                textClassName="font-serif tracking-[0.15em] text-2xl font-medium text-[#1A1A1A]"
+                taglineClassName="text-[10px] font-mono tracking-widest text-[#5E5C5A] uppercase block"
+              />
             </div>
 
             {/* Tagline */}
