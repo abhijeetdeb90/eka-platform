@@ -86,6 +86,7 @@ export type AnalyticsEvent =
   | "question_started"
   | "creator_opened"
   | "business_opened"
+  | "cultural_inquiry_sent"
   // Retention Loops
   | "retention_session_start"
   | "retention_day_1_active"
