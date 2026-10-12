@@ -166,7 +166,7 @@ CREATE POLICY "Admins have full access to community contributions"
     ON public.community_contributions FOR ALL
     USING (
         EXISTS (
-            SELECT 1 FROM public.profiles
-            WHERE id = auth.uid() AND (role::text = 'founder' OR role = 'admin')
+            SELECT 1 FROM public.user_roles ur
+            WHERE ur.user_id = auth.uid() AND ur.role::text IN ('founder', 'admin')
         )
     );
