@@ -149,7 +149,7 @@ CREATE POLICY "Users can manage own likes"
 -- 6. NOTIFICATIONS
 CREATE TABLE IF NOT EXISTS public.notifications (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  recipient_id uuid NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  user_id uuid NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
   actor_id uuid REFERENCES public.profiles(id) ON DELETE SET NULL,
   kind text NOT NULL CHECK (kind IN ('follow', 'like', 'comment')),
   post_id uuid REFERENCES public.posts(id) ON DELETE CASCADE,
@@ -159,7 +159,7 @@ CREATE TABLE IF NOT EXISTS public.notifications (
 );
 
 CREATE INDEX IF NOT EXISTS notifications_inbox_idx
-  ON public.notifications(recipient_id, created_at DESC);
+  ON public.notifications(user_id, created_at DESC);
 
 ALTER TABLE public.notifications ENABLE ROW LEVEL SECURITY;
 
@@ -167,8 +167,8 @@ DROP POLICY IF EXISTS "Recipients can view and update own notifications" ON publ
 CREATE POLICY "Recipients can view and update own notifications"
   ON public.notifications FOR ALL
   TO authenticated
-  USING (auth.uid() = recipient_id)
-  WITH CHECK (auth.uid() = recipient_id);
+  USING (auth.uid() = user_id)
+  WITH CHECK (auth.uid() = user_id);
 
 -- 7. BLOCKS
 CREATE TABLE IF NOT EXISTS public.blocks (
