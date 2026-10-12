@@ -201,7 +201,7 @@ function CreateArchivePage() {
         {/* Header & Archival Calling */}
         <section className="text-center space-y-3">
           <div className="flex justify-center">
-            <Link to="/creator-studio" className="inline-flex items-center gap-2 rounded-xl border border-primary/30 bg-primary/5 px-4 py-2 text-sm font-medium text-primary hover:bg-primary/10">
+            <Link to={"/creator-studio" as never} className="inline-flex items-center gap-2 rounded-xl border border-primary/30 bg-primary/5 px-4 py-2 text-sm font-medium text-primary hover:bg-primary/10">
               Open Creator Studio <ArrowRight className="size-4" />
             </Link>
           </div>
