@@ -248,9 +248,9 @@ function FindYourPeoplePage() {
                       <div className="flex items-center gap-3 mb-3">
                         <div className="size-12 rounded-full bg-accent/60 overflow-hidden flex items-center justify-center font-serif text-lg text-foreground font-semibold">
                           {p.avatar_url ? (
-                            <img src={p.avatar_url} alt={p.display_name} className="size-full object-cover" />
+                            <img src={p.avatar_url} alt={p.display_name ?? p.username ?? "EKA Member"} className="size-full object-cover" />
                           ) : (
-                            (p.display_name || p.username || "U")[0].toUpperCase()
+                            ((p.display_name || p.username || "U")[0] ?? "U").toUpperCase()
                           )}
                         </div>
                         <div>
