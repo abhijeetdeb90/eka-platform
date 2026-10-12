@@ -93,7 +93,7 @@ CREATE POLICY "Admin write access to question corpus"
         EXISTS (
             SELECT 1 FROM public.user_roles ur
             WHERE ur.user_id = auth.uid()
-            AND ur.role IN ('admin', 'founder', 'editor', 'scholar')
+            AND ur.role::text IN ('admin', 'founder', 'editor', 'scholar')
         )
     );
 
@@ -109,7 +109,7 @@ CREATE POLICY "Admins can inspect AI token logs"
         EXISTS (
             SELECT 1 FROM public.user_roles ur
             WHERE ur.user_id = auth.uid()
-            AND ur.role IN ('admin', 'founder')
+            AND ur.role::text IN ('admin', 'founder')
         )
     );
 
