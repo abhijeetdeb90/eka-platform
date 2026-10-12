@@ -142,6 +142,8 @@ import { Route as ApiSecurityIncidentResponseRouteImport } from './routes/api/se
 import { Route as ApiSecuritySessionsRouteImport } from './routes/api/security.sessions'
 import { Route as ApiStorageConfirmRouteImport } from './routes/api/storage.confirm'
 import { Route as ApiStorageUploadUrlRouteImport } from './routes/api/storage.upload-url'
+import { Route as ApiV1FeedRouteImport } from './routes/api/v1/feed'
+import { Route as ApiV1PostsRouteImport } from './routes/api/v1/posts'
 import { Route as ApiWebhooksRazorpayRouteImport } from './routes/api/webhooks.razorpay'
 import { Route as ApiWebhooksResendRouteImport } from './routes/api/webhooks.resend'
 import { Route as AuthenticatedAppBrandFinanceRouteImport } from './routes/_authenticated/app.brand.finance'
@@ -167,6 +169,7 @@ import { Route as ApiPublicBillingWebhookRouteImport } from './routes/api/public
 import { Route as ApiPublicSearchGroundedRouteImport } from './routes/api/public/search.grounded'
 import { Route as ApiPublicSecurityReportAbuseRouteImport } from './routes/api/public/security.report-abuse'
 import { Route as ApiPublicSecurityVerifyUrlRouteImport } from './routes/api/public/security.verify-url'
+import { Route as ApiV1UploadsSignRouteImport } from './routes/api/v1/uploads.sign'
 import { Route as AuthenticatedAppMarketBookingIdRouteImport } from './routes/_authenticated/app.market.booking.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -851,6 +854,16 @@ const ApiStorageUploadUrlRoute = ApiStorageUploadUrlRouteImport.update({
   path: '/api/storage/upload-url',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiV1FeedRoute = ApiV1FeedRouteImport.update({
+  id: '/api/v1/feed',
+  path: '/api/v1/feed',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiV1PostsRoute = ApiV1PostsRouteImport.update({
+  id: '/api/v1/posts',
+  path: '/api/v1/posts',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiWebhooksRazorpayRoute = ApiWebhooksRazorpayRouteImport.update({
   id: '/razorpay',
   path: '/razorpay',
@@ -996,6 +1009,11 @@ const ApiPublicSecurityVerifyUrlRoute =
     path: '/api/public/security/verify-url',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiV1UploadsSignRoute = ApiV1UploadsSignRouteImport.update({
+  id: '/api/v1/uploads/sign',
+  path: '/api/v1/uploads/sign',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAppMarketBookingIdRoute =
   AuthenticatedAppMarketBookingIdRouteImport.update({
     id: '/market/booking/$id',
@@ -1135,6 +1153,8 @@ export interface FileRoutesByFullPath {
   '/api/security/sessions': typeof ApiSecuritySessionsRoute
   '/api/storage/confirm': typeof ApiStorageConfirmRoute
   '/api/storage/upload-url': typeof ApiStorageUploadUrlRoute
+  '/api/v1/feed': typeof ApiV1FeedRoute
+  '/api/v1/posts': typeof ApiV1PostsRoute
   '/api/webhooks/razorpay': typeof ApiWebhooksRazorpayRoute
   '/api/webhooks/resend': typeof ApiWebhooksResendRoute
   '/app/': typeof AuthenticatedAppIndexRoute
@@ -1155,6 +1175,7 @@ export interface FileRoutesByFullPath {
   '/api/public/search/grounded': typeof ApiPublicSearchGroundedRoute
   '/api/public/security/report-abuse': typeof ApiPublicSecurityReportAbuseRoute
   '/api/public/security/verify-url': typeof ApiPublicSecurityVerifyUrlRoute
+  '/api/v1/uploads/sign': typeof ApiV1UploadsSignRoute
   '/app/discover/': typeof AuthenticatedAppDiscoverIndexRoute
   '/app/episodes/': typeof AuthenticatedAppEpisodesIndexRoute
   '/app/journeys/': typeof AuthenticatedAppJourneysIndexRoute
@@ -1292,6 +1313,8 @@ export interface FileRoutesByTo {
   '/api/security/sessions': typeof ApiSecuritySessionsRoute
   '/api/storage/confirm': typeof ApiStorageConfirmRoute
   '/api/storage/upload-url': typeof ApiStorageUploadUrlRoute
+  '/api/v1/feed': typeof ApiV1FeedRoute
+  '/api/v1/posts': typeof ApiV1PostsRoute
   '/api/webhooks/razorpay': typeof ApiWebhooksRazorpayRoute
   '/api/webhooks/resend': typeof ApiWebhooksResendRoute
   '/app': typeof AuthenticatedAppIndexRoute
@@ -1312,6 +1335,7 @@ export interface FileRoutesByTo {
   '/api/public/search/grounded': typeof ApiPublicSearchGroundedRoute
   '/api/public/security/report-abuse': typeof ApiPublicSecurityReportAbuseRoute
   '/api/public/security/verify-url': typeof ApiPublicSecurityVerifyUrlRoute
+  '/api/v1/uploads/sign': typeof ApiV1UploadsSignRoute
   '/app/discover': typeof AuthenticatedAppDiscoverIndexRoute
   '/app/episodes': typeof AuthenticatedAppEpisodesIndexRoute
   '/app/journeys': typeof AuthenticatedAppJourneysIndexRoute
@@ -1454,6 +1478,8 @@ export interface FileRoutesById {
   '/api/security/sessions': typeof ApiSecuritySessionsRoute
   '/api/storage/confirm': typeof ApiStorageConfirmRoute
   '/api/storage/upload-url': typeof ApiStorageUploadUrlRoute
+  '/api/v1/feed': typeof ApiV1FeedRoute
+  '/api/v1/posts': typeof ApiV1PostsRoute
   '/api/webhooks/razorpay': typeof ApiWebhooksRazorpayRoute
   '/api/webhooks/resend': typeof ApiWebhooksResendRoute
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
@@ -1474,6 +1500,7 @@ export interface FileRoutesById {
   '/api/public/search/grounded': typeof ApiPublicSearchGroundedRoute
   '/api/public/security/report-abuse': typeof ApiPublicSecurityReportAbuseRoute
   '/api/public/security/verify-url': typeof ApiPublicSecurityVerifyUrlRoute
+  '/api/v1/uploads/sign': typeof ApiV1UploadsSignRoute
   '/_authenticated/app/discover/': typeof AuthenticatedAppDiscoverIndexRoute
   '/_authenticated/app/episodes/': typeof AuthenticatedAppEpisodesIndexRoute
   '/_authenticated/app/journeys/': typeof AuthenticatedAppJourneysIndexRoute
@@ -1616,6 +1643,8 @@ export interface FileRouteTypes {
     | '/api/security/sessions'
     | '/api/storage/confirm'
     | '/api/storage/upload-url'
+    | '/api/v1/feed'
+    | '/api/v1/posts'
     | '/api/webhooks/razorpay'
     | '/api/webhooks/resend'
     | '/app/'
@@ -1636,6 +1665,7 @@ export interface FileRouteTypes {
     | '/api/public/search/grounded'
     | '/api/public/security/report-abuse'
     | '/api/public/security/verify-url'
+    | '/api/v1/uploads/sign'
     | '/app/discover/'
     | '/app/episodes/'
     | '/app/journeys/'
@@ -1773,6 +1803,8 @@ export interface FileRouteTypes {
     | '/api/security/sessions'
     | '/api/storage/confirm'
     | '/api/storage/upload-url'
+    | '/api/v1/feed'
+    | '/api/v1/posts'
     | '/api/webhooks/razorpay'
     | '/api/webhooks/resend'
     | '/app'
@@ -1793,6 +1825,7 @@ export interface FileRouteTypes {
     | '/api/public/search/grounded'
     | '/api/public/security/report-abuse'
     | '/api/public/security/verify-url'
+    | '/api/v1/uploads/sign'
     | '/app/discover'
     | '/app/episodes'
     | '/app/journeys'
@@ -1934,6 +1967,8 @@ export interface FileRouteTypes {
     | '/api/security/sessions'
     | '/api/storage/confirm'
     | '/api/storage/upload-url'
+    | '/api/v1/feed'
+    | '/api/v1/posts'
     | '/api/webhooks/razorpay'
     | '/api/webhooks/resend'
     | '/_authenticated/app/'
@@ -1954,6 +1989,7 @@ export interface FileRouteTypes {
     | '/api/public/search/grounded'
     | '/api/public/security/report-abuse'
     | '/api/public/security/verify-url'
+    | '/api/v1/uploads/sign'
     | '/_authenticated/app/discover/'
     | '/_authenticated/app/episodes/'
     | '/_authenticated/app/journeys/'
@@ -2039,10 +2075,13 @@ export interface RootRouteChildren {
   ApiSecuritySessionsRoute: typeof ApiSecuritySessionsRoute
   ApiStorageConfirmRoute: typeof ApiStorageConfirmRoute
   ApiStorageUploadUrlRoute: typeof ApiStorageUploadUrlRoute
+  ApiV1FeedRoute: typeof ApiV1FeedRoute
+  ApiV1PostsRoute: typeof ApiV1PostsRoute
   ApiPublicBillingWebhookRoute: typeof ApiPublicBillingWebhookRoute
   ApiPublicSearchGroundedRoute: typeof ApiPublicSearchGroundedRoute
   ApiPublicSecurityReportAbuseRoute: typeof ApiPublicSecurityReportAbuseRoute
   ApiPublicSecurityVerifyUrlRoute: typeof ApiPublicSecurityVerifyUrlRoute
+  ApiV1UploadsSignRoute: typeof ApiV1UploadsSignRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -2978,6 +3017,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiStorageUploadUrlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/v1/feed': {
+      id: '/api/v1/feed'
+      path: '/api/v1/feed'
+      fullPath: '/api/v1/feed'
+      preLoaderRoute: typeof ApiV1FeedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/v1/posts': {
+      id: '/api/v1/posts'
+      path: '/api/v1/posts'
+      fullPath: '/api/v1/posts'
+      preLoaderRoute: typeof ApiV1PostsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/webhooks/razorpay': {
       id: '/api/webhooks/razorpay'
       path: '/razorpay'
@@ -3151,6 +3204,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/security/verify-url'
       fullPath: '/api/public/security/verify-url'
       preLoaderRoute: typeof ApiPublicSecurityVerifyUrlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/v1/uploads/sign': {
+      id: '/api/v1/uploads/sign'
+      path: '/api/v1/uploads/sign'
+      fullPath: '/api/v1/uploads/sign'
+      preLoaderRoute: typeof ApiV1UploadsSignRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/app/market/booking/$id': {
@@ -3488,10 +3548,13 @@ const rootRouteChildren: RootRouteChildren = {
   ApiSecuritySessionsRoute: ApiSecuritySessionsRoute,
   ApiStorageConfirmRoute: ApiStorageConfirmRoute,
   ApiStorageUploadUrlRoute: ApiStorageUploadUrlRoute,
+  ApiV1FeedRoute: ApiV1FeedRoute,
+  ApiV1PostsRoute: ApiV1PostsRoute,
   ApiPublicBillingWebhookRoute: ApiPublicBillingWebhookRoute,
   ApiPublicSearchGroundedRoute: ApiPublicSearchGroundedRoute,
   ApiPublicSecurityReportAbuseRoute: ApiPublicSecurityReportAbuseRoute,
   ApiPublicSecurityVerifyUrlRoute: ApiPublicSecurityVerifyUrlRoute,
+  ApiV1UploadsSignRoute: ApiV1UploadsSignRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
