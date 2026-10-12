@@ -66,7 +66,7 @@
 :root {
   --radius: 0.5rem;
 
-  --background: #FAF7F2;
+  --background: #FFFFFF;
   --foreground: #1A1A1A;
   --card: #FFFFFF;
   --card-foreground: #1A1A1A;
@@ -75,38 +75,38 @@
 
   --primary: #C45C26;
   --primary-foreground: #FFFFFF;
-  --primary-soft: #F3EDE6;
+  --primary-soft: #F7F7F7;
 
-  --secondary: #F3EDE6;
+  --secondary: #F7F7F7;
   --secondary-foreground: #1A1A1A;
 
-  --muted: #F3EDE6;
+  --muted: #F7F7F7;
   --muted-foreground: #5C5C5C;
 
-  --accent: #F3EDE6;
+  --accent: #F7F7F7;
   --accent-foreground: #C45C26;
 
   --destructive: #B42318;
   --destructive-foreground: #FFFFFF;
 
-  --border: #E8E2D9;
-  --input: #E8E2D9;
+  --border: #E7E7E7;
+  --input: #E0E0E0;
   --ring: #C45C26;
 
-  --sand: #FAF7F2;
-  --parchment: #F3EDE6;
+  --sand: #FFFFFF;
+  --parchment: #F7F7F7;
   --terracotta: #C45C26;
   --saffron: #C45C26;
   --forest: #354a3c;
   --indigo-ink: #2b354f;
 
-  --sidebar: #FAF7F2;
+  --sidebar: #FFFFFF;
   --sidebar-foreground: #1A1A1A;
   --sidebar-primary: #C45C26;
   --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #F3EDE6;
+  --sidebar-accent: #F7F7F7;
   --sidebar-accent-foreground: #1A1A1A;
-  --sidebar-border: #E8E2D9;
+  --sidebar-border: #E7E7E7;
   --sidebar-ring: #C45C26;
 }
 
