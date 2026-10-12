@@ -68,6 +68,7 @@ CREATE TABLE IF NOT EXISTS public.media_assets (
   UNIQUE (post_id, position)
 );
 
+ALTER TABLE public.media_assets ADD COLUMN IF NOT EXISTS post_id uuid REFERENCES public.posts(id) ON DELETE CASCADE;
 CREATE INDEX IF NOT EXISTS media_assets_post_idx ON public.media_assets(post_id);
 CREATE INDEX IF NOT EXISTS media_assets_owner_idx ON public.media_assets(owner_id);
 
