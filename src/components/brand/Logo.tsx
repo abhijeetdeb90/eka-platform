@@ -65,61 +65,37 @@ export function EkaMark({
     );
   }
 
-  // Canonical Vector SVG Cultural Meridian
+  // Canonical EKA logo: interlinked cultural orbits and a human focal mark
   return (
     <svg
       viewBox="0 0 100 100"
       fill="none"
       role="img"
-      aria-label="EKA Cultural Meridian Emblem"
-      className={cn("shrink-0 select-none drop-shadow-xs transition-transform duration-500", sizeClass, className)}
+      aria-label="EKA cultural connection logo"
+      className={cn("shrink-0 select-none transition-transform duration-500", sizeClass, className)}
     >
-      <defs>
-        <linearGradient id="ekaVectorCoreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#C25E3E" />
-          <stop offset="100%" stopColor="#9E472A" />
-        </linearGradient>
-        <mask id="ekaVectorMask">
-          <rect width="100" height="100" fill="#FFFFFF" />
-          <circle cx="50" cy="50" r="15" fill="#000000" />
-        </mask>
-      </defs>
-
-      {/* Outer Global Boundary Ring */}
-      <circle
-        cx="50"
-        cy="50"
-        r="44"
-        stroke="currentColor"
-        strokeWidth="4"
-        className="text-foreground/85 dark:text-foreground/90"
-      />
-
-      {/* Interior Masked Cultural Meridians */}
-      <g
-        mask="url(#ekaVectorMask)"
-        stroke="currentColor"
-        strokeWidth="4"
-        strokeLinecap="round"
-        className="text-foreground/75 dark:text-foreground/80"
-      >
-        {/* The Shared Human Horizon (Equator) */}
-        <line x1="6" y1="50" x2="94" y2="50" />
-        {/* Prime Cultural Meridians */}
-        <path d="M 50 6 C 68 22, 68 78, 50 94" />
-        <path d="M 50 6 C 32 22, 32 78, 50 94" />
+      <g stroke="#C25E3E" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="50" cy="50" r="46" />
+        <ellipse cx="50" cy="50" rx="20" ry="46" />
+        <ellipse cx="50" cy="50" rx="20" ry="46" transform="rotate(45 50 50)" />
+        <ellipse cx="50" cy="50" rx="20" ry="46" transform="rotate(90 50 50)" />
+        <ellipse cx="50" cy="50" rx="20" ry="46" transform="rotate(135 50 50)" />
+        <circle cx="50" cy="50" r="27" />
+        <circle cx="50" cy="50" r="22" />
+        <circle cx="50" cy="50" r="17" />
       </g>
-
-      {/* Cardinal Meridian Nodes */}
-      <circle cx="50" cy="6" r="2.5" fill="#C25E3E" />
-      <circle cx="94" cy="50" r="2.5" fill="#C25E3E" />
-      <circle cx="50" cy="94" r="2.5" fill="#C25E3E" />
-      <circle cx="6" cy="50" r="2.5" fill="#C25E3E" />
-
-      {/* The "One Within" Focal Core: Radiant Terracotta Beacon */}
-      <circle cx="50" cy="50" r="9" fill="url(#ekaVectorCoreGrad)" />
+      <g stroke="#C25E3E" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="50" cy="45" r="3.6" fill="#C25E3E" />
+        <path d="M43 50 Q50 47 57 50 L53 55 L55 64 Q55 68 50 69 Q45 68 45 64 L47 55 Z" fill="#C25E3E" />
+        <path d="M42 51 Q50 55 58 51" />
+      </g>
+      <g fill="#C25E3E">
+        <circle cx="50" cy="4" r="2.5" />
+        <circle cx="96" cy="50" r="2.5" />
+        <circle cx="50" cy="96" r="2.5" />
+        <circle cx="4" cy="50" r="2.5" />
+      </g>
     </svg>
-  );
 }
 
 /**
