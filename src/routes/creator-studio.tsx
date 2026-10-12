@@ -11,7 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useProfile } from "@/hooks/useProfile";
 import { supabase } from "@/integrations/supabase/client";
 
-export const Route = createFileRoute("/creator-studio")({
+export const Route = createFileRoute("/creator-studio" as never)({
   ssr: false,
   beforeLoad: async () => {
     const { data } = await supabase.auth.getSession();
