@@ -1,4 +1,3 @@
-import { PrismaClient } from "@prisma/client";
-const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
-export const prisma = globalForPrisma.prisma ?? new PrismaClient();
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+// Prisma is not used by the Supabase-backed application runtime.
+// Keep this module dependency-free until Prisma is explicitly adopted.
+export {};
