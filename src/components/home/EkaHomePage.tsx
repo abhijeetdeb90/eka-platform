@@ -15,6 +15,11 @@ import { Button } from "@/components/ui/button";
 import { EKADynamicBanner } from "@/components/home/EKADynamicBanner";
 import { HomeStoriesSection } from "@/components/home/HomeStoriesSection";
 import { ExploreByCulturalCategory } from "@/components/home/ExploreByCulturalCategory";
+import { CompareCulturesSection } from "@/components/home/CompareCulturesSection";
+import { CulturalPrinciplesSection } from "@/components/home/CulturalPrinciplesSection";
+import { TwoDoorwaysSection } from "@/components/home/TwoDoorwaysSection";
+import { DestinationLineageSection } from "@/components/home/DestinationLineageSection";
+import { FamilyHeritageCtaBanner } from "@/components/home/FamilyHeritageCtaBanner";
 import { BETA_PLACES_OR_PRACTICES } from "@/data/beta-seed-data";
 import { useProfile } from "@/hooks/useProfile";
 
@@ -271,7 +276,22 @@ export function EkaHomePage() {
           </div>
         </section>
 
-        {/* 4. How It Works (3 Steps) */}
+        {/* 5. Compare Cultures (Different cultures, similar human questions) */}
+        <CompareCulturesSection />
+
+        {/* 6. Two Doorways (Explore Living Culture vs Find Your People) */}
+        <TwoDoorwaysSection />
+
+        {/* 7. Built on principles that protect human warmth */}
+        <CulturalPrinciplesSection />
+
+        {/* 8. Explore by Destination & Lineage */}
+        <DestinationLineageSection />
+
+        {/* 9. Your Story Belongs Here (Record Family Heritage Banner) */}
+        <FamilyHeritageCtaBanner />
+
+        {/* 10. How It Works (3 Steps) */}
         <section className="py-12 sm:py-20 px-4 sm:px-6 bg-white border-t border-[#E8E2D9]">
           <div className="mx-auto max-w-[1120px]">
             <div className="text-center max-w-xl mx-auto mb-10 sm:mb-14">
