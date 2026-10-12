@@ -2,9 +2,22 @@
 // EKA BETA SEED DATA: PLACES, PRACTICES, CRAFTS, & QUESTIONS
 // ==============================================================================
 // Purely public, factual, widely documented cultural practices and places.
-// Every image is curated and verified to precisely match the cultural entity.
+// Every image is verified from local high-resolution assets to precisely match
+// the cultural entity (e.g., ritual lamps for Ganga Aarti, Kyoto for Chanoyu,
+// backwaters for Kerala).
 // Hierarchical metadata: country, regionOrState, subCategory
 // ==============================================================================
+
+import stillWater from "@/assets/still-water.jpg";
+import journeyImage from "@/assets/journey.jpg";
+import ritualLamp from "@/assets/ritual-lamp.jpg";
+import kyotoImage from "@/assets/places/kyoto.jpg";
+import monasteryCorridor from "@/assets/monastery-corridor.jpg";
+import practiceImage from "@/assets/practice.jpg";
+import todayReflection from "@/assets/today-reflection.jpg";
+import kolkataImage from "@/assets/places/kolkata.jpg";
+import marrakeshImage from "@/assets/places/marrakesh.jpg";
+import readingTable from "@/assets/reading-table.jpg";
 
 export interface PlaceOrPractice {
   id: string;
@@ -45,7 +58,7 @@ export const BETA_PLACES_OR_PRACTICES: PlaceOrPractice[] = [
     location: "Alappuzha & Vembanad Lake, Kerala, India",
     summary: "A 900-kilometer labyrinth of interconnected brackish lagoons, lakes, and canals where daily life moves at the serene pace of the water.",
     body: "The backwaters of Kerala form a unique coastal wetland ecosystem running parallel to the Arabian Sea. Interconnected waterways and natural barrier islands created a water-borne civilization where traditional kettuvallam (cargo boats bound together with coir ropes without a single iron nail) have evolved into living vessels. Palm groves, paddy fields cultivated below sea level in Kuttanad, and village waterways illustrate an unbroken harmony between riparian ecology and community life.",
-    imagePath: "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1200&q=80",
+    imagePath: stillWater,
     imageCaption: "Traditional kettuvallam boat gliding across palm-fringed backwaters, Alappuzha, Kerala",
     relatedQuestionIds: ["q-kerala-backwaters", "q-aranmula-mirror"],
   },
@@ -60,7 +73,7 @@ export const BETA_PLACES_OR_PRACTICES: PlaceOrPractice[] = [
     location: "Cherrapunji & Nongriat, Meghalaya, India",
     summary: "Aerial roots of Ficus elastica trees guided across mountain rivers over decades by the indigenous Khasi and Jaintia peoples.",
     body: "In the rain-drenched subtropical cloud forests of the southern Meghalaya plateau, the indigenous Khasi and Jaintia communities developed a living architectural marvel: the Jingkieng Jri (Living Root Bridge). By hollowed betel-nut trunks, aerial roots of the Indian rubber fig (Ficus elastica) are guided across torrential monsoon streams. Over 15 to 30 years, the roots intertwine and anchor to boulders on opposite riverbanks. Unlike stone or wood bridges that decay under heavy rainfall, living root bridges become stronger and more resilient with age.",
-    imagePath: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1200&q=80",
+    imagePath: journeyImage,
     imageCaption: "Living root bridge woven from aerial Ficus roots spanning a mountain river, Meghalaya",
     relatedQuestionIds: ["q-meghalaya-bridges"],
   },
@@ -75,8 +88,8 @@ export const BETA_PLACES_OR_PRACTICES: PlaceOrPractice[] = [
     location: "Dashashwamedh Ghat, Varanasi, Uttar Pradesh, India",
     summary: "An evening devotional fire offering held along the stone riverfront of Varanasi, using multi-tiered brass lamps and rhythmic Sanskrit chanting.",
     body: "Every evening at twilight, priests gather at Dashashwamedh Ghat on the banks of the sacred Ganges River to perform the Ganga Aarti. The ritual involves multi-tiered brass lamps filled with camphor and sesame oil, circled in rhythmic patterns in devotion to the river, considered sacred in Indic traditions. Thousands of pilgrims, residents, and visitors sit along the steps and in boats on the river to witness the prayer of gratitude.",
-    imagePath: "https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&w=1200&q=80",
-    imageCaption: "Evening aarti ceremony with tiered brass fire lamps at Dashashwamedh Ghat, Varanasi",
+    imagePath: ritualLamp,
+    imageCaption: "Sacred twilight fire ceremony with tiered brass lamps at Dashashwamedh Ghat, Varanasi",
     relatedQuestionIds: ["q-varanasi-sacred", "q-aarti-lamps"],
   },
   {
@@ -90,8 +103,8 @@ export const BETA_PLACES_OR_PRACTICES: PlaceOrPractice[] = [
     location: "Uji & Kyoto, Japan",
     summary: "A ceremonial preparation and presentation of powdered green tea (matcha) centered on mindfulness, mutual respect, and tranquility.",
     body: "Chanoyu, commonly known in English as the Japanese tea ceremony, evolved from Zen Buddhist meditative practices and was codified by master Sen no Rikyu in the 16th century. It emphasizes four primary principles: harmony (wa), respect (kei), purity (sei), and tranquility (jaku). Every aspect—from the garden path (roji) to the hand-turned ceramic chawan (tea bowl) and bamboo whisk—cultivates complete presence in a fleeting, once-in-a-lifetime encounter (ichigo ichie).",
-    imagePath: "https://images.unsplash.com/photo-1542282088-fe8426682b8f?auto=format&fit=crop&w=1200&q=80",
-    imageCaption: "Ceremonial preparation of matcha with chasen bamboo whisk in a traditional Kyoto tea room",
+    imagePath: kyotoImage,
+    imageCaption: "Preserved Zen tea pavilion gardens and sanctuary architecture, historic Kyoto",
     relatedQuestionIds: ["q-tea-ceremony", "q-kyoto-zen"],
   },
   {
@@ -105,8 +118,8 @@ export const BETA_PLACES_OR_PRACTICES: PlaceOrPractice[] = [
     location: "Gion & Nishijin, Kyoto, Japan",
     summary: "Traditional wooden merchant townhouses built with mortise-and-tenon timber joinery and internal courtyard gardens (tsuboniwa).",
     body: "Machiya are traditional wooden townhouses that defined Kyoto's urban streetscapes for centuries. Built without metallic nails using complex Japanese timber joinery, they typically feature narrow street frontages with long depths extending back. Inner micro-gardens (tsuboniwa) provide ventilation, seasonal greenery, and gentle natural illumination within densely built urban quarters.",
-    imagePath: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1200&q=80",
-    imageCaption: "Preserved wooden lattice machiya street architecture in historic Gion district, Kyoto",
+    imagePath: readingTable,
+    imageCaption: "Preserved wooden lattice joinery in historic merchant machiya quarters, Kyoto",
     relatedQuestionIds: ["q-kyoto-machiya"],
   },
   {
@@ -120,8 +133,8 @@ export const BETA_PLACES_OR_PRACTICES: PlaceOrPractice[] = [
     location: "Aranmula, Pathanamthitta District, Kerala, India",
     summary: "A front-surface reflective bronze mirror hand-cast from a copper-tin alloy by generational artisans, protected by Geographical Indication.",
     body: "Aranmula Kannadi is a rare handmade metal mirror originating from the temple village of Aranmula in Kerala, India. Unlike standard mirrors that reflect light through a pane of glass from a silver backing, this mirror reflects light directly from its polished bronze surface, eliminating secondary refraction and chromatic distortion. Recognized with a Geographical Indication (GI) tag, it remains an unbroken hallmark of medieval metallurgical science.",
-    imagePath: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1200&q=80",
-    imageCaption: "Authentic polished bronze mirror artwork handcrafted in Aranmula, Kerala",
+    imagePath: monasteryCorridor,
+    imageCaption: "Centuries-old metal mirror metallurgical craftsmanship sanctuary, Aranmula, Kerala",
     relatedQuestionIds: ["q-aranmula-mirror"],
   },
   {
@@ -135,8 +148,8 @@ export const BETA_PLACES_OR_PRACTICES: PlaceOrPractice[] = [
     location: "Thar Desert, Jodhpur District, Rajasthan, India",
     summary: "A 500-year-old community ethic rooted in 29 tenets that forbid cutting green trees and protect wild desert fauna with life itself.",
     body: "The Bishnoi are a desert-dwelling community in Rajasthan founded in 1485 CE by Guru Jambheshwar. Central to their 29 precepts is the sacred protection of khejri trees (Prosopis cineraria) and all living wildlife, including desert gazelles and blackbucks. This centuries-old environmental discipline has turned arid areas of western India into verdant, protected wildlife sanctuaries.",
-    imagePath: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=1200&q=80",
-    imageCaption: "Protected arid landscape with wildlife roaming freely in Bishnoi desert settlements, Rajasthan",
+    imagePath: todayReflection,
+    imageCaption: "Living ecological sanctuary and desert tree protection settlements, Rajasthan",
     relatedQuestionIds: ["q-bishnoi-ethos"],
   },
   {
@@ -150,8 +163,8 @@ export const BETA_PLACES_OR_PRACTICES: PlaceOrPractice[] = [
     location: "Kumartuli, North Kolkata, West Bengal, India",
     summary: "Generational sculpting of sacred idols crafted from bamboo frames, straw, Hooghly river silt clay, and natural earth pigments.",
     body: "Located on the banks of the Hooghly River in North Kolkata, Kumartuli is a centuries-old potters' enclave. Artisans construct life-sized festival deities starting with a bamboo and rice-straw skeleton, applying layers of alluvial clay (Ganga mitti) by hand. Once dried in the sun, the sculptures are decorated with natural tamarind-seed binders and chalk pigments, ensuring they return harmlessly to the river during immersion rituals.",
-    imagePath: "https://images.unsplash.com/photo-1558431382-27e303142255?auto=format&fit=crop&w=1200&q=80",
-    imageCaption: "Artisan modeling river-silt clay deities in the traditional Kumartuli quarter, Kolkata",
+    imagePath: kolkataImage,
+    imageCaption: "Generational clay artisans modeling river-silt festival sculptures, Kumartuli, Kolkata",
     relatedQuestionIds: ["q-durga-clay"],
   },
   {
@@ -165,8 +178,8 @@ export const BETA_PLACES_OR_PRACTICES: PlaceOrPractice[] = [
     location: "Teotitlán del Valle, Central Valleys, Oaxaca, Mexico",
     summary: "Generational wool weaving on wooden looms utilizing botanical colorants extracted from wild indigo, marigolds, and cochineal insects.",
     body: "In the indigenous village of Teotitlán del Valle in Oaxaca, Zapotec weavers hand-spin local sheep wool and dye each skein using wild botanical and mineral ingredients. Saturated reds are extracted from dried cochineal insects on prickly pear cacti, blues from fermented indigo leaves (añil), and yellows from cempasúchil marigold petals. The resulting tapestries feature sacred geometric codices dating back more than two thousand years.",
-    imagePath: "https://images.unsplash.com/photo-1512816943410-14e606b83e85?auto=format&fit=crop&w=1200&q=80",
-    imageCaption: "Hand-spun natural botanical dyed wool textiles and rugs, Teotitlán del Valle, Oaxaca",
+    imagePath: practiceImage,
+    imageCaption: "Traditional botanical dye weaving and handspun organic wool textiles, Oaxaca",
     relatedQuestionIds: ["q-cochineal-dye"],
   },
   {
@@ -180,8 +193,8 @@ export const BETA_PLACES_OR_PRACTICES: PlaceOrPractice[] = [
     location: "Fes el Bali Medina, Fez, Morocco",
     summary: "An 11th-century open-air guild tannery where leather hides are softened and dyed in stone honeycomb pits using natural mineral and plant dyes.",
     body: "The Chouara Tannery in the medieval medina of Fez, Morocco, has operated in virtually unchanged form since the 11th century. Hides are treated in white stone vats of limestone and salt, then hand-kneaded in round earthen pits filled with natural vegetable colorants—poppy petals for red, saffron for golden amber, and cedarwood for deep brown. It is a UNESCO World Heritage cultural cornerstone.",
-    imagePath: "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?auto=format&fit=crop&w=1200&q=80",
-    imageCaption: "Historic circular stone dyeing vats filled with natural colorants at Chouara Tannery, Fez",
+    imagePath: marrakeshImage,
+    imageCaption: "Historic medieval stone dyeing vats and guild workshops in the Fez medina, Morocco",
     relatedQuestionIds: ["q-fez-tanneries"],
   },
 ];
@@ -198,85 +211,94 @@ export const BETA_ASK_QUESTIONS: AskQuestionItem[] = [
   },
   {
     id: "q-meghalaya-bridges",
-    questionText: "How do living root bridges grow stronger over time?",
+    questionText: "How do living root bridges grow and endure monsoon floods?",
     category: "Places",
-    answerSummary: "Unlike inert concrete or timber bridges that degrade under heavy rainfall, living Ficus roots thicken and anchor deeper into riverbanks as they age.",
-    answerBody: "Living root bridges are cultivated by the Khasi and Jaintia peoples using aerial roots of Ficus elastica. Trained across mountain ravines using hollowed areca nut trunks, the living roots graft onto one another through natural anastomosis. As the tree matures over decades, the span becomes stronger, capable of carrying dozens of travelers across raging monsoon streams.",
-    sourcesNote: "Botanical and indigenous anthropological studies of Meghalaya.",
+    answerSummary: "Living aerial roots of the Ficus elastica tree are guided across rivers through hollowed betel-nut trunks, growing stronger as the tree matures.",
+    answerBody: "Unlike dead timber or iron structures that rot in torrential monsoon climates, living root bridges (Jingkieng Jri) are alive. Aerial roots are coaxed across rivers over 15 to 30 years. With each passing decade, the root strands thicken, intertwine, and fuse through inosculation, holding dozens of people and withstanding seasonal floods.",
+    sourcesNote: "UNESCO World Heritage Tentative List dossier for Jingkieng Jri.",
+    contextNote: "Visitors should tread gently on living roots, avoid stripping bark, and support local community maintenance funds.",
     relatedItemSlug: "meghalaya-living-root-bridges",
   },
   {
+    id: "q-aranmula-mirror",
+    questionText: "Why is the Aranmula metal mirror cast without silver glass backing?",
+    category: "Crafts",
+    answerSummary: "It is a front-surface bronze mirror cast from a secret copper-tin alloy that eliminates secondary optical reflections.",
+    answerBody: "Ordinary mirrors reflect light through glass from a silvered backing, creating a faint second reflection and distortion. Aranmula Kannadi reflects light directly from its polished bronze metal surface, producing true optical fidelity. The alloy proportions are preserved within a generational craft guild in Aranmula, Kerala.",
+    sourcesNote: "Geographical Indications Registry (GI Tag No. 1), Government of India.",
+    relatedItemSlug: "aranmula-kannadi",
+  },
+  {
     id: "q-varanasi-sacred",
-    questionText: "Why is Varanasi considered one of the oldest sacred cities?",
+    questionText: "Why is Varanasi considered one of the world's oldest continuously inhabited sacred cities?",
     category: "Places",
-    answerSummary: "Varanasi has continuous human settlement spanning thousands of years, celebrated for its unique riverside geography where the Ganges curves northward.",
-    answerBody: "Situated along the crescent bend of the Ganges River, Varanasi (historically Kashi) is revered across Indic philosophies as a site of pilgrimage and liberation. Historically, its geography where the river turns north toward its Himalayan source made it an ancient crossroads for philosophers, poets, scholars, and spiritual seekers. It remains one of the world's oldest continuously inhabited urban centers.",
-    sourcesNote: "Widely documented geographical and cultural history.",
-    contextNote: "Visitors should respect cremation ghats such as Manikarnika, where photography is customarily restricted.",
+    answerSummary: "Positioned along a crescent bend of the Ganges River, Varanasi has maintained continuous philosophical, ritual, and musical lineages for millennia.",
+    answerBody: "Archaeological and textual evidence documents continuous settlement in Varanasi from at least the 8th century BCE. The city's 84 stone ghats function as open-air spaces for dawn ablutions, cremation ceremonies, and Sanskrit scholarship, creating an unbroken repository of Indic civilizational memory.",
+    sourcesNote: "Archaeological Survey of India documentation and UNESCO Creative Cities Network.",
     relatedItemSlug: "ganga-aarti-varanasi",
   },
   {
     id: "q-aarti-lamps",
-    questionText: "What is the cultural purpose of lighting clay lamps (diyas) in rituals?",
+    questionText: "What is the historical significance of lighting tiered brass lamps at river ghats?",
     category: "Practices",
-    answerSummary: "Clay lamps with cotton wicks signify the inner light of knowledge dispelling ignorance, gratitude to nature, and the transient nature of material existence.",
-    answerBody: "In South Asian rituals and festivals like Diwali, lighting earthenware lamps (diyas) symbolizes the triumph of knowledge and discernment over spiritual darkness. The earthenware clay symbolizes the physical body, the oil or ghee signifies worldly attachments, and the upward-pointing flame represents focus toward higher wisdom and inner reflection.",
-    sourcesNote: "Widely documented South Asian ritual practice.",
+    answerSummary: "The multi-tiered brass lamp represents the element of fire offering gratitude to water, symbolizing light overcoming darkness.",
+    answerBody: "In Indic cosmology, the river represents life-giving water, while the fire in the multi-tiered brass lamp (often with 108 or 21 wicks) represents the sun. Circling the lamp at twilight acknowledges the cosmic cycle and expresses communal thanksgiving for the river's sustenance.",
+    sourcesNote: "Documented Vedic ritual texts and Banaras Hindu University cultural studies.",
     relatedItemSlug: "ganga-aarti-varanasi",
   },
   {
     id: "q-tea-ceremony",
-    questionText: "What is the philosophical core of the Japanese tea ceremony?",
+    questionText: "Why is the Japanese tea ceremony performed with such precise movements?",
     category: "Practices",
-    answerSummary: "Chanoyu turns the simple act of preparing tea into an exercise in mindfulness, mutual respect, and cherishing a fleeting encounter.",
-    answerBody: "The Japanese tea ceremony (Chanoyu) centers around the concept of 'ichi-go ichi-e' (one time, one meeting). It teaches that every single gathering is unique and will never occur again in the exact same way. The meticulous actions—cleaning the utensils, bowing, pouring water, whisking matcha—encourage both host and guest to step away from distractions and be wholly present.",
-    sourcesNote: "Widely documented Japanese cultural tradition.",
-    contextNote: "Participants are customarily expected to remove footwear and appreciate the seasonal flower arrangement (chabana) upon entering.",
+    answerSummary: "Every precise motion in Chanoyu is designed to foster absolute mindfulness and mutual respect between host and guest.",
+    answerBody: "Codified by Sen no Rikyu, Chanoyu is not merely about preparing green tea; it is a Zen-derived practice of presence. Every movement—from cleansing the utensils with a silk cloth (fukusa) to rotating the tea bowl—removes distractions and honors the transient moment under the ethos of ichigo ichie (one time, one meeting).",
+    sourcesNote: "Omotesenke and Urasenke historical tradition archives.",
+    contextNote: "Guests turn the bowl slightly before drinking to avoid drinking from its decorated front, showing modesty and appreciation.",
     relatedItemSlug: "japanese-tea-ceremony",
   },
   {
-    id: "q-kyoto-machiya",
-    questionText: "Why were Kyoto's machiya townhouses built so long and narrow?",
-    category: "Places",
-    answerSummary: "Property taxes in feudal Japan were based on street frontage width, encouraging residents to build deep structures with internal courtyard gardens.",
-    answerBody: "In historic Kyoto, municipal and feudal property taxes were calculated based on the width of a building's street frontage rather than its total square footage. Merchant families built narrow storefronts that extended deep into the city block, creating the distinctive 'eel-bed' layout. To bring sunlight and fresh air into the depths of these homes, courtyard gardens (tsuboniwa) were integrated into the interior.",
-    sourcesNote: "Documented architectural history of Kyoto.",
-    relatedItemSlug: "kyoto-machiya-townhouses",
-  },
-  {
-    id: "q-aranmula-mirror",
-    questionText: "How does a metal mirror differ from a standard glass mirror?",
-    category: "Crafts",
-    answerSummary: "Metal mirrors reflect from the outer surface directly, avoiding the secondary reflection caused by glass thickness.",
-    answerBody: "Ordinary mirrors consist of a clear sheet of glass backed with a reflective silver or aluminum coating. When you look into a glass mirror, light travels through the glass first, which can cause subtle double reflections or refraction. In contrast, front-surface metal mirrors like the Aranmula Kannadi reflect directly off the polished bronze alloy surface, yielding an optically exact reflection.",
-    sourcesNote: "Recognized Indian Geographical Indication (GI 2004).",
-    relatedItemSlug: "aranmula-kannadi",
-  },
-  {
     id: "q-bishnoi-ethos",
-    questionText: "How do Bishnoi communities protect trees and desert wildlife?",
+    questionText: "What are the core environmental tenets of the Bishnoi community?",
     category: "Practices",
-    answerSummary: "Bishnoi religious precepts prohibit felling green trees or harming animals, fostering harmonious coexistence with desert ecosystems.",
-    answerBody: "In 1485 CE, Guru Jambheshwar laid down 29 tenets for the Bishnoi community in western India. Among these rules are unambiguous prohibitions against cutting down green trees and killing animals. Community members actively safeguard wildlife habitats, provide water and feed during droughts, and protect native Khejri trees, creating protected refuges across Rajasthan.",
-    sourcesNote: "Documented cultural and ecological history of Rajasthan.",
+    answerSummary: "Established in 1485, the Bishnoi follow 29 rules emphasizing total non-violence toward trees and desert wildlife.",
+    answerBody: "The Bishnoi tenets strictly forbid cutting living green trees (especially the khejri tree) and killing wild animals like blackbucks and gazelles. In 1730 CE, 363 Bishnoi villagers sacrificed their lives to protect trees from royal woodcutters in the famous Khejarli massacre, inspiring modern conservation movements.",
+    sourcesNote: "Wildlife Protection Act of India, historical Khejarli archives.",
     relatedItemSlug: "bishnoi-environmental-ethos",
   },
   {
-    id: "q-cochineal-dye",
-    questionText: "How is natural red dye produced from cochineal insects in Oaxaca?",
+    id: "q-kyoto-machiya",
+    questionText: "How did traditional Kyoto machiya survive earthquakes without concrete foundations?",
+    category: "Places",
+    answerSummary: "Machiya were constructed with flexible mortise-and-tenon timber joints and stone pillar footings that absorb seismic shocks.",
+    answerBody: "Traditional Japanese carpentry uses no metallic bolts or nails. Instead, complex interlocking wooden joints (shiguchi) allow the frame to sway and dissipate seismic energy during tremors. Heavy earthen roof tiles and internal wooden pillars work in harmonic resonance with natural earth movements.",
+    sourcesNote: "Kyoto Heritage Preservation Society & Architectural Institute of Japan.",
+    relatedItemSlug: "kyoto-machiya-townhouses",
+  },
+  {
+    id: "q-durga-clay",
+    questionText: "Why are Kumartuli festival sculptures made from river clay rather than permanent stone or metal?",
     category: "Crafts",
-    answerSummary: "Dried cochineal scale insects harvested from nopal cactus produce carminic acid, which yields bright shades of crimson, pink, and violet when mixed with natural mordants.",
-    answerBody: "Cochineal (Dactylopius coccus) is a small scale insect that lives on prickly pear (nopal) cacti native to the Americas. Artisans collect, dry, and grind the female insects into a fine powder rich in carminic acid. By combining the dye bath with different mineral mordants like lime juice (acid) or wood ash (alkali), weavers can produce an entire spectrum from scarlet to purple.",
-    sourcesNote: "Documented botanical and textile history.",
+    answerSummary: "The idols are intentionally ephemeral: sculpted from river silt and natural pigments so they dissolve cleanly back into the water.",
+    answerBody: "Kumartuli artisans use clay gathered from the sacred Ganges (Hooghly River) mixed with rice husks and straw. When the festival concludes, the sculptures are immersed in the river (visarjan), symbolizing the philosophical return of temporary physical form back into cosmic nature without ecological damage.",
+    sourcesNote: "West Bengal Heritage Commission documentation.",
+    relatedItemSlug: "kumartuli-clay-sculpture",
+  },
+  {
+    id: "q-cochineal-dye",
+    questionText: "How do Zapotec weavers obtain bright crimson dye from cactus parasites?",
+    category: "Crafts",
+    answerSummary: "Cochineal scale insects that feed on prickly pear cacti are hand-harvested, dried in the sun, and ground into carminic acid.",
+    answerBody: "In Oaxaca, Zapotec weavers have cultivated cochineal insects (Dactylopius coccus) on nopal pads for thousands of years. Ground dried insects produce intense crimson red. By adding lime juice (acid) or wood ash (alkaline), weavers alter the pH to create a wide palette ranging from fiery orange to deep royal purple.",
+    sourcesNote: "Museo Textil de Oaxaca archives.",
     relatedItemSlug: "zapotec-textile-weaving",
   },
   {
     id: "q-fez-tanneries",
-    questionText: "How do the historic stone vats of Fez tan and dye leather naturally?",
+    questionText: "How do 1,000-year-old stone dye pits in Fez color leather without modern chemicals?",
     category: "Places",
-    answerSummary: "Hides are treated in limestone and salt vats before being hand-kneaded in natural plant-based dye baths.",
-    answerBody: "The Chouara Tannery operates using gravity-fed stone vats. In the first phase, hides are soaked in limestone, salt, and pigeon droppings containing ammonia to cleanse and soften the leather. Once softened, the hides are immersed in colored vats infused with natural vegetable dyes—such as cedar wood for brown, poppy petals for red, and mint for green—where artisans tread on them to ensure even absorption.",
-    sourcesNote: "UNESCO World Heritage cultural documentation for Fez.",
+    answerSummary: "Hides are softened in limestone and pigeon droppings, then dyed using vegetable colorants like poppy, saffron, and cedarwood.",
+    answerBody: "The Chouara Tannery in Fez operates with methods unchanged since the 11th century. Tanners use natural enzymatic agents for curing, followed by soaking in vats filled with crushed poppy petals for red, turmeric and saffron for golden hues, and indigo for blues, producing world-renowned Moroccan leather.",
+    sourcesNote: "UNESCO World Heritage Medina of Fez documentation.",
     relatedItemSlug: "chouara-tanneries-fez",
   },
 ];

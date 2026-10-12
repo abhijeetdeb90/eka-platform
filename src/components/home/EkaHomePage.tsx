@@ -14,6 +14,7 @@ import { SiteFooter } from "@/components/site/SiteFooter";
 import { Button } from "@/components/ui/button";
 import { EKADynamicBanner } from "@/components/home/EKADynamicBanner";
 import { HomeStoriesSection } from "@/components/home/HomeStoriesSection";
+import { ExploreByCulturalCategory } from "@/components/home/ExploreByCulturalCategory";
 import { BETA_PLACES_OR_PRACTICES } from "@/data/beta-seed-data";
 import { useProfile } from "@/hooks/useProfile";
 
@@ -82,7 +83,10 @@ export function EkaHomePage() {
           <HomeStoriesSection />
         </section>
 
-        {/* 3. Explore Places & Practices + Daily Living Reflection */}
+        {/* 3. Explore by Cultural Category (12-Card Dimensions Grid from Stitch Design) */}
+        <ExploreByCulturalCategory className="border-b border-[#E8E2D9] bg-white" />
+
+        {/* 4. Explore Places & Practices + Daily Living Reflection */}
         <section className="py-10 sm:py-16 px-4 sm:px-6 bg-[#FAF7F2]">
           <div className="mx-auto max-w-[1120px]">
             {/* Main Discovery Columns Grid: 2/3 Content, 1/3 Daily Reflection Widget */}
