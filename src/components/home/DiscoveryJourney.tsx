@@ -131,7 +131,7 @@ const KNOWLEDGE_STEPS = [
     title: "Learn",
     summary: "Context & Story",
     shortText: "Hear the human story directly from the community.",
-    casePrompt: "You listen to Pandit Ramakrishna along Dashashwamedh Ghat.",
+    casePrompt: "You listen to the evening chants along Dashashwamedh Ghat.",
     curiosityQuestion: "For 1,200 years, the five elements are offered back to the water as living gratitude.",
   },
   {

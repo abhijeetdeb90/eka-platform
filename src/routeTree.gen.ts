@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as AccessibilityRouteImport } from './routes/accessibility'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AdsRouteImport } from './routes/ads'
 import { Route as AgentRouteImport } from './routes/agent'
@@ -46,6 +47,7 @@ import { Route as LearnRouteImport } from './routes/learn'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as MembershipRouteImport } from './routes/membership'
 import { Route as MessagesRouteImport } from './routes/messages'
+import { Route as ModernSlaveryRouteImport } from './routes/modern-slavery'
 import { Route as MyEkaRouteImport } from './routes/my-eka'
 import { Route as ObserveRouteImport } from './routes/observe'
 import { Route as OpsRouteImport } from './routes/ops'
@@ -184,6 +186,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccessibilityRoute = AccessibilityRouteImport.update({
+  id: '/accessibility',
+  path: '/accessibility',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -354,6 +361,11 @@ const MembershipRoute = MembershipRouteImport.update({
 const MessagesRoute = MessagesRouteImport.update({
   id: '/messages',
   path: '/messages',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ModernSlaveryRoute = ModernSlaveryRouteImport.update({
+  id: '/modern-slavery',
+  path: '/modern-slavery',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MyEkaRoute = MyEkaRouteImport.update({
@@ -1024,6 +1036,7 @@ const AuthenticatedAppMarketBookingIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/accessibility': typeof AccessibilityRoute
   '/admin': typeof AdminRoute
   '/ads': typeof AdsRoute
   '/agent': typeof AgentRoute
@@ -1058,6 +1071,7 @@ export interface FileRoutesByFullPath {
   '/mcp': typeof McpRoute
   '/membership': typeof MembershipRoute
   '/messages': typeof MessagesRoute
+  '/modern-slavery': typeof ModernSlaveryRoute
   '/my-eka': typeof MyEkaRoute
   '/observe': typeof ObserveRoute
   '/ops': typeof OpsRoute
@@ -1187,6 +1201,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/accessibility': typeof AccessibilityRoute
   '/admin': typeof AdminRoute
   '/ads': typeof AdsRoute
   '/agent': typeof AgentRoute
@@ -1219,6 +1234,7 @@ export interface FileRoutesByTo {
   '/mcp': typeof McpRoute
   '/membership': typeof MembershipRoute
   '/messages': typeof MessagesRoute
+  '/modern-slavery': typeof ModernSlaveryRoute
   '/my-eka': typeof MyEkaRoute
   '/observe': typeof ObserveRoute
   '/ops': typeof OpsRoute
@@ -1349,6 +1365,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/about': typeof AboutRoute
+  '/accessibility': typeof AccessibilityRoute
   '/admin': typeof AdminRoute
   '/ads': typeof AdsRoute
   '/agent': typeof AgentRoute
@@ -1383,6 +1400,7 @@ export interface FileRoutesById {
   '/mcp': typeof McpRoute
   '/membership': typeof MembershipRoute
   '/messages': typeof MessagesRoute
+  '/modern-slavery': typeof ModernSlaveryRoute
   '/my-eka': typeof MyEkaRoute
   '/observe': typeof ObserveRoute
   '/ops': typeof OpsRoute
@@ -1514,6 +1532,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/accessibility'
     | '/admin'
     | '/ads'
     | '/agent'
@@ -1548,6 +1567,7 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/membership'
     | '/messages'
+    | '/modern-slavery'
     | '/my-eka'
     | '/observe'
     | '/ops'
@@ -1677,6 +1697,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/accessibility'
     | '/admin'
     | '/ads'
     | '/agent'
@@ -1709,6 +1730,7 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/membership'
     | '/messages'
+    | '/modern-slavery'
     | '/my-eka'
     | '/observe'
     | '/ops'
@@ -1838,6 +1860,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/about'
+    | '/accessibility'
     | '/admin'
     | '/ads'
     | '/agent'
@@ -1872,6 +1895,7 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/membership'
     | '/messages'
+    | '/modern-slavery'
     | '/my-eka'
     | '/observe'
     | '/ops'
@@ -2003,6 +2027,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
+  AccessibilityRoute: typeof AccessibilityRoute
   AdminRoute: typeof AdminRoute
   AdsRoute: typeof AdsRoute
   AgentRoute: typeof AgentRoute
@@ -2037,6 +2062,7 @@ export interface RootRouteChildren {
   McpRoute: typeof McpRoute
   MembershipRoute: typeof MembershipRoute
   MessagesRoute: typeof MessagesRoute
+  ModernSlaveryRoute: typeof ModernSlaveryRoute
   MyEkaRoute: typeof MyEkaRoute
   ObserveRoute: typeof ObserveRoute
   OpsRoute: typeof OpsRoute
@@ -2105,6 +2131,13 @@ declare module '@tanstack/react-router' {
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/accessibility': {
+      id: '/accessibility'
+      path: '/accessibility'
+      fullPath: '/accessibility'
+      preLoaderRoute: typeof AccessibilityRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -2343,6 +2376,13 @@ declare module '@tanstack/react-router' {
       path: '/messages'
       fullPath: '/messages'
       preLoaderRoute: typeof MessagesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/modern-slavery': {
+      id: '/modern-slavery'
+      path: '/modern-slavery'
+      fullPath: '/modern-slavery'
+      preLoaderRoute: typeof ModernSlaveryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/my-eka': {
@@ -3475,6 +3515,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AboutRoute: AboutRoute,
+  AccessibilityRoute: AccessibilityRoute,
   AdminRoute: AdminRoute,
   AdsRoute: AdsRoute,
   AgentRoute: AgentRoute,
@@ -3509,6 +3550,7 @@ const rootRouteChildren: RootRouteChildren = {
   McpRoute: McpRoute,
   MembershipRoute: MembershipRoute,
   MessagesRoute: MessagesRoute,
+  ModernSlaveryRoute: ModernSlaveryRoute,
   MyEkaRoute: MyEkaRoute,
   ObserveRoute: ObserveRoute,
   OpsRoute: OpsRoute,

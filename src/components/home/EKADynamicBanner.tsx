@@ -206,20 +206,20 @@ export function EKADynamicBanner({
           <div className="pt-2 flex flex-wrap items-center gap-3 sm:gap-4">
             <Button
               size="lg"
-              onClick={(e) => handlePrimaryCtaClick(e, "#living-world")}
+              onClick={(e) => handlePrimaryCtaClick(e, "#stories-of-the-world")}
               className="rounded-2xl px-7 py-5 bg-terracotta hover:bg-terracotta/90 text-white font-medium text-xs font-mono tracking-wider uppercase gap-2 shadow-calm group transition-all"
             >
-              <span>EXPLORE THE WORLD</span>
+              <span>EXPLORE STORIES</span>
               <ArrowRight className="size-3.5 group-hover:translate-x-1 transition-transform" />
             </Button>
 
-            <Link to="/join">
+            <Link to="/discover">
               <Button
                 size="lg"
                 variant="outline"
                 className="rounded-2xl px-6 py-5 border-white/30 bg-black/40 backdrop-blur-md text-white hover:bg-white/20 font-medium text-xs font-mono tracking-wider uppercase"
               >
-                JOIN EKA
+                DISCOVER PLACES
               </Button>
             </Link>
           </div>

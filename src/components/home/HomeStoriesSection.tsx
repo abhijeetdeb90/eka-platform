@@ -45,7 +45,7 @@ const FEATURED_HOME_STORIES: StoryPreview[] = [
     location: "Varanasi, India",
     curiosityQuestion: "Why is fire offered back to the river water at dusk?",
     imageUrl: "/places/varanasi.jpg",
-    creatorName: "Pt. Ramakrishna Shastry",
+    creatorName: "Ganga Seva Nidhi Tradition",
     duration: "0:45",
   },
   {
@@ -56,7 +56,7 @@ const FEATURED_HOME_STORIES: StoryPreview[] = [
     location: "Kyoto, Japan",
     curiosityQuestion: "How does one bowl of green tea become silent meditation?",
     imageUrl: "/places/kyoto.jpg",
-    creatorName: "Master Sen Soukaku",
+    creatorName: "Urasenke Tea Lineage",
     duration: "1:00",
   },
   {
@@ -67,7 +67,7 @@ const FEATURED_HOME_STORIES: StoryPreview[] = [
     location: "Oaxaca, Mexico",
     curiosityQuestion: "Why are yellow marigolds placed outside front doors?",
     imageUrl: "/content/observe.jpg",
-    creatorName: "Doña Elena Morales",
+    creatorName: "Zapotec Hearth Tradition",
     duration: "0:52",
   },
   {
@@ -78,7 +78,7 @@ const FEATURED_HOME_STORIES: StoryPreview[] = [
     location: "Kerala, India",
     curiosityQuestion: "Why does this ancient metal mirror have zero distortion?",
     imageUrl: "/content/monastery-corridor.jpg",
-    creatorName: "K. Sudhakaran Achari",
+    creatorName: "Aranmula Metallurgy Guild",
     duration: "0:58",
   },
   {
@@ -89,7 +89,7 @@ const FEATURED_HOME_STORIES: StoryPreview[] = [
     location: "Assam, India",
     curiosityQuestion: "How do monastery masks move their jaws using reed strings?",
     imageUrl: "/content/reading-table.jpg",
-    creatorName: "Prabin Goswami",
+    creatorName: "Samaguri Satra Monastic Craft",
     duration: "0:50",
   },
   {
@@ -100,7 +100,7 @@ const FEATURED_HOME_STORIES: StoryPreview[] = [
     location: "Fez, Morocco",
     curiosityQuestion: "How do natural botanical dyes preserve color for centuries?",
     imageUrl: "/places/marrakesh.jpg",
-    creatorName: "Maâlem Tariq Benjelloun",
+    creatorName: "Chouara Artisan Guild",
     duration: "1:05",
   },
 ];
@@ -114,7 +114,7 @@ export function HomeStoriesSection() {
   });
 
   return (
-    <section className="container-eka py-6 sm:py-10 space-y-6">
+    <section id="stories-of-the-world" className="container-eka py-6 sm:py-10 space-y-6">
       {/* Header & Subtext */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div className="space-y-1.5 max-w-2xl">
@@ -129,8 +129,8 @@ export function HomeStoriesSection() {
             Watch, Wonder & Experience Living Culture
           </h2>
           <p className="text-sm sm:text-base text-muted-foreground font-light leading-relaxed">
-            Short-form cultural reels from real elders, master artisans, and community stewards.
-            From family traditions and ancient rituals to foodways, crafts, festivals and everyday ways of life.
+            Short-form cultural reels from community contributors, documented craft guilds, and regional traditions.
+            From family rituals and traditional crafts to seasonal festivals and everyday shared life.
           </p>
         </div>
 

@@ -27,7 +27,7 @@ export const GLOBAL_HOME_BANNERS: EKABannerItem[] = [
     title: "Don't just scroll the world.\nUnderstand it.",
     subtitle: "One Within. One With All.",
     description:
-      "From family traditions and living rituals to master crafts, foodways, classical texts, and sacred geography — EKA connects human knowledge with authentic community custodians.",
+      "From family traditions and living rituals to master crafts, foodways, and sacred places — EKA connects human knowledge with authentic community contributors and living lineages.",
     curiosityQuestion: "What if the world is far more connected than you think?",
     image: heroImage,
     location: "Global Civilizations",

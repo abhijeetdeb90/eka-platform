@@ -1,4 +1,4 @@
-﻿import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { ChevronLeft, ChevronRight, Film, ImagePlus, Layers, Loader2, Plus, X } from "lucide-react";
@@ -146,7 +146,7 @@ export function Composer({
   });
 
   const submit = async () => {
-    const hasText = content.trim().length > 0;
+    const hasText = content.trim().length > 0 || topic.trim().length > 0;
     const hasMedia = files.length > 0;
     if (!(hasText || hasMedia) || busy) return;
     setBusy(true);
@@ -193,12 +193,14 @@ export function Composer({
       setUploading(false);
     }
 
+    const finalContent = content.trim() || topic.trim() || "Shared reflection";
+
     const { data: inserted, error } = await supabase
       .from("posts")
       .insert({
         author_id: auth.user.id,
         type,
-        content: content.trim(),
+        content: finalContent,
         topic: topic.trim() || null,
         media_url: mediaValue,
         community_id: community || null,
@@ -477,7 +479,7 @@ export function Composer({
               : `${files.length} photo${files.length > 1 ? "s" : ""} selected · Free for all seekers`}
           </span>
         ) : (
-          <span className="text-xs text-muted-foreground">Photos to 10 MB Ã‚· Video to 50 MB Ã‚· Carousels up to 10 photos</span>
+          <span className="text-xs text-muted-foreground">Photos to 10 MB · Video to 50 MB · Carousels up to 10 photos</span>
         )}
       </div>
 
@@ -518,7 +520,7 @@ export function Composer({
         <p className="text-xs text-muted-foreground">
           {POST_TYPES.find((t) => t.value === type)?.hint}
         </p>
-        <Button onClick={submit} disabled={busy || !(content.trim() || files.length > 0)}>
+        <Button onClick={submit} disabled={busy || !(content.trim() || topic.trim() || files.length > 0)}>
           {(uploading || busy) && (
             <Loader2 aria-hidden="true" className="mr-2 size-4 animate-spin" />
           )}

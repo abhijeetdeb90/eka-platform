@@ -5,11 +5,13 @@
 // ==============================================================================
 
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Home, Compass, HelpCircle, UserPlus } from "lucide-react";
+import { Home, Compass, Film, Radio, PlusCircle, User } from "lucide-react";
+import { useProfile } from "@/hooks/useProfile";
 
 export function MobileBottomNav() {
   const routerState = useRouterState();
   const currentPath = routerState.location.pathname;
+  const { data: profile } = useProfile();
 
   // Do not show on admin or internal routes
   if (
@@ -25,8 +27,10 @@ export function MobileBottomNav() {
   const items = [
     { label: "Home", to: "/", exact: true, icon: Home },
     { label: "Discover", to: "/discover", icon: Compass },
-    { label: "Ask EKA", to: "/ask", icon: HelpCircle },
-    { label: "Join", to: "/join", icon: UserPlus },
+    { label: "Stories", to: "/stories", icon: Film },
+    { label: "Feed", to: "/feed", icon: Radio },
+    { label: "Create", to: "/create", icon: PlusCircle },
+    { label: profile ? "Profile" : "Sign In", to: "/my-eka", icon: User },
   ];
 
   return (
@@ -35,7 +39,7 @@ export function MobileBottomNav() {
       className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-[#FAF7F2]/95 backdrop-blur-md border-t border-[#E8E2D9]"
     >
       <div
-        className="flex items-center justify-around max-w-md mx-auto px-3 py-2"
+        className="flex items-center justify-between max-w-md mx-auto px-2 py-1.5"
         style={{ paddingBottom: "max(0.5rem, env(safe-area-inset-bottom))" }}
       >
         {items.map((item) => {
@@ -47,12 +51,12 @@ export function MobileBottomNav() {
             <Link
               key={item.to}
               to={item.to}
-              className={`flex flex-col items-center gap-1 py-1 px-3 text-xs font-medium transition-colors ${
+              className={`flex flex-col items-center gap-0.5 py-1 px-2 text-[10px] font-medium transition-colors ${
                 active ? "text-[#C45C26] font-semibold" : "text-[#5C5C5C] hover:text-[#1A1A1A]"
               }`}
             >
               <Icon className="size-5" />
-              <span>{item.label}</span>
+              <span className="truncate max-w-[50px]">{item.label}</span>
             </Link>
           );
         })}

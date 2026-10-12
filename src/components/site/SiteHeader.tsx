@@ -7,18 +7,22 @@
 
 import { useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Menu, X, ArrowRight } from "lucide-react";
+import { Menu, X, ArrowRight, Plus, User } from "lucide-react";
 import { EkaLogo } from "@/components/brand/Logo";
 import { Button } from "@/components/ui/button";
+import { useProfile } from "@/hooks/useProfile";
 
 export function SiteHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const routerState = useRouterState();
   const currentPath = routerState.location.pathname;
+  const { data: profile } = useProfile();
 
   const navLinks = [
     { label: "Home", to: "/", exact: true },
     { label: "Discover", to: "/discover" },
+    { label: "Stories", to: "/stories" },
+    { label: "Feed", to: "/feed" },
     { label: "Ask EKA", to: "/ask" },
   ];
 
@@ -50,7 +54,7 @@ export function SiteHeader() {
               <Link
                 key={link.to}
                 to={link.to}
-                className={`rounded-lg px-3.5 py-1.5 text-sm font-medium transition-colors ${
+                className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
                   isActive
                     ? "text-[#1A1A1A] font-semibold bg-[#F3EDE6]"
                     : "text-[#5C5C5C] hover:text-[#1A1A1A] hover:bg-[#F3EDE6]/60"
@@ -62,20 +66,42 @@ export function SiteHeader() {
           })}
         </nav>
 
-        {/* Right CTA: Language + Join */}
+        {/* Right CTA: Create + Profile / Join */}
         <div className="hidden md:flex items-center gap-3">
-          <span className="text-xs text-[#5C5C5C] font-mono px-2 py-1 rounded bg-[#F3EDE6]">
-            English
-          </span>
           <Button
             asChild
             size="sm"
-            className="rounded-full bg-[#C45C26] hover:bg-[#A34A1F] text-white px-5 py-2 text-xs font-medium shadow-none transition-colors"
+            variant="outline"
+            className="rounded-full border-[#E8E2D9] bg-white hover:bg-[#F3EDE6] text-[#1A1A1A] px-4 py-1.5 text-xs font-medium shadow-none transition-colors"
           >
-            <Link to="/join">
-              <span>Join</span>
+            <Link to="/create" className="inline-flex items-center gap-1.5">
+              <Plus className="size-3.5 text-[#C45C26]" />
+              <span>Create</span>
             </Link>
           </Button>
+
+          {profile ? (
+            <Button
+              asChild
+              size="sm"
+              className="rounded-full bg-[#C45C26] hover:bg-[#A34A1F] text-white px-4 py-1.5 text-xs font-medium shadow-none transition-colors"
+            >
+              <Link to="/my-eka" className="inline-flex items-center gap-1.5">
+                <User className="size-3.5" />
+                <span>{profile.display_name?.split(" ")[0] || "Profile"}</span>
+              </Link>
+            </Button>
+          ) : (
+            <Button
+              asChild
+              size="sm"
+              className="rounded-full bg-[#C45C26] hover:bg-[#A34A1F] text-white px-5 py-2 text-xs font-medium shadow-none transition-colors"
+            >
+              <Link to="/auth">
+                <span>Sign In</span>
+              </Link>
+            </Button>
+          )}
         </div>
 
         {/* Mobile menu button */}
@@ -112,6 +138,20 @@ export function SiteHeader() {
                 {link.label}
               </Link>
             ))}
+            <Link
+              to="/create"
+              onClick={() => setMobileMenuOpen(false)}
+              className="rounded-lg px-3 py-2 text-sm font-medium text-[#C45C26] hover:bg-[#F3EDE6]"
+            >
+              + Create Post
+            </Link>
+            <Link
+              to="/my-eka"
+              onClick={() => setMobileMenuOpen(false)}
+              className="rounded-lg px-3 py-2 text-sm font-medium text-[#1A1A1A] hover:bg-[#F3EDE6]"
+            >
+              {profile ? "My Profile" : "Sign In / Profile"}
+            </Link>
           </nav>
           <div className="pt-2 border-t border-[#E8E2D9] flex items-center justify-between">
             <span className="text-xs text-[#5C5C5C]">Language: English</span>

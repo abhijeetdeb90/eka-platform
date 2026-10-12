@@ -1,24 +1,64 @@
 // ==============================================================================
-// EKA BETA HOMEPAGE
+// EKA HOMEPAGE
 // ==============================================================================
-// Calm, editorial, modern. Not mystical, not startup-gradient.
-// - Header (SiteHeader): Logo + BETA badge, Nav, English, Join button
-// - Hero: Single column on mobile; headline + one subline + two CTAs max
-// - Optional thin strip: "Curated cultural places and practices for learning"
-// - 3-6 featured cards: image, title, 1-line description, location — link to Discover
-// - Short "How it works" (3 steps): Discover → Learn a little → Ask EKA
-// - Footer (SiteFooter): essential cookies only, no ad tracking
+// 1. Flagship Cinematic Hero Banner: ONE WORLD. BILLIONS OF STORIES.
+// 2. Stories from the World (Short-form video reels & visual highlights rail)
+// 3. Category-First Discovery & Knowledge Objects + Living Reflection
+// 4. How EKA Works (Discover → Learn → Ask EKA)
 // ==============================================================================
 
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, Compass, HelpCircle, MapPin } from "lucide-react";
+import { ArrowRight, Compass, HelpCircle, MapPin, Sparkles, BookOpen, Layers, Feather, Radio } from "lucide-react";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { Button } from "@/components/ui/button";
+import { EKADynamicBanner } from "@/components/home/EKADynamicBanner";
+import { HomeStoriesSection } from "@/components/home/HomeStoriesSection";
 import { BETA_PLACES_OR_PRACTICES } from "@/data/beta-seed-data";
+import { useProfile } from "@/hooks/useProfile";
 
 export function EkaHomePage() {
+  const { data: profile } = useProfile();
   const featured = BETA_PLACES_OR_PRACTICES.slice(0, 6);
+
+  const categories = [
+    {
+      title: "Living Traditions",
+      desc: "Festivals, community gatherings, and living rites of passage",
+      count: "Documented",
+      link: "/discover",
+      tag: "Practices",
+      icon: Sparkles,
+      color: "border-amber-200 bg-amber-50/40 text-amber-900",
+    },
+    {
+      title: "Master Crafts & Guilds",
+      desc: "Centuries-old metalwork, textiles, clay sculpture, and stonework",
+      count: "GI Verified",
+      link: "/discover",
+      tag: "Crafts",
+      icon: Layers,
+      color: "border-orange-200 bg-orange-50/40 text-orange-900",
+    },
+    {
+      title: "Sacred Geography",
+      desc: "Historic river ghats, monastic sanctuaries, and cultural landscapes",
+      count: "World Heritage",
+      link: "/discover",
+      tag: "Places",
+      icon: MapPin,
+      color: "border-stone-200 bg-stone-50/40 text-stone-900",
+    },
+    {
+      title: "Oral Lore & Perspectives",
+      desc: "Living memory, culinary hearths, and ancestral philosophies",
+      count: "Community",
+      link: "/feed",
+      tag: "Feed",
+      icon: BookOpen,
+      color: "border-emerald-200 bg-emerald-50/40 text-emerald-900",
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-[#FAF7F2] text-[#1A1A1A] flex flex-col font-sans selection:bg-[#C45C26]/20">
@@ -28,146 +68,239 @@ export function EkaHomePage() {
         {/* Curated thin notification strip */}
         <div className="border-b border-[#E8E2D9] bg-[#F3EDE6]/60 py-2 px-4 text-center">
           <p className="text-xs text-[#5C5C5C]">
-            Curated cultural places and practices for learning • Beta release
+            Curated cultural places, practices, and community stories • Real people & authentic lineages
           </p>
         </div>
 
-        {/* Hero Section */}
-        <section className="py-12 sm:py-20 md:py-24 px-4 sm:px-6">
-          <div className="mx-auto max-w-[1120px] text-center sm:text-left">
-            <div className="max-w-3xl space-y-4">
-              <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl font-medium tracking-tight text-[#1A1A1A] leading-[1.1]">
-                Don't just scroll the world. <br className="hidden sm:inline" />
-                <span className="text-[#C45C26]">Understand it.</span>
-              </h1>
-              <p className="text-lg sm:text-xl text-[#5C5C5C] leading-relaxed max-w-2xl font-normal">
-                Curated stories of traditions, architectural landmarks, and craftsmanship from around the world.
-              </p>
-
-              {/* Two CTAs Max */}
-              <div className="pt-4 flex flex-wrap items-center justify-center sm:justify-start gap-3">
-                <Button
-                  asChild
-                  className="rounded-full bg-[#C45C26] hover:bg-[#A34A1F] text-white px-6 py-3 text-sm font-medium shadow-none transition-colors"
-                >
-                  <Link to="/discover" className="inline-flex items-center gap-2">
-                    <span>Explore Places & Practices</span>
-                    <ArrowRight className="size-4" />
-                  </Link>
-                </Button>
-                <Button
-                  asChild
-                  variant="outline"
-                  className="rounded-full border-[#E8E2D9] bg-white hover:bg-[#F3EDE6] text-[#1A1A1A] px-6 py-3 text-sm font-medium shadow-none transition-colors"
-                >
-                  <Link to="/ask" className="inline-flex items-center gap-2">
-                    <HelpCircle className="size-4 text-[#5C5C5C]" />
-                    <span>Ask a Question</span>
-                  </Link>
-                </Button>
-              </div>
-            </div>
-          </div>
+        {/* 1. Flagship Cinematic Dynamic Banner: ONE WORLD. BILLIONS OF STORIES. */}
+        <section className="mx-auto max-w-[1120px] px-4 sm:px-6 pt-4 sm:pt-6 pb-2">
+          <EKADynamicBanner />
         </section>
 
-        {/* Featured Places & Practices Grid */}
-        <section className="py-10 sm:py-16 px-4 sm:px-6 border-t border-[#E8E2D9] bg-white">
-          <div className="mx-auto max-w-[1120px]">
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-10 gap-3">
-              <div>
-                <h2 className="font-serif text-2xl sm:text-3xl font-medium text-[#1A1A1A] tracking-tight">
-                  Featured Places & Practices
-                </h2>
-                <p className="text-sm text-[#5C5C5C] mt-1">
-                  A starter selection of widely documented living traditions and cultural crafts.
-                </p>
-              </div>
-              <Link
-                to="/discover"
-                className="text-sm font-medium text-[#C45C26] hover:text-[#A34A1F] flex items-center gap-1.5 self-start sm:self-auto transition-colors"
-              >
-                <span>View all places</span>
-                <ArrowRight className="size-4" />
-              </Link>
-            </div>
+        {/* 2. Stories from the World (9:16 Video Highlights & Reels) */}
+        <section className="border-b border-[#E8E2D9] bg-white/60">
+          <HomeStoriesSection />
+        </section>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {featured.map((item) => (
-                <Link
-                  key={item.id}
-                  to="/discover"
-                  className="group rounded-xl border border-[#E8E2D9] bg-white p-4 flex flex-col justify-between hover:border-[#C45C26]/40 transition-colors"
-                >
+        {/* 3. Explore Places & Practices + Daily Living Reflection */}
+        <section className="py-10 sm:py-16 px-4 sm:px-6 bg-[#FAF7F2]">
+          <div className="mx-auto max-w-[1120px]">
+            {/* Main Discovery Columns Grid: 2/3 Content, 1/3 Daily Reflection Widget */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+              
+              {/* Left Column: Category Cards & Featured Documentation */}
+              <div className="lg:col-span-8 space-y-8">
+                {/* Header */}
+                <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
                   <div>
-                    {/* 16:10 aspect image */}
-                    <div className="aspect-[16/10] w-full rounded-lg overflow-hidden bg-[#F3EDE6] mb-3">
-                      <img
-                        src={item.imagePath}
-                        alt={item.title}
-                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
-                        loading="lazy"
-                      />
-                    </div>
-                    {/* Caption + location under image */}
-                    <div className="flex items-center justify-between text-xs text-[#5C5C5C] mb-2">
-                      <span className="flex items-center gap-1">
-                        <MapPin className="size-3 text-[#C45C26]" />
-                        {item.location}
-                      </span>
-                      <span className="rounded bg-[#F3EDE6] px-2 py-0.5 text-[11px] font-medium text-[#5C5C5C]">
-                        {item.category}
-                      </span>
-                    </div>
-                    <h3 className="font-serif text-lg font-medium text-[#1A1A1A] leading-snug group-hover:text-[#C45C26] transition-colors">
-                      {item.title}
-                    </h3>
-                    <p className="text-sm text-[#5C5C5C] leading-relaxed mt-1.5 line-clamp-2">
-                      {item.summary}
+                    <h2 className="font-serif text-2xl sm:text-3xl font-medium text-[#1A1A1A] tracking-tight">
+                      Explore Places & Living Practices
+                    </h2>
+                    <p className="text-sm text-[#5C5C5C] mt-1">
+                      Curated cultural knowledge objects, verified regional crafts, and ancient landmarks.
                     </p>
                   </div>
-                  <p className="text-[11px] text-[#5C5C5C]/80 italic mt-3 pt-2 border-t border-[#E8E2D9]/60">
-                    {item.imageCaption}
+                  <Link
+                    to="/discover"
+                    className="text-sm font-medium text-[#C45C26] hover:text-[#A34A1F] flex items-center gap-1.5 self-start sm:self-auto transition-colors"
+                  >
+                    <span>View all</span>
+                    <ArrowRight className="size-4" />
+                  </Link>
+                </div>
+
+                {/* 4 Category-First Cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {categories.map((c) => {
+                    const Icon = c.icon;
+                    return (
+                      <Link
+                        key={c.title}
+                        to={c.link as any}
+                        className={`group p-5 rounded-2xl border transition-all duration-300 hover:shadow-sm hover:border-[#C45C26]/40 ${c.color}`}
+                      >
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="size-9 rounded-xl bg-white/80 shadow-xs flex items-center justify-center text-[#C45C26]">
+                            <Icon className="size-5" />
+                          </div>
+                          <span className="font-mono text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-white/70">
+                            {c.count}
+                          </span>
+                        </div>
+                        <h3 className="font-serif text-lg font-medium text-[#1A1A1A] group-hover:text-[#C45C26] transition-colors">
+                          {c.title}
+                        </h3>
+                        <p className="text-xs text-[#5C5C5C] mt-1.5 leading-relaxed">
+                          {c.desc}
+                        </p>
+                      </Link>
+                    );
+                  })}
+                </div>
+
+                {/* Featured Documentation 2-col subset */}
+                <div className="pt-4 border-t border-[#E8E2D9]">
+                  <h3 className="font-serif text-xl font-medium text-[#1A1A1A] mb-4">
+                    Documented Cultural Objects
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    {featured.slice(0, 4).map((item) => (
+                      <Link
+                        key={item.id}
+                        to="/discover"
+                        className="group rounded-2xl border border-[#E8E2D9] bg-white p-4 flex flex-col justify-between hover:border-[#C45C26]/40 transition-colors shadow-xs"
+                      >
+                        <div>
+                          <div className="aspect-[16/10] w-full rounded-xl overflow-hidden bg-[#F3EDE6] mb-3">
+                            <img
+                              src={item.imagePath}
+                              alt={item.title}
+                              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                              loading="lazy"
+                            />
+                          </div>
+                          <div className="flex items-center justify-between text-xs text-[#5C5C5C] mb-1.5">
+                            <span className="flex items-center gap-1 font-mono text-[11px]">
+                              <MapPin className="size-3 text-[#C45C26]" />
+                              {item.location}
+                            </span>
+                            <span className="rounded bg-[#F3EDE6] px-2 py-0.5 text-[10px] font-medium text-[#5C5C5C]">
+                              {item.category}
+                            </span>
+                          </div>
+                          <h4 className="font-serif text-base font-medium text-[#1A1A1A] group-hover:text-[#C45C26] transition-colors leading-snug">
+                            {item.title}
+                          </h4>
+                          <p className="text-xs text-[#5C5C5C] leading-relaxed mt-1 line-clamp-2">
+                            {item.summary}
+                          </p>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column: Daily Living Reflection & Community Actions */}
+              <div className="lg:col-span-4 space-y-6">
+                
+                {/* Daily Cultural Reflection Widget */}
+                <div className="rounded-2xl border border-amber-200/80 bg-white p-6 shadow-xs space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase font-bold tracking-widest text-[#C45C26]">
+                      <Sparkles className="size-3.5" />
+                      Daily Reflection
+                    </span>
+                    <span className="text-[11px] font-mono text-[#5C5C5C]">
+                      Today
+                    </span>
+                  </div>
+
+                  <div className="space-y-2">
+                    <h3 className="font-serif text-lg sm:text-xl font-medium text-[#1A1A1A] leading-snug">
+                      "What is a family ritual or tradition you carry that grounds your everyday life?"
+                    </h3>
+                    <p className="text-xs text-[#5C5C5C] leading-relaxed">
+                      EKA invites personal reflections and community memories alongside documented public traditions.
+                    </p>
+                  </div>
+
+                  <div className="pt-2 border-t border-[#E8E2D9]">
+                    <Button
+                      asChild
+                      className="w-full rounded-xl bg-[#C45C26] hover:bg-[#A34A1F] text-white text-xs font-medium py-2.5 shadow-none transition-colors"
+                    >
+                      <Link to="/create">
+                        <Feather className="size-3.5 mr-1.5" />
+                        <span>Share Your Reflection</span>
+                      </Link>
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Community Living Feed Quick Portal */}
+                <div className="rounded-2xl border border-[#E8E2D9] bg-white p-6 shadow-xs space-y-3">
+                  <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-[#5C5C5C]">
+                    <Radio className="size-3.5 text-[#C45C26]" />
+                    <span>Real-Time Activity</span>
+                  </div>
+                  <h4 className="font-serif text-base font-medium text-[#1A1A1A]">
+                    Live Community Feed
+                  </h4>
+                  <p className="text-xs text-[#5C5C5C] leading-relaxed">
+                    Read unvarnished reflections, artisan demonstrations, and cultural questions from verified contributors.
                   </p>
-                </Link>
-              ))}
+                  <Link
+                    to="/feed"
+                    className="inline-flex items-center gap-1.5 text-xs font-medium text-[#C45C26] hover:underline pt-1"
+                  >
+                    <span>Open community feed</span>
+                    <ArrowRight className="size-3" />
+                  </Link>
+                </div>
+
+                {/* Ask EKA Inquiries Starter */}
+                <div className="rounded-2xl border border-[#E8E2D9] bg-white p-6 shadow-xs space-y-3">
+                  <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-[#5C5C5C]">
+                    <HelpCircle className="size-3.5 text-[#C45C26]" />
+                    <span>Inquiry Engine</span>
+                  </div>
+                  <h4 className="font-serif text-base font-medium text-[#1A1A1A]">
+                    Curious about a tradition?
+                  </h4>
+                  <p className="text-xs text-[#5C5C5C] leading-relaxed">
+                    Ask questions and read factual historical explanations grounded in living cultural history.
+                  </p>
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="w-full rounded-xl border-[#E8E2D9] bg-white hover:bg-[#F3EDE6] text-[#1A1A1A] text-xs font-medium py-2.5 transition-colors"
+                  >
+                    <Link to="/ask">
+                      <span>Explore Inquiries</span>
+                    </Link>
+                  </Button>
+                </div>
+
+              </div>
             </div>
           </div>
         </section>
 
-        {/* How It Works (3 Steps) */}
-        <section className="py-12 sm:py-20 px-4 sm:px-6 bg-[#FAF7F2] border-t border-[#E8E2D9]">
+        {/* 4. How It Works (3 Steps) */}
+        <section className="py-12 sm:py-20 px-4 sm:px-6 bg-white border-t border-[#E8E2D9]">
           <div className="mx-auto max-w-[1120px]">
             <div className="text-center max-w-xl mx-auto mb-10 sm:mb-14">
               <h2 className="font-serif text-2xl sm:text-3xl font-medium text-[#1A1A1A] tracking-tight">
                 How EKA Works
               </h2>
               <p className="text-sm text-[#5C5C5C] mt-2">
-                Designed for calm, focused cultural learning without algorithm loops.
+                Designed for calm, focused cultural understanding and authentic human sharing.
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="rounded-xl border border-[#E8E2D9] bg-white p-6 space-y-3">
+              <div className="rounded-xl border border-[#E8E2D9] bg-[#FAF7F2] p-6 space-y-3">
                 <span className="font-mono text-xs font-semibold text-[#C45C26]">01</span>
-                <h3 className="font-serif text-lg font-medium text-[#1A1A1A]">Discover</h3>
+                <h3 className="font-serif text-lg font-medium text-[#1A1A1A]">Watch & Discover</h3>
                 <p className="text-sm text-[#5C5C5C] leading-relaxed">
-                  Browse documented public cultural rituals, regional foodways, and traditional artisan crafts.
+                  Experience short-form visual stories, regional crafts, and living rites of passage from around the world.
                 </p>
               </div>
 
-              <div className="rounded-xl border border-[#E8E2D9] bg-white p-6 space-y-3">
+              <div className="rounded-xl border border-[#E8E2D9] bg-[#FAF7F2] p-6 space-y-3">
                 <span className="font-mono text-xs font-semibold text-[#C45C26]">02</span>
-                <h3 className="font-serif text-lg font-medium text-[#1A1A1A]">Learn a Little</h3>
+                <h3 className="font-serif text-lg font-medium text-[#1A1A1A]">Inquire with Context</h3>
                 <p className="text-sm text-[#5C5C5C] leading-relaxed">
-                  Read concise, factual explanations with context notes and clear location references.
+                  Understand why traditions exist through factual context notes and verified provenance without algorithmic noise.
                 </p>
               </div>
 
-              <div className="rounded-xl border border-[#E8E2D9] bg-white p-6 space-y-3">
+              <div className="rounded-xl border border-[#E8E2D9] bg-[#FAF7F2] p-6 space-y-3">
                 <span className="font-mono text-xs font-semibold text-[#C45C26]">03</span>
-                <h3 className="font-serif text-lg font-medium text-[#1A1A1A]">Ask EKA</h3>
+                <h3 className="font-serif text-lg font-medium text-[#1A1A1A]">Contribute & Connect</h3>
                 <p className="text-sm text-[#5C5C5C] leading-relaxed">
-                  Inquire into why traditions exist and explore factual historical answers grounded in reliable context.
+                  Share your own family rituals, artisan crafts, and memories to help build a living global archive.
                 </p>
               </div>
             </div>
