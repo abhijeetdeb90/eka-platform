@@ -1,4 +1,4 @@
-﻿-- =================================================================================
+-- =================================================================================
 -- EKA CULTURAL MODELS ENHANCEMENT
 -- =================================================================================
 -- This migration expands EKA's backend data models to deeply represent 
@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS public.cultural_heritage_sites (
     location_point geometry(POINT, 4326), -- PostGIS spatial coordinates
     region TEXT,
     country TEXT,
-    tradition_id UUID REFERENCES public.knowledge_objects(id), -- Link to a specific culture/tradition
+    tradition_id TEXT REFERENCES public.knowledge_objects(id), -- Link to a specific culture/tradition
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS public.cultural_events (
     name TEXT NOT NULL,
     local_name TEXT,
     description TEXT,
-    tradition_id UUID REFERENCES public.knowledge_objects(id),
+    tradition_id TEXT REFERENCES public.knowledge_objects(id),
     -- Calendar tracking (Gregorian vs Lunar/Solar)
     calendar_type TEXT CHECK (calendar_type IN ('gregorian', 'lunar', 'lunisolar', 'solar', 'other')),
     typical_month TEXT, -- e.g., 'October/November' for Diwali
