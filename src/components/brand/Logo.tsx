@@ -96,6 +96,7 @@ export function EkaMark({
         <circle cx="4" cy="50" r="2.5" />
       </g>
     </svg>
+  );
 }
 
 /**
