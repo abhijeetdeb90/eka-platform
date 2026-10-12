@@ -210,29 +210,31 @@ function DiscoverPage() {
                 </div>
               </div>
 
-              {/* Level 2: Region / State Filter (Dynamic) */}
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-xs font-mono uppercase tracking-wider text-[#5C5C5C] flex items-center gap-1.5 shrink-0 mr-1">
-                  <MapPin className="size-3.5 text-[#C45C26]" />
-                  State / Region:
-                </span>
-                <div className="flex flex-wrap gap-1.5">
-                  {regionsForCountry.map((region) => (
-                    <button
-                      key={region}
-                      type="button"
-                      onClick={() => setSelectedRegion(region)}
-                      className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
-                        selectedRegion === region
-                          ? "bg-[#1A1A1A] text-white shadow-xs"
-                          : "border border-[#E8E2D9] bg-white text-[#5C5C5C] hover:text-[#1A1A1A] hover:bg-[#F3EDE6]"
-                      }`}
-                    >
-                      {region === "All" ? "All States" : region}
-                    </button>
-                  ))}
+              {/* Level 2: Region / State Filter (Dynamic: only displayed when a country is chosen) */}
+              {selectedCountry !== "All" && (
+                <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-[#E8E2D9]/40">
+                  <span className="text-xs font-mono uppercase tracking-wider text-[#5C5C5C] flex items-center gap-1.5 shrink-0 mr-1">
+                    <MapPin className="size-3.5 text-[#C45C26]" />
+                    {selectedCountry} Regions:
+                  </span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {regionsForCountry.map((region) => (
+                      <button
+                        key={region}
+                        type="button"
+                        onClick={() => setSelectedRegion(region)}
+                        className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                          selectedRegion === region
+                            ? "bg-[#1A1A1A] text-white shadow-xs"
+                            : "border border-[#E8E2D9] bg-white text-[#5C5C5C] hover:text-[#1A1A1A] hover:bg-[#F3EDE6]"
+                        }`}
+                      >
+                        {region === "All" ? `All in ${selectedCountry}` : region}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Level 3: Heritage Category Filter */}
               <div className="flex flex-wrap items-center gap-2">
@@ -273,7 +275,7 @@ function DiscoverPage() {
                     setSelectedSubCategory("All");
                     setSearchQuery("");
                   }}
-                  className="text-[#C45C26] hover:underline font-medium"
+                  className="text-[#C45C26] hover:underline font-medium cursor-pointer"
                 >
                   Reset all filters
                 </button>
@@ -302,8 +304,8 @@ function DiscoverPage() {
                   }}
                 >
                   <div>
-                    {/* High-res Verified Photo */}
-                    <div className="aspect-[16/10] w-full rounded-xl overflow-hidden bg-[#F3EDE6] mb-3 relative">
+                    {/* High-res Verified Photo (4:3 aspect container) */}
+                    <div className="aspect-[4/3] w-full rounded-xl overflow-hidden bg-[#F3EDE6] mb-3 relative">
                       <img
                         src={item.imagePath}
                         alt={item.title}

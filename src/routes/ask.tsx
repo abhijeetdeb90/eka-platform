@@ -88,6 +88,7 @@ function AskEkaPage() {
   const [inputText, setInputText] = useState(searchParams.q || "");
   const [isSearching, setIsSearching] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [showCuratedMobile, setShowCuratedMobile] = useState<boolean>(!searchParams.q);
 
   // Active answer state
   const [activeAnswer, setActiveAnswer] = useState<DisplayAnswer | null>(() => {
@@ -126,6 +127,7 @@ function AskEkaPage() {
     if (!q) return;
 
     setIsSearching(true);
+    setShowCuratedMobile(false); // Hide curated inquiries on mobile once user inquires
 
     try {
       // 1. Try server-side TanStack Start function (uses Gemini directly with secure server env)
@@ -294,8 +296,8 @@ function AskEkaPage() {
                 </Button>
               </div>
 
-              {/* Quick Inquiry Chips (Thumb-friendly on mobile) */}
-              <div className="flex items-center gap-2 overflow-x-auto pb-1.5 pt-1 scrollbar-none">
+              {/* Quick Inquiry Chips (Thumb-friendly on mobile, scrollbar hidden) */}
+              <div className="flex items-center gap-2 overflow-x-auto pb-1.5 pt-1 scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
                 <span className="text-[11px] font-mono text-[#5C5C5C] uppercase tracking-wider shrink-0 mr-1">
                   Quick Ideas:
                 </span>
@@ -304,7 +306,7 @@ function AskEkaPage() {
                     key={item.label}
                     type="button"
                     onClick={() => handleSelectChip(item.query)}
-                    className="shrink-0 rounded-full border border-[#E8E2D9] bg-white px-3 py-1.5 text-xs text-[#1A1A1A] hover:border-[#C45C26] hover:text-[#C45C26] transition-colors focus:outline-none focus:ring-1 focus:ring-[#C45C26]"
+                    className="shrink-0 rounded-full border border-[#E8E2D9] bg-white px-3.5 py-1.5 text-xs text-[#1A1A1A] hover:border-[#C45C26] hover:text-[#C45C26] transition-colors focus:outline-none focus:ring-1 focus:ring-[#C45C26]"
                   >
                     {item.label}
                   </button>
@@ -416,12 +418,26 @@ function AskEkaPage() {
                     </div>
                   )}
 
-                  {/* Documentation Note & Sources */}
-                  <div className="pt-2 text-xs text-[#5C5C5C] flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-t border-[#E8E2D9]">
+                  {/* Reference basis & Mobile Reset Flow */}
+                  <div className="pt-2 text-xs text-[#5C5C5C] flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t border-[#E8E2D9]">
                     <div className="flex items-center gap-2">
                       <BookOpen className="size-3.5 text-[#C45C26] shrink-0" />
                       <span>Reference basis: {activeAnswer.sourcesNote}</span>
                     </div>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowCuratedMobile(true);
+                        setInputText("");
+                        if (typeof window !== "undefined") {
+                          window.scrollTo({ top: 0, behavior: "smooth" });
+                        }
+                      }}
+                      className="inline-flex items-center gap-1.5 text-xs font-medium text-[#C45C26] hover:text-[#A34A1F] transition-colors self-start sm:self-auto cursor-pointer"
+                    >
+                      <span>← Ask something else</span>
+                    </button>
                   </div>
 
                   {/* Related Discover Items */}
@@ -476,8 +492,8 @@ function AskEkaPage() {
               )}
             </div>
 
-            {/* Left/Sidebar Column: Curated Starter Questions */}
-            <div className="lg:col-span-4 order-2 lg:order-1 space-y-3">
+            {/* Curated Starter Questions: Always visible on desktop (lg:block), on mobile only if showCuratedMobile is true */}
+            <div className={`lg:col-span-4 order-2 lg:order-1 space-y-3 ${showCuratedMobile ? "block" : "hidden lg:block"}`}>
               <div className="flex items-center justify-between pb-1">
                 <span className="font-serif text-base font-medium text-[#1A1A1A]">
                   Curated Inquiries ({BETA_ASK_QUESTIONS.length})

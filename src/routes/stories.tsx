@@ -917,7 +917,7 @@ function EkaStoriesPage() {
         </div>
       </div>
 
-      <main id="main-content" className="flex-1 space-y-10 sm:space-y-14 py-6 sm:py-10">
+      <main id="main-content" className="flex-1 space-y-10 sm:space-y-14 py-12 sm:py-16">
         {/* ==================================================================== */}
         {/* HERO / KICKER & TITLE */}
         {/* ==================================================================== */}
