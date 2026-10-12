@@ -100,6 +100,7 @@ import { Route as KnowledgeIndexRouteImport } from './routes/knowledge.index'
 import { Route as KnowledgeSlugRouteImport } from './routes/knowledge.$slug'
 import { Route as PassportSlugRouteImport } from './routes/passport.$slug'
 import { Route as PeopleUsernameRouteImport } from './routes/people.$username'
+import { Route as PlacesSlugRouteImport } from './routes/places.$slug'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as AuthenticatedAdminCreatorRiskRouteImport } from './routes/_authenticated/admin.creator-risk'
 import { Route as AuthenticatedAdminEconomicsRouteImport } from './routes/_authenticated/admin.economics'
@@ -632,6 +633,11 @@ const PeopleUsernameRoute = PeopleUsernameRouteImport.update({
   path: '/people/$username',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PlacesSlugRoute = PlacesSlugRouteImport.update({
+  id: '/places/$slug',
+  path: '/places/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
   id: '/.lovable/oauth/consent',
   path: '/.lovable/oauth/consent',
@@ -1121,6 +1127,7 @@ export interface FileRoutesByFullPath {
   '/knowledge/$slug': typeof KnowledgeSlugRoute
   '/passport/$slug': typeof PassportSlugRoute
   '/people/$username': typeof PeopleUsernameRoute
+  '/places/$slug': typeof PlacesSlugRoute
   '/brands-enterprise/': typeof BrandsEnterpriseIndexRoute
   '/founder-admin/': typeof FounderAdminIndexRoute
   '/knowledge/': typeof KnowledgeIndexRoute
@@ -1283,6 +1290,7 @@ export interface FileRoutesByTo {
   '/knowledge/$slug': typeof KnowledgeSlugRoute
   '/passport/$slug': typeof PassportSlugRoute
   '/people/$username': typeof PeopleUsernameRoute
+  '/places/$slug': typeof PlacesSlugRoute
   '/brands-enterprise': typeof BrandsEnterpriseIndexRoute
   '/founder-admin': typeof FounderAdminIndexRoute
   '/knowledge': typeof KnowledgeIndexRoute
@@ -1450,6 +1458,7 @@ export interface FileRoutesById {
   '/knowledge/$slug': typeof KnowledgeSlugRoute
   '/passport/$slug': typeof PassportSlugRoute
   '/people/$username': typeof PeopleUsernameRoute
+  '/places/$slug': typeof PlacesSlugRoute
   '/brands-enterprise/': typeof BrandsEnterpriseIndexRoute
   '/founder-admin/': typeof FounderAdminIndexRoute
   '/knowledge/': typeof KnowledgeIndexRoute
@@ -1617,6 +1626,7 @@ export interface FileRouteTypes {
     | '/knowledge/$slug'
     | '/passport/$slug'
     | '/people/$username'
+    | '/places/$slug'
     | '/brands-enterprise/'
     | '/founder-admin/'
     | '/knowledge/'
@@ -1779,6 +1789,7 @@ export interface FileRouteTypes {
     | '/knowledge/$slug'
     | '/passport/$slug'
     | '/people/$username'
+    | '/places/$slug'
     | '/brands-enterprise'
     | '/founder-admin'
     | '/knowledge'
@@ -1945,6 +1956,7 @@ export interface FileRouteTypes {
     | '/knowledge/$slug'
     | '/passport/$slug'
     | '/people/$username'
+    | '/places/$slug'
     | '/brands-enterprise/'
     | '/founder-admin/'
     | '/knowledge/'
@@ -2092,6 +2104,7 @@ export interface RootRouteChildren {
   KnowledgeSlugRoute: typeof KnowledgeSlugRoute
   PassportSlugRoute: typeof PassportSlugRoute
   PeopleUsernameRoute: typeof PeopleUsernameRoute
+  PlacesSlugRoute: typeof PlacesSlugRoute
   KnowledgeIndexRoute: typeof KnowledgeIndexRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   ApiEmailSendRoute: typeof ApiEmailSendRoute
@@ -2747,6 +2760,13 @@ declare module '@tanstack/react-router' {
       path: '/people/$username'
       fullPath: '/people/$username'
       preLoaderRoute: typeof PeopleUsernameRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/places/$slug': {
+      id: '/places/$slug'
+      path: '/places/$slug'
+      fullPath: '/places/$slug'
+      preLoaderRoute: typeof PlacesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/.lovable/oauth/consent': {
@@ -3581,6 +3601,7 @@ const rootRouteChildren: RootRouteChildren = {
   KnowledgeSlugRoute: KnowledgeSlugRoute,
   PassportSlugRoute: PassportSlugRoute,
   PeopleUsernameRoute: PeopleUsernameRoute,
+  PlacesSlugRoute: PlacesSlugRoute,
   KnowledgeIndexRoute: KnowledgeIndexRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   ApiEmailSendRoute: ApiEmailSendRoute,

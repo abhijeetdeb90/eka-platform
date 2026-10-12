@@ -483,11 +483,23 @@ function DiscoverPage() {
                 </div>
               )}
 
-              {/* Action: Ask EKA AI Companion about this Tradition */}
+              {/* Action: Place Detail Page & Ask EKA AI Companion */}
               <div className="pt-4 border-t border-[#E8E2D9] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <span className="text-xs text-[#5C5C5C]">
-                  Curious to ask deeper questions about {selectedItem.title}?
-                </span>
+                <Button
+                  asChild
+                  variant="outline"
+                  size="sm"
+                  className="rounded-full border-[#E8E2D9] text-xs font-medium text-[#1A1A1A] hover:bg-[#F3EDE6]"
+                >
+                  <Link
+                    to="/places/$slug"
+                    params={{ slug: selectedItem.slug }}
+                  >
+                    <span>View Dedicated Place Page</span>
+                    <ChevronRight className="size-3.5 ml-1" />
+                  </Link>
+                </Button>
+
                 <Button
                   asChild
                   size="sm"

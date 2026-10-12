@@ -1,0 +1,102 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum RegionType { STATE UNION_TERRITORY }
+enum PostType { STORY RITUAL CRAFT QUESTION PHOTO PRACTICE }
+enum Visibility { PUBLIC FOLLOWERS PRIVATE }
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  username  String   @unique
+  bio       String?
+  avatarUrl String?
+  createdAt DateTime @default(now())
+  posts     Post[]
+  comments  Comment[]
+  likes     Like[]
+  followsOut Follow[] @relation("Following")
+  followsIn  Follow[] @relation("Followers")
+  savedPlaces SavedPlace[]
+}
+
+model Place {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  country     String   @default("India")
+  region      String
+  regionType  RegionType
+  subtitle    String
+  description String   @db.Text
+  imageUrl    String
+  imageAlt    String
+  latitude    Float?
+  longitude   Float?
+  featured    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  posts       Post[]
+  @@index([country, region])
+}
+
+model Post {
+  id         String     @id @default(cuid())
+  authorId   String
+  author     User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  placeId    String?
+  place      Place?     @relation(fields: [placeId], references: [id], onDelete: SetNull)
+  content    String     @db.Text
+  mediaUrls  String[]   @default([])
+  type       PostType   @default(STORY)
+  visibility Visibility @default(PUBLIC)
+  createdAt  DateTime   @default(now())
+  comments   Comment[]
+  likes      Like[]
+  @@index([createdAt])
+  @@index([placeId, createdAt])
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+  @@index([postId, createdAt])
+}
+
+model Like {
+  userId    String
+  postId    String
+  createdAt DateTime @default(now())
+  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post      Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  @@id([userId, postId])
+}
+
+model Follow {
+  followerId  String
+  followingId String
+  createdAt   DateTime @default(now())
+  follower    User @relation("Following", fields: [followerId], references: [id], onDelete: Cascade)
+  following   User @relation("Followers", fields: [followingId], references: [id], onDelete: Cascade)
+  @@id([followerId, followingId])
+  @@index([followingId])
+}
+
+model SavedPlace {
+  userId    String
+  placeId   String
+  createdAt DateTime @default(now())
+  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  place     Place @relation(fields: [placeId], references: [id], onDelete: Cascade)
+  @@id([userId, placeId])
+}
