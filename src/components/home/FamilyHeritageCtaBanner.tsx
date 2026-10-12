@@ -16,9 +16,9 @@ export function FamilyHeritageCtaBanner() {
           </h2>
 
           <p className="text-sm sm:text-base text-stone-300 max-w-2xl mx-auto leading-relaxed">
-            Your family's recipe. Your village festival. Your craft lineage. Your local memory.
+            A family memory, a local tradition, a festival, or a craft worth preserving.
             <br className="hidden sm:inline" />
-            Share it with a global community that treasures genuine human heritage.
+            Share it as an article, video, or image with a community that values every story.
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
@@ -28,7 +28,7 @@ export function FamilyHeritageCtaBanner() {
             >
               <Link to="/create">
                 <Feather className="size-4 mr-2" />
-                <span>Record Family Heritage</span>
+                <span>Share Your Story With Us</span>
               </Link>
             </Button>
 
