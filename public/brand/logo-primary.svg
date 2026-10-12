@@ -1,54 +1,20 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 64" fill="none">
-  <!-- EKA Canonical Primary Horizontal Lockup -->
-  <defs>
-    <linearGradient id="ekaCoreWarm" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#C25E3E"/>
-      <stop offset="100%" stop-color="#9E472A"/>
-    </linearGradient>
-    <mask id="hMask">
-      <rect width="64" height="64" fill="#FFFFFF"/>
-      <circle cx="32" cy="32" r="10" fill="#000000"/>
-    </mask>
-  </defs>
-
-  <!-- 1. CULTURAL MERIDIAN EMBLEM (Left, 64x64 bounds) -->
-  <g id="eka-symbol">
-    <!-- Outer Globe Ring -->
-    <circle cx="32" cy="32" r="26" stroke="#1E2A38" stroke-width="2.75"/>
-
-    <!-- Masked Interior Meridians -->
-    <g mask="url(#hMask)" stroke="#1E2A38" stroke-width="2.75" stroke-linecap="round">
-      <line x1="6" y1="32" x2="58" y2="32"/>
-      <path d="M 32 6 C 43 16, 43 48, 32 58"/>
-      <path d="M 32 6 C 21 16, 21 48, 32 58"/>
-    </g>
-
-    <!-- Cardinal Meridian Nodes -->
-    <circle cx="32" cy="6" r="1.75" fill="#C25E3E"/>
-    <circle cx="58" cy="32" r="1.75" fill="#C25E3E"/>
-    <circle cx="32" cy="58" r="1.75" fill="#C25E3E"/>
-    <circle cx="6" cy="32" r="1.75" fill="#C25E3E"/>
-
-    <!-- The "One Within" Focal Core -->
-    <circle cx="32" cy="32" r="5.5" fill="url(#ekaCoreWarm)"/>
+  <g transform="translate(2 2) scale(.6)"><g stroke="#C25E3E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="50" cy="50" r="46"/>
+    <ellipse cx="50" cy="50" rx="20" ry="46" transform="rotate(0 50 50)"/>
+    <ellipse cx="50" cy="50" rx="20" ry="46" transform="rotate(45 50 50)"/>
+    <ellipse cx="50" cy="50" rx="20" ry="46" transform="rotate(90 50 50)"/>
+    <ellipse cx="50" cy="50" rx="20" ry="46" transform="rotate(135 50 50)"/>
+    <circle cx="50" cy="50" r="27"/>
+    <circle cx="50" cy="50" r="22"/>
+    <circle cx="50" cy="50" r="17"/>
   </g>
-
-  <!-- 2. TYPOGRAPHIC LOGOTYPE & DESCRIPTOR -->
-  <g id="eka-logotype" transform="translate(74, 0)">
-    <!-- Primary Mark: EKA -->
-    <text x="0" y="36" 
-          font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" 
-          font-weight="800" 
-          font-size="28" 
-          letter-spacing="0.22em" 
-          fill="#1E2A38">EKA</text>
-    
-    <!-- Secondary Product Positioning: CULTURAL INTELLIGENCE -->
-    <text x="1" y="49" 
-          font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" 
-          font-weight="600" 
-          font-size="7.5" 
-          letter-spacing="0.28em" 
-          fill="#718096">CULTURAL INTELLIGENCE</text>
+  <g stroke="#C25E3E" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="50" cy="45" r="3.6" fill="#C25E3E"/>
+    <path d="M43 50 Q50 47 57 50 L53 55 L55 64 Q55 68 50 69 Q45 68 45 64 L47 55 Z" fill="#C25E3E"/>
+    <path d="M42 51 Q50 55 58 51"/>
   </g>
+  <circle cx="5" cy="50" r="2.5" fill="#C25E3E"/><circle cx="50" cy="5" r="2.5" fill="#C25E3E"/><circle cx="95" cy="50" r="2.5" fill="#C25E3E"/>
+</g>
+  <text x="70" y="43" font-family="Arial, sans-serif" font-size="34" font-weight="700" letter-spacing="6" fill="#C25E3E">EKA</text>
 </svg>
