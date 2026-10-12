@@ -29,6 +29,7 @@ import { Route as ContentRouteImport } from './routes/content'
 import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as CopyrightRouteImport } from './routes/copyright'
 import { Route as CreateRouteImport } from './routes/create'
+import { Route as CreatorStudioRouteImport } from './routes/creator-studio'
 import { Route as CrmRouteImport } from './routes/crm'
 import { Route as DiscoverRouteImport } from './routes/discover'
 import { Route as EnterpriseRouteImport } from './routes/enterprise'
@@ -272,6 +273,11 @@ const CopyrightRoute = CopyrightRouteImport.update({
 const CreateRoute = CreateRouteImport.update({
   id: '/create',
   path: '/create',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CreatorStudioRoute = CreatorStudioRouteImport.update({
+  id: '/creator-studio',
+  path: '/creator-studio',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CrmRoute = CrmRouteImport.update({
@@ -1059,6 +1065,7 @@ export interface FileRoutesByFullPath {
   '/cookies': typeof CookiesRoute
   '/copyright': typeof CopyrightRoute
   '/create': typeof CreateRoute
+  '/creator-studio': typeof CreatorStudioRoute
   '/crm': typeof CrmRoute
   '/discover': typeof DiscoverRoute
   '/enterprise': typeof EnterpriseRoute
@@ -1224,6 +1231,7 @@ export interface FileRoutesByTo {
   '/cookies': typeof CookiesRoute
   '/copyright': typeof CopyrightRoute
   '/create': typeof CreateRoute
+  '/creator-studio': typeof CreatorStudioRoute
   '/crm': typeof CrmRoute
   '/discover': typeof DiscoverRoute
   '/enterprise': typeof EnterpriseRoute
@@ -1390,6 +1398,7 @@ export interface FileRoutesById {
   '/cookies': typeof CookiesRoute
   '/copyright': typeof CopyrightRoute
   '/create': typeof CreateRoute
+  '/creator-studio': typeof CreatorStudioRoute
   '/crm': typeof CrmRoute
   '/discover': typeof DiscoverRoute
   '/enterprise': typeof EnterpriseRoute
@@ -1558,6 +1567,9 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/copyright'
     | '/create'
+    | '/creator-studio'
+    | '/creator-studio'
+    | '/creator-studio'
     | '/crm'
     | '/discover'
     | '/enterprise'
@@ -2056,6 +2068,7 @@ export interface RootRouteChildren {
   CookiesRoute: typeof CookiesRoute
   CopyrightRoute: typeof CopyrightRoute
   CreateRoute: typeof CreateRoute
+  CreatorStudioRoute: typeof CreatorStudioRoute
   CrmRoute: typeof CrmRoute
   DiscoverRoute: typeof DiscoverRoute
   EnterpriseRoute: typeof EnterpriseRoute
@@ -3552,6 +3565,7 @@ const rootRouteChildren: RootRouteChildren = {
   CookiesRoute: CookiesRoute,
   CopyrightRoute: CopyrightRoute,
   CreateRoute: CreateRoute,
+  CreatorStudioRoute: CreatorStudioRoute,
   CrmRoute: CrmRoute,
   DiscoverRoute: DiscoverRoute,
   EnterpriseRoute: EnterpriseRoute,
