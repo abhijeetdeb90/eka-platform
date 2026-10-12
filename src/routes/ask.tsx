@@ -95,7 +95,7 @@ function AskEkaPage() {
     // Initial seed question
     const defaultSeed = searchParams.q
       ? BETA_ASK_QUESTIONS.find((item) =>
-          item.questionText.toLowerCase().includes(searchParams.q.toLowerCase())
+          item.questionText.toLowerCase().includes((searchParams.q ?? "").toLowerCase())
         ) || BETA_ASK_QUESTIONS[0]
       : BETA_ASK_QUESTIONS[0];
 
@@ -164,18 +164,18 @@ function AskEkaPage() {
         // 2. Fall back to EKA Cultural Intelligence Engine
         const engineResult = await askEkaCulturalEngine(q);
         const related = BETA_PLACES_OR_PRACTICES.filter(
-          (p) => p.slug === engineResult.matchedObject.slug || p.regionOrState.includes(engineResult.matchedObject.region)
+          (p) => p.slug === (engineResult.matchedObject?.slug ?? "") || p.regionOrState.includes(engineResult.matchedObject?.region ?? "")
         );
 
         setActiveAnswer({
           questionText: q,
-          category: engineResult.matchedObject.category || "Living Lineage",
+          category: engineResult.matchedObject?.category || "Living Lineage",
           answerSummary: engineResult.aiExplanation.summary,
           answerBody: engineResult.aiExplanation.deepExplanation,
-          whyItMatters: `Rooted in ${engineResult.matchedObject.origin.philosophicalRoot}. Historically practiced in ${engineResult.matchedObject.region}.`,
+          whyItMatters: engineResult.matchedObject ? `Rooted in ${engineResult.matchedObject.origin.philosophicalRoot}. Historically practiced in ${engineResult.matchedObject.region}.` : "Grounded in EKA cultural knowledge and verified sources.",
           culturalNuance: engineResult.aiExplanation.culturalNuance,
           visitorGuidance: engineResult.aiExplanation.visitorGuidance,
-          sourcesNote: engineResult.verifiedSources.map((s) => s.citation).join(" • "),
+          sourcesNote: engineResult.verifiedSources.map((s) => s.citationRef).join(" • "),
           poweredBy: engineResult.aiExplanation.poweredBy,
           relatedPlaces: related.length > 0 ? related : BETA_PLACES_OR_PRACTICES.slice(0, 2),
         });
