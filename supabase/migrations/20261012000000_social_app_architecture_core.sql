@@ -13,15 +13,15 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;
 -- 1. FOLLOWS
 CREATE TABLE IF NOT EXISTS public.follows (
   follower_id uuid NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
-  followed_id uuid NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  following_id uuid NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
   status text NOT NULL DEFAULT 'accepted' CHECK (status IN ('pending', 'accepted')),
   created_at timestamptz NOT NULL DEFAULT now(),
-  PRIMARY KEY (follower_id, followed_id),
-  CHECK (follower_id <> followed_id)
+  PRIMARY KEY (follower_id, following_id),
+  CHECK (follower_id <> following_id)
 );
 
-CREATE INDEX IF NOT EXISTS follows_followed_idx ON public.follows(followed_id, follower_id);
-CREATE INDEX IF NOT EXISTS follows_follower_idx ON public.follows(follower_id, followed_id);
+CREATE INDEX IF NOT EXISTS follows_following_idx ON public.follows(following_id, follower_id);
+CREATE INDEX IF NOT EXISTS follows_follower_idx ON public.follows(follower_id, following_id);
 
 ALTER TABLE public.follows ENABLE ROW LEVEL SECURITY;
 
