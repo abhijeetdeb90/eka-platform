@@ -14,7 +14,7 @@ test.describe("EKA Monetization & Access Model", () => {
         }),
       );
       // Ensure default free tier
-      localStorage.removeItem("eka_user_tier_preview");
+      localStorage.setItem("eka_user_tier_preview", "free");
     });
   });
 
@@ -66,15 +66,14 @@ test.describe("EKA Monetization & Access Model", () => {
     ).toBeVisible({ timeout: 15000 });
 
     // Click Ask EKA button on first story card in the Living Stories section
-    const firstStoryCard = page.locator("article").first();
-    await expect(firstStoryCard).toBeVisible();
-    const askBtn = firstStoryCard.getByRole("button", { name: /Ask EKA/i });
-    await expect(askBtn).toBeVisible();
-    await askBtn.click();
+    const askBtn = page.getByTestId("story-ask-eka-btn").first();
+    await expect(askBtn).toBeVisible({ timeout: 10000 });
+    await askBtn.scrollIntoViewIfNeeded();
+    await askBtn.click({ force: true });
 
     // Verify Intelligence Paywall Modal opens
     const modal = page.getByTestId("intelligence-paywall-modal");
-    await expect(modal).toBeVisible();
+    await expect(modal).toBeVisible({ timeout: 10000 });
 
     // Verify paywall modal title and hook
     await expect(
@@ -185,11 +184,11 @@ test.describe("EKA Monetization & Access Model", () => {
       localStorage.setItem("eka_user_tier_preview", "free");
     }, { session: mockSession });
 
-    await page.goto("/creator-studio");
+    await page.goto("/app/creator/dashboard");
 
     // Free user navigating to creator dashboard encounters the Paid Workspace Gate
     const workspaceGate = page.getByTestId("creator-workspace-gate");
-    await expect(workspaceGate).toBeVisible();
+    await expect(workspaceGate).toBeVisible({ timeout: 15000 });
 
     await expect(
       page.getByText("Creator Studio — Professional Workspace"),

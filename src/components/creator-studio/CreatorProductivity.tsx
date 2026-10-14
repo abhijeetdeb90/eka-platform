@@ -69,18 +69,21 @@ export function CreatorProductivity({ onAttachToDraft }: CreatorProductivityProp
     if (!result) return;
 
     const sourcesSummary = result.sources
-      .map((s) => `${s.title} (${s.kind}${s.century ? `, ${s.century}` : ""}): ${s.citation}`)
+      .map(
+        (s) =>
+          `${s.title} (${s.canonicalText || s.language}${s.era ? `, ${s.era}` : ""}): ${s.citationRef}`
+      )
       .join("\n");
 
-    const draftedCaption = `${result.summary}\n\nKey Cultural Significance:\n${result.explanation.slice(
+    const draftedCaption = `${result.aiExplanation.summary}\n\nKey Cultural Significance:\n${result.aiExplanation.deepExplanation.slice(
       0,
       300
     )}…\n\nVerified Sources:\n${sourcesSummary}`;
 
     onAttachToDraft({
-      title: result.topic,
+      title: result.traditionName || result.query,
       caption: draftedCaption,
-      topic: result.tradition || "Traditions",
+      topic: result.traditionName || "Traditions",
       sources: sourcesSummary,
     });
 
@@ -90,8 +93,8 @@ export function CreatorProductivity({ onAttachToDraft }: CreatorProductivityProp
   const handleCopySummary = () => {
     if (!result) return;
     navigator.clipboard.writeText(
-      `${result.topic}\n\n${result.summary}\n\nVerified Sources:\n` +
-        result.sources.map((s) => `• ${s.title}: ${s.citation}`).join("\n")
+      `${result.traditionName || result.query}\n\n${result.aiExplanation.summary}\n\nVerified Sources:\n` +
+        result.sources.map((s) => `• ${s.title}: ${s.citationRef}`).join("\n")
     );
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -175,11 +178,11 @@ export function CreatorProductivity({ onAttachToDraft }: CreatorProductivityProp
             <div>
               <div className="flex items-center gap-2">
                 <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px]">
-                  {result.tradition || "Cultural Lineage"}
+                  {result.traditionName || "Cultural Lineage"}
                 </Badge>
                 <span className="text-xs text-muted-foreground">Verified Grounded Inquiry</span>
               </div>
-              <h3 className="font-serif text-2xl font-bold text-foreground mt-1">{result.topic}</h3>
+              <h3 className="font-serif text-2xl font-bold text-foreground mt-1">{result.traditionName || result.query}</h3>
             </div>
 
             <div className="flex items-center gap-2">
@@ -209,14 +212,14 @@ export function CreatorProductivity({ onAttachToDraft }: CreatorProductivityProp
               <span className="text-[11px] font-semibold uppercase tracking-wider text-primary font-mono">
                 Epistemic Synthesis
               </span>
-              <p className="text-sm font-serif text-foreground leading-relaxed">{result.summary}</p>
+              <p className="text-sm font-serif text-foreground leading-relaxed">{result.aiExplanation.summary}</p>
             </div>
 
             <div className="space-y-2 text-xs text-foreground/90 leading-relaxed font-light">
               <span className="font-semibold uppercase tracking-wider text-muted-foreground font-mono text-[10px]">
                 Historical & Lineage Context
               </span>
-              <p className="whitespace-pre-wrap">{result.explanation}</p>
+              <p className="whitespace-pre-wrap">{result.aiExplanation.deepExplanation}</p>
             </div>
           </div>
 
@@ -234,12 +237,12 @@ export function CreatorProductivity({ onAttachToDraft }: CreatorProductivityProp
                     <div className="flex items-center justify-between">
                       <span className="font-medium text-xs text-foreground">{src.title}</span>
                       <Badge variant="outline" className="text-[10px] py-0 px-1 font-mono">
-                        {src.kind}
+                        {src.language}
                       </Badge>
                     </div>
-                    <p className="text-[11px] text-muted-foreground">{src.citation}</p>
-                    {src.century && (
-                      <p className="text-[10px] text-primary/80 font-mono">Historical Era: {src.century}</p>
+                    <p className="text-[11px] text-muted-foreground">{src.citationRef}</p>
+                    {src.era && (
+                      <p className="text-[10px] text-primary/80 font-mono">Historical Era: {src.era}</p>
                     )}
                   </div>
                 ))}
@@ -248,7 +251,7 @@ export function CreatorProductivity({ onAttachToDraft }: CreatorProductivityProp
           )}
 
           {/* Regional Variations */}
-          {result.regionalVariations.length > 0 && (
+          {result.crossCulturalGraph.connections.length > 0 && (
             <div className="space-y-3 pt-2 border-t border-border/60">
               <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5 font-mono">
                 <Layers className="size-3.5 text-amber-600" />
@@ -256,10 +259,10 @@ export function CreatorProductivity({ onAttachToDraft }: CreatorProductivityProp
               </h4>
 
               <div className="grid gap-2.5 sm:grid-cols-2">
-                {result.regionalVariations.map((reg, idx) => (
+                {result.crossCulturalGraph.connections.map((reg, idx) => (
                   <div key={idx} className="rounded-xl border border-border/70 p-3 space-y-1 bg-background/40">
-                    <span className="font-semibold text-xs text-foreground">{reg.region}</span>
-                    <p className="text-[11px] text-muted-foreground leading-snug">{reg.practice}</p>
+                    <span className="font-semibold text-xs text-foreground">{reg.region} ({reg.regionalName})</span>
+                    <p className="text-[11px] text-muted-foreground leading-snug">{reg.culturalSignificance || reg.distinctRitual}</p>
                   </div>
                 ))}
               </div>

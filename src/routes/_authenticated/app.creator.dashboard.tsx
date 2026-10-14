@@ -16,7 +16,7 @@ export const Route = createFileRoute("/_authenticated/app/creator/dashboard")({
   component: CreatorDashboardPage,
 });
 
-export function CreatorDashboardPage() {
+function CreatorDashboardPage() {
   return (
     <AppScreen eyebrow="Creator Studio" title="Workspace Dashboard">
       <CreatorStudioWorkspace inAppLayout={true} />

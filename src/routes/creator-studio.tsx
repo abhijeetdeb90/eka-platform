@@ -6,16 +6,6 @@ import { CreatorStudioWorkspace } from "@/components/creator-studio/CreatorStudi
 
 export const Route = createFileRoute("/creator-studio")({
   ssr: false,
-  beforeLoad: async () => {
-    if (typeof window === "undefined") return;
-    if (localStorage.getItem("eka_user_tier_preview")) {
-      return;
-    }
-    const { data } = await supabase.auth.getSession();
-    if (!data.session?.user) {
-      throw redirect({ to: "/auth", search: { next: "/creator-studio" } });
-    }
-  },
   head: () => ({
     meta: [
       { title: "Creator Studio & Intelligence Workspace | EKA" },

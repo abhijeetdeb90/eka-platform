@@ -65,8 +65,6 @@ export function ContentEditModal({ post, isOpen, onClose, onUpdated }: ContentEd
         topic: topic.trim() || null,
         tradition: tradition.trim() || null,
         status,
-        location_label: location.trim() || null,
-        language: language.trim() || null,
         updated_at: new Date().toISOString(),
       };
 

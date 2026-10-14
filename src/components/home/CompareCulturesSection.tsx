@@ -2,7 +2,24 @@ import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Globe, ArrowRight } from "lucide-react";
 
-const COMPARISON_TOPICS = [
+interface CulturalCard {
+  countryCode: string;
+  region: string;
+  culture: string;
+  riteName: string;
+  desc: string;
+  quote: string;
+}
+
+interface ComparisonTopic {
+  id: string;
+  label: string;
+  question: string;
+  description: string;
+  cards: CulturalCard[];
+}
+
+const COMPARISON_TOPICS: ComparisonTopic[] = [
   {
     id: "coming-of-age",
     label: "Coming-of-Age Ceremonies",
@@ -136,11 +153,13 @@ const COMPARISON_TOPICS = [
   },
 ];
 
-export function CompareCulturesSection() {
-  const [activeTab, setActiveTab] = useState(COMPARISON_TOPICS[0].id);
+const DEFAULT_TOPIC: ComparisonTopic = COMPARISON_TOPICS[0] as ComparisonTopic;
 
-  const currentTopic =
-    COMPARISON_TOPICS.find((t) => t.id === activeTab) || COMPARISON_TOPICS[0];
+export function CompareCulturesSection() {
+  const [activeTab, setActiveTab] = useState<string>(DEFAULT_TOPIC.id);
+
+  const currentTopic: ComparisonTopic =
+    COMPARISON_TOPICS.find((t) => t.id === activeTab) ?? DEFAULT_TOPIC;
 
   return (
     <section className="section-container border-b border-[#E8E2D9] py-16 px-4 sm:px-6">

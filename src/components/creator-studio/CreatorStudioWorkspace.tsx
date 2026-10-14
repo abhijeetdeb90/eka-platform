@@ -257,23 +257,19 @@ export function CreatorStudioWorkspace({ inAppLayout = false }: CreatorStudioWor
     }
   };
 
-  // 3. Subscription Gate Enforced: If loading, show clean skeleton
-  if (accessLoading || profileLoading) {
+  // 3. Subscription Gate Enforced: If not entitled, show Upgrade Screen immediately
+  if (!accessLoading && !access?.isEntitled) {
+    return <EkaPlusUpgradeScreen onSuccess={loadCreatorData} />;
+  }
+
+  // 4. Loading state while checking credentials
+  if (accessLoading || (access?.isEntitled && profileLoading)) {
     return (
       <div className="min-h-[500px] flex flex-col items-center justify-center p-8 space-y-4">
         <div className="size-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
         <p className="text-sm font-mono text-muted-foreground animate-pulse">
           Verifying EKA+ subscriber credentials…
         </p>
-      </div>
-    );
-  }
-
-  // 4. Subscription Gate Enforced: If not entitled, show Upgrade Screen with canonical hook
-  if (!access?.isEntitled) {
-    return (
-      <div data-testid="creator-workspace-gate">
-        <EkaPlusUpgradeScreen onSuccess={loadCreatorData} />
       </div>
     );
   }

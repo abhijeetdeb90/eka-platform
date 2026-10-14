@@ -352,6 +352,7 @@ function LearnPage() {
                   {/* 3. Ask EKA Action (Gated with Ask EKA 🔒 / Understand more with EKA AI) */}
                   <div className="border-t border-border/60 pt-3 flex flex-col gap-1.5">
                     <Button
+                      data-testid="story-ask-eka-btn"
                       onClick={() =>
                         handleInquiryTrigger({
                           title: story.name,

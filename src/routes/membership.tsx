@@ -81,7 +81,8 @@ function MembershipPage() {
 
   const handleSimulate = (t: MonetizationTier) => {
     setTier(t);
-    toast.success(`Switched active preview to: ${PRODUCT_TIERS[t].name}`);
+    const tierConfigKey = t === "creator" ? "plus" : t;
+    toast.success(`Switched active preview to: ${PRODUCT_TIERS[tierConfigKey].name}`);
   };
 
   return (
