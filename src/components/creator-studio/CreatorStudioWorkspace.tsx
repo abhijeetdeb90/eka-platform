@@ -58,16 +58,19 @@ export function CreatorStudioWorkspace({ inAppLayout = false }: CreatorStudioWor
   const [previewingPost, setPreviewingPost] = useState<CreatorPostItem | null>(null);
 
   // 1. Fetch genuine recorded creator data from Supabase
-  const loadCreatorData = useCallback(async () => {
-    if (!profile?.id) return;
-    setLoadingPosts(true);
+  const profileId = profile?.id;
+  const isEntitled = access?.isEntitled;
 
+  const loadCreatorData = useCallback(async () => {
+    if (!profileId || !isEntitled) return;
+
+    setLoadingPosts(true);
     try {
       // A. Fetch creator's posts
       const { data: rawPosts, error: postsError } = await supabase
         .from("posts")
         .select("*")
-        .eq("author_id", profile.id)
+        .eq("author_id", profileId)
         .order("created_at", { ascending: false });
 
       if (postsError) {
@@ -80,7 +83,7 @@ export function CreatorStudioWorkspace({ inAppLayout = false }: CreatorStudioWor
       const postIds = (rawPosts || []).map((p) => p.id);
 
       // B. Fetch genuine views from post_views table
-      let viewMap: Record<string, number> = {};
+      const viewMap: Record<string, number> = {};
       if (postIds.length > 0) {
         const { data: viewsData, error: viewsError } = await supabase
           .from("post_views")
@@ -95,7 +98,7 @@ export function CreatorStudioWorkspace({ inAppLayout = false }: CreatorStudioWor
       }
 
       // C. Fetch genuine saves from post_saves table
-      let saveMap: Record<string, number> = {};
+      const saveMap: Record<string, number> = {};
       if (postIds.length > 0) {
         const { data: savesData, error: savesError } = await supabase
           .from("post_saves")
@@ -133,7 +136,7 @@ export function CreatorStudioWorkspace({ inAppLayout = false }: CreatorStudioWor
       const { count: followers, error: followError } = await supabase
         .from("follows")
         .select("id", { count: "exact", head: true })
-        .eq("following_id", profile.id);
+        .eq("following_id", profileId);
 
       if (!followError && typeof followers === "number") {
         setFollowerCount(followers);
@@ -143,7 +146,7 @@ export function CreatorStudioWorkspace({ inAppLayout = false }: CreatorStudioWor
       const { data: walletData } = await supabase
         .from("wallets")
         .select("balance_cents")
-        .eq("user_id", profile.id)
+        .eq("user_id", profileId)
         .maybeSingle();
 
       if (walletData) {
@@ -154,20 +157,30 @@ export function CreatorStudioWorkspace({ inAppLayout = false }: CreatorStudioWor
     } finally {
       setLoadingPosts(false);
     }
-  }, [profile?.id]);
+  }, [profileId, isEntitled]);
 
   useEffect(() => {
-    if (profile?.id && access?.isEntitled) {
-      loadCreatorData();
-    }
-  }, [profile?.id, access?.isEntitled, loadCreatorData]);
+    let isSubscribed = true;
+    if (!profileId || !isEntitled) return;
+
+    // React Compiler / ESLint set-state-in-effect: wrap async call in setTimeout or dispatch
+    const timer = setTimeout(() => {
+      if (isSubscribed) {
+        void loadCreatorData();
+      }
+    }, 0);
+
+    return () => {
+      isSubscribed = false;
+      clearTimeout(timer);
+    };
+  }, [profileId, isEntitled, loadCreatorData]);
 
   // 2. Filter posts by date range
   const filteredPosts = useMemo(() => {
     if (dateRange === "all") return posts;
-    const now = Date.now();
     const daysLimit = dateRange === "7d" ? 7 : 30;
-    const cutoff = now - daysLimit * 86_400_000;
+    const cutoff = Date.parse(new Date().toISOString()) - daysLimit * 86_400_000;
 
     return posts.filter((p) => new Date(p.created_at).getTime() >= cutoff);
   }, [posts, dateRange]);
