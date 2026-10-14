@@ -8,7 +8,7 @@ export default defineConfig({
   workers: process.env["CI"] ? 1 : 2,
   reporter: "list",
   use: {
-    baseURL: process.env["PLAYWRIGHT_TEST_BASE_URL"] || "http://localhost:8080",
+    baseURL: process.env["PLAYWRIGHT_TEST_BASE_URL"] || "http://localhost:3000",
     trace: "on-first-retry",
     screenshot: "only-on-failure",
   },
@@ -22,9 +22,9 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: "npm run dev",
-    url: "http://localhost:8080",
+    command: "cmd /c npm run dev",
+    url: "http://localhost:3000",
     reuseExistingServer: true,
-    timeout: 30000,
+    timeout: 120000,
   },
 });

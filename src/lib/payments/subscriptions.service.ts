@@ -35,9 +35,9 @@ const inMemoryPlans: SubscriptionPlan[] = [
   {
     id: "monthly",
     code: "EKA_PATRON_MONTHLY",
-    name: "Monthly Sanctuary Membership",
-    description: "Full access to cultural library, AI exploration, and community circles.",
-    amount_minor: 29900, // ₹299
+    name: "Monthly EKA+ Membership",
+    description: "Full access to cultural intelligence, AI exploration, Creator Studio, and community circles.",
+    amount_minor: 49900, // ₹499
     currency: "INR",
     cadence: "monthly",
     period_days: 30,

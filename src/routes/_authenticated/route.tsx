@@ -9,6 +9,11 @@ export const Route = createFileRoute("/_authenticated")({
       return { user: null };
     }
 
+    // Allow dev preview simulation (e.g. from tests or dev preview switcher)
+    if (localStorage.getItem("eka_user_tier_preview")) {
+      return { user: { id: "00000000-0000-0000-0000-000000000099", email: "seeker@eka.earth" } };
+    }
+
     // 2. Check local Supabase session first (instant, synchronous cache lookup)
     const { data: sessionData } = await supabase.auth.getSession();
     const session = sessionData?.session;

@@ -495,26 +495,7 @@ export function Composer({
         />
       </div>
 
-      {!communityId && (joined?.length ?? 0) > 0 && (
-        <>
-          <Label htmlFor="composer-audience" className="sr-only">
-            Where to post
-          </Label>
-          <select
-            id="composer-audience"
-            value={community}
-            onChange={(e) => setCommunity(e.target.value)}
-            className="mt-2 h-9 w-full rounded-md border border-input bg-background px-3 text-sm"
-          >
-            <option value="">Post to your followers</option>
-            {joined?.map((m) => (
-              <option key={m.community_id} value={m.community_id}>
-                {m.communities?.name ?? "Circle"}
-              </option>
-            ))}
-          </select>
-        </>
-      )}
+
 
       <div className="mt-4 flex items-center justify-between gap-3">
         <p className="text-xs text-muted-foreground">

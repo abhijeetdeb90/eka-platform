@@ -154,3 +154,23 @@ export function track(event: AnalyticsEvent, props: Record<string, unknown> = {}
     }
   })();
 }
+
+/** Records an authentic post view in post_views table, respecting consent and privacy */
+export function recordPostView(postId: string, viewerId?: string | null) {
+  if (!postId) return;
+  void (async () => {
+    try {
+      let uid = viewerId;
+      if (uid === undefined) {
+        const { data } = await supabase.auth.getUser();
+        uid = data.user?.id ?? null;
+      }
+      await supabase.from("post_views").insert({
+        post_id: postId,
+        viewer_id: uid ?? null,
+      });
+    } catch {
+      /* telemetry must never break the product */
+    }
+  })();
+}

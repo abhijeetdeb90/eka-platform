@@ -33,11 +33,11 @@ import { RazorpayCheckoutButton } from "@/components/checkout/RazorpayCheckoutBu
 export const Route = createFileRoute("/membership")({
   head: () => ({
     meta: [
-      { title: "EKA Access Model & Membership — Free Knowledge, Paid Intelligence" },
+      { title: "EKA Access Model & Membership — Free Knowledge, Premium Intelligence" },
       {
         name: "description",
         content:
-          "Knowledge is free. Intelligence is paid. Creation is paid. Explore the global map and read all cultural stories for free. Subscribe to EKA+ for AI, comparisons, and deep research.",
+          "Knowledge is free. Intelligence is premium. Creation is rewarded. Explore the global map and read all cultural stories for free. Subscribe to EKA+ for AI, comparisons, creator tools, and deep research.",
       },
       { property: "og:title", content: "Go beyond the story with EKA" },
       {
@@ -86,7 +86,7 @@ function MembershipPage() {
 
   return (
     <ShowcaseLayout
-      eyebrow="EKA Access Model · Free Knowledge · Paid Intelligence & Creation"
+      eyebrow="EKA Access Model · Free Knowledge · Premium Intelligence & Rewarded Creation"
       title="Go beyond the story."
       lede={CORE_PHILOSOPHY.subscriptionHook}
       image={circleCommunion}
@@ -103,24 +103,23 @@ function MembershipPage() {
               The Important Distinction
             </Badge>
             <h2 className="font-serif text-3xl sm:text-4xl text-foreground font-normal">
-              Knowledge should be free. Intelligence should be paid. Creation should be paid.
+              Knowledge is free. Intelligence is premium. Creation is rewarded.
             </h2>
             <p className="text-sm sm:text-base text-muted-foreground font-serif leading-relaxed font-light">
-              That is a much stronger proposition than putting cultural stories behind a paywall.
-              The free product becomes EKA's global cultural library, while subscriptions convert
-              users who want to understand more, use AI, create, research and build.
+              Cultural knowledge, open discovery, and community storytelling belong to everyone. Publishing is 100% free forever.
+              Subscriptions fund deep contextual AI, research intelligence, creator analytics, and direct 85% creator reward pools.
             </p>
           </div>
 
-          <div className="mt-14 grid gap-6 md:grid-cols-3">
-            {/* Free: Knowledge */}
+          <div className="mt-14 grid gap-6 md:grid-cols-2 max-w-4xl mx-auto">
+            {/* Free: Knowledge & Open Creation */}
             <div className="rounded-3xl border border-border/80 bg-card p-6 sm:p-8 space-y-4 shadow-calm">
               <div className="size-12 rounded-2xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
                 <BookOpen className="size-6" />
               </div>
               <div>
                 <span className="font-mono text-xs uppercase tracking-wider text-emerald-600 font-bold">
-                  FREE · Global Library
+                  FREE · Global Commons & Free Publishing
                 </span>
                 <h3 className="font-serif text-xl sm:text-2xl font-normal text-foreground mt-1">
                   Knowledge is Free
@@ -128,19 +127,18 @@ function MembershipPage() {
               </div>
               <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
                 EKA's cultural database and global map are completely open. Anyone can explore the
-                interactive map, read all cultural stories, view sacred places, and learn about
-                communities without a paywall.
+                interactive map, read cultural stories, view sacred places, join communities, and publish photos, reels, videos, and articles without paying.
               </p>
               <div className="pt-2 text-xs font-mono text-emerald-700 font-medium">
-                Discover → Read → Explore → Follow
+                Discover → Read → Publish → Connect
               </div>
             </div>
 
-            {/* Paid: Intelligence (EKA+) */}
+            {/* Premium: Intelligence (EKA+) */}
             <div className="rounded-3xl border border-primary/50 bg-primary/5 p-6 sm:p-8 space-y-4 shadow-lift relative">
               <div className="absolute top-4 right-4">
                 <Badge className="bg-primary text-primary-foreground text-[10px]">
-                  ₹299/month
+                  ₹499/month
                 </Badge>
               </div>
               <div className="size-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
@@ -148,42 +146,18 @@ function MembershipPage() {
               </div>
               <div>
                 <span className="font-mono text-xs uppercase tracking-wider text-primary font-bold">
-                  EKA+ · Intelligence Layer
+                  EKA+ · Unified Intelligence & Creator Studio
                 </span>
                 <h3 className="font-serif text-xl sm:text-2xl font-normal text-foreground mt-1">
-                  Intelligence is Paid
+                  Intelligence is Premium
                 </h3>
               </div>
               <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                For curious seekers who want to go deeper. Ask questions with EKA AI, compare
-                spiritual parallels across civilizations, personalized daily wisdom, and deep
-                primary source manuscripts.
+                For curious seekers and serious cultural storytellers. Ask questions with source-backed EKA AI, compare
+                spiritual parallels across civilizations, unlock deep research manuscripts, advanced creator analytics, and professional Studio tools.
               </p>
               <div className="pt-2 text-xs font-mono text-primary font-medium">
-                Ask → Understand → Compare → Research
-              </div>
-            </div>
-
-            {/* Paid: Creation (Creator Studio) */}
-            <div className="rounded-3xl border border-border/80 bg-card p-6 sm:p-8 space-y-4 shadow-calm">
-              <div className="size-12 rounded-2xl bg-terracotta/10 text-terracotta flex items-center justify-center">
-                <Palette className="size-6" />
-              </div>
-              <div>
-                <span className="font-mono text-xs uppercase tracking-wider text-terracotta font-bold">
-                  CREATOR · Paid Workspace
-                </span>
-                <h3 className="font-serif text-xl sm:text-2xl font-normal text-foreground mt-1">
-                  Creation is Paid
-                </h3>
-              </div>
-              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                Creator Studio is clearly positioned as a paid workspace rather than a free social
-                feed. Full publishing engine, real-time creator analytics, Qualified Contribution
-                Score (QCS), and 85% subscription pool share.
-              </p>
-              <div className="pt-2 text-xs font-mono text-terracotta font-medium">
-                Create → Publish → Analyse → Grow
+                Ask AI → Understand → Research → Analytics
               </div>
             </div>
           </div>
@@ -262,8 +236,8 @@ function MembershipPage() {
             </p>
           </div>
 
-          <div className="mt-12 grid gap-8 lg:grid-cols-3">
-            {/* 1. FREE */}
+          <div className="mt-12 grid gap-8 md:grid-cols-2 max-w-4xl mx-auto">
+            {/* 1. FREE (EKA Seeker) */}
             <div className="flex flex-col justify-between rounded-3xl border border-border/80 bg-card p-8 shadow-calm">
               <div className="space-y-4">
                 <Badge variant="outline" className="text-xs font-mono uppercase">
@@ -310,11 +284,11 @@ function MembershipPage() {
               </div>
             </div>
 
-            {/* 2. EKA+ (Intelligence) */}
+            {/* 2. EKA+ (Intelligence & Creator Studio) */}
             <div className="flex flex-col justify-between rounded-3xl border-2 border-primary bg-card p-8 shadow-lift relative">
               <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                 <Badge className="bg-primary text-primary-foreground font-mono text-[10px] px-3">
-                  MOST POPULAR
+                  UNIFIED ACCESS
                 </Badge>
               </div>
               <div className="space-y-4">
@@ -354,79 +328,15 @@ function MembershipPage() {
                   <Button disabled className="w-full rounded-full bg-primary/20 text-primary hover:bg-primary/20" variant="secondary">
                     Current Plan
                   </Button>
-                ) : tier === "creator" ? (
-                  <Button disabled className="w-full rounded-full bg-primary/20 text-primary hover:bg-primary/20" variant="secondary">
-                    Included in Creator Plan
-                  </Button>
                 ) : import.meta.env.VITE_RAZORPAY_KEY_ID ? (
                   <RazorpayCheckoutButton
-                    amount={29900}
+                    amount={49900}
                     currency="INR"
                     planName={PRODUCT_TIERS.plus.name}
-                    description="Monthly access to EKA contextual intelligence & AI"
+                    description="Monthly access to EKA+ contextual intelligence, AI, and Creator Studio"
                     className="w-full rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
-                    label="Subscribe ₹299 / month"
+                    label="Subscribe ₹499 / month"
                     onSuccess={() => handleSimulate("plus")}
-                  />
-                ) : (
-                  <Button disabled className="w-full rounded-full bg-muted text-muted-foreground" variant="secondary">
-                    Checkout Unavailable
-                  </Button>
-                )}
-                <Button asChild variant="ghost" size="sm" className="w-full text-xs text-muted-foreground">
-                  <Link to="/checkout">Order details & invoices</Link>
-                </Button>
-              </div>
-            </div>
-
-            {/* 3. CREATOR (Paid Workspace) */}
-            <div className="flex flex-col justify-between rounded-3xl border border-border/80 bg-card p-8 shadow-calm">
-              <div className="space-y-4">
-                <Badge variant="outline" className="border-terracotta/40 text-terracotta text-xs font-mono uppercase">
-                  {PRODUCT_TIERS.creator.badge}
-                </Badge>
-                <div>
-                  <h3 className="font-serif text-2xl font-normal text-foreground">
-                    {PRODUCT_TIERS.creator.name}
-                  </h3>
-                  <p className="font-mono text-xs text-terracotta font-semibold mt-0.5">
-                    {PRODUCT_TIERS.creator.tagline}
-                  </p>
-                </div>
-                <div className="pt-2">
-                  <span className="font-display text-4xl text-foreground font-semibold">
-                    {PRODUCT_TIERS.creator.price}
-                  </span>
-                  <span className="text-xs text-muted-foreground ml-1.5 font-mono">
-                    /{PRODUCT_TIERS.creator.period}
-                  </span>
-                </div>
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  {PRODUCT_TIERS.creator.description}
-                </p>
-                <div className="border-t border-border/60 pt-4 space-y-2.5">
-                  {PRODUCT_TIERS.creator.highlights.map((h, i) => (
-                    <div key={i} className="flex items-start gap-2 text-xs">
-                      <Palette className="size-3.5 text-terracotta mt-0.5 shrink-0" />
-                      <span className="text-foreground/90">{h}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className="pt-8 space-y-2">
-                {tier === "creator" ? (
-                  <Button disabled className="w-full rounded-full bg-terracotta/20 text-terracotta hover:bg-terracotta/20" variant="secondary">
-                    Current Plan
-                  </Button>
-                ) : import.meta.env.VITE_RAZORPAY_KEY_ID ? (
-                  <RazorpayCheckoutButton
-                    amount={79900}
-                    currency="INR"
-                    planName={PRODUCT_TIERS.creator.name}
-                    description="Monthly access to professional Creator Studio workspace & settlement ledger"
-                    className="w-full rounded-full bg-terracotta text-white hover:bg-terracotta/90"
-                    label="Join Creator Studio ₹799 / month"
-                    onSuccess={() => handleSimulate("creator")}
                   />
                 ) : (
                   <Button disabled className="w-full rounded-full bg-muted text-muted-foreground" variant="secondary">
@@ -522,7 +432,7 @@ function MembershipPage() {
             EKA Access Model
           </Badge>
           <h2 className="font-serif text-3xl sm:text-4xl text-foreground font-normal">
-            Knowledge is free. Intelligence is paid. Creation is paid.
+            Knowledge is free. Intelligence is premium. Creation is rewarded.
           </h2>
           <p className="mx-auto max-w-lg text-sm text-muted-foreground leading-relaxed">
             Go beyond the story. Ask questions. Compare cultures. Explore deeper. Create with EKA.
@@ -530,7 +440,7 @@ function MembershipPage() {
 
           <div className="pt-4 flex flex-wrap justify-center gap-4">
             <Button asChild size="lg" className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90">
-              <Link to="/auth">Get EKA+ Intelligence (₹299/mo)</Link>
+              <Link to="/auth">Get EKA+ (₹499/mo)</Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="rounded-full">
               <Link to="/discover">Explore Free Cultural Library</Link>

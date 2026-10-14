@@ -2,12 +2,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { currentUserId } from "@/lib/api";
 import { todayISO } from "@/lib/sadhana";
 
-/** ₹299 benchmark (+ taxes), accessible entry price for cultural & spiritual knowledge. */
+/** ₹499 benchmark (+ taxes), accessible unified price for cultural intelligence & creator ecosystem. */
 export const MEMBERSHIP = {
-  name: "EKA Membership",
-  price: "₹299",
+  name: "EKA+ Membership",
+  price: "₹499",
   cadence: "month",
-  priceCents: 29900,
+  priceCents: 49900,
   currency: "INR",
   taxesNote: "+ applicable taxes",
   promise:

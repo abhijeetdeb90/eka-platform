@@ -53,28 +53,20 @@ const CHECKOUT_PLANS: PlanOption[] = [
   },
   {
     id: "eka-plus-monthly",
-    name: "EKA+ Intelligence Monthly",
-    tagline: "Contextual AI & Cross-Cultural Inquiry",
-    amountPaise: 29900, // ₹299.00
+    name: "EKA+ Unified Monthly",
+    tagline: "Contextual AI, Creator Studio & Deep Research",
+    amountPaise: 49900, // ₹499.00
     period: "month",
-    description: "Full access to Ask EKA AI, cultural comparisons, and deep manuscript sources.",
+    description: "Full access to Ask EKA AI, cultural comparisons, manuscript sources, and Creator Studio tools.",
     popular: true,
   },
   {
-    id: "creator-studio-monthly",
-    name: "Creator Studio Professional",
-    tagline: "Creation Workspace & Direct Monetization",
-    amountPaise: 79900, // ₹799.00
-    period: "month",
-    description: "Publish paid offerings, real-time analytics, and settlement ledger.",
-  },
-  {
     id: "eka-annual-patron",
-    name: "EKA Patron Annual",
-    tagline: "Full Sanctuary Access + 2 Months Free",
-    amountPaise: 299000, // ₹2,990.00
+    name: "EKA+ Patron Annual",
+    tagline: "Full Unified Access + 2 Months Free",
+    amountPaise: 499000, // ₹4,990.00
     period: "year",
-    description: "Annual cultural intelligence membership with priority features and archive passes.",
+    description: "Annual cultural intelligence & creator membership with priority features and archive passes.",
   },
 ];
 

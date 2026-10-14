@@ -224,7 +224,7 @@ export function ReelStoryCard({
     <div
       onClick={onClick}
       className={cn(
-        "group relative aspect-[9/16] w-full min-w-[200px] max-w-[285px] overflow-hidden rounded-2xl bg-stone-900 shadow-calm transition-all duration-300 hover:shadow-lift hover:scale-[1.01] cursor-pointer shrink-0 select-none",
+        "group relative aspect-[9/16] w-full overflow-hidden rounded-2xl bg-stone-900 shadow-calm transition-all duration-300 hover:shadow-lift hover:scale-[1.01] cursor-pointer select-none",
         className,
       )}
     >
@@ -318,8 +318,8 @@ export function ReelStoryCard({
         </h4>
 
         {/* Creator Info & Action Bar */}
-        <div className="pt-1 flex items-center justify-between gap-2 border-t border-white/15">
-          <div className="flex items-center gap-1.5 min-w-0">
+        <div className="pt-1.5 flex items-center justify-between gap-1 border-t border-white/15">
+          <div className="flex items-center gap-1.5 min-w-0 flex-1">
             <div className="size-5 rounded-full bg-white/20 flex items-center justify-center text-[10px] font-semibold text-white overflow-hidden shrink-0">
               {creator.avatar ? (
                 <img src={creator.avatar} alt={creator.name} className="size-full object-cover" />
@@ -327,17 +327,19 @@ export function ReelStoryCard({
                 creator.name.charAt(0)
               )}
             </div>
-            <span className="text-[11px] font-medium text-white/90 truncate flex items-center gap-1">
+            <span className="text-[10px] sm:text-[11px] font-medium text-white/90 truncate flex items-center gap-1">
               <span className="truncate">{creator.name}</span>
               {creator.verified && <ShieldCheck className="size-3 text-emerald-400 shrink-0" />}
             </span>
+          </div>
 
-            {/* Micro Follow Button */}
+          {/* Micro Follow Button & Actions */}
+          <div className="flex items-center gap-1 shrink-0">
             <button
               type="button"
               onClick={handleFollow}
               className={cn(
-                "ml-1 px-1.5 py-0.5 rounded text-[9px] font-medium transition-colors cursor-pointer",
+                "px-2 py-0.5 rounded text-[9px] font-medium transition-colors cursor-pointer shrink-0",
                 isFollowing
                   ? "bg-white/20 text-white"
                   : "bg-terracotta text-white hover:bg-terracotta/90",
@@ -346,10 +348,7 @@ export function ReelStoryCard({
             >
               {isFollowing ? "Following" : "+ Follow"}
             </button>
-          </div>
 
-          {/* Quick Action Icons */}
-          <div className="flex items-center gap-1 shrink-0 text-white/80">
             <button
               type="button"
               onClick={handleLike}

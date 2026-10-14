@@ -3,13 +3,14 @@
 // ==============================================================================
 // "THE WORLD'S TRUSTED CULTURAL INTELLIGENCE LAYER"
 // "ONE WITHIN. ONE WITH ALL."
-// Ensures universal, authoritative visual branding across all headers, footers,
-// cockpit consoles, navigation bars, and cultural portals.
+// Incorporates the official brand emblem and lockup assets directly.
 // ==============================================================================
 
 import { useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
-import ekaLogoImg from "@/assets/brand/eka-logo.png";
+import ekaEmblemSvg from "@/assets/brand/eka-emblem.svg";
+import ekaPrimarySvg from "@/assets/brand/eka-primary-lockup.svg";
 
 export interface EkaLogoProps {
   className?: string;
@@ -22,80 +23,57 @@ export interface EkaLogoProps {
   taglineText?: string;
   useVector?: boolean;
   size?: "xs" | "sm" | "md" | "lg" | "xl";
+  variant?: "standard" | "symbol" | "stacked" | "full";
+  width?: number | string;
+  height?: number | string;
+  href?: string | boolean;
+  alt?: string;
 }
 
 const SIZE_PRESETS = {
-  xs: { mark: "size-6", text: "text-base tracking-[0.2em]", tag: "text-[8px]" },
-  sm: { mark: "size-7", text: "text-lg tracking-[0.22em]", tag: "text-[8.5px]" },
-  md: { mark: "size-8 sm:size-9", text: "text-xl sm:text-2xl tracking-[0.24em]", tag: "text-[9px]" },
-  lg: { mark: "size-11 sm:size-12", text: "text-2xl sm:text-3xl tracking-[0.25em]", tag: "text-[10px]" },
-  xl: { mark: "size-14 sm:size-16", text: "text-3xl sm:text-4xl tracking-[0.26em]", tag: "text-xs" },
+  xs: { mark: "h-6 w-6", text: "text-base tracking-[0.2em]", tag: "text-[8px]", height: 24 },
+  sm: { mark: "h-7 w-7", text: "text-lg tracking-[0.22em]", tag: "text-[8.5px]", height: 28 },
+  md: { mark: "h-8 w-8 sm:h-9 sm:w-9", text: "text-xl sm:text-2xl tracking-[0.24em]", tag: "text-[9px]", height: 36 },
+  lg: { mark: "h-11 w-11 sm:h-12 sm:w-12", text: "text-2xl sm:text-3xl tracking-[0.25em]", tag: "text-[10px]", height: 48 },
+  xl: { mark: "h-14 w-14 sm:h-16 sm:w-16", text: "text-3xl sm:text-4xl tracking-[0.26em]", tag: "text-xs", height: 64 },
 };
 
 /**
- * EKA Cultural Meridian Mark ("One Within. One With All.")
- * Represents the global commons of humanity, the cartographic meridian,
- * the documentary aperture of cultural discovery, and the central focal core of consciousness.
+ * EKA Official Cultural Meridian Emblem ("One Within. One With All.")
  */
 export function EkaMark({
   className,
-  useVector = false,
   size = "md",
+  width,
+  height,
+  alt = "EKA Cultural Meridian Emblem",
 }: {
   className?: string;
   useVector?: boolean;
   size?: "xs" | "sm" | "md" | "lg" | "xl";
+  width?: number | string;
+  height?: number | string;
+  alt?: string;
 }) {
   const [imageError, setImageError] = useState(false);
   const sizeClass = SIZE_PRESETS[size].mark;
+  const dimension = SIZE_PRESETS[size].height;
 
-  if (!useVector && !imageError) {
-    return (
-      <img
-        src={ekaLogoImg || "/brand/eka-logo.png"}
-        alt="EKA Cultural Meridian Emblem"
-        loading="eager"
-        onError={() => setImageError(true)}
-        className={cn(
-          "rounded-full object-contain shrink-0 select-none transition-transform duration-500 hover:scale-105",
-          sizeClass,
-          className
-        )}
-      />
-    );
-  }
-
-  // Canonical EKA logo: interlinked cultural orbits and a human focal mark
   return (
-    <svg
-      viewBox="0 0 100 100"
-      fill="none"
-      role="img"
-      aria-label="EKA cultural connection logo"
-      className={cn("shrink-0 select-none transition-transform duration-500", sizeClass, className)}
-    >
-      <g stroke="#C25E3E" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="50" cy="50" r="46" />
-        <ellipse cx="50" cy="50" rx="20" ry="46" />
-        <ellipse cx="50" cy="50" rx="20" ry="46" transform="rotate(45 50 50)" />
-        <ellipse cx="50" cy="50" rx="20" ry="46" transform="rotate(90 50 50)" />
-        <ellipse cx="50" cy="50" rx="20" ry="46" transform="rotate(135 50 50)" />
-        <circle cx="50" cy="50" r="27" />
-        <circle cx="50" cy="50" r="22" />
-        <circle cx="50" cy="50" r="17" />
-      </g>
-      <g stroke="#C25E3E" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="50" cy="45" r="3.6" fill="#C25E3E" />
-        <path d="M43 50 Q50 47 57 50 L53 55 L55 64 Q55 68 50 69 Q45 68 45 64 L47 55 Z" fill="#C25E3E" />
-        <path d="M42 51 Q50 55 58 51" />
-      </g>
-      <g fill="#C25E3E">
-        <circle cx="50" cy="4" r="2.5" />
-        <circle cx="96" cy="50" r="2.5" />
-        <circle cx="50" cy="96" r="2.5" />
-        <circle cx="4" cy="50" r="2.5" />
-      </g>
-    </svg>
+    <img
+      src={!imageError ? (ekaEmblemSvg || "/brand/eka-emblem.svg") : "/brand/eka-logo.png"}
+      alt={alt}
+      width={width || dimension}
+      height={height || dimension}
+      loading="eager"
+      decoding="async"
+      onError={() => setImageError(true)}
+      className={cn(
+        "object-contain shrink-0 select-none transition-transform duration-500 hover:scale-105",
+        !width && !height && sizeClass,
+        className
+      )}
+    />
   );
 }
 
@@ -111,12 +89,66 @@ export function EkaLogo({
   withTagline = false,
   withBeta = false,
   taglineText = "Cultural Intelligence",
-  useVector = false,
+  useVector = true,
   size = "md",
+  variant = "standard",
+  width,
+  height,
+  href,
+  alt = "EKA — The World's Trusted Cultural Intelligence Layer",
 }: EkaLogoProps) {
   const currentSize = SIZE_PRESETS[size];
 
-  return (
+  // Full lockup variant: Primary vector lockup
+  if (variant === "full") {
+    const fullImg = (
+      <img
+        src={ekaPrimarySvg || "/brand/eka-primary-lockup.svg"}
+        alt={alt}
+        width={width || currentSize.height * 2.2}
+        height={height || currentSize.height}
+        loading="eager"
+        decoding="async"
+        className={cn("object-contain select-none", className)}
+      />
+    );
+
+    if (href) {
+      const target = typeof href === "string" ? href : "/";
+      return (
+        <Link to={target} aria-label={alt} className="inline-flex items-center">
+          {fullImg}
+        </Link>
+      );
+    }
+    return fullImg;
+  }
+
+  // Symbol only variant
+  if (variant === "symbol") {
+    const symbolImg = (
+      <EkaMark
+        size={size}
+        width={width}
+        height={height}
+        alt={alt}
+        useVector={useVector}
+        className={cn(markClassName, className)}
+      />
+    );
+
+    if (href) {
+      const target = typeof href === "string" ? href : "/";
+      return (
+        <Link to={target} aria-label={alt} className="inline-flex items-center">
+          {symbolImg}
+        </Link>
+      );
+    }
+    return symbolImg;
+  }
+
+  const standardContent = (
     <span
       className={cn(
         "group inline-flex items-center gap-2.5 sm:gap-3 select-none",
@@ -126,8 +158,11 @@ export function EkaLogo({
       <EkaMark
         useVector={useVector}
         size={size}
+        width={width}
+        height={height}
+        alt={alt}
         className={cn(
-          "transition-transform duration-700 ease-out group-hover:scale-105 group-hover:rotate-6",
+          "transition-transform duration-700 ease-out group-hover:scale-105",
           markClassName
         )}
       />
@@ -135,7 +170,7 @@ export function EkaLogo({
         <span className="inline-flex items-center gap-2">
           <span
             className={cn(
-              "font-display font-bold text-foreground tracking-[0.24em] transition-colors",
+              "font-display font-bold text-[#681A1C] tracking-[0.24em] transition-colors",
               currentSize.text,
               textClassName
             )}
@@ -145,7 +180,7 @@ export function EkaLogo({
           {withBeta && (
             <span
               className={cn(
-                "inline-flex items-center px-1.5 py-0.5 rounded-sm text-[8.5px] font-mono font-semibold uppercase tracking-widest border border-border/80 bg-accent/60 text-muted-foreground leading-none shrink-0 select-none",
+                "inline-flex items-center px-1.5 py-0.5 rounded-sm text-[8.5px] font-mono font-semibold uppercase tracking-widest border border-[#E8E2D9] bg-[#F7F6F2] text-[#681A1C]/80 leading-none shrink-0 select-none",
                 betaClassName
               )}
             >
@@ -167,4 +202,17 @@ export function EkaLogo({
       </span>
     </span>
   );
+
+  if (href) {
+    const target = typeof href === "string" ? href : "/";
+    return (
+      <Link to={target} aria-label={alt} className="inline-flex items-center">
+        {standardContent}
+      </Link>
+    );
+  }
+
+  return standardContent;
 }
+
+export default EkaLogo;

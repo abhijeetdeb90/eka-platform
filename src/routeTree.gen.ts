@@ -146,6 +146,7 @@ import { Route as ApiSecurityIncidentResponseRouteImport } from './routes/api/se
 import { Route as ApiSecuritySessionsRouteImport } from './routes/api/security.sessions'
 import { Route as ApiStorageConfirmRouteImport } from './routes/api/storage.confirm'
 import { Route as ApiStorageUploadUrlRouteImport } from './routes/api/storage.upload-url'
+import { Route as ApiSubscriptionsEntitlementRouteImport } from './routes/api/subscriptions.entitlement'
 import { Route as ApiV1FeedRouteImport } from './routes/api/v1/feed'
 import { Route as ApiV1PostsRouteImport } from './routes/api/v1/posts'
 import { Route as ApiWebhooksRazorpayRouteImport } from './routes/api/webhooks.razorpay'
@@ -878,6 +879,12 @@ const ApiStorageUploadUrlRoute = ApiStorageUploadUrlRouteImport.update({
   path: '/api/storage/upload-url',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiSubscriptionsEntitlementRoute =
+  ApiSubscriptionsEntitlementRouteImport.update({
+    id: '/entitlement',
+    path: '/entitlement',
+    getParentRoute: () => ApiSubscriptionsRoute,
+  } as any)
 const ApiV1FeedRoute = ApiV1FeedRouteImport.update({
   id: '/api/v1/feed',
   path: '/api/v1/feed',
@@ -1110,7 +1117,7 @@ export interface FileRoutesByFullPath {
   '/api/payouts': typeof ApiPayoutsRoute
   '/api/reconciliation': typeof ApiReconciliationRoute
   '/api/refunds': typeof ApiRefundsRoute
-  '/api/subscriptions': typeof ApiSubscriptionsRoute
+  '/api/subscriptions': typeof ApiSubscriptionsRouteWithChildren
   '/api/verify-payment': typeof ApiVerifyPaymentRoute
   '/api/webhooks': typeof ApiWebhooksRouteWithChildren
   '/auth/callback': typeof AuthCallbackRoute
@@ -1181,6 +1188,7 @@ export interface FileRoutesByFullPath {
   '/api/security/sessions': typeof ApiSecuritySessionsRoute
   '/api/storage/confirm': typeof ApiStorageConfirmRoute
   '/api/storage/upload-url': typeof ApiStorageUploadUrlRoute
+  '/api/subscriptions/entitlement': typeof ApiSubscriptionsEntitlementRoute
   '/api/v1/feed': typeof ApiV1FeedRoute
   '/api/v1/posts': typeof ApiV1PostsRoute
   '/api/webhooks/razorpay': typeof ApiWebhooksRazorpayRoute
@@ -1274,7 +1282,7 @@ export interface FileRoutesByTo {
   '/api/payouts': typeof ApiPayoutsRoute
   '/api/reconciliation': typeof ApiReconciliationRoute
   '/api/refunds': typeof ApiRefundsRoute
-  '/api/subscriptions': typeof ApiSubscriptionsRoute
+  '/api/subscriptions': typeof ApiSubscriptionsRouteWithChildren
   '/api/verify-payment': typeof ApiVerifyPaymentRoute
   '/api/webhooks': typeof ApiWebhooksRouteWithChildren
   '/auth/callback': typeof AuthCallbackRoute
@@ -1345,6 +1353,7 @@ export interface FileRoutesByTo {
   '/api/security/sessions': typeof ApiSecuritySessionsRoute
   '/api/storage/confirm': typeof ApiStorageConfirmRoute
   '/api/storage/upload-url': typeof ApiStorageUploadUrlRoute
+  '/api/subscriptions/entitlement': typeof ApiSubscriptionsEntitlementRoute
   '/api/v1/feed': typeof ApiV1FeedRoute
   '/api/v1/posts': typeof ApiV1PostsRoute
   '/api/webhooks/razorpay': typeof ApiWebhooksRazorpayRoute
@@ -1443,7 +1452,7 @@ export interface FileRoutesById {
   '/api/payouts': typeof ApiPayoutsRoute
   '/api/reconciliation': typeof ApiReconciliationRoute
   '/api/refunds': typeof ApiRefundsRoute
-  '/api/subscriptions': typeof ApiSubscriptionsRoute
+  '/api/subscriptions': typeof ApiSubscriptionsRouteWithChildren
   '/api/verify-payment': typeof ApiVerifyPaymentRoute
   '/api/webhooks': typeof ApiWebhooksRouteWithChildren
   '/auth/callback': typeof AuthCallbackRoute
@@ -1514,6 +1523,7 @@ export interface FileRoutesById {
   '/api/security/sessions': typeof ApiSecuritySessionsRoute
   '/api/storage/confirm': typeof ApiStorageConfirmRoute
   '/api/storage/upload-url': typeof ApiStorageUploadUrlRoute
+  '/api/subscriptions/entitlement': typeof ApiSubscriptionsEntitlementRoute
   '/api/v1/feed': typeof ApiV1FeedRoute
   '/api/v1/posts': typeof ApiV1PostsRoute
   '/api/webhooks/razorpay': typeof ApiWebhooksRazorpayRoute
@@ -1683,6 +1693,7 @@ export interface FileRouteTypes {
     | '/api/security/sessions'
     | '/api/storage/confirm'
     | '/api/storage/upload-url'
+    | '/api/subscriptions/entitlement'
     | '/api/v1/feed'
     | '/api/v1/posts'
     | '/api/webhooks/razorpay'
@@ -1847,6 +1858,7 @@ export interface FileRouteTypes {
     | '/api/security/sessions'
     | '/api/storage/confirm'
     | '/api/storage/upload-url'
+    | '/api/subscriptions/entitlement'
     | '/api/v1/feed'
     | '/api/v1/posts'
     | '/api/webhooks/razorpay'
@@ -2015,6 +2027,7 @@ export interface FileRouteTypes {
     | '/api/security/sessions'
     | '/api/storage/confirm'
     | '/api/storage/upload-url'
+    | '/api/subscriptions/entitlement'
     | '/api/v1/feed'
     | '/api/v1/posts'
     | '/api/webhooks/razorpay'
@@ -2111,7 +2124,7 @@ export interface RootRouteChildren {
   ApiPayoutsRoute: typeof ApiPayoutsRoute
   ApiReconciliationRoute: typeof ApiReconciliationRoute
   ApiRefundsRoute: typeof ApiRefundsRoute
-  ApiSubscriptionsRoute: typeof ApiSubscriptionsRoute
+  ApiSubscriptionsRoute: typeof ApiSubscriptionsRouteWithChildren
   ApiVerifyPaymentRoute: typeof ApiVerifyPaymentRoute
   ApiWebhooksRoute: typeof ApiWebhooksRouteWithChildren
   KnowledgeSlugRoute: typeof KnowledgeSlugRoute
@@ -3097,6 +3110,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiStorageUploadUrlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/subscriptions/entitlement': {
+      id: '/api/subscriptions/entitlement'
+      path: '/entitlement'
+      fullPath: '/api/subscriptions/entitlement'
+      preLoaderRoute: typeof ApiSubscriptionsEntitlementRouteImport
+      parentRoute: typeof ApiSubscriptionsRoute
+    }
     '/api/v1/feed': {
       id: '/api/v1/feed'
       path: '/api/v1/feed'
@@ -3537,6 +3557,17 @@ const InvestorRouteWithChildren = InvestorRoute._addFileChildren(
   InvestorRouteChildren,
 )
 
+interface ApiSubscriptionsRouteChildren {
+  ApiSubscriptionsEntitlementRoute: typeof ApiSubscriptionsEntitlementRoute
+}
+
+const ApiSubscriptionsRouteChildren: ApiSubscriptionsRouteChildren = {
+  ApiSubscriptionsEntitlementRoute: ApiSubscriptionsEntitlementRoute,
+}
+
+const ApiSubscriptionsRouteWithChildren =
+  ApiSubscriptionsRoute._addFileChildren(ApiSubscriptionsRouteChildren)
+
 interface ApiWebhooksRouteChildren {
   ApiWebhooksRazorpayRoute: typeof ApiWebhooksRazorpayRoute
   ApiWebhooksResendRoute: typeof ApiWebhooksResendRoute
@@ -3616,7 +3647,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPayoutsRoute: ApiPayoutsRoute,
   ApiReconciliationRoute: ApiReconciliationRoute,
   ApiRefundsRoute: ApiRefundsRoute,
-  ApiSubscriptionsRoute: ApiSubscriptionsRoute,
+  ApiSubscriptionsRoute: ApiSubscriptionsRouteWithChildren,
   ApiVerifyPaymentRoute: ApiVerifyPaymentRoute,
   ApiWebhooksRoute: ApiWebhooksRouteWithChildren,
   KnowledgeSlugRoute: KnowledgeSlugRoute,

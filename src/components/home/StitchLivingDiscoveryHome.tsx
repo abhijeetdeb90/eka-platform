@@ -697,12 +697,6 @@ export function StitchLivingDiscoveryHome({ profile, loginForm }: StitchLivingDi
               >
                 Record Family Heritage
               </Link>
-              <Link
-                to="/insights"
-                className="px-6 py-3 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs sm:text-sm font-semibold transition-colors"
-              >
-                Oral History Guidelines
-              </Link>
             </div>
           </div>
         </div>

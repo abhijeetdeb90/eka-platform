@@ -430,7 +430,7 @@ export function ContextualAskEkaModal({
                   size="sm"
                   className="rounded-full text-xs bg-primary text-primary-foreground hover:bg-primary/90"
                 >
-                  <Link to="/membership">Get EKA+ (₹299/mo)</Link>
+                  <Link to="/membership">Get EKA+ (₹499/mo)</Link>
                 </Button>
                 <Button
                   size="sm"

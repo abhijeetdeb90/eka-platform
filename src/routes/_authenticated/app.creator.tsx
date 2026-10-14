@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { CreatorDashboardPage } from "./app.creator.dashboard";
+import { AppScreen } from "@/components/app/AppScreen";
+import { CreatorStudioWorkspace } from "@/components/creator-studio/CreatorStudioWorkspace";
 
 export const Route = createFileRoute("/_authenticated/app/creator")({
   head: () => ({
@@ -19,5 +20,13 @@ export const Route = createFileRoute("/_authenticated/app/creator")({
       { name: "twitter:card", content: "summary" },
     ],
   }),
-  component: CreatorDashboardPage,
+  component: AppCreatorPage,
 });
+
+function AppCreatorPage() {
+  return (
+    <AppScreen eyebrow="Creator Studio" title="Workspace Dashboard">
+      <CreatorStudioWorkspace inAppLayout={true} />
+    </AppScreen>
+  );
+}

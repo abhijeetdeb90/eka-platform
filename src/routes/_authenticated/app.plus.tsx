@@ -36,8 +36,8 @@ function MembershipPage() {
       toast.error("Please sign in to manage membership.");
       return;
     }
-    const priceCents = plan === "creator" ? 79900 : 29900;
-    const planName = plan === "creator" ? "Creator Studio Professional" : "EKA+ Intelligence";
+    const priceCents = 49900;
+    const planName = "EKA+";
 
     openCheckout({
       amount: priceCents,
@@ -50,13 +50,13 @@ function MembershipPage() {
       },
       notes: {
         user_id: auth.user.id,
-        plan,
+        plan: "plus",
       },
       onSuccess: async (rzpResponse) => {
         const { error } = await supabase.from("subscriptions").upsert(
           {
             user_id: auth.user.id,
-            plan,
+            plan: "plus",
             status: "active",
             price_cents: priceCents,
             currency: "INR",
@@ -66,10 +66,10 @@ function MembershipPage() {
         if (error) {
           console.error("[Subscription upsert error]", error);
         }
-        setTier(plan);
-        track("subscription_purchase", { plan, payment_id: rzpResponse.razorpay_payment_id });
+        setTier("plus");
+        track("subscription_purchase", { plan: "plus", payment_id: rzpResponse.razorpay_payment_id });
         await queryClient.invalidateQueries({ queryKey: ["subscription"] });
-        toast.success(`Your ${PRODUCT_TIERS[plan].name} membership is active!`);
+        toast.success(`Your ${PRODUCT_TIERS.plus.name} membership is active!`);
       },
     });
   };
@@ -87,127 +87,90 @@ function MembershipPage() {
           {CORE_PHILOSOPHY.subscriptionHook}
         </h2>
         <p className="mx-auto max-w-xl text-xs sm:text-sm text-muted-foreground leading-relaxed">
-          Knowledge should be free. Intelligence should be paid. Creation should be paid.
-          Explore the global library freely. Upgrade when you need deep intelligence and creation tools.
+          Knowledge is free. Intelligence is premium. Creation is rewarded.
+          Explore the global library and publish freely. Upgrade to EKA+ when you need deep contextual intelligence, research tools, and creator studio analytics.
         </p>
       </div>
 
-      {/* 2. Three Architecture Tiers */}
-      <div className="grid gap-4 md:grid-cols-3">
+      {/* 2. Two Architecture Tiers */}
+      <div className="grid gap-6 md:grid-cols-2 max-w-4xl mx-auto">
         {/* FREE */}
-        <div className="rounded-2xl border border-border/80 bg-card p-5 space-y-3 shadow-xs">
+        <div className="rounded-2xl border border-border/80 bg-card p-6 space-y-4 shadow-xs">
           <Badge variant="outline" className="text-[10px] font-mono uppercase">
-            FREE LIBRARY
+            FREE COMMONS & PUBLISHING
           </Badge>
           <div>
-            <h3 className="font-serif text-lg font-medium text-foreground">Free Library</h3>
+            <h3 className="font-serif text-lg font-medium text-foreground">Free Seeker</h3>
             <p className="font-mono text-xs text-emerald-600 font-semibold mt-0.5">
-              Discover → Read → Explore → Follow
+              Discover → Read → Publish → Connect
             </p>
           </div>
-          <p className="text-2xl font-semibold text-foreground font-display">₹0</p>
+          <p className="text-3xl font-semibold text-foreground font-display">₹0</p>
           <p className="text-xs text-muted-foreground">
-            Free access to the cultural library, global map, and all stories.
+            Free access to the cultural library, global map, social feed, and 100% free publishing.
           </p>
-          <div className="border-t border-border/60 pt-3 space-y-1.5 text-xs">
-            <div className="flex items-center gap-1.5 text-foreground/90">
-              <Check className="size-3.5 text-emerald-600" />
-              <span>Explore global map & stories</span>
+          <div className="border-t border-border/60 pt-3 space-y-2 text-xs">
+            <div className="flex items-center gap-2 text-foreground/90">
+              <Check className="size-4 text-emerald-600 shrink-0" />
+              <span>Explore global map & cultural stories</span>
             </div>
-            <div className="flex items-center gap-1.5 text-foreground/90">
-              <Check className="size-3.5 text-emerald-600" />
-              <span>View traditions, places & images</span>
+            <div className="flex items-center gap-2 text-foreground/90">
+              <Check className="size-4 text-emerald-600 shrink-0" />
+              <span>Free publishing (photos, reels, videos, stories, articles)</span>
             </div>
-            <div className="flex items-center gap-1.5 text-foreground/90">
-              <Check className="size-3.5 text-emerald-600" />
-              <span>Search cultural knowledge</span>
+            <div className="flex items-center gap-2 text-foreground/90">
+              <Check className="size-4 text-emerald-600 shrink-0" />
+              <span>Join cultural communities & follow creators</span>
             </div>
           </div>
-          <Button variant="outline" size="sm" asChild className="w-full rounded-full text-xs mt-2">
+          <Button variant="outline" size="sm" asChild className="w-full rounded-full text-xs mt-4">
             <Link to="/app/explore">Explore Free Library</Link>
           </Button>
         </div>
 
         {/* EKA+ */}
-        <div className="rounded-2xl border-2 border-primary bg-card p-5 space-y-3 shadow-lift relative">
-          <Badge className="bg-primary text-primary-foreground text-[10px] font-mono uppercase">
-            EKA+ INTELLIGENCE
+        <div className="rounded-2xl border-2 border-primary bg-card p-6 space-y-4 shadow-lift relative">
+          <div className="absolute -top-3 right-6">
+            <Badge className="bg-primary text-primary-foreground text-[10px] font-mono uppercase">
+              UNIFIED SUBSCRIPTION
+            </Badge>
+          </div>
+          <Badge variant="outline" className="border-primary/40 text-primary text-[10px] font-mono uppercase">
+            EKA+ UNIFIED
           </Badge>
           <div>
             <h3 className="font-serif text-lg font-medium text-foreground">EKA+</h3>
             <p className="font-mono text-xs text-primary font-semibold mt-0.5">
-              Ask → Understand → Compare → Research
+              Ask → Understand → Research → Analytics
             </p>
           </div>
-          <p className="text-2xl font-semibold text-primary font-display">
-            ₹299<span className="text-xs text-muted-foreground font-mono">/mo</span>
+          <p className="text-3xl font-semibold text-primary font-display">
+            ₹499<span className="text-xs text-muted-foreground font-mono">/mo</span>
           </p>
           <p className="text-xs text-muted-foreground">
-            EKA AI, cross-cultural comparisons, personalized journeys & primary sources.
+            Source-backed EKA AI, cross-cultural comparisons, deep research, creator analytics & Studio tools.
           </p>
-          <div className="border-t border-border/60 pt-3 space-y-1.5 text-xs">
-            <div className="flex items-center gap-1.5 text-foreground/90 font-medium">
-              <Sparkles className="size-3.5 text-saffron" />
-              <span>EKA AI interactive exploration</span>
+          <div className="border-t border-border/60 pt-3 space-y-2 text-xs">
+            <div className="flex items-center gap-2 text-foreground/90 font-medium">
+              <Sparkles className="size-4 text-saffron shrink-0" />
+              <span>Ask EKA AI interactive exploration & provenance</span>
             </div>
-            <div className="flex items-center gap-1.5 text-foreground/90 font-medium">
-              <Sparkles className="size-3.5 text-saffron" />
-              <span>AI cultural comparisons across regions</span>
+            <div className="flex items-center gap-2 text-foreground/90 font-medium">
+              <Sparkles className="size-4 text-saffron shrink-0" />
+              <span>Cross-cultural comparisons & primary manuscripts</span>
             </div>
-            <div className="flex items-center gap-1.5 text-foreground/90 font-medium">
-              <Sparkles className="size-3.5 text-saffron" />
-              <span>Deep research & manuscript sources</span>
+            <div className="flex items-center gap-2 text-foreground/90 font-medium">
+              <Sparkles className="size-4 text-saffron shrink-0" />
+              <span>Creator Studio workspace, advanced analytics & 85% pools</span>
             </div>
           </div>
           <Button
             size="sm"
             disabled={checkoutLoading}
             onClick={() => joinPlan("plus")}
-            className="w-full rounded-full text-xs mt-2 bg-primary text-primary-foreground hover:bg-primary/90"
+            className="w-full rounded-full text-xs mt-4 bg-primary text-primary-foreground hover:bg-primary/90"
           >
-            {checkoutLoading ? "Opening Checkout..." : tier === "plus" ? "Active Plan" : "Get EKA+ (₹299/mo)"}
-          </Button>
-        </div>
-
-        {/* CREATOR */}
-        <div className="rounded-2xl border border-border/80 bg-card p-5 space-y-3 shadow-xs">
-          <Badge variant="outline" className="border-terracotta/40 text-terracotta text-[10px] font-mono uppercase">
-            CREATOR WORKSPACE
-          </Badge>
-          <div>
-            <h3 className="font-serif text-lg font-medium text-foreground">Creator Studio</h3>
-            <p className="font-mono text-xs text-terracotta font-semibold mt-0.5">
-              Create → Publish → Analyse → Grow
-            </p>
-          </div>
-          <p className="text-2xl font-semibold text-foreground font-display">
-            ₹799<span className="text-xs text-muted-foreground font-mono">/mo</span>
-          </p>
-          <p className="text-xs text-muted-foreground">
-            Dedicated paid workspace to create, publish, analyze and participate in 85% revenue pools.
-          </p>
-          <div className="border-t border-border/60 pt-3 space-y-1.5 text-xs">
-            <div className="flex items-center gap-1.5 text-foreground/90">
-              <Palette className="size-3.5 text-terracotta" />
-              <span>Creator Studio workspace</span>
-            </div>
-            <div className="flex items-center gap-1.5 text-foreground/90">
-              <Palette className="size-3.5 text-terracotta" />
-              <span>Create & publish stories</span>
-            </div>
-            <div className="flex items-center gap-1.5 text-foreground/90">
-              <Palette className="size-3.5 text-terracotta" />
-              <span>Creator analytics & 85% pools</span>
-            </div>
-          </div>
-          <Button
-            size="sm"
-            variant="outline"
-            disabled={checkoutLoading}
-            onClick={() => joinPlan("creator")}
-            className="w-full rounded-full text-xs mt-2 border-terracotta/40 text-terracotta hover:bg-terracotta/5"
-          >
-            {checkoutLoading ? "Opening Checkout..." : tier === "creator" ? "Active Workspace" : "Enter Creator (₹799/mo)"}
+            {checkoutLoading ? "Opening Checkout..." : tier === "plus" ? "Active Plan" : "Get EKA+ (₹499/mo)"}
           </Button>
         </div>
       </div>

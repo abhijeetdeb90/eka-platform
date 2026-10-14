@@ -2,14 +2,13 @@
  * EKA Monetization & Access Model
  *
  * Core Philosophy:
- * - Knowledge should be free.
- * - Intelligence should be paid.
- * - Creation should be paid.
+ * - Knowledge is free.
+ * - Intelligence is premium.
+ * - Creation is rewarded.
  *
  * Product Architecture:
- * - FREE: Discover → Read → Explore → Follow
- * - EKA+: Ask → Understand → Compare → Research
- * - CREATOR: Create → Publish → Analyse → Grow
+ * - Free Seeker (₹0): Discover → Read → Explore → Publish (photos, videos, carousels, articles) → Follow
+ * - EKA+ (₹499/mo): Ask EKA AI → Understand → Deeper Research → Creator Analytics & Workspace
  */
 
 import { useState, useEffect } from "react";
@@ -20,15 +19,15 @@ export type MonetizationTier = "free" | "plus" | "creator";
 export interface AccessModelFeature {
   id: string;
   name: string;
-  category: "Knowledge (Library)" | "Intelligence (AI)" | "Creation (Studio)";
+  category: "Knowledge (Library)" | "Intelligence (AI)" | "Creation & Analytics";
   free: boolean;
   paid: boolean;
   description: string;
 }
 
 /**
- * Canonical EKA Feature Matrix matching specification:
- * Knowledge is free, Intelligence is paid, Creation is paid.
+ * Canonical EKA Feature Matrix matching revised specification:
+ * Knowledge is free. Intelligence is premium. Creation is rewarded.
  */
 export const EKA_ACCESS_FEATURES: AccessModelFeature[] = [
   // 1. Cultural Library (Knowledge) — 100% Free & Open
@@ -73,72 +72,56 @@ export const EKA_ACCESS_FEATURES: AccessModelFeature[] = [
     description: "Full-text search across EKA's public cultural database, traditions, places, and tags.",
   },
 
-  // 2. EKA Intelligence (AI & Deep Research) — Paid (EKA+)
+  // 2. Open Publishing — 100% Free for all registered users
+  {
+    id: "create_publish",
+    name: "Free publishing for all creators",
+    category: "Creation & Analytics",
+    free: true,
+    paid: true,
+    description: "Publish reflections, photos, vertical videos/reels, multi-image carousels, and written stories with zero paywall.",
+  },
+
+  // 3. EKA+ Unified Subscription (₹499/mo) — AI, Research & Creator Analytics
   {
     id: "eka_ai",
-    name: "EKA AI",
+    name: "Ask EKA AI (Source-Backed)",
     category: "Intelligence (AI)",
     free: false,
     paid: true,
-    description: "Ask EKA contextual inquiry engine powered by grounded epistemic models and primary provenance.",
+    description: "Source-backed cultural questions, contextual inquiries, and citation links with monthly usage allowance.",
   },
   {
     id: "ai_cultural_comparisons",
-    name: "AI cultural comparisons",
+    name: "AI cross-cultural comparisons",
     category: "Intelligence (AI)",
     free: false,
     paid: true,
     description: "Cross-cultural parallel synthesis comparing rituals, foodways, and spiritual roots across civilizations.",
   },
   {
-    id: "personalized_learning",
-    name: "Personalised cultural learning",
-    category: "Intelligence (AI)",
-    free: false,
-    paid: true,
-    description: "Tailored daily wisdom, 7-to-90 day contemplative journeys, and adaptive curiosity loops.",
-  },
-  {
     id: "deep_research",
-    name: "Deep research / source exploration",
+    name: "Advanced research & source lineages",
     category: "Intelligence (AI)",
     free: false,
     paid: true,
-    description: "Primary manuscript citations, multi-lingual translations, academic verifiers, and lineage roots.",
-  },
-
-  // 3. Creator Studio & Monetization — Free creation for all, Pro tools for creators
-  {
-    id: "create_publish",
-    name: "Publish stories, photos, videos & carousels",
-    category: "Creation (Studio)",
-    free: true,
-    paid: true,
-    description: "Share reflections, stories, multi-image carousels, and video reels with the global community for free.",
-  },
-  {
-    id: "creator_studio",
-    name: "Creator Studio",
-    category: "Creation (Studio)",
-    free: false,
-    paid: true,
-    description: "Professional monetization workspace for cultural storytellers, researchers, and community custodians.",
+    description: "Deeper research workflows, follow-up inquiries, and primary manuscript references where operational.",
   },
   {
     id: "creator_analytics",
-    name: "Creator analytics",
-    category: "Creation (Studio)",
+    name: "Creator performance analytics",
+    category: "Creation & Analytics",
     free: false,
     paid: true,
-    description: "Real-time engagement telemetry, Qualified Contribution Score (QCS), and audience insights.",
+    description: "Real-time engagement telemetry, content performance summaries, and audience insights based on stored data.",
   },
   {
-    id: "advanced_creator_tools",
-    name: "Advanced monetization & offerings",
-    category: "Creation (Studio)",
+    id: "creator_studio_workspace",
+    name: "Creator Studio workspace",
+    category: "Creation & Analytics",
     free: false,
     paid: true,
-    description: "Publish paid workshops, consultations, cultural experiences, digital products, and manage payout ledgers.",
+    description: "Professional content management workspace, drafts management, and structured publishing tools.",
   },
 ];
 
@@ -158,95 +141,75 @@ export interface ProductTierConfig {
   popular?: boolean;
 }
 
-export const PRODUCT_TIERS: Record<MonetizationTier, ProductTierConfig> = {
+export const PRODUCT_TIERS: Record<"free" | "plus", ProductTierConfig> = {
   free: {
     id: "free",
     badge: "Open Cultural Commons",
-    name: "Free Seeker",
+    name: "EKA Seeker",
     tagline: "Discover → Share → Connect → Belong",
-    headline: "Creation and knowledge are open to all.",
+    headline: "Discover culture. Share your story. Find your community.",
     price: "₹0",
     period: "forever",
     priceNote: "Free forever · No credit card required",
     description:
-      "Open access to explore EKA's cultural library, post reflections, share photos, publish stories, upload videos, and create carousels.",
+      "Open access to explore EKA's cultural library and publish photos, vertical videos, reels, carousels, and stories freely.",
     highlights: [
-      "Publish photos, stories, videos & multi-image carousels",
+      "Publish photos, vertical videos, reels & multi-image carousels",
+      "Publish cultural stories and written articles",
+      "Create a profile & build your audience",
       "Explore the interactive Global Cultural Map",
       "Read all cultural stories & living traditions",
-      "Join Circles and connect with custodians",
-      "Full search across global cultural knowledge",
-      "Follow creators & save public traditions",
+      "Follow creators, save public traditions & join communities",
     ],
     ctaLabel: "Start Exploring Free",
     actionUrl: "/discover",
   },
   plus: {
     id: "plus",
-    badge: "EKA Intelligence",
+    badge: "Unified Membership",
     name: "EKA+",
-    tagline: "Ask → Understand → Compare → Research",
-    headline: "Intelligence should be paid.",
-    price: "₹299",
+    tagline: "Understand deeper. Research smarter. Grow your audience.",
+    headline: "Understand deeper. Research smarter. Grow your audience.",
+    price: "₹499",
     period: "month",
     priceNote: "+ applicable taxes · Cancel anytime",
     description:
-      "Go beyond the story. Ask questions with EKA AI, compare cultures across regions, and explore deep verified sources.",
+      "Cultural intelligence and professional creator tools unified in one membership. Source-backed AI, deep research, and creator analytics.",
     highlights: [
-      "Ask EKA AI: Grounded contextual intelligence",
-      "AI Cross-cultural comparison & parallel synthesis",
-      "Personalised cultural learning & daily journeys",
-      "Deep research: Primary sources & manuscript citations",
-      "Grounded in verified primary lineages & zero hallucination",
+      "Ask EKA AI: Source-backed cultural questions & research",
+      "Cross-cultural comparisons & contextual synthesis",
+      "Advanced research workflows & verified citations",
+      "Creator analytics: Real stored audience & content telemetry",
+      "Creator Studio: Professional content management workspace",
     ],
-    ctaLabel: "Unlock EKA+ Intelligence",
+    ctaLabel: "Get EKA+",
     actionUrl: "/membership",
     popular: true,
-  },
-  creator: {
-    id: "creator",
-    badge: "Paid Workspace",
-    name: "Creator Studio",
-    tagline: "Create → Publish → Analyse → Grow",
-    headline: "Creation should be paid.",
-    price: "₹799",
-    period: "month",
-    priceNote: "+ applicable taxes · Professional suite",
-    description:
-      "A dedicated, professional workspace for cultural storytellers, researchers, and lineage custodians to publish paid offerings and earn.",
-    highlights: [
-      "Full Creator Studio professional workspace",
-      "Offer paid workshops, cultural consultations & masterclasses",
-      "Transaction-driven commerce with transparent 5–10% commission",
-      "Audience analytics & Qualified Contribution Score (QCS)",
-      "Direct payout settlement ledger with automated tax compliance",
-    ],
-    ctaLabel: "Enter Creator Studio",
-    actionUrl: "/app/creator",
   },
 };
 
 export const CORE_PHILOSOPHY = {
-  title: "The Important Distinction",
+  title: "The Core Philosophy",
+  tagline: "Knowledge is free. Intelligence is premium. Creation is rewarded.",
   pillars: [
     {
-      title: "Knowledge should be free.",
+      title: "Knowledge is free.",
       description:
-        "EKA's cultural database and global map are completely open. Cultural stories are never locked behind a paywall; they belong to the human commons.",
+        "EKA's cultural database and global map are completely open. Cultural stories belong to the human commons and are never paywalled.",
     },
     {
-      title: "Intelligence should be paid.",
+      title: "Intelligence is premium.",
       description:
-        "EKA AI, contextual synthesis, personalized learning paths, and cross-cultural comparisons require computation and epistemic curation.",
+        "Source-backed Ask EKA AI, contextual synthesis, cross-cultural comparisons, and manuscript exploration require computation and epistemic curation.",
     },
     {
-      title: "Creation is open to everyone.",
+      title: "Creation is rewarded.",
       description:
-        "Every seeker can post stories, share photos, upload videos, and build multi-slide carousels for free. Creator Studio is an optional workspace for professional creators who offer ticketed events, workshops, cultural experiences, consultations, and digital products, with transparent transaction accounting and direct payouts.",
+        "Publishing photos, videos, carousels, and articles is 100% free for everyone. EKA+ provides unified creator analytics and advanced workspace tools to help you grow your audience.",
     },
   ],
   subscriptionHook:
-    "Go beyond the story. Ask questions. Compare cultures. Explore deeper. Create with EKA.",
+    "Discover freely. Share your lineage. Go deeper with EKA+.",
 };
 
 const STORAGE_KEY = "eka_user_tier_preview";
@@ -308,11 +271,11 @@ export function useMonetizationTier() {
   const isPlus = tier === "plus";
   const isCreator = tier === "creator";
 
-  // Intelligence is accessible to EKA+ and Creator tiers
+  // Intelligence is accessible to EKA+ subscribers (and legacy creator records)
   const canUseIntelligence = tier === "plus" || tier === "creator";
 
-  // Creator workspace is accessible only to Creator tier
-  const canUseCreatorStudio = tier === "creator";
+  // Creator workspace & analytics are unified into EKA+ (and accessible to legacy creator subscribers)
+  const canUseCreatorStudio = tier === "plus" || tier === "creator";
 
   return {
     tier,

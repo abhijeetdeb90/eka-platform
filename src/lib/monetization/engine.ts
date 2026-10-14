@@ -6,9 +6,8 @@
  * Strict separation of revenue streams:
  * 
  * A. EKA REVENUE:
- *    - EKA Premium subscription (₹299/mo, ₹2,990/yr) -> 100% EKA revenue (creator payout = ₹0)
+ *    - EKA+ Unified subscription (₹499/mo, ₹4,990/yr) -> Includes Ask EKA AI & Creator Studio workspace
  *    - EKA Pro features / Cultural Intelligence API
- *    - Creator Pro tools (e.g. Creator Studio subscription ₹799/mo)
  *    - Enterprise SaaS & Cultural Intelligence products
  *    - Enterprise research, reports & sponsored placements
  *    -> NO creator payout or subsidy pool from EKA subscriptions.
@@ -231,10 +230,11 @@ export function aggregateMasterFinancials(params: {
 }): MasterFinancialTelemetry {
   const subBreakdown = calculateEkaSubscriptionRevenue(
     params.activeSubscribers,
-    params.subPricePaise ?? 29_900
+    params.subPricePaise ?? 49_900
   );
 
-  const creatorStudioSubRevenue = (params.creatorStudioSubscribers ?? 0) * 79_900; // ₹799
+  // Creator Studio workspace is included in the unified EKA+ subscription (₹499/mo)
+  const creatorStudioSubRevenue = (params.creatorStudioSubscribers ?? 0) * 49_900;
   const enterpriseRevenue = params.enterpriseContractValueMinor ?? 0;
 
   let creatorGmvMinor = 0;

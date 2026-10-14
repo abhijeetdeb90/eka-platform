@@ -170,7 +170,7 @@ export function IntelligencePaywallModal({
               <span className="text-[11px] font-mono text-primary">Discover → Understand → Build</span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
               <div className="rounded-2xl border border-border/70 bg-sand/15 p-4 space-y-1">
                 <span className="font-mono text-[10px] uppercase font-bold text-muted-foreground">
                   FREE
@@ -186,29 +186,17 @@ export function IntelligencePaywallModal({
               <div className="rounded-2xl border border-primary/50 bg-primary/10 p-4 space-y-1 shadow-xs">
                 <div className="flex items-center justify-between">
                   <span className="font-mono text-[10px] uppercase font-bold text-primary">
-                    EKA+ (₹299/mo)
+                    EKA+ (₹499/mo)
                   </span>
                   <Badge variant="secondary" className="text-[9px] px-1.5 py-0 h-4 bg-primary text-primary-foreground">
-                    Recommended
+                    Unified Access
                   </Badge>
                 </div>
                 <p className="font-serif font-medium text-foreground text-sm">
                   Ask → Understand → Compare → Research
                 </p>
                 <p className="text-muted-foreground text-[11px]">
-                  EKA AI, comparisons & primary sources
-                </p>
-              </div>
-
-              <div className="rounded-2xl border border-border/70 bg-sand/15 p-4 space-y-1">
-                <span className="font-mono text-[10px] uppercase font-bold text-muted-foreground">
-                  CREATOR (₹799/mo)
-                </span>
-                <p className="font-serif font-medium text-foreground text-sm">
-                  Create → Publish → Analyse → Grow
-                </p>
-                <p className="text-muted-foreground text-[11px]">
-                  Creator Studio workspace & publishing suite
+                  EKA AI, comparisons, Creator Studio & analytics
                 </p>
               </div>
             </div>
@@ -226,7 +214,7 @@ export function IntelligencePaywallModal({
                   <tr className="border-b border-border/70 bg-muted/40 font-mono text-[11px] text-muted-foreground">
                     <th className="py-2.5 px-4 font-semibold">Feature</th>
                     <th className="py-2.5 px-4 text-center font-semibold w-24">Free</th>
-                    <th className="py-2.5 px-4 text-center font-semibold w-24 text-primary">Paid</th>
+                    <th className="py-2.5 px-4 text-center font-semibold w-24 text-primary">Paid (EKA+)</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border/60">
@@ -269,7 +257,7 @@ export function IntelligencePaywallModal({
               >
                 <Link to="/membership">
                   <Sparkles className="size-4 text-saffron" />
-                  <span>Subscribe to EKA+ (₹299/month)</span>
+                  <span>Subscribe to EKA+ (₹499/month)</span>
                   <ArrowRight className="size-4 ml-auto" />
                 </Link>
               </Button>

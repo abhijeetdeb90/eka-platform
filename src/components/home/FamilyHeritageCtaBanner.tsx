@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Feather, BookOpen } from "lucide-react";
+import { Feather } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function FamilyHeritageCtaBanner() {
@@ -29,17 +29,6 @@ export function FamilyHeritageCtaBanner() {
               <Link to="/create">
                 <Feather className="size-4 mr-2" />
                 <span>Share Your Story With Us</span>
-              </Link>
-            </Button>
-
-            <Button
-              asChild
-              variant="outline"
-              className="rounded-full bg-white/10 hover:bg-white/20 text-white border-white/20 text-sm font-medium px-7 py-3.5 h-auto"
-            >
-              <Link to="/standards">
-                <BookOpen className="size-4 mr-2" />
-                <span>Oral History Guidelines</span>
               </Link>
             </Button>
           </div>

@@ -2,28 +2,28 @@ import { supabase } from "@/integrations/supabase/client";
 import { currentUserId } from "@/lib/api";
 import { PLUS_PRICE_PAISE, PLUS_ANNUAL_PAISE } from "@/lib/constants/economics";
 
-/** One membership, two billing cadences. ₹299/month is the benchmark price. */
+/** One membership, two billing cadences. ₹499/month is the unified EKA+ price. */
 export const PLANS = [
   {
     id: "monthly",
     name: "Monthly",
     priceCents: PLUS_PRICE_PAISE,
     currency: "INR",
-    label: "₹299",
+    label: "₹499",
     cadence: "month",
     periodDays: 30,
     blurb:
-      "Full access to cultural library, AI exploration, personalized learning, and community discussions.",
+      "Full access to cultural library, Ask EKA AI, primary sources, and the premium Creator Studio workspace.",
   },
   {
     id: "annual",
     name: "Annual",
     priceCents: PLUS_ANNUAL_PAISE,
     currency: "INR",
-    label: "₹2,990",
+    label: "₹4,990",
     cadence: "year",
     periodDays: 365,
-    blurb: "Two months on us. Full annual cycle of the twelve themes and all member benefits.",
+    blurb: "Two months on us. Full annual cycle of the twelve themes, Ask EKA AI, and Creator Studio.",
   },
 ] as const;
 
@@ -158,6 +158,19 @@ export function entitlementFor(sub: SubscriptionRow | null | undefined): Entitle
     daysToRenewal: null,
     message: "No active membership.",
   };
+}
+
+/**
+ * Verified entitlement check for EKA+ (₹499/mo).
+ * Includes Ask EKA AI and cultural research features, plus the premium Creator Studio workspace.
+ * Preserves access for active subscribers on plus, creator (legacy), or annual plans.
+ */
+export function isEkaPlusEntitled(sub: SubscriptionRow | null | undefined): boolean {
+  if (!sub) return false;
+  const ent = entitlementFor(sub);
+  if (!ent.active) return false;
+  const plan = sub.plan?.toLowerCase() || "";
+  return plan === "plus" || plan === "creator" || plan === "annual" || plan === "monthly";
 }
 
 /** Stripe-style proration: unused time on the old plan credits the new one. */

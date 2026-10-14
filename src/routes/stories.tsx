@@ -45,7 +45,6 @@ import { motion, AnimatePresence } from "motion/react";
 import { toast } from "sonner";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
-import { StitchOralChantsSection } from "@/components/stories/StitchOralChantsSection";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -486,8 +485,8 @@ const REELS_DATA: ReelItem[] = [
     duration: "0:50",
     category: "Living Cultures",
     location: "Majuli, Assam",
-    mediaUrl: "/brand/eka-banner-sunset.jpg",
-    thumbnailUrl: "/brand/eka-banner-sunset.jpg",
+    mediaUrl: "/content/practice.jpg",
+    thumbnailUrl: "/content/practice.jpg",
     contextNote:
       "Crafted from river silt clay, cow dung, and woven split bamboo, Sattriya monastery performers bring sacred epics to life in the river island of Majuli.",
     creator: {
@@ -668,7 +667,7 @@ const EDITORIAL_EXPLAINERS: EditorialExplainer[] = [
     location: "Punjab, India",
     summary:
       "The revolutionary egalitarian kitchen where kings and peasants sit shoulder-to-shoulder on the floor for communal food.",
-    imageUrl: "/content/reading-table.jpg",
+    imageUrl: "/content/give.jpg",
     fullContent: {
       lead: "Instituted in the 15th century by Guru Nanak, Langar is a radical spiritual institution of universal hospitality.",
       ritualSignificance:
@@ -688,7 +687,7 @@ const EDITORIAL_EXPLAINERS: EditorialExplainer[] = [
     location: "Karnataka, India",
     summary:
       "A living spirit oracle where dancers enter trances to arbitrate justice and balance between villages and forest deities.",
-    imageUrl: "/content/today-reflection.jpg",
+    imageUrl: "/content/practice.jpg",
     fullContent: {
       lead: "In the coastal belt of Tulu Nadu, Bhoota Kola is not folklore performance; it is real-time community adjudication.",
       ritualSignificance:
@@ -719,6 +718,66 @@ const EDITORIAL_EXPLAINERS: EditorialExplainer[] = [
         "In the harsh Thar desert, Bishnoi villages stand out as lush oases teeming with free-roaming antelopes and ancient trees.",
       custodians: "Bishnoi village councils and forest wardens.",
       askPrompt: "What are the 29 principles of Bishnoi sacred ecology?",
+    },
+  },
+  {
+    id: "exp-kumartuli-clay",
+    title: "FROM GANGA MUD TO DIVINITY: THE RITES OF CLAY",
+    category: "Sacred Crafts",
+    location: "Kolkata, India",
+    summary:
+      "How straw armatures and alluvial river silt from the holy Hooghly are transformed by generational sculptors into living presence.",
+    imageUrl: "/places/kolkata.jpg",
+    fullContent: {
+      lead: "Every autumn in the alleyways of Kumartuli, sculptors welcome the sacred river clay into their studios to give form to the formless.",
+      ritualSignificance:
+        "The creation begins with straw and bamboo structures bound with jute twine, layered with Ganga silt (Entel mati and Bele mati), culminating in the sacred ritual of 'Chokkhudan' — painting the eyes of the deity on Mahalaya dawn.",
+      symbolism:
+        "Clay drawn from the river returns to the river upon immersion (Visarjan), completing the eternal cosmic cycle of creation and dissolution.",
+      modernContinuity:
+        "Hundreds of family workshops continue an unbroken craft lineage spanning over three centuries in North Kolkata.",
+      custodians: "Patuapara and Kumartuli hereditary clay idol makers.",
+      askPrompt: "What is the spiritual significance of the four rites of clay in Kumartuli?",
+    },
+  },
+  {
+    id: "exp-ryoanji-stones",
+    title: "RAKING STILLNESS: THE 15 STONES OF RYOAN-JI",
+    category: "Sacred Places",
+    location: "Kyoto, Japan",
+    summary:
+      "Why no matter where you sit on the wooden veranda of this dry landscape Zen garden, only 14 stones can ever be seen at once.",
+    imageUrl: "/content/still-water.jpg",
+    fullContent: {
+      lead: "At Ryoan-ji in northwest Kyoto, fifteen moss-ringed boulders rest in a rectangular bed of combed white gravel.",
+      ritualSignificance:
+        "Designed in the Muromachi period as a karesansui (dry landscape) rock garden, the site eliminates all decorative plants, water, and ornament to reflect the mind back upon itself.",
+      symbolism:
+        "The architecture ensures that from any earthly viewpoint on the veranda, at least one stone remains obscured from human sight, reminding the seeker of the incompleteness of ego and the mystery of totality.",
+      modernContinuity:
+        "Monks rake the gravel every morning into linear oceanic patterns before the garden gate opens.",
+      custodians: "Myoshin-ji school of Rinzai Zen Buddhism.",
+      askPrompt: "Why are only 14 stones visible at once in Ryoan-ji?",
+    },
+  },
+  {
+    id: "exp-berber-weaving",
+    title: "THE MATHEMATICAL LANGUAGE OF ATLAS WEAVERS",
+    category: "Master Crafts",
+    location: "Atlas Mountains, Morocco",
+    summary:
+      "How Amazigh matriarchs weave generational genealogies, fertility talismans, and mountain topography on upright wooden handlooms.",
+    imageUrl: "/places/marrakesh.jpg",
+    fullContent: {
+      lead: "In the snow-capped High Atlas Mountains, Beni Ourain and Amazigh rugs are not decorative furnishings; they are woven memoirs.",
+      ritualSignificance:
+        "Working without paper cartoons or preliminary sketches, weavers recite poetry and count uncarded sheep wool knots in memory of ancestral lineage.",
+      symbolism:
+        "Lozenge diamonds represent the protective eye, zigzags denote running mountain water, and deliberate asymmetries ward off misfortune.",
+      modernContinuity:
+        "Village cooperatives preserve traditional vegetable dyeing with madder root, saffron, and indigo.",
+      custodians: "Amazigh matriarchs and rural artisan cooperatives of Morocco.",
+      askPrompt: "How do Amazigh weaving motifs preserve family oral genealogy?",
     },
   },
 ];
@@ -784,8 +843,8 @@ const STATIC_STORIES_DATA: StaticStoryItem[] = [
 function EkaStoriesPage() {
   const navigate = useNavigate();
 
-  // Active filter tab: "all" | "reels" | "carousels" | "editorial" | "static"
-  const [activeTab, setActiveTab] = useState<"all" | "reels" | "carousels" | "editorial" | "static">("all");
+  // Active filter tab: "all" | "reels" | "editorial"
+  const [activeTab, setActiveTab] = useState<"all" | "reels" | "editorial">("all");
 
   // Highlight Viewer Modal State
   const [activeHighlight, setActiveHighlight] = useState<HighlightSequence | null>(null);
@@ -1002,23 +1061,22 @@ function EkaStoriesPage() {
         </section>
 
         {/* ==================================================================== */}
+        {/* ==================================================================== */}
         {/* VIEW FILTER TABS */}
         {/* ==================================================================== */}
         <section className="container-eka">
           <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
             {[
-              { id: "all", label: "All Formats" },
-              { id: "reels", label: "Reels (9:16)" },
-              { id: "carousels", label: "Carousels" },
-              { id: "editorial", label: "Short Explainers" },
-              { id: "static", label: "Static Visuals" },
+              { id: "all", label: "All Stories" },
+              { id: "reels", label: "Living Traditions" },
+              { id: "editorial", label: "Editorials" },
             ].map((tab) => (
               <button
                 key={tab.id}
                 type="button"
                 onClick={() => setActiveTab(tab.id as any)}
                 className={cn(
-                  "px-3.5 py-1.5 rounded-full text-xs font-mono transition-all cursor-pointer whitespace-nowrap",
+                  "px-4 py-1.5 rounded-full text-xs font-mono transition-all cursor-pointer whitespace-nowrap",
                   activeTab === tab.id
                     ? "bg-foreground text-background font-semibold shadow-xs"
                     : "bg-card border border-border/70 text-muted-foreground hover:text-foreground hover:bg-accent/40",
@@ -1038,10 +1096,10 @@ function EkaStoriesPage() {
             <div className="flex items-center justify-between border-b border-border/60 pb-3">
               <div>
                 <h3 className="font-display text-xl sm:text-2xl font-normal text-foreground">
-                  Cultural Reels
+                  Living Traditions
                 </h3>
                 <p className="text-xs text-muted-foreground font-light">
-                  Short, cinematic 9:16 stories from verified cultural custodians.
+                  Direct glimpses of living practices, sacred craft, and rituals from around the globe.
                 </p>
               </div>
               <button
@@ -1049,7 +1107,7 @@ function EkaStoriesPage() {
                 onClick={() => openReelTheater(0)}
                 className="text-xs font-medium text-terracotta hover:underline flex items-center gap-1 cursor-pointer"
               >
-                <span>Play all reels</span>
+                <span>Play all stories</span>
                 <ArrowRight className="size-3" />
               </button>
             </div>
@@ -1076,24 +1134,17 @@ function EkaStoriesPage() {
         )}
 
         {/* ==================================================================== */}
-        {/* STITCH DESIGN: FORMAT A - SACRED ORAL CHANTS & FIELD RECORDINGS */}
-        {/* ==================================================================== */}
-        {(activeTab === "all" || activeTab === "reels") && (
-          <StitchOralChantsSection />
-        )}
-
-        {/* ==================================================================== */}
-        {/* SECTION 6: SHORT EDITORIAL CARDS (Converted Knowledge & Articles) */}
+        {/* SECTION 6: SHORT EDITORIAL CARDS (Editorials Only) */}
         {/* ==================================================================== */}
         {(activeTab === "all" || activeTab === "editorial") && (
           <section className="container-eka space-y-4">
             <div className="flex items-center justify-between border-b border-border/60 pb-3">
               <div>
                 <h3 className="font-display text-xl sm:text-2xl font-normal text-foreground">
-                  Editorial Explainers
+                  Editorials
                 </h3>
                 <p className="text-xs text-muted-foreground font-light">
-                  Direct answers to eternal questions. Concise, scannable, verified.
+                  Direct answers to eternal questions. Concise, scannable, verified cultural insights.
                 </p>
               </div>
               <Link
@@ -1120,87 +1171,6 @@ function EkaStoriesPage() {
                   onClick={() => {
                     setSelectedExplainer(item);
                     track("editorial_card_explored" as any, { id: item.id, title: item.title });
-                  }}
-                />
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* ==================================================================== */}
-        {/* SECTION 5.B: CAROUSELS SECTION (Multi-Slide Visual Stories) */}
-        {/* ==================================================================== */}
-        {(activeTab === "all" || activeTab === "carousels") && (
-          <section className="container-eka space-y-4">
-            <div className="flex items-center justify-between border-b border-border/60 pb-3">
-              <div>
-                <h3 className="font-display text-xl sm:text-2xl font-normal text-foreground">
-                  Visual Carousels
-                </h3>
-                <p className="text-xs text-muted-foreground font-light">
-                  Step-by-step photographic essays exploring master crafts and sacred places.
-                </p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-              {CAROUSEL_DATA.map((carousel) => (
-                <CarouselCard
-                  key={carousel.id}
-                  id={carousel.id}
-                  title={carousel.title}
-                  category={carousel.category}
-                  slidesCount={carousel.slidesCount}
-                  coverImageUrl={carousel.coverImageUrl}
-                  location={carousel.location}
-                  contextOneLiner={carousel.contextOneLiner}
-                  creator={carousel.creator}
-                  onClick={() => {
-                    triggerAskEka(
-                      `What is the story behind ${carousel.title}?`,
-                      carousel.title,
-                      carousel.location,
-                    );
-                  }}
-                />
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* ==================================================================== */}
-        {/* SECTION 5.C: STATIC VISUAL STORIES SECTION */}
-        {/* ==================================================================== */}
-        {(activeTab === "all" || activeTab === "static") && (
-          <section className="container-eka space-y-4">
-            <div className="flex items-center justify-between border-b border-border/60 pb-3">
-              <div>
-                <h3 className="font-display text-xl sm:text-2xl font-normal text-foreground">
-                  Static Visual Moments
-                </h3>
-                <p className="text-xs text-muted-foreground font-light">
-                  Living cultural photography captured by practitioners around the globe.
-                </p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-              {STATIC_STORIES_DATA.map((story) => (
-                <StaticStoryCard
-                  key={story.id}
-                  id={story.id}
-                  title={story.title}
-                  category={story.category}
-                  location={story.location}
-                  imageUrl={story.imageUrl}
-                  context={story.context}
-                  creator={story.creator}
-                  onClick={() => {
-                    triggerAskEka(
-                      `Tell me about the tradition of ${story.title} in ${story.location}`,
-                      story.title,
-                      story.location,
-                    );
                   }}
                 />
               ))}

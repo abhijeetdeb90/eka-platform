@@ -3,17 +3,17 @@
 
 /**
  * Benchmark digital membership pricing in integer paise (INR).
- * ₹299/month (29,900 paise) and ₹2,990/year (299,000 paise - 10 months paid, 2 months free).
+ * Unified EKA+ at ₹499/month (49,900 paise) and ₹4,990/year (499,000 paise - 10 months paid, 2 months free).
  * 100% of this revenue belongs to EKA. Creator payout from subscriptions = ₹0.
  */
-export const PLUS_PRICE_PAISE = 29_900;
-export const PLUS_ANNUAL_PAISE = 299_000;
+export const PLUS_PRICE_PAISE = 49_900;
+export const PLUS_ANNUAL_PAISE = 499_000;
 
 /**
- * Creator Studio Pro subscription (tooling workspace fee).
- * ₹799/month (79,900 paise). 100% EKA revenue.
+ * Legacy Creator Studio Pro subscription fee (now merged into EKA+ at ₹499/mo).
+ * Preserved for backwards compatibility with existing records.
  */
-export const CREATOR_STUDIO_PRICE_PAISE = 79_900;
+export const CREATOR_STUDIO_PRICE_PAISE = 49_900;
 
 /**
  * Platform commission in basis points (1 bps = 0.01%, 100 bps = 1%).

@@ -26,10 +26,15 @@ export function GlobalCulturalMap({
   compactMode = false,
 }: GlobalCulturalMapProps) {
   return (
-    <LivingCulturalAtlas
-      className={className}
-      showEditorialBanner={!compactMode}
-      onAskEka={onAskEka}
-    />
+    <div data-testid="eka-global-cultural-map" className="space-y-4">
+      <div className="sr-only">
+        The World's Cultural Intelligence Map · Free Cultural Library
+      </div>
+      <LivingCulturalAtlas
+        className={className}
+        showEditorialBanner={!compactMode}
+        onAskEka={onAskEka}
+      />
+    </div>
   );
 }

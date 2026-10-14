@@ -1,18 +1,32 @@
-// @ts-nocheck
-import React, { useEffect } from "react";
-import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
+import React, { useState, useEffect } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
-import { Compass, ArrowRight, Sparkles } from "lucide-react";
+import {
+  Compass,
+  ArrowRight,
+  Sparkles,
+  MapPin,
+  Lock,
+  Check,
+  Palette,
+  Globe,
+  BookOpen,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { useMonetizationTier } from "@/lib/monetization";
+import { GlobalCulturalMap } from "@/components/discovery/GlobalCulturalMap";
+import {
+  ContextualAskEkaModal,
+  type ContextualAskEkaTarget,
+} from "@/components/discovery/ContextualAskEkaModal";
+import { IntelligencePaywallModal } from "@/components/discovery/IntelligencePaywallModal";
 
 export const Route = createFileRoute("/learn")({
-  beforeLoad: () => {
-    throw redirect({ to: "/discover" });
-  },
   head: () => ({
     meta: [
-      { title: "Discover — Cultural Knowledge & Exploration | EKA" },
+      { title: "Understand the World Through Its Stories | EKA Learn" },
       {
         name: "description",
         content:
@@ -20,40 +34,8 @@ export const Route = createFileRoute("/learn")({
       },
     ],
   }),
-  component: LearnRedirectPage,
+  component: LearnPage,
 });
-
-function LearnRedirectPage() {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    navigate({ to: "/discover", replace: true });
-  }, [navigate]);
-
-  return (
-    <div className="min-h-screen bg-sand/20 dark:bg-stone-950 text-foreground flex flex-col justify-between">
-      <SiteHeader />
-      <main className="container-eka py-20 text-center space-y-4 max-w-lg mx-auto">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-terracotta/10 text-terracotta text-xs font-mono">
-          <Compass className="size-3.5" />
-          <span>Merged into EKA Discover</span>
-        </div>
-        <h1 className="font-display text-2xl font-normal">Redirecting to Discover...</h1>
-        <p className="text-xs text-muted-foreground">
-          Learn and Discover have unified into a single cultural exploration experience.
-        </p>
-        <Button
-          onClick={() => navigate({ to: "/discover", replace: true })}
-          className="rounded-xl bg-terracotta text-white text-xs"
-        >
-          <span>Continue to Discover</span>
-          <ArrowRight className="size-3.5 ml-1" />
-        </Button>
-      </main>
-      <SiteFooter />
-    </div>
-  );
-}
 
 
 // Flagship visual learn stories requested in specifications
@@ -258,7 +240,7 @@ function LearnPage() {
 
             <div className="rounded-2xl border border-primary/40 bg-primary/5 p-3.5 space-y-1">
               <span className="font-mono text-[10px] uppercase font-bold text-primary flex items-center gap-1">
-                <Lock className="size-3 text-saffron" /> EKA+ (₹299/mo)
+                <Lock className="size-3 text-saffron" /> EKA+ (₹499/mo)
               </span>
               <p className="font-serif text-sm text-foreground">
                 Ask → Understand → Compare → Research
@@ -270,7 +252,7 @@ function LearnPage() {
 
             <div className="rounded-2xl border border-border/60 bg-background/70 p-3.5 space-y-1">
               <span className="font-mono text-[10px] uppercase font-bold text-muted-foreground flex items-center gap-1">
-                <Palette className="size-3" /> CREATOR (₹799/mo)
+                <Palette className="size-3" /> CREATOR STUDIO (Included in EKA+)
               </span>
               <p className="font-serif text-sm text-foreground">
                 Create → Publish → Analyse → Grow

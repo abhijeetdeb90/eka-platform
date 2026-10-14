@@ -135,7 +135,7 @@ export function SiteFooter() {
                 </li>
                 <li>
                   <Link to="/privacy" className="hover:text-[#C45C26] transition-colors">
-                    Privacy
+                    Privacy (DPDP Act, 2023)
                   </Link>
                 </li>
                 <li>
@@ -188,8 +188,9 @@ export function SiteFooter() {
         {/* Legal & Notice */}
         <div className="text-xs text-[#5E5C5A] leading-relaxed mb-8">
           <p>
-            <strong className="text-[#2D2B2A]">Legal & Grievance Notice:</strong> For personal data
-            rights, content grievances, or copyright notices, contact our Grievance Desk at{" "}
+            <strong className="text-[#2D2B2A]">Legal & Grievance Notice:</strong> In full compliance with the{" "}
+            <strong className="text-[#2D2B2A]">Digital Personal Data Protection Act, 2023 (DPDP Act)</strong> and international privacy standards. For personal data
+            rights, consent withdrawal, content grievances, or copyright notices, contact our Grievance Desk at{" "}
             <a href="mailto:grievance@eka.earth" className="text-[#C45C26] underline hover:text-[#A34A1F]">
               grievance@eka.earth
             </a>

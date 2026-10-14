@@ -47,8 +47,8 @@ export const MembershipBannerSection: React.FC = () => {
                 Ask questions. Compare cultures. Explore deeper. Create with EKA.
               </p>
               <p className="mt-4 text-base sm:text-lg text-muted-foreground font-light leading-relaxed">
-                Knowledge should be free. Intelligence should be paid. Creation should be paid.
-                Explore the open cultural library freely, or upgrade to EKA+ for AI, comparisons, and deep research.
+                Knowledge is free. Intelligence is premium. Creation is rewarded.
+                Explore the open cultural library and publish stories freely, or upgrade to EKA+ for AI, comparisons, and Creator Studio tools.
               </p>
 
               <div className="mt-8 grid gap-3 sm:grid-cols-2">
@@ -81,11 +81,11 @@ export const MembershipBannerSection: React.FC = () => {
               <div className="rounded-2xl border border-primary/30 bg-sand/40 p-6 sm:p-8 backdrop-blur-xs shadow-calm text-center lg:text-left flex flex-col justify-between h-full">
                 <div>
                   <div className="inline-flex rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold text-primary uppercase tracking-wider">
-                    EKA+ Intelligence Membership
+                    EKA+ Unified Membership
                   </div>
                   <div className="mt-4 flex items-baseline justify-center lg:justify-start gap-1">
                     <span className="font-display text-4xl sm:text-5xl font-semibold text-foreground">
-                      ₹299
+                      ₹499
                     </span>
                     <span className="text-sm font-light text-muted-foreground">
                       / month + taxes
