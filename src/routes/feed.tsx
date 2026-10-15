@@ -69,7 +69,7 @@ function FeedPage() {
         .from("posts")
         .select(`
           *,
-          author:profiles(id, display_name, account_type, avatar_url)
+          author:profiles(id, display_name, account_type, avatar_url, verified)
         `)
         .eq("status", "visible")
         .eq("visibility", "public");
@@ -99,7 +99,7 @@ function FeedPage() {
       identity={post.author?.account_type || "Contributor"}
       time={new Date(post.created_at).toLocaleDateString()}
       location={post.tradition || undefined}
-      verifiedHuman={!post.is_sample}
+      verifiedHuman={post.author?.verified === true}
       topic={post.topic || undefined}
       content={
         <div className="space-y-3">
