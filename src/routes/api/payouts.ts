@@ -5,6 +5,7 @@ import {
   assertServerRole,
   isAdminRole,
   resolveActingUserId,
+  unauthorizedResponse,
 } from "@/lib/auth/access-control";
 
 /**
@@ -19,10 +20,7 @@ export const Route = createFileRoute("/api/payouts")({
         try {
           const auth = await requireServerAuth(request);
           if (!auth.ok) {
-            return new Response(JSON.stringify({ error: auth.error }), {
-              status: auth.status,
-              headers: { "Content-Type": "application/json" },
-            });
+            return unauthorizedResponse(auth.error, auth.status);
           }
 
           const body = (await request.json()) as Record<string, unknown>;
@@ -30,7 +28,6 @@ export const Route = createFileRoute("/api/payouts")({
 
           switch (action) {
             case "onboard_creator": {
-              // Always bind to authenticated user; admins may onboard another user
               const target = resolveActingUserId(
                 auth.userId,
                 auth.roles,
@@ -114,7 +111,6 @@ export const Route = createFileRoute("/api/payouts")({
                 });
               }
 
-              // request_payout
               const amountMinor = body["amount_minor"] ? Number(body["amount_minor"]) : undefined;
               const method = body["method"] as any;
               const payout = await creatorPayoutsEngine.requestPayout({
@@ -130,13 +126,9 @@ export const Route = createFileRoute("/api/payouts")({
 
             case "retry_payout":
             case "hold_payout": {
-              // Administrative actions only
               const admin = await assertServerRole(request, ["admin", "super_admin", "founder"]);
               if (!admin.ok) {
-                return new Response(JSON.stringify({ error: admin.error ?? "Forbidden" }), {
-                  status: admin.status,
-                  headers: { "Content-Type": "application/json" },
-                });
+                return unauthorizedResponse(admin.error ?? "Forbidden", admin.status);
               }
 
               const payoutId = body["payout_id"] as string;
