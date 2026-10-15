@@ -51,15 +51,20 @@ export const Route = createFileRoute("/api/v1/posts")({
         const SUPABASE_URL =
           process.env["SUPABASE_URL"] ||
           process.env["VITE_SUPABASE_URL"] ||
-          process.env["NEXT_PUBLIC_SUPABASE_URL"] ||
-          "https://kbiutqzhcbyuseygcspe.supabase.co";
+          process.env["NEXT_PUBLIC_SUPABASE_URL"];
 
         const SUPABASE_KEY =
           process.env["SUPABASE_SECRET_KEY"] ||
           process.env["SUPABASE_SERVICE_ROLE_KEY"] ||
           process.env["SUPABASE_PUBLISHABLE_KEY"] ||
-          process.env["VITE_SUPABASE_PUBLISHABLE_KEY"] ||
-          "sb_publishable_DKdNOtbppccL297o2_Ixkw_f2j0Rf7-";
+          process.env["VITE_SUPABASE_PUBLISHABLE_KEY"];
+
+        if (!SUPABASE_URL || !SUPABASE_KEY) {
+          return new Response(JSON.stringify({ error: "Supabase server configuration is missing." }), {
+            status: 503,
+            headers: { "Content-Type": "application/json" },
+          });
+        }
 
         const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
           auth: { persistSession: false },
