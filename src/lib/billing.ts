@@ -64,6 +64,10 @@ export type SubscriptionRow = {
   retention_offer_applied: boolean | null;
   price_cents: number | null;
   currency: string | null;
+  provider?: string | null;
+  provider_reference?: string | null;
+  razorpay_payment_id?: string | null;
+  razorpay_subscription_id?: string | null;
 };
 
 export type Entitlement = {
@@ -88,6 +92,20 @@ export function entitlementFor(sub: SubscriptionRow | null | undefined): Entitle
       message: "No membership yet.",
     };
   }
+  const providerVerified =
+    sub.provider === "razorpay" &&
+    Boolean(sub.razorpay_payment_id || sub.razorpay_subscription_id || sub.provider_reference);
+  const serverTrialVerified = sub.status === "trialing" && sub.provider === "internal_trial";
+  if (!providerVerified && !serverTrialVerified) {
+    return {
+      active: false,
+      state: "none",
+      renewsOn: null,
+      daysToRenewal: null,
+      message: "Membership could not be verified by the payment provider. Complete checkout to activate EKA+.",
+    };
+  }
+
   const now = Date.now();
   const periodEnd = sub.current_period_end ? new Date(sub.current_period_end) : null;
   const pausedUntil = sub.paused_until ? new Date(sub.paused_until) : null;
@@ -191,7 +209,7 @@ export async function fetchSubscription(): Promise<SubscriptionRow | null> {
   const { data } = await supabase
     .from("subscriptions")
     .select(
-      "plan, status, started_at, expires_at, cancel_at_period_end, current_period_end, canceled_at, paused_until, retention_offer_applied, price_cents, currency",
+      "plan, status, started_at, expires_at, cancel_at_period_end, current_period_end, canceled_at, paused_until, retention_offer_applied, price_cents, currency, provider, provider_reference, razorpay_payment_id, razorpay_subscription_id",
     )
     .eq("user_id", uid)
     .order("updated_at", { ascending: false })
