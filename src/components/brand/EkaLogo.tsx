@@ -11,8 +11,8 @@
 import React from "react";
 import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
-import ekaEmblemSvg from "@/assets/brand/eka-emblem.svg";
-import ekaPrimarySvg from "@/assets/brand/eka-primary-lockup.svg";
+import ekaEmblemJpg from "@/assets/brand/eka-emblem.jpg";
+import ekaLogoFullJpg from "@/assets/brand/eka-logo-full.jpg";
 
 export type EkaLogoVariant = "standard" | "symbol" | "stacked" | "full";
 export type EkaLogoSize = "xs" | "sm" | "md" | "lg" | "xl";
@@ -78,14 +78,14 @@ export function EkaEmblem({
 
   return (
     <img
-      src={ekaEmblemSvg || "/brand/eka-emblem.svg"}
+      src={ekaEmblemJpg || "/brand/eka-emblem.jpg"}
       alt={alt}
       width={width || preset.height}
       height={height || preset.height}
       loading="eager"
       decoding="async"
       className={cn(
-        "object-contain shrink-0 select-none transition-transform duration-500 ease-out group-hover:scale-105",
+        "object-contain shrink-0 select-none transition-transform duration-500 ease-out group-hover:scale-105 rounded-full",
         !width && !height && preset.mark,
         className
       )}
@@ -114,11 +114,11 @@ export function EkaLogo({
 }: EkaLogoProps) {
   const currentSize = SIZE_PRESETS[size];
 
-  // If variant is "full", render the official primary lockup SVG directly
+  // If variant is "full", render the official primary lockup directly
   if (variant === "full") {
     const fullImg = (
       <img
-        src={ekaPrimarySvg || "/brand/eka-primary-lockup.svg"}
+        src={ekaLogoFullJpg || "/brand/eka-logo-full.jpg"}
         alt={alt}
         width={width || (currentSize.height * 2.2)}
         height={height || currentSize.height}
