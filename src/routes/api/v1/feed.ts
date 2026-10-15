@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { z } from "zod";
 import { createClient } from "@supabase/supabase-js";
 
 export const Route = createFileRoute("/api/v1/feed")({
@@ -44,19 +43,26 @@ export const Route = createFileRoute("/api/v1/feed")({
           ...(token ? { global: { headers: { Authorization: `Bearer ${token}` } } } : {}),
         });
 
-        // 1. Determine followed IDs if user is logged in
-        let authorIds: string[] | null = null;
-        if (currentUserId) {
-          const { data: followRows } = await supabase
-            .from("follows")
-            .select("followed_id")
-            .eq("follower_id", currentUserId)
-            .eq("status", "accepted");
-
-          const followedIds = (followRows || []).map((f: any) => f.followed_id);
-          // Fan-out-on-read: self + followed accounts
-          authorIds = [currentUserId, ...followedIds];
+        if (!currentUserId) {
+          return new Response(JSON.stringify({ error: "Sign in to load your community feed." }), {
+            status: 401,
+            headers: { "Content-Type": "application/json" },
+          });
         }
+
+        // The live schema uses following_id and has no follow-status column.
+        const { data: followRows, error: followsError } = await supabase
+          .from("follows")
+          .select("following_id")
+          .eq("follower_id", currentUserId);
+        if (followsError) {
+          return new Response(JSON.stringify({ error: "Could not load followed accounts." }), {
+            status: 500,
+            headers: { "Content-Type": "application/json" },
+          });
+        }
+        const followedIds = (followRows || []).map((f: any) => f.following_id);
+        const authorIds = [currentUserId, ...followedIds];
 
         // 2. Query posts
         let query = supabase
@@ -82,9 +88,7 @@ export const Route = createFileRoute("/api/v1/feed")({
           query = query.lt("created_at", cursor);
         }
 
-        if (authorIds && authorIds.length > 1) {
-          query = query.in("author_id", authorIds);
-        }
+        query = query.in("author_id", authorIds);
 
         const { data: posts, error } = await query;
 
