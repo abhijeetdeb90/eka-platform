@@ -48,13 +48,13 @@ function FeedPage() {
   const { data: feedResult, isLoading, isError, refetch } = useQuery({
     queryKey: ["feed-posts", activeTab],
     queryFn: async () => {
+      const { data: auth, error: authError } = await supabase.auth.getUser();
+      if (authError) throw authError;
+      if (!auth.user) return { posts: [], requiresSignIn: true };
+
       let followedIds: string[] | null = null;
 
       if (activeTab === "following") {
-        const { data: auth, error: authError } = await supabase.auth.getUser();
-        if (authError) throw authError;
-        if (!auth.user) return { posts: [], requiresSignIn: true };
-
         const { data: follows, error: followError } = await supabase
           .from("follows")
           .select("following_id")
@@ -72,6 +72,8 @@ function FeedPage() {
           author:profiles(id, display_name, account_type, avatar_url, verified)
         `)
         .eq("status", "visible");
+
+      if (activeTab === "foryou") query = query.eq("visibility", "public");
 
       if (followedIds) query = query.in("author_id", followedIds);
 
@@ -227,6 +229,13 @@ function FeedPage() {
                   <Button variant="outline" size="sm" onClick={() => refetch()} className="rounded-xl">
                     <RefreshCw className="size-3.5 mr-1.5" />
                     <span>Try again</span>
+                  </Button>
+                </div>
+              ) : requiresSignIn ? (
+                <div className="p-8 text-center text-muted-foreground border border-dashed rounded-3xl space-y-3">
+                  <p>Sign in to see real community posts. Discover and Stories remain open to explore.</p>
+                  <Button asChild size="sm" variant="outline" className="rounded-xl">
+                    <Link to="/auth">Sign in</Link>
                   </Button>
                 </div>
               ) : posts.map(renderPost)}
