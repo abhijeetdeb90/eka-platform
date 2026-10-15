@@ -1,11 +1,11 @@
-// ==============================================================================
+// =============================================================================
 // EKA PLATFORM — CENTRALIZED ACCESS CONTROL & RBAC ARCHITECTURE
-// ==============================================================================
+// =============================================================================
 // Hard product separation:
 // 1. CONSUMER (Public / Pre-Launch Early Access: eka.earth)
 // 2. FOUNDER / ADMIN (Private Internal Operating System: /founder-admin)
 // 3. BRANDS / ENTERPRISE (Separate Commercial B2B Product: /brands-enterprise)
-// ==============================================================================
+// =============================================================================
 
 import { redirect } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
@@ -23,6 +23,7 @@ export type EkaRole =
 
 export const FOUNDER_ADMIN_ROLES = ["founder", "super_admin", "admin", "moderator"] as const;
 export const BRANDS_ENTERPRISE_ROLES = ["brand", "enterprise", "founder", "super_admin", "admin"] as const;
+export const ADMIN_ROLES = ["admin", "super_admin", "founder"] as const;
 
 /**
  * Fetch authenticated user and roles from Supabase session and user_roles table.
@@ -131,14 +132,62 @@ export async function verifyBrandEnterpriseAccess(redirectTo: string = "/"): Pro
   return { userId: session.userId!, roles: session.roles };
 }
 
+async function resolveRolesForUser(userId: string, token: string): Promise<string[]> {
+  let roles: string[] = [];
+
+  // Try server admin client first if running in server context
+  try {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    if (supabaseAdmin) {
+      const { data: roleRecords } = await (supabaseAdmin as any)
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", userId);
+      roles = (roleRecords ?? []).map((r: any) => String(r.role).toLowerCase());
+      if (roles.length > 0) return roles;
+    }
+  } catch {
+    // fall through
+  }
+
+  // Fallback: query with the caller's authenticated token (respects RLS)
+  try {
+    const { createClient } = await import("@supabase/supabase-js");
+    const client = createClient(
+      process.env["VITE_SUPABASE_URL"] ||
+        process.env["SUPABASE_URL"] ||
+        "https://kbiutqzhcbyuseygcspe.supabase.co",
+      process.env["VITE_SUPABASE_PUBLISHABLE_KEY"] ||
+        process.env["SUPABASE_PUBLISHABLE_KEY"] ||
+        "",
+      {
+        global: {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+        auth: { persistSession: false },
+      }
+    );
+    const { data: roleRecords } = await client
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userId);
+    roles = (roleRecords ?? []).map((r: any) => String(r.role).toLowerCase());
+  } catch (e) {
+    console.error("[assertServerRole] Failed to fetch roles:", e);
+  }
+
+  return roles;
+}
+
 /**
  * Server-side API request authorization validator:
- * Validates request authorization header or bearer token.
+ * Validates request Authorization Bearer token and optional role list.
+ * Returns userId + roles on success.
  */
 export async function assertServerRole(
   request: Request,
   allowedRoles: string[]
-): Promise<{ ok: boolean; status: number; error?: string; userId?: string }> {
+): Promise<{ ok: boolean; status: number; error?: string; userId?: string; roles?: string[] }> {
   const authHeader = request.headers.get("Authorization");
   if (!authHeader) {
     return { ok: false, status: 401, error: "Unauthorized: Missing Authorization header" };
@@ -156,41 +205,7 @@ export async function assertServerRole(
   }
 
   const userId = data.user.id;
-  let roles: string[] = [];
-
-  // Try server admin client first if running in server context
-  try {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    if (supabaseAdmin) {
-      const { data: roleRecords } = await (supabaseAdmin as any)
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", userId);
-      roles = (roleRecords ?? []).map((r: any) => String(r.role).toLowerCase());
-    }
-  } catch {
-    // If supabaseAdmin is unavailable or fails, query using the authenticated token
-    try {
-      const { createClient } = await import("@supabase/supabase-js");
-      const client = createClient(
-        process.env["VITE_SUPABASE_URL"] || "https://kbiutqzhcbyuseygcspe.supabase.co",
-        process.env["VITE_SUPABASE_PUBLISHABLE_KEY"] || "sb_publishable_DKdNOtbppccL297o2_Ixkw_f2j0Rf7-",
-        {
-          global: {
-            headers: { Authorization: `Bearer ${token}` },
-          },
-          auth: { persistSession: false },
-        }
-      );
-      const { data: roleRecords } = await client
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", userId);
-      roles = (roleRecords ?? []).map((r: any) => String(r.role).toLowerCase());
-    } catch (e) {
-      console.error("[assertServerRole] Failed to fetch roles:", e);
-    }
-  }
+  const roles = await resolveRolesForUser(userId, token);
 
   const hasAllowedRole = roles.some((r) => allowedRoles.map((a) => a.toLowerCase()).includes(r));
 
@@ -198,5 +213,59 @@ export async function assertServerRole(
     return { ok: false, status: 403, error: "Forbidden: Access restricted to authorized roles" };
   }
 
-  return { ok: true, status: 200, userId };
+  return { ok: true, status: 200, userId, roles };
+}
+
+/**
+ * Require any authenticated user (no role gate).
+ * Use for self-service money routes; bind resource ownership to returned userId.
+ */
+export async function requireServerAuth(
+  request: Request
+): Promise<{ ok: true; userId: string; roles: string[] } | { ok: false; status: number; error: string }> {
+  const authHeader = request.headers.get("Authorization");
+  if (!authHeader) {
+    return { ok: false, status: 401, error: "Unauthorized: Missing Authorization header" };
+  }
+
+  const token = authHeader.replace(/^Bearer\s+/i, "").trim();
+  if (!token) {
+    return { ok: false, status: 401, error: "Unauthorized: Invalid Bearer token" };
+  }
+
+  const { data, error } = await supabase.auth.getUser(token);
+  if (error || !data.user) {
+    return { ok: false, status: 401, error: "Unauthorized: Invalid session" };
+  }
+
+  const userId = data.user.id;
+  const roles = await resolveRolesForUser(userId, token);
+  return { ok: true, userId, roles };
+}
+
+/** True if the subject holds an admin-level role. */
+export function isAdminRole(roles: string[]): boolean {
+  return roles.some((r) => ADMIN_ROLES.includes(r as (typeof ADMIN_ROLES)[number]));
+}
+
+/**
+ * Resolve a target resource user/creator id.
+ * Non-admins may only act as themselves; admins may act on behalf of others.
+ */
+export function resolveActingUserId(
+  authUserId: string,
+  roles: string[],
+  requestedId: string | undefined | null
+): { ok: true; userId: string } | { ok: false; status: number; error: string } {
+  if (!requestedId || requestedId === authUserId) {
+    return { ok: true, userId: authUserId };
+  }
+  if (isAdminRole(roles)) {
+    return { ok: true, userId: requestedId };
+  }
+  return {
+    ok: false,
+    status: 403,
+    error: "Forbidden: Cannot act on behalf of another user",
+  };
 }
