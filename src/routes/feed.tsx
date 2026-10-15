@@ -240,7 +240,7 @@ function FeedPage() {
                 </div>
               ) : posts.map(renderPost)}
 
-              {!isLoading && !isError && posts?.length === 0 && (
+              {!isLoading && !isError && !requiresSignIn && posts?.length === 0 && (
                 <div className="p-6 text-center text-xs text-muted-foreground border border-dashed rounded-2xl bg-card/40 flex flex-col sm:flex-row items-center justify-between gap-3">
                   <span>No community posts yet. Be the first to share a cultural story!</span>
                   <Button asChild size="sm" variant="outline" className="rounded-xl text-xs shrink-0">
