@@ -36,8 +36,8 @@ using (
     )
   )
   or auth.uid() = author_id
-  or private.has_role(auth.uid(), 'moderator'::app_role)
-  or private.has_role(auth.uid(), 'admin'::app_role)
+  or public.has_role(auth.uid(), 'moderator'::app_role)
+  or public.has_role(auth.uid(), 'admin'::app_role)
 );
 
 -- Paid membership state is written only by trusted server-side handlers.
