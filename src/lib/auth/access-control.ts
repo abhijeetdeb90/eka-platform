@@ -8,7 +8,7 @@
 // =============================================================================
 
 import { redirect } from "@tanstack/react-router";
-import { supabase } from "@/integrations/supabase/client";
+import { createClient } from "@supabase/supabase-js";
 import { getInvestorDemoSession } from "@/lib/auth/demo-session";
 
 export type EkaRole =
@@ -25,9 +25,29 @@ export const FOUNDER_ADMIN_ROLES = ["founder", "super_admin", "admin", "moderato
 export const BRANDS_ENTERPRISE_ROLES = ["brand", "enterprise", "founder", "super_admin", "admin"] as const;
 export const ADMIN_ROLES = ["admin", "super_admin", "founder"] as const;
 
+/** Build marker so smoke tests can confirm the guarded bundle is live. */
+export const EKA_AUTH_GUARD_VERSION = "v1-money-route-auth";
+
+function supabaseUrl(): string {
+  return (
+    process.env["SUPABASE_URL"] ||
+    process.env["VITE_SUPABASE_URL"] ||
+    "https://kbiutqzhcbyuseygcspe.supabase.co"
+  );
+}
+
+function supabasePublishableKey(): string {
+  return (
+    process.env["SUPABASE_PUBLISHABLE_KEY"] ||
+    process.env["VITE_SUPABASE_PUBLISHABLE_KEY"] ||
+    process.env["SUPABASE_ANON_KEY"] ||
+    process.env["VITE_SUPABASE_ANON_KEY"] ||
+    ""
+  );
+}
+
 /**
- * Fetch authenticated user and roles from Supabase session and user_roles table.
- * Strictly uses cryptographic auth sessions; zero query-parameter backdoors.
+ * Browser-only session helper. Do not call from server route handlers.
  */
 export async function getSessionAndRoles(): Promise<{
   userId: string | null;
@@ -39,7 +59,8 @@ export async function getSessionAndRoles(): Promise<{
       return { userId: null, roles: [], isAuthenticated: false };
     }
 
-    // 0. Check investor presentation demo session (safe, read-only sandboxed role)
+    const { supabase } = await import("@/integrations/supabase/client");
+
     const demo = getInvestorDemoSession();
     if (demo && demo.active) {
       return {
@@ -49,7 +70,6 @@ export async function getSessionAndRoles(): Promise<{
       };
     }
 
-    // 1. Fast local session check via getSession
     const { data: sessionData } = await supabase.auth.getSession();
     let userId = sessionData?.session?.user?.id ?? null;
 
@@ -64,7 +84,6 @@ export async function getSessionAndRoles(): Promise<{
       return { userId: null, roles: [], isAuthenticated: false };
     }
 
-    // 2. Fetch roles assigned to this user from verified database table
     const { data: roleRecords } = await supabase
       .from("user_roles")
       .select("role")
@@ -83,12 +102,6 @@ export async function getSessionAndRoles(): Promise<{
   }
 }
 
-/**
- * Route guard for Founder/Admin routes:
- * If user is unauthenticated or not a founder/admin/moderator,
- * immediately deny access and silently redirect to consumer root ('/').
- * DO NOT expose internal UI or structure to unauthorized users.
- */
 export async function verifyFounderAdminAccess(redirectTo: string = "/"): Promise<{ userId: string; roles: string[] }> {
   const session = await getSessionAndRoles();
 
@@ -108,11 +121,6 @@ export async function verifyFounderAdminAccess(redirectTo: string = "/"): Promis
   return { userId: session.userId!, roles: session.roles };
 }
 
-/**
- * Route guard for Brands/Enterprise routes:
- * If user is unauthenticated or not a brand/enterprise/admin,
- * immediately deny access and redirect to consumer root ('/').
- */
 export async function verifyBrandEnterpriseAccess(redirectTo: string = "/"): Promise<{ userId: string; roles: string[] }> {
   const session = await getSessionAndRoles();
 
@@ -135,7 +143,6 @@ export async function verifyBrandEnterpriseAccess(redirectTo: string = "/"): Pro
 async function resolveRolesForUser(userId: string, token: string): Promise<string[]> {
   let roles: string[] = [];
 
-  // Try server admin client first if running in server context
   try {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     if (supabaseAdmin) {
@@ -150,27 +157,14 @@ async function resolveRolesForUser(userId: string, token: string): Promise<strin
     // fall through
   }
 
-  // Fallback: query with the caller's authenticated token (respects RLS)
   try {
-    const { createClient } = await import("@supabase/supabase-js");
-    const client = createClient(
-      process.env["VITE_SUPABASE_URL"] ||
-        process.env["SUPABASE_URL"] ||
-        "https://kbiutqzhcbyuseygcspe.supabase.co",
-      process.env["VITE_SUPABASE_PUBLISHABLE_KEY"] ||
-        process.env["SUPABASE_PUBLISHABLE_KEY"] ||
-        "",
-      {
-        global: {
-          headers: { Authorization: `Bearer ${token}` },
-        },
-        auth: { persistSession: false },
-      }
-    );
-    const { data: roleRecords } = await client
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", userId);
+    const key = supabasePublishableKey();
+    if (!key) return roles;
+    const client = createClient(supabaseUrl(), key, {
+      global: { headers: { Authorization: `Bearer ${token}` } },
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+    const { data: roleRecords } = await client.from("user_roles").select("role").eq("user_id", userId);
     roles = (roleRecords ?? []).map((r: any) => String(r.role).toLowerCase());
   } catch (e) {
     console.error("[assertServerRole] Failed to fetch roles:", e);
@@ -180,10 +174,29 @@ async function resolveRolesForUser(userId: string, token: string): Promise<strin
 }
 
 /**
- * Server-side API request authorization validator:
- * Validates request Authorization Bearer token and optional role list.
- * Returns userId + roles on success.
+ * Validate Bearer token using a server-safe Supabase client (no browser storage).
  */
+async function validateBearerUser(token: string): Promise<{ userId: string } | null> {
+  const key = supabasePublishableKey();
+  if (!key) {
+    try {
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const { data, error } = await (supabaseAdmin as any).auth.getUser(token);
+      if (error || !data?.user) return null;
+      return { userId: data.user.id as string };
+    } catch {
+      return null;
+    }
+  }
+
+  const client = createClient(supabaseUrl(), key, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
+  const { data, error } = await client.auth.getUser(token);
+  if (error || !data?.user) return null;
+  return { userId: data.user.id };
+}
+
 export async function assertServerRole(
   request: Request,
   allowedRoles: string[]
@@ -198,27 +211,24 @@ export async function assertServerRole(
     return { ok: false, status: 401, error: "Unauthorized: Invalid Bearer token" };
   }
 
-  // Validate session token with supabase
-  const { data, error } = await supabase.auth.getUser(token);
-  if (error || !data.user) {
+  const user = await validateBearerUser(token);
+  if (!user) {
     return { ok: false, status: 401, error: "Unauthorized: Invalid session" };
   }
 
-  const userId = data.user.id;
-  const roles = await resolveRolesForUser(userId, token);
-
+  const roles = await resolveRolesForUser(user.userId, token);
   const hasAllowedRole = roles.some((r) => allowedRoles.map((a) => a.toLowerCase()).includes(r));
 
   if (!hasAllowedRole) {
     return { ok: false, status: 403, error: "Forbidden: Access restricted to authorized roles" };
   }
 
-  return { ok: true, status: 200, userId, roles };
+  return { ok: true, status: 200, userId: user.userId, roles };
 }
 
 /**
  * Require any authenticated user (no role gate).
- * Use for self-service money routes; bind resource ownership to returned userId.
+ * Server-safe: does not import the browser Supabase client.
  */
 export async function requireServerAuth(
   request: Request
@@ -233,25 +243,19 @@ export async function requireServerAuth(
     return { ok: false, status: 401, error: "Unauthorized: Invalid Bearer token" };
   }
 
-  const { data, error } = await supabase.auth.getUser(token);
-  if (error || !data.user) {
+  const user = await validateBearerUser(token);
+  if (!user) {
     return { ok: false, status: 401, error: "Unauthorized: Invalid session" };
   }
 
-  const userId = data.user.id;
-  const roles = await resolveRolesForUser(userId, token);
-  return { ok: true, userId, roles };
+  const roles = await resolveRolesForUser(user.userId, token);
+  return { ok: true, userId: user.userId, roles };
 }
 
-/** True if the subject holds an admin-level role. */
 export function isAdminRole(roles: string[]): boolean {
   return roles.some((r) => ADMIN_ROLES.includes(r as (typeof ADMIN_ROLES)[number]));
 }
 
-/**
- * Resolve a target resource user/creator id.
- * Non-admins may only act as themselves; admins may act on behalf of others.
- */
 export function resolveActingUserId(
   authUserId: string,
   roles: string[],
@@ -268,4 +272,16 @@ export function resolveActingUserId(
     status: 403,
     error: "Forbidden: Cannot act on behalf of another user",
   };
+}
+
+/** Standard 401 JSON for money routes (includes guard version for deploy verification). */
+export function unauthorizedResponse(error: string, status = 401): Response {
+  return new Response(JSON.stringify({ error, guard: EKA_AUTH_GUARD_VERSION }), {
+    status,
+    headers: {
+      "Content-Type": "application/json",
+      "X-EKA-Auth-Guard": EKA_AUTH_GUARD_VERSION,
+      "Cache-Control": "no-store",
+    },
+  });
 }
