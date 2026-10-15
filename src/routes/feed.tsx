@@ -42,55 +42,6 @@ export const Route = createFileRoute("/feed")({
   component: FeedPage,
 });
 
-// Curated demo starter seed posts labeled transparently per EKA editorial standards
-const SAMPLE_CULTURAL_POSTS = [
-  {
-    id: "sample-feed-1",
-    author: {
-      display_name: "Kyoto Chado Documentation",
-      account_type: "Demo · Cultural Archive",
-      avatar_url: "",
-    },
-    created_at: new Date(Date.now() - 3600000 * 2).toISOString(),
-    tradition: "Kyoto, Japan",
-    topic: "Chado & The Art of Stillness",
-    content: "In morning tea room preparation, twenty minutes are dedicated to sweeping the garden path (roji) of damp pine needles. The guest has not yet arrived, yet the hospitality (omotenashi) began at dawn.",
-    media_url: "/places/kyoto.jpg",
-    type: "post",
-    is_sample: true,
-  },
-  {
-    id: "sample-feed-2",
-    author: {
-      display_name: "Oaxaca Culinary Documentation",
-      account_type: "Demo · Cultural Archive",
-      avatar_url: "",
-    },
-    created_at: new Date(Date.now() - 3600000 * 6).toISOString(),
-    tradition: "Oaxaca, Mexico",
-    topic: "Ceremonial Mole Negro",
-    content: "Toasting mulato and pasilla chiles over open flame until black. The smoke carries memories of regional hearths; the volcanic stone metate grinds patience into sustenance.",
-    media_url: "/content/reading-table.jpg",
-    type: "post",
-    is_sample: true,
-  },
-  {
-    id: "sample-feed-3",
-    author: {
-      display_name: "Aranmula Heritage Documentation",
-      account_type: "Demo · Cultural Archive",
-      avatar_url: "",
-    },
-    created_at: new Date(Date.now() - 3600000 * 14).toISOString(),
-    tradition: "Kerala, India",
-    topic: "Aranmula Metal Mirror Casting",
-    content: "The molten bronze alloy reaches a precise golden glow. Unlike glass, the metal mirror does not reflect back mere surface refraction—it returns light undistorted.",
-    media_url: "/content/monastery-corridor.jpg",
-    type: "post",
-    is_sample: true,
-  },
-];
-
 function FeedPage() {
   const [activeTab, setActiveTab] = useState("foryou");
 
@@ -108,14 +59,14 @@ function FeedPage() {
         .limit(20);
       
       if (error) {
-        console.warn("Feed query error, fallback to curated pulse:", error);
-        return [];
+        // Surface database/RLS/schema failures instead of disguising them as an empty feed.
+        console.error("Feed query failed:", error.message);
+        throw error;
       }
       return data || [];
-    }
+    },
+    retry: 1,
   });
-
-  const displayPosts = (posts && posts.length > 0) ? posts : SAMPLE_CULTURAL_POSTS;
 
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
@@ -230,7 +181,7 @@ function FeedPage() {
                     <span>Try again</span>
                   </Button>
                 </div>
-              ) : displayPosts.map((post: any) => (
+              ) : (posts ?? []).map((post: any) => (
                 <FeedPost 
                   key={post.id}
                   id={post.id}
@@ -257,9 +208,9 @@ function FeedPage() {
                 />
               ))}
 
-              {posts && posts.length === 0 && (
+              {!isLoading && !isError && posts?.length === 0 && (
                 <div className="p-6 text-center text-xs text-muted-foreground border border-dashed rounded-2xl bg-card/40 flex flex-col sm:flex-row items-center justify-between gap-3">
-                  <span>Showing initial living archive reflections. Be the first to publish a new post!</span>
+                  <span>No community posts yet. Be the first to share a cultural story!</span>
                   <Button asChild size="sm" variant="outline" className="rounded-xl text-xs shrink-0">
                     <Link to="/create">
                       <span>Create Post</span>
