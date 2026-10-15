@@ -86,7 +86,7 @@ function CreateArchivePage() {
       return;
     }
 
-    if ((activeKind === "carousel" || activeKind === "video") && !file) {
+    if (activeKind === "video" && !file) {
       toast.error(`Please provide a media file for your ${activeKind}`);
       return;
     }
