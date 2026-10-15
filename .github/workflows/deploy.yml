@@ -1,4 +1,4 @@
-name: EKA Multi-Cloud Edge Deployment
+name: EKA Vercel Production Deployment
 
 on:
   push:
@@ -6,34 +6,43 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: production_deployment
+  group: eka-vercel-production
   cancel-in-progress: false
 
 jobs:
   deploy:
-    name: Build & Deploy to Vercel & Cloudflare Edge
+    name: Build, deploy and smoke-test production
     runs-on: ubuntu-latest
-    timeout-minutes: 20
-
+    timeout-minutes: 25
     steps:
-      - name: Checkout Code
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: "npm"
+          cache: npm
 
-      - name: Install Dependencies
+      - name: Validate deployment configuration
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+        run: |
+          set -eu
+          test -n "$VERCEL_TOKEN" || { echo "::error::VERCEL_TOKEN secret is missing"; exit 1; }
+          test -n "$VERCEL_ORG_ID" || { echo "::error::VERCEL_ORG_ID secret is missing"; exit 1; }
+          test -n "$VERCEL_PROJECT_ID" || { echo "::error::VERCEL_PROJECT_ID secret is missing"; exit 1; }
+          test -n "$VITE_SUPABASE_URL" || { echo "::error::VITE_SUPABASE_URL secret is missing"; exit 1; }
+          test -n "$VITE_SUPABASE_PUBLISHABLE_KEY" || { echo "::error::VITE_SUPABASE_PUBLISHABLE_KEY secret is missing"; exit 1; }
+
+      - name: Install dependencies
         run: npm ci
 
-      - name: Database Migration Check
-        run: npx drizzle-kit check || echo "Migrations up-to-date"
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-
-      - name: Build Production Assets
+      - name: Build production assets
         run: npm run build
         env:
           NODE_ENV: production
@@ -42,26 +51,33 @@ jobs:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           POSTHOG_KEY: ${{ secrets.POSTHOG_KEY }}
 
-      - name: Deploy Production to Vercel
-        if: ${{ secrets.VERCEL_TOKEN != '' }}
-        run: |
-          npx vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-          npx vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
-          npx vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Link Vercel production project
+        run: npx vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
-      - name: Deploy to Cloudflare Workers / Nitro
-        run: npx nitro deploy --prebuilt || echo "Edge deployment completed"
+      - name: Build Vercel production output
+        run: npx vercel build --prod --token="$VERCEL_TOKEN"
         env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
-      - name: Notify n8n Webhook of Release
-        if: success()
+      - name: Deploy to Vercel production
+        run: npx vercel deploy --prebuilt --prod --yes --token="$VERCEL_TOKEN"
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+      - name: Verify production responds successfully
         run: |
-          curl -X POST "${{ secrets.N8N_RELEASE_WEBHOOK_URL }}" \
-            -H "Content-Type: application/json" \
-            -d '{"event":"production_deploy_success","commit":"${{ github.sha }}","timestamp":"'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"}' || true
+          set -eu
+          curl --fail --silent --show-error --location \
+            --retry 10 --retry-delay 6 --retry-connrefused \
+            --max-time 30 https://eka-platform.vercel.app/ \
+            --output /tmp/eka-production.html
+          grep -qi '<html' /tmp/eka-production.html
+          echo "Production URL returned HTML successfully."
