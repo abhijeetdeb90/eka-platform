@@ -1,20 +1,30 @@
 import { createFileRoute } from "@tanstack/react-router";
 import crypto from "node:crypto";
+import { requireServerAuth, resolveActingUserId } from "@/lib/auth/access-control";
 
 /**
  * Backend Endpoint: Verify Razorpay Payment Signature
  * POST /api/verify-payment
- * 
+ *
+ * Requires authenticated Bearer token. Subscription activation is bound to
+ * the authenticated user (admins may activate for another user_id).
+ *
  * Algorithm: HMAC-SHA256(order_id + "|" + payment_id, KEY_SECRET)
  * Compares generated signature with razorpay_signature using timing-safe comparison.
- * Return success (200) only if signatures match.
- * Return 400 for signature mismatch or missing fields.
  */
 export const Route = createFileRoute("/api/verify-payment")({
   server: {
     handlers: {
       POST: async ({ request }) => {
         try {
+          const auth = await requireServerAuth(request);
+          if (!auth.ok) {
+            return new Response(
+              JSON.stringify({ success: false, error: auth.error }),
+              { status: auth.status, headers: { "Content-Type": "application/json" } },
+            );
+          }
+
           const keySecret = process.env.RAZORPAY_KEY_SECRET;
 
           if (!keySecret) {
@@ -33,6 +43,9 @@ export const Route = createFileRoute("/api/verify-payment")({
             razorpay_signature?: string;
             order_id?: string;
             payment_id?: string;
+            user_id?: string;
+            plan_id?: string;
+            amount_minor?: number;
           };
 
           try {
@@ -51,7 +64,6 @@ export const Route = createFileRoute("/api/verify-payment")({
           const paymentId = body.razorpay_payment_id || body.payment_id;
           const signature = body.razorpay_signature;
 
-          // Missing fields validation
           if (!orderId || !paymentId || !signature) {
             const missing: string[] = [];
             if (!orderId) missing.push("razorpay_order_id");
@@ -67,7 +79,6 @@ export const Route = createFileRoute("/api/verify-payment")({
             );
           }
 
-          // HMAC-SHA256 algorithm: order_id + "|" + payment_id
           const payload = `${orderId}|${paymentId}`;
           const generatedSignature = crypto
             .createHmac("sha256", keySecret)
@@ -76,8 +87,6 @@ export const Route = createFileRoute("/api/verify-payment")({
 
           const a = Buffer.from(generatedSignature, "utf-8");
           const b = Buffer.from(signature, "utf-8");
-
-          // Timing-safe comparison to prevent side-channel timing attacks
           const isMatch = a.length === b.length && crypto.timingSafeEqual(a, b);
 
           if (!isMatch) {
@@ -91,28 +100,43 @@ export const Route = createFileRoute("/api/verify-payment")({
             );
           }
 
-          // Secure Server-Side Activation in Supabase
-          const userId = (body as any).user_id;
-          const planId = (body as any).plan_id || "plus";
-          const amountMinor = (body as any).amount_minor || 49900;
+          const target = resolveActingUserId(auth.userId, auth.roles, body.user_id);
+          if (!target.ok) {
+            return new Response(
+              JSON.stringify({ success: false, error: target.error }),
+              { status: target.status, headers: { "Content-Type": "application/json" } },
+            );
+          }
 
-          if (userId) {
-            try {
-              const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "https://kbiutqzhcbyuseygcspe.supabase.co";
-              const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_PUBLISHABLE_KEY || "sb_publishable_DKdNOtbppccL297o2_Ixkw_f2j0Rf7-";
+          const planId = body.plan_id || "plus";
+          const amountMinor = body.amount_minor || 49900;
 
-              // Activate subscription record
+          try {
+            const supabaseUrl =
+              process.env.SUPABASE_URL ||
+              process.env.VITE_SUPABASE_URL ||
+              "https://kbiutqzhcbyuseygcspe.supabase.co";
+            const supabaseKey =
+              process.env.SUPABASE_SERVICE_ROLE_KEY ||
+              process.env.SUPABASE_SECRET_KEY ||
+              process.env.SUPABASE_ANON_KEY ||
+              process.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
+              "";
+
+            if (!supabaseKey) {
+              console.warn("[verify-payment] No Supabase key available for persistence");
+            } else {
               const renewalDate = new Date(Date.now() + 30 * 86400 * 1000).toISOString();
               await fetch(`${supabaseUrl}/rest/v1/subscriptions`, {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
-                  "apikey": supabaseKey,
-                  "Authorization": `Bearer ${supabaseKey}`,
-                  "Prefer": "resolution=merge-duplicates",
+                  apikey: supabaseKey,
+                  Authorization: `Bearer ${supabaseKey}`,
+                  Prefer: "resolution=merge-duplicates",
                 },
                 body: JSON.stringify({
-                  user_id: userId,
+                  user_id: target.userId,
                   plan: planId,
                   status: "active",
                   price_cents: amountMinor,
@@ -124,9 +148,9 @@ export const Route = createFileRoute("/api/verify-payment")({
                   updated_at: new Date().toISOString(),
                 }),
               });
-            } catch (persistErr) {
-              console.warn("[verify-payment] Database persistence notice:", persistErr);
             }
+          } catch (persistErr) {
+            console.warn("[verify-payment] Database persistence notice:", persistErr);
           }
 
           return new Response(
@@ -135,6 +159,7 @@ export const Route = createFileRoute("/api/verify-payment")({
               message: "Payment verified successfully.",
               order_id: orderId,
               payment_id: paymentId,
+              user_id: target.userId,
             }),
             { status: 200, headers: { "Content-Type": "application/json" } },
           );
