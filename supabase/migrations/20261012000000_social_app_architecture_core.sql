@@ -13,15 +13,15 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;
 -- 1. FOLLOWS
 CREATE TABLE IF NOT EXISTS public.follows (
   follower_id uuid NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
-  followed_id uuid NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  following_id uuid NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
   status text NOT NULL DEFAULT 'accepted' CHECK (status IN ('pending', 'accepted')),
   created_at timestamptz NOT NULL DEFAULT now(),
-  PRIMARY KEY (follower_id, followed_id),
-  CHECK (follower_id <> followed_id)
+  PRIMARY KEY (follower_id, following_id),
+  CHECK (follower_id <> following_id)
 );
 
-CREATE INDEX IF NOT EXISTS follows_followed_idx ON public.follows(followed_id, follower_id);
-CREATE INDEX IF NOT EXISTS follows_follower_idx ON public.follows(follower_id, followed_id);
+CREATE INDEX IF NOT EXISTS follows_following_idx ON public.follows(following_id, follower_id);
+CREATE INDEX IF NOT EXISTS follows_follower_idx ON public.follows(follower_id, following_id);
 
 ALTER TABLE public.follows ENABLE ROW LEVEL SECURITY;
 
@@ -68,6 +68,8 @@ CREATE TABLE IF NOT EXISTS public.media_assets (
   UNIQUE (post_id, position)
 );
 
+ALTER TABLE public.media_assets ADD COLUMN IF NOT EXISTS post_id uuid REFERENCES public.posts(id) ON DELETE CASCADE;
+ALTER TABLE public.media_assets ADD COLUMN IF NOT EXISTS owner_id uuid REFERENCES public.profiles(id) ON DELETE CASCADE;
 CREATE INDEX IF NOT EXISTS media_assets_post_idx ON public.media_assets(post_id);
 CREATE INDEX IF NOT EXISTS media_assets_owner_idx ON public.media_assets(owner_id);
 
@@ -147,7 +149,7 @@ CREATE POLICY "Users can manage own likes"
 -- 6. NOTIFICATIONS
 CREATE TABLE IF NOT EXISTS public.notifications (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  recipient_id uuid NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  user_id uuid NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
   actor_id uuid REFERENCES public.profiles(id) ON DELETE SET NULL,
   kind text NOT NULL CHECK (kind IN ('follow', 'like', 'comment')),
   post_id uuid REFERENCES public.posts(id) ON DELETE CASCADE,
@@ -157,7 +159,7 @@ CREATE TABLE IF NOT EXISTS public.notifications (
 );
 
 CREATE INDEX IF NOT EXISTS notifications_inbox_idx
-  ON public.notifications(recipient_id, created_at DESC);
+  ON public.notifications(user_id, created_at DESC);
 
 ALTER TABLE public.notifications ENABLE ROW LEVEL SECURITY;
 
@@ -165,8 +167,8 @@ DROP POLICY IF EXISTS "Recipients can view and update own notifications" ON publ
 CREATE POLICY "Recipients can view and update own notifications"
   ON public.notifications FOR ALL
   TO authenticated
-  USING (auth.uid() = recipient_id)
-  WITH CHECK (auth.uid() = recipient_id);
+  USING (auth.uid() = user_id)
+  WITH CHECK (auth.uid() = user_id);
 
 -- 7. BLOCKS
 CREATE TABLE IF NOT EXISTS public.blocks (
