@@ -194,6 +194,8 @@ export async function fetchSubscription(): Promise<SubscriptionRow | null> {
       "plan, status, started_at, expires_at, cancel_at_period_end, current_period_end, canceled_at, paused_until, retention_offer_applied, price_cents, currency",
     )
     .eq("user_id", uid)
+    .order("updated_at", { ascending: false })
+    .limit(1)
     .maybeSingle();
   return (data as SubscriptionRow) ?? null;
 }
@@ -202,80 +204,41 @@ function addDays(days: number) {
   return new Date(Date.now() + days * 86_400_000).toISOString();
 }
 
-/**
- * Local lifecycle write. When a billing provider is connected these same rows
- * are written by the webhook instead; the shape stays identical either way.
- */
-export async function setPlan(planId: PlanId) {
-  const uid = await currentUserId();
-  if (!uid) return;
-  const plan = planFor(planId);
-  await supabase.from("subscriptions").upsert(
-    {
-      user_id: uid,
-      plan: planId,
-      status: "trialing",
-      price_cents: plan.priceCents,
-      currency: plan.currency,
-      cancel_at_period_end: false,
-      canceled_at: null,
-      paused_until: null,
-      current_period_end: addDays(plan.periodDays),
+async function mutateMembership(action: string, extra: Record<string, unknown> = {}) {
+  const { data, error } = await supabase.auth.getSession();
+  const token = data.session?.access_token;
+  if (error || !token) throw new Error("Please sign in again to manage your membership.");
+
+  const response = await fetch("/api/membership", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
-    { onConflict: "user_id,plan" },
-  );
+    body: JSON.stringify({ action, ...extra }),
+  });
+  const result = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(result.error || "Membership update failed.");
+  return result;
+}
+
+/** Membership activation is server-only and follows verified payment confirmation. */
+export async function setPlan(_planId: PlanId): Promise<void> {
+  throw new Error("Memberships can only be activated after server-verified payment.");
 }
 
 export async function scheduleCancellation() {
-  const uid = await currentUserId();
-  if (!uid) return;
-  await supabase
-    .from("subscriptions")
-    .update({ cancel_at_period_end: true, canceled_at: new Date().toISOString() })
-    .eq("user_id", uid);
+  await mutateMembership("cancel");
 }
 
 export async function resumeMembership() {
-  const uid = await currentUserId();
-  if (!uid) return;
-  await supabase
-    .from("subscriptions")
-    .update({
-      cancel_at_period_end: false,
-      canceled_at: null,
-      paused_until: null,
-      status: "active",
-    })
-    .eq("user_id", uid);
+  await mutateMembership("resume");
 }
 
 export async function pauseMembership(days: number) {
-  const uid = await currentUserId();
-  if (!uid) return;
-  await supabase
-    .from("subscriptions")
-    .update({
-      paused_until: addDays(days),
-      cancel_at_period_end: false,
-      canceled_at: null,
-      current_period_end: addDays(days + 30),
-      retention_offer_applied: true,
-    })
-    .eq("user_id", uid);
+  await mutateMembership("pause", { days });
 }
 
-export async function applyDiscount(percent: number) {
-  const uid = await currentUserId();
-  if (!uid) return;
-  const sub = await fetchSubscription();
-  const base = sub?.price_cents ?? PLANS[0].priceCents;
-  await supabase
-    .from("subscriptions")
-    .update({
-      price_cents: Math.round(base * (1 - percent / 100)),
-      cancel_at_period_end: false,
-      canceled_at: null,
-      retention_offer_applied: true,
-    })
-    .eq("user_id", uid);
+export async function applyDiscount(_percent: number): Promise<void> {
+  throw new Error("Membership discounts are disabled until the payment provider can apply them atomically.");
 }
