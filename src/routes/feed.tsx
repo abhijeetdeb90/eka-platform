@@ -45,29 +45,77 @@ export const Route = createFileRoute("/feed")({
 function FeedPage() {
   const [activeTab, setActiveTab] = useState("foryou");
 
-  const { data: posts, isLoading, isError, refetch } = useQuery({
-    queryKey: ["feed-posts"],
+  const { data: feedResult, isLoading, isError, refetch } = useQuery({
+    queryKey: ["feed-posts", activeTab],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let followedIds: string[] | null = null;
+
+      if (activeTab === "following") {
+        const { data: auth, error: authError } = await supabase.auth.getUser();
+        if (authError) throw authError;
+        if (!auth.user) return { posts: [], requiresSignIn: true };
+
+        const { data: follows, error: followError } = await supabase
+          .from("follows")
+          .select("following_id")
+          .eq("follower_id", auth.user.id);
+        if (followError) throw followError;
+
+        followedIds = (follows ?? []).map((follow) => follow.following_id);
+        if (followedIds.length === 0) return { posts: [], requiresSignIn: false };
+      }
+
+      let query = supabase
         .from("posts")
         .select(`
           *,
           author:profiles(id, display_name, account_type, avatar_url)
         `)
         .eq("status", "visible")
-        .eq("visibility", "public")
-        .order("created_at", { ascending: false })
-        .limit(20);
-      
+        .eq("visibility", "public");
+
+      if (followedIds) query = query.in("author_id", followedIds);
+
+      const { data, error } = await query.order("created_at", { ascending: false }).limit(20);
       if (error) {
-        // Surface database/RLS/schema failures instead of disguising them as an empty feed.
         console.error("Feed query failed:", error.message);
         throw error;
       }
-      return data || [];
+
+      return { posts: data ?? [], requiresSignIn: false };
     },
     retry: 1,
   });
+
+  const posts = feedResult?.posts ?? [];
+  const requiresSignIn = feedResult?.requiresSignIn ?? false;
+
+  const renderPost = (post: any) => (
+    <FeedPost
+      key={post.id}
+      id={post.id}
+      avatar={post.author?.avatar_url || ""}
+      name={post.author?.display_name || "Unknown"}
+      identity={post.author?.account_type || "Contributor"}
+      time={new Date(post.created_at).toLocaleDateString()}
+      location={post.tradition || undefined}
+      verifiedHuman={!post.is_sample}
+      topic={post.topic || undefined}
+      content={
+        <div className="space-y-3">
+          {post.topic && <p className="font-bold text-foreground font-sans">{post.topic}</p>}
+          <p className="whitespace-pre-wrap">{post.content}</p>
+          {post.media_url && (
+            post.type === "video" ? (
+              <video src={post.media_url} controls className="w-full rounded-xl mt-3 max-h-[60vh] bg-black" />
+            ) : (
+              <img src={post.media_url} alt="Post media" className="w-full rounded-xl mt-3 max-h-[60vh] object-cover bg-black/5" />
+            )
+          )}
+        </div>
+      }
+    />
+  );
 
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
@@ -182,32 +230,7 @@ function FeedPage() {
                     <span>Try again</span>
                   </Button>
                 </div>
-              ) : (posts ?? []).map((post: any) => (
-                <FeedPost 
-                  key={post.id}
-                  id={post.id}
-                  avatar={post.author?.avatar_url || ""}
-                  name={post.author?.display_name || "Unknown"}
-                  identity={post.author?.account_type || "Contributor"}
-                  time={new Date(post.created_at).toLocaleDateString()}
-                  location={post.tradition || undefined}
-                  verifiedHuman={!post.is_sample}
-                  topic={post.topic || undefined}
-                  content={
-                    <div className="space-y-3">
-                      {post.topic && <p className="font-bold text-foreground font-sans">{post.topic}</p>}
-                      <p className="whitespace-pre-wrap">{post.content}</p>
-                      {post.media_url && (
-                        post.type === "video" ? (
-                          <video src={post.media_url} controls className="w-full rounded-xl mt-3 max-h-[60vh] bg-black" />
-                        ) : (
-                          <img src={post.media_url} alt="Post media" className="w-full rounded-xl mt-3 max-h-[60vh] object-cover bg-black/5" />
-                        )
-                      )}
-                    </div>
-                  }
-                />
-              ))}
+              ) : posts.map(renderPost)}
 
               {!isLoading && !isError && posts?.length === 0 && (
                 <div className="p-6 text-center text-xs text-muted-foreground border border-dashed rounded-2xl bg-card/40 flex flex-col sm:flex-row items-center justify-between gap-3">
@@ -223,14 +246,33 @@ function FeedPage() {
             </TabsContent>
             
             <TabsContent value="following" className="space-y-6">
-              <div className="p-8 text-center text-muted-foreground border border-dashed rounded-3xl space-y-3">
-                <p>Follow custodians and cultural practitioners to see their updates here.</p>
-                <Button asChild size="sm" variant="outline" className="rounded-xl">
-                  <Link to="/discover">
-                    <span>Explore Custodians in Discover</span>
-                  </Link>
-                </Button>
-              </div>
+              {isLoading ? (
+                <p className="p-8 text-center text-sm text-muted-foreground">Loading posts from people you follow…</p>
+              ) : isError ? (
+                <div className="p-8 text-center text-muted-foreground border border-dashed rounded-3xl space-y-3">
+                  <p>Could not load posts from people you follow.</p>
+                  <Button variant="outline" size="sm" onClick={() => refetch()} className="rounded-xl">
+                    <RefreshCw className="size-3.5 mr-1.5" />
+                    Try again
+                  </Button>
+                </div>
+              ) : requiresSignIn ? (
+                <div className="p-8 text-center text-muted-foreground border border-dashed rounded-3xl space-y-3">
+                  <p>Sign in to see updates from people you follow.</p>
+                  <Button asChild size="sm" variant="outline" className="rounded-xl">
+                    <Link to="/auth">Sign in</Link>
+                  </Button>
+                </div>
+              ) : posts.length === 0 ? (
+                <div className="p-8 text-center text-muted-foreground border border-dashed rounded-3xl space-y-3">
+                  <p>No posts from followed accounts yet.</p>
+                  <Button asChild size="sm" variant="outline" className="rounded-xl">
+                    <Link to="/discover">Discover people to follow</Link>
+                  </Button>
+                </div>
+              ) : (
+                posts.map(renderPost)
+              )}
             </TabsContent>
           </Tabs>
         </section>
