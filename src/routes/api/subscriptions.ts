@@ -100,8 +100,10 @@ export const Route = createFileRoute("/api/subscriptions")({
               if (!Number.isInteger(days) || days < 1 || days > 30) {
                 return json({ error: "Pause duration must be between 1 and 30 days." }, 400);
               }
+              const preservedPeriodEnd = periodEnd && periodEnd.getTime() > now.getTime() ? periodEnd : now;
               patch = {
                 paused_until: new Date(now.getTime() + days * 86_400_000).toISOString(),
+                current_period_end: new Date(preservedPeriodEnd.getTime() + days * 86_400_000).toISOString(),
                 cancel_at_period_end: false,
                 canceled_at: null,
                 retention_offer_applied: true,
