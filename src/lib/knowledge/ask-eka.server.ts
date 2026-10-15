@@ -1,25 +1,31 @@
-﻿import { createServerFn } from "@tanstack/react-start";
+import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { GoogleGenAI } from "@google/genai";
 import { supabase } from "@/integrations/supabase/client";
 
-// This is a server-only block. We can safely use process.env here.
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "dummy" });
+function getGeminiClient(): GoogleGenAI {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    throw new Error("GEMINI_API_KEY is not configured on the server");
+  }
+  return new GoogleGenAI({ apiKey });
+}
 
 export const askEkaIntelligence = createServerFn({ method: "POST" })
   .validator((d: { query: string }) => d)
   .handler(async ({ data }) => {
     // 1. First, search Supabase for context to ground the AI response
-    // We try to find related posts or knowledge_objects based on text search
     let contextData = "";
     try {
       const { data: searchData } = await supabase
         .from("posts")
         .select("topic, tradition, content")
         .limit(5);
-        
+
       if (searchData && searchData.length > 0) {
-        contextData = searchData.map(p => `Topic: ${p.topic}\nTradition: ${p.tradition}\nContent: ${p.content}`).join("\n\n");
+        contextData = searchData
+          .map((p) => `Topic: ${p.topic}\nTradition: ${p.tradition}\nContent: ${p.content}`)
+          .join("\n\n");
       }
     } catch (e) {
       console.error("Failed to fetch context", e);
@@ -38,11 +44,12 @@ Context from EKA Database:
 ${contextData || "No direct local context found."}`;
 
     try {
+      const ai = getGeminiClient();
       const response = await ai.models.generateContent({
         model: "gemini-2.5-flash",
         contents: [
-          { role: "user", parts: [{ text: systemPrompt }, { text: `User Query: ${data.query}` }] }
-        ]
+          { role: "user", parts: [{ text: systemPrompt }, { text: `User Query: ${data.query}` }] },
+        ],
       });
 
       return {
