@@ -205,7 +205,7 @@ async function mutateMembership(action: string, extra: Record<string, unknown> =
   const token = data.session?.access_token;
   if (error || !token) throw new Error("Please sign in again to manage your membership.");
 
-  const response = await fetch("/api/membership", {
+  const response = await fetch("/api/subscriptions", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
