@@ -156,7 +156,9 @@ function MySubscriptionsPage() {
               <div>
                 <span className="text-muted-foreground block font-mono uppercase text-[10px]">Billing Gateway</span>
                 <span className="font-medium text-foreground text-sm">
-                  Razorpay Verified
+                  {sub?.provider === "razorpay" && (sub.razorpay_payment_id || sub.razorpay_subscription_id || sub.provider_reference)
+                    ? "Razorpay Verified"
+                    : "Trial Access"}
                 </span>
               </div>
             </div>

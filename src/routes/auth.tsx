@@ -102,8 +102,14 @@ function AuthPage() {
       return;
     }
 
-    // Handle investor presentation demo credentials directly
+    // Investor demo identities are local-only; never bypass Supabase authentication in production.
     if (cleanEmail.toLowerCase().includes("@eka.demo")) {
+      if (!import.meta.env.DEV) {
+        toast.error("Investor demo sign-in is disabled in production. Use a real EKA account.");
+        setBusy(false);
+        return;
+      }
+
       let demoRole: InvestorDemoRole = "consumer";
       if (cleanEmail.toLowerCase().includes("admin")) demoRole = "admin";
       else if (

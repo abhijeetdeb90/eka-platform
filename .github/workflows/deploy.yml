@@ -38,22 +38,15 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build production assets
-        run: npm run build
-        env:
-          NODE_ENV: production
-          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
-          POSTHOG_KEY: ${{ secrets.POSTHOG_KEY }}
-
       - name: Link Vercel production project
-        run: npx vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+        run: npx vercel pull --yes --environment=production
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
       - name: Build Vercel production output
-        run: npx vercel build --prod --token="$VERCEL_TOKEN"
+        run: npx vercel build --prod
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -67,7 +60,7 @@ jobs:
         run: |
           set -uo pipefail
           set +e
-          timeout 150s npx vercel deploy --prebuilt --prod --yes --token="$VERCEL_TOKEN" 2>&1 | tee /tmp/vercel-deploy.log
+          timeout 150s npx vercel deploy --prebuilt --prod --yes 2>&1 | tee /tmp/vercel-deploy.log
           deploy_status=${PIPESTATUS[0]}
           set -e
 

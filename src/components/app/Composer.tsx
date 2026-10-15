@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ChevronLeft, ChevronRight, Film, ImagePlus, Layers, Loader2, Plus, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Film, ImagePlus, Layers, Loader2, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -82,31 +82,26 @@ export function Composer({
       return;
     }
 
-    const validImages: File[] = [];
-    for (const f of newFiles) {
+    const validImages = newFiles.filter((f) => {
       if (!f.type.startsWith("image/")) {
         toast.error(`"${f.name}" is not a recognized photo or video.`);
-        continue;
+        return false;
       }
       if (f.size > IMAGE_MAX_BYTES) {
         toast.error(`"${f.name}" exceeds the 10 MB photo limit.`);
-        continue;
+        return false;
       }
-      validImages.push(f);
-    }
+      return true;
+    });
 
-    if (validImages.length === 0) return;
-
-    const baseFiles = isVideo ? [] : [...files];
-    const combined = [...baseFiles, ...validImages];
-    if (combined.length > 10) {
-      toast.info("Carousels support up to 10 photos. Added first 10.");
+    const firstImage = validImages[0];
+    if (!firstImage) return;
+    if (validImages.length > 1 || files.length > 0) {
+      toast.info("One photo or one video per post is supported right now. Multi-photo carousels are disabled until gallery storage is added.");
     }
-    const finalFiles = combined.slice(0, 10);
-    setFiles(finalFiles);
-    if (finalFiles.length > 1 && type === "reflection") {
-      setType("story");
-    }
+    setFiles([firstImage]);
+    setAspect("original");
+    setActiveIndex(0);
   };
 
   const removeFile = (idx: number) => {
@@ -182,7 +177,7 @@ export function Composer({
               return toStoredMedia(path);
             }),
           );
-          mediaValue = uploadedPaths.length > 1 ? JSON.stringify(uploadedPaths) : (uploadedPaths[0] ?? null);
+          mediaValue = uploadedPaths[0] ?? null;
         }
       } catch {
         setUploading(false);
@@ -372,18 +367,7 @@ export function Composer({
                 </div>
               ))}
 
-              {/* Add more photos button for carousel */}
-              {files.length < 10 && (
-                <button
-                  type="button"
-                  onClick={() => fileInput.current?.click()}
-                  className="flex size-16 shrink-0 flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed border-border/80 text-muted-foreground hover:border-primary hover:text-foreground transition-colors"
-                  title="Add more photos to carousel (up to 10)"
-                >
-                  <Plus className="size-4" />
-                  <span className="text-[9px] font-medium">+ Slide</span>
-                </button>
-              )}
+
             </div>
           )}
 
@@ -443,7 +427,6 @@ export function Composer({
           ref={fileInput}
           type="file"
           accept={ACCEPTED_MEDIA}
-          multiple
           className="sr-only"
           aria-label="Attach photos, story carousel, or video"
           onChange={(e) => {
@@ -470,7 +453,7 @@ export function Composer({
               ? "Change video"
               : files.length > 1
                 ? `${files.length} Photos in Carousel`
-                : "1 Photo (Tap to add slides)"}
+                : "1 Photo (Tap to replace)"}
         </Button>
         {files.length > 0 ? (
           <span className="truncate text-xs text-muted-foreground">
@@ -479,7 +462,7 @@ export function Composer({
               : `${files.length} photo${files.length > 1 ? "s" : ""} selected · Free for all seekers`}
           </span>
         ) : (
-          <span className="text-xs text-muted-foreground">Photos to 10 MB · Video to 50 MB · Carousels up to 10 photos</span>
+          <span className="text-xs text-muted-foreground">One photo to 10 MB or one video to 50 MB per post</span>
         )}
       </div>
 

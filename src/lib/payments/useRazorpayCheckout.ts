@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 export interface CheckoutOptions {
@@ -84,10 +85,21 @@ export function useRazorpayCheckout() {
         return;
       }
 
-      // 2. Call backend /api/create-order
+      // Require the current Supabase session for every server-side payment action.
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      const accessToken = sessionData.session?.access_token;
+      if (sessionError || !accessToken) {
+        throw new Error("Please sign in again before starting checkout.");
+      }
+
+      // 2. Call backend /api/create-order with the authenticated user token.
+      const authHeaders = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      };
       const orderRes = await fetch("/api/create-order", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: authHeaders,
         body: JSON.stringify({
           amount: options.amount,
           currency: options.currency || "INR",
@@ -150,7 +162,7 @@ export function useRazorpayCheckout() {
             toast.loading("Verifying payment authenticity...");
             const verifyRes = await fetch("/api/verify-payment", {
               method: "POST",
-              headers: { "Content-Type": "application/json" },
+              headers: authHeaders,
               body: JSON.stringify({
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,

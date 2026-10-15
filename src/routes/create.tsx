@@ -10,7 +10,6 @@ import { useState } from "react";
 import { createFileRoute, Link, useNavigate, redirect } from "@tanstack/react-router";
 import {
   Film,
-  Image as ImageIcon,
   MessageSquare,
   MapPin,
   Sparkles,
@@ -53,7 +52,7 @@ export const Route = createFileRoute("/create")({
   component: CreateArchivePage,
 });
 
-type ContributionKind = "post" | "carousel" | "video";
+type ContributionKind = "post" | "video";
 
 function CreateArchivePage() {
   const navigate = useNavigate();
@@ -87,7 +86,7 @@ function CreateArchivePage() {
       return;
     }
 
-    if ((activeKind === "carousel" || activeKind === "video") && !file) {
+    if (activeKind === "video" && !file) {
       toast.error(`Please provide a media file for your ${activeKind}`);
       return;
     }
@@ -247,12 +246,6 @@ function CreateArchivePage() {
               label: "Post",
               icon: MessageSquare,
               desc: "Share a cultural reflection",
-            },
-            {
-              id: "carousel" as const,
-              label: "Carousel",
-              icon: ImageIcon,
-              desc: "Share multiple images",
             },
             {
               id: "video" as const,
