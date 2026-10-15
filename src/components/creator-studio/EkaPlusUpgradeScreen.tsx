@@ -71,7 +71,7 @@ export function EkaPlusUpgradeScreen({ onSuccess }: EkaPlusUpgradeScreenProps) {
         plan: "plus",
       },
       onSuccess: async () => {
-        setTier("plus");
+        if (import.meta.env.DEV) setTier("plus");
         await queryClient.invalidateQueries({ queryKey: ["subscription"] });
         await queryClient.invalidateQueries({ queryKey: ["eka-plus-access"] });
         toast.success("Welcome to EKA+! Your Creator Studio is now active.");
@@ -134,14 +134,16 @@ export function EkaPlusUpgradeScreen({ onSuccess }: EkaPlusUpgradeScreenProps) {
               <ArrowUpRight className="size-4 ml-1.5" />
             </Link>
           </Button>
-          <Button
-            variant="outline"
-            size="lg"
-            onClick={handleInstantDemo}
-            className="rounded-full"
-          >
-            <span>Instant Workspace Demo Preview</span>
-          </Button>
+          {import.meta.env.DEV && (
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={handleInstantDemo}
+              className="rounded-full"
+            >
+              <span>Instant Workspace Demo Preview</span>
+            </Button>
+          )}
         </div>
       </div>
 
