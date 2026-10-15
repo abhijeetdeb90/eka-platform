@@ -1,10 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import Razorpay from "razorpay";
+import { requireServerAuth } from "@/lib/auth/access-control";
 
 /**
  * Backend Endpoint: Create Razorpay Order
  * POST /api/create-order
- * 
+ *
+ * Requires authenticated Bearer token. Order notes are stamped with the
+ * authenticated user_id so downstream verification cannot be spoofed.
+ *
  * Request: { amount (paise), currency?, receipt?, notes? }
  * Minimum amount: 100 paise (₹1)
  * Returns: { order_id, amount, currency, receipt }
@@ -14,6 +18,14 @@ export const Route = createFileRoute("/api/create-order")({
     handlers: {
       POST: async ({ request }) => {
         try {
+          const auth = await requireServerAuth(request);
+          if (!auth.ok) {
+            return new Response(JSON.stringify({ error: auth.error }), {
+              status: auth.status,
+              headers: { "Content-Type": "application/json" },
+            });
+          }
+
           const keyId =
             process.env.RAZORPAY_KEY_ID ||
             process.env.VITE_RAZORPAY_KEY_ID;
@@ -24,7 +36,7 @@ export const Route = createFileRoute("/api/create-order")({
               JSON.stringify({
                 error: "Razorpay credentials not configured. Please set RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET.",
               }),
-              { status: 401, headers: { "Content-Type": "application/json" } },
+              { status: 503, headers: { "Content-Type": "application/json" } },
             );
           }
 
@@ -59,6 +71,11 @@ export const Route = createFileRoute("/api/create-order")({
             body.receipt ||
             `rcpt_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
 
+          const notes: Record<string, string> = {
+            ...(body.notes || {}),
+            eka_user_id: auth.userId,
+          };
+
           const razorpay = new Razorpay({
             key_id: keyId,
             key_secret: keySecret,
@@ -68,7 +85,7 @@ export const Route = createFileRoute("/api/create-order")({
             amount: Math.round(amount),
             currency,
             receipt,
-            notes: body.notes || {},
+            notes,
           });
 
           return new Response(

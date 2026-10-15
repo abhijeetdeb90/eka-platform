@@ -45,14 +45,5 @@
       ]
     }
   ],
-  "crons": [
-    {
-      "path": "/api/cron/daily-reflection",
-      "schedule": "0 0 * * *"
-    },
-    {
-      "path": "/api/cron/payout-calculator",
-      "schedule": "0 0 * * 0"
-    }
-  ]
+  "crons": []
 }
