@@ -94,11 +94,12 @@ export function Composer({
       return true;
     });
 
-    if (validImages.length === 0) return;
+    const firstImage = validImages[0];
+    if (!firstImage) return;
     if (validImages.length > 1 || files.length > 0) {
       toast.info("One photo or one video per post is supported right now. Multi-photo carousels are disabled until gallery storage is added.");
     }
-    setFiles([validImages[0]]);
+    setFiles([firstImage]);
     setAspect("original");
     setActiveIndex(0);
   };
