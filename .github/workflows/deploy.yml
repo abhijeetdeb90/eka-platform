@@ -65,24 +65,37 @@ jobs:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: |
-          set -eu
+          set -uo pipefail
           set +e
-          timeout 150s npx vercel deploy --prebuilt --prod --yes --token="$VERCEL_TOKEN"
-          deploy_status=$?
+          timeout 150s npx vercel deploy --prebuilt --prod --yes --token="$VERCEL_TOKEN" 2>&1 | tee /tmp/vercel-deploy.log
+          deploy_status=${PIPESTATUS[0]}
           set -e
-          if [ "$deploy_status" -eq 124 ]; then
-            echo "::warning::Vercel CLI did not exit within 150 seconds; production URL smoke test will determine whether deployment is live."
-          elif [ "$deploy_status" -ne 0 ]; then
-            echo "::error::Vercel deployment command failed with exit code $deploy_status."
-            exit "$deploy_status"
+
+          # Vercel CLI may wait on project checks even after it reports the deployment completed.
+          # Treat a timeout as non-fatal only when the CLI explicitly reported completion.
+          if grep -q "Deployment completed" /tmp/vercel-deploy.log; then
+            echo "Vercel reported deployment completion."
+          else
+            echo "::error::Vercel did not confirm deployment completion (CLI exit: $deploy_status)."
+            exit 1
           fi
 
-      - name: Verify production responds successfully
+          DEPLOYMENT_URL="$(grep -Eo 'https://eka-platform-[^[:space:]]+\.vercel\.app' /tmp/vercel-deploy.log | tail -n 1 || true)"
+          if [ -z "$DEPLOYMENT_URL" ]; then
+            echo "::error::Could not extract the new deployment URL from Vercel CLI output."
+            exit 1
+          fi
+          echo "DEPLOYMENT_URL=$DEPLOYMENT_URL" >> "$GITHUB_ENV"
+          echo "New deployment URL: $DEPLOYMENT_URL"
+
+      - name: Verify new deployment and production alias
         run: |
           set -eu
-          curl --fail --silent --show-error --location \
-            --retry 10 --retry-delay 6 --retry-connrefused \
-            --max-time 30 https://eka-platform.vercel.app/ \
-            --output /tmp/eka-production.html
-          grep -qi '<html' /tmp/eka-production.html
-          echo "Production URL returned HTML successfully."
+          for url in "$DEPLOYMENT_URL" "https://eka-platform.vercel.app/"; do
+            echo "Checking $url"
+            curl --fail --silent --show-error --location \
+              --retry 10 --retry-delay 6 --retry-connrefused \
+              --max-time 30 "$url" --output /tmp/eka-production.html
+            grep -qi '<html' /tmp/eka-production.html
+          done
+          echo "New deployment URL and production alias both returned HTML successfully."
