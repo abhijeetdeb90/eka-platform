@@ -71,8 +71,7 @@ function FeedPage() {
           *,
           author:profiles(id, display_name, account_type, avatar_url, verified)
         `)
-        .eq("status", "visible")
-        .eq("visibility", "public");
+        .eq("status", "visible");
 
       if (followedIds) query = query.in("author_id", followedIds);
 
