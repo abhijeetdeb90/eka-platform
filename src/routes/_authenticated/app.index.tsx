@@ -9,10 +9,7 @@ import { HomeRail } from "@/components/app/HomeRail";
 import { UserAvatar } from "@/components/app/Avatar";
 import { fetchHomeFeed } from "@/lib/api";
 import { useProfile } from "@/hooks/useProfile";
-import { FadeIn, HoverLiftCard } from "@/components/motion/MotionPrimitives";
-import stillWater from "@/assets/still-water.jpg";
-import ritualLamp from "@/assets/ritual-lamp.jpg";
-import readingTable from "@/assets/reading-table.jpg";
+import { FadeIn } from "@/components/motion/MotionPrimitives";
 import { fetchActiveHomepageSections, resolveSectionCards } from "@/lib/studio/homepage-service";
 import { PageShell } from "@/components/layout/PageShell";
 
@@ -25,81 +22,6 @@ const REASON_COPY: Record<string, string> = {
   sangha: "From your Circle",
   interest: "Because of your interests",
 };
-
-/** Editorial cards woven into the feed so the page always has something to look at. */
-const EDITORIAL = [
-  {
-    image: stillWater,
-    eyebrow: "Reading · Silence",
-    title: "Silence isn’t the absence of thought",
-    body: "It is the space in which thought becomes visible. A short essay on what practitioners across traditions mean when they say “sit”.",
-    tags: ["Silence", "Practice", "Zen"],
-    to: "/app/explore",
-    cta: "Read in Explore",
-  },
-  {
-    image: ritualLamp,
-    eyebrow: "Ritual · Light",
-    title: "The small flame that people keep",
-    body: "Lamps, candles, oil and wick — why nearly every tradition marks attention with a light, and what it asks of the person holding it.",
-    tags: ["Ritual", "Devotion", "Culture"],
-    to: "/app/discover",
-    cta: "Religions & cultures",
-  },
-  {
-    image: readingTable,
-    eyebrow: "Study · Text",
-    title: "Reading slowly, on purpose",
-    body: "One page, twice. A practice for scripture, poetry and anything else worth not finishing quickly.",
-    tags: ["Study", "Wisdom", "Journal"],
-    to: "/app/journal",
-    cta: "Open your journal",
-  },
-] as const;
-
-function EditorialCard({ item }: { item: (typeof EDITORIAL)[number] }) {
-  return (
-    <HoverLiftCard className="group overflow-hidden rounded-2xl border border-border/80 bg-card shadow-calm transition-all duration-300 hover:border-border hover:shadow-lift">
-      <Link to={item.to} className="block focus:outline-hidden">
-        <div className="overflow-hidden">
-          <img
-            src={item.image}
-            alt={`${item.title} — ${item.eyebrow}`}
-            loading="lazy"
-            width={1280}
-            height={960}
-            className="h-56 w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03] sm:h-72"
-          />
-        </div>
-        <div className="p-5 sm:p-6">
-          <p className="text-[10px] font-medium uppercase tracking-[0.28em] text-muted-foreground">
-            {item.eyebrow}
-          </p>
-          <h2 className="mt-3 font-display text-xl font-normal leading-snug sm:text-2xl">
-            {item.title}
-          </h2>
-          <p className="mt-2 text-sm leading-relaxed text-muted-foreground font-light">
-            {item.body}
-          </p>
-          <div className="mt-4 flex flex-wrap items-center gap-2">
-            {item.tags.map((t) => (
-              <span
-                key={t}
-                className="rounded-full border border-border/70 bg-sand/30 px-2.5 py-0.5 text-[10px] uppercase tracking-[0.18em] text-muted-foreground"
-              >
-                {t}
-              </span>
-            ))}
-            <span className="ml-auto inline-flex items-center text-sm font-medium text-terracotta transition-transform group-hover:translate-x-1">
-              <span>{item.cta}</span>
-              <ArrowRight className="ml-1 size-3.5" />
-            </span>
-          </div>
-        </div>
-      </Link>
-    </HoverLiftCard>
-  );
-}
 
 function HomeFeed() {
   const { data: profile, isLoading } = useProfile();
@@ -132,46 +54,21 @@ function HomeFeed() {
 
   const feed = posts ?? [];
 
-  // Weave an editorial card in after every third post so the column never runs dry.
-  const stream: Array<{ key: string; node: React.ReactNode }> = [];
-  feed.forEach((post, i) => {
-    stream.push({
-      key: post.id,
-      node: (
-        <FadeIn delay={0.03} direction="up" className="space-y-1.5">
-          {post.reason && post.reason !== "recent" && (
-            <p className="px-1 text-[11px] font-medium uppercase tracking-[0.2em] text-muted-foreground">
-              {REASON_COPY[post.reason]}
-            </p>
-          )}
-          <PostCard post={post} />
-        </FadeIn>
-      ),
-    });
-    const editorialIndex = Math.floor(i / 3);
-    if ((i + 1) % 3 === 0 && editorialIndex < EDITORIAL.length) {
-      stream.push({
-        key: `editorial-${editorialIndex}`,
-        node: (
-          <FadeIn delay={0.05} direction="up">
-            <EditorialCard item={EDITORIAL[editorialIndex]!} />
-          </FadeIn>
-        ),
-      });
-    }
-  });
-  if (!feedLoading && feed.length < 3) {
-    EDITORIAL.slice(feed.length === 0 ? 0 : 1).forEach((item, i) =>
-      stream.push({
-        key: `fill-${i}`,
-        node: (
-          <FadeIn delay={i * 0.05} direction="up">
-            <EditorialCard item={item} />
-          </FadeIn>
-        ),
-      }),
-    );
-  }
+  // The social feed contains only real posts returned by Supabase.
+  // Editorial/discovery content belongs on discovery surfaces, never as feed filler.
+  const stream: Array<{ key: string; node: React.ReactNode }> = feed.map((post) => ({
+    key: post.id,
+    node: (
+      <FadeIn delay={0.03} direction="up" className="space-y-1.5">
+        {post.reason && post.reason !== "recent" && (
+          <p className="px-1 text-[11px] font-medium uppercase tracking-[0.2em] text-muted-foreground">
+            {REASON_COPY[post.reason]}
+          </p>
+        )}
+        <PostCard post={post} />
+      </FadeIn>
+    ),
+  }));
 
   // On narrow screens the rail is folded into the column after the first posts,
   // as a dense two-up grid, so nothing is stranded below an empty stretch.
@@ -297,10 +194,24 @@ function HomeFeed() {
 
           {!feedLoading && feed.length === 0 && (
             <div className="rounded-2xl border border-border/60 bg-sand/20 p-8 text-center">
-              <p className="text-sm leading-relaxed text-muted-foreground font-light">
-                Your sanctuary feed deepens as you follow seekers and join Circles. In the meantime,
-                explore the reflections above.
+              <h2 className="font-display text-lg font-normal text-foreground">Your feed is ready for its first post</h2>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                There are no community posts to show yet. Follow people, join Circles, or share something yourself.
               </p>
+              <div className="mt-4 flex flex-wrap justify-center gap-2">
+                <Link
+                  to="/app/discover"
+                  className="inline-flex items-center rounded-xl border border-border px-4 py-2 text-sm font-medium hover:bg-accent"
+                >
+                  Discover people
+                </Link>
+                <Link
+                  to="/app/create"
+                  className="inline-flex items-center rounded-xl bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
+                >
+                  Create a post
+                </Link>
+              </div>
             </div>
           )}
     </PageShell>
