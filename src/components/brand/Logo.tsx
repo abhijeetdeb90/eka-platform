@@ -9,8 +9,8 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
-import ekaEmblemJpg from "@/assets/brand/eka-emblem.jpg";
-import ekaLogoFullJpg from "@/assets/brand/eka-logo-full.jpg";
+import ekaEmblemPng from "@/assets/brand/eka-emblem.png";
+import ekaLogoFullPng from "@/assets/brand/eka-official-logo.png";
 
 export interface EkaLogoProps {
   className?: string;
@@ -61,7 +61,7 @@ export function EkaMark({
 
   return (
     <img
-      src={!imageError ? (ekaEmblemJpg || "/brand/eka-emblem.jpg") : "/brand/eka-emblem.jpg"}
+      src={!imageError ? (ekaEmblemPng || "/brand/eka-emblem.png") : "/brand/eka-emblem.png"}
       alt={alt}
       width={width || dimension}
       height={height || dimension}
@@ -69,7 +69,7 @@ export function EkaMark({
       decoding="async"
       onError={() => setImageError(true)}
       className={cn(
-        "object-contain shrink-0 select-none transition-transform duration-500 hover:scale-105 rounded-full",
+        "object-contain shrink-0 select-none transition-transform duration-500 hover:scale-105",
         !width && !height && sizeClass,
         className
       )}
@@ -88,7 +88,7 @@ export function EkaLogo({
   betaClassName,
   withTagline = false,
   withBeta = false,
-  taglineText = "Cultural Intelligence",
+  taglineText = "A Billion Stories — One Within. One With All.",
   useVector = true,
   size = "md",
   variant = "standard",
@@ -103,7 +103,7 @@ export function EkaLogo({
   if (variant === "full") {
     const fullImg = (
       <img
-        src={ekaLogoFullJpg || "/brand/eka-logo-full.jpg"}
+        src={ekaLogoFullPng || "/brand/eka-official-logo.png"}
         alt={alt}
         width={width || currentSize.height * 2.2}
         height={height || currentSize.height}

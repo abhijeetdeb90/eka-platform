@@ -7,7 +7,7 @@
 
 import { useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Menu, X, ArrowRight, Plus, User } from "lucide-react";
+import { Menu, X, ArrowRight, Plus, User, Search, Bell, MessageSquare } from "lucide-react";
 import { EkaLogo } from "@/components/brand/Logo";
 import { Button } from "@/components/ui/button";
 import { useProfile } from "@/hooks/useProfile";
@@ -67,12 +67,42 @@ export function SiteHeader() {
         </nav>
 
         {/* Right CTA: Create + Profile / Join */}
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden md:flex items-center gap-2 sm:gap-3">
+          <Link
+            to="/discover"
+            className="rounded-full p-2 text-[#5C5C5C] hover:text-[#1A1A1A] hover:bg-[#F3EDE6] transition-colors"
+            title="Search & Explore"
+            aria-label="Search"
+          >
+            <Search className="size-4" />
+          </Link>
+
+          {profile && (
+            <>
+              <Link
+                to="/app/notifications"
+                className="rounded-full p-2 text-[#5C5C5C] hover:text-[#1A1A1A] hover:bg-[#F3EDE6] transition-colors"
+                title="Notifications"
+                aria-label="Notifications"
+              >
+                <Bell className="size-4" />
+              </Link>
+              <Link
+                to="/app/sanghas"
+                className="rounded-full p-2 text-[#5C5C5C] hover:text-[#1A1A1A] hover:bg-[#F3EDE6] transition-colors"
+                title="Messages & Circles"
+                aria-label="Messages"
+              >
+                <MessageSquare className="size-4" />
+              </Link>
+            </>
+          )}
+
           <Button
             asChild
             size="sm"
             variant="outline"
-            className="rounded-full border-[#E8E2D9] bg-white hover:bg-[#F3EDE6] text-[#1A1A1A] px-4 py-1.5 text-xs font-medium shadow-none transition-colors"
+            className="rounded-full border-[#E8E2D9] bg-white hover:bg-[#F3EDE6] text-[#1A1A1A] px-3.5 py-1.5 text-xs font-medium shadow-none transition-colors"
           >
             <Link to="/create" className="inline-flex items-center gap-1.5">
               <Plus className="size-3.5 text-[#C45C26]" />
@@ -84,7 +114,7 @@ export function SiteHeader() {
             <Button
               asChild
               size="sm"
-              className="rounded-full bg-[#C45C26] hover:bg-[#A34A1F] text-white px-4 py-1.5 text-xs font-medium shadow-none transition-colors"
+              className="rounded-full bg-[#C45C26] hover:bg-[#A34A1F] text-white px-3.5 py-1.5 text-xs font-medium shadow-none transition-colors"
             >
               <Link to="/my-eka" className="inline-flex items-center gap-1.5">
                 <User className="size-3.5" />

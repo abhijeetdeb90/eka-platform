@@ -243,10 +243,10 @@ export function Composer({
     <div className="rounded-2xl border border-border/70 bg-card p-5 transition-shadow duration-500 focus-within:shadow-calm sm:p-6">
       <p className="text-[10px] uppercase tracking-[0.28em] text-muted-foreground">Share</p>
       <h2 className="mt-2 font-display text-xl leading-snug sm:text-2xl">
-        What are you sitting with today?
+        What's on your mind?
       </h2>
       <p className="mt-1.5 text-sm text-muted-foreground" id="composer-hint">
-        Share a reflection, photo story, video or tradition. Free for all seekers.
+        Share a cultural story, photo, video, tradition, craft or memory. Free for all seekers.
       </p>
 
       <Label htmlFor="composer-content" className="sr-only">

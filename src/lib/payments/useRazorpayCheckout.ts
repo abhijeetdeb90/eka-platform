@@ -155,6 +155,9 @@ export function useRazorpayCheckout() {
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,
+                user_id: options.notes?.user_id,
+                plan_id: options.notes?.plan || "plus",
+                amount_minor: options.amount,
               }),
             });
 

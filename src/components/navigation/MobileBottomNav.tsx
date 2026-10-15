@@ -26,10 +26,9 @@ export function MobileBottomNav() {
 
   const items = [
     { label: "Home", to: "/", exact: true, icon: Home },
-    { label: "Discover", to: "/discover", icon: Compass },
-    { label: "Stories", to: "/stories", icon: Film },
-    { label: "Feed", to: "/feed", icon: Radio },
+    { label: "Explore", to: "/discover", icon: Compass },
     { label: "Create", to: "/create", icon: PlusCircle },
+    { label: "Ask EKA", to: "/ask", icon: Radio },
     { label: profile ? "Profile" : "Sign In", to: "/my-eka", icon: User },
   ];
 

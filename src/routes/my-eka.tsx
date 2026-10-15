@@ -146,7 +146,12 @@ function MyEkaPage() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2.5 self-stretch sm:self-auto justify-end">
+                <div className="flex items-center gap-2 self-stretch sm:self-auto justify-end flex-wrap">
+                  <Button variant="outline" size="sm" asChild className="rounded-xl text-xs">
+                    <Link to="/app/subscriptions">
+                      <span>My Subscriptions</span>
+                    </Link>
+                  </Button>
                   <Button variant="outline" size="sm" asChild className="rounded-xl text-xs">
                     <Link to="/app/settings">
                       <Settings className="size-3.5 mr-1.5" />

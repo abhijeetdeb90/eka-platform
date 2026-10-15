@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { AlertTriangle, BellRing, Check } from "lucide-react";
+import { AlertTriangle, BellRing, Check, CreditCard } from "lucide-react";
 import { toast } from "sonner";
 import { AppScreen } from "@/components/app/AppScreen";
 import { Button } from "@/components/ui/button";
@@ -12,10 +12,12 @@ import {
   planFor,
   prorate,
   resumeMembership,
-  setPlan,
+  scheduleCancellation,
   type PlanId,
 } from "@/lib/billing";
 import { track } from "@/lib/analytics";
+import { useRazorpayCheckout } from "@/lib/payments/useRazorpayCheckout";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/app/billing")({
   component: BillingPage,
@@ -23,9 +25,10 @@ export const Route = createFileRoute("/_authenticated/app/billing")({
 
 function BillingPage() {
   const queryClient = useQueryClient();
-  const { data: sub } = useQuery({ queryKey: ["subscription-row"], queryFn: fetchSubscription });
+  const { data: sub, isLoading: subLoading } = useQuery({ queryKey: ["subscription-row"], queryFn: fetchSubscription });
   const entitlement = entitlementFor(sub);
   const current = planFor(sub?.plan);
+  const { openCheckout, loading: checkoutLoading } = useRazorpayCheckout();
 
   const refresh = async () => {
     await queryClient.invalidateQueries({ queryKey: ["subscription-row"] });
@@ -33,12 +36,46 @@ function BillingPage() {
   };
 
   const change = async (planId: PlanId) => {
-    await setPlan(planId);
-    track("plan_change", { from: current.id, to: planId });
+    const targetPlan = planFor(planId);
+    if (planId === current.id && entitlement.active) {
+      toast.info("You are already subscribed to this plan.");
+      return;
+    }
+
+    const { data: auth } = await supabase.auth.getUser();
+    if (!auth.user) {
+      toast.error("Please sign in to change your plan.");
+      return;
+    }
+
+    track("plan_change_initiated", { from: current.id, to: planId });
+
+    openCheckout({
+      amount: targetPlan.priceCents,
+      currency: targetPlan.currency,
+      name: `EKA ${targetPlan.name} Membership`,
+      description: targetPlan.blurb,
+      prefill: {
+        email: auth.user.email,
+        name: auth.user.user_metadata?.full_name || auth.user.user_metadata?.name || "",
+      },
+      notes: {
+        user_id: auth.user.id,
+        plan: planId,
+      },
+      onSuccess: async () => {
+        track("plan_change_completed", { from: current.id, to: planId });
+        await refresh();
+        toast.success(`Your ${targetPlan.name} membership is active!`);
+      },
+    });
+  };
+
+  const cancel = async () => {
+    await scheduleCancellation();
+    track("membership_cancel_scheduled");
     await refresh();
-    toast.success(
-      planId === current.id ? "Plan confirmed." : "Plan changed. The difference is prorated.",
-    );
+    toast.info("Membership cancellation scheduled at the end of your billing period.");
   };
 
   const daysLeft = entitlement.daysToRenewal ?? 0;
@@ -148,19 +185,20 @@ function BillingPage() {
       </section>
 
       <p className="text-xs text-muted-foreground">
-        Card billing is not connected yet, so plan changes here update your membership record and
-        entitlement without taking a payment. When Stripe is connected, the same lifecycle —
-        checkout, upgrade, downgrade, proration, pause, renewal and cancellation — is driven by
-        verified webhooks at <code>/api/public/billing/webhook</code>.
+        Secure checkout is powered by Razorpay. All transactions are cryptographically verified
+        on the server before granting membership access. Real-time updates, renewals, and cancellations
+        are synchronized directly with your account.
       </p>
 
       <div className="flex flex-wrap gap-3">
         <Button variant="outline" asChild>
           <Link to="/app/plus">Membership details</Link>
         </Button>
-        <Button variant="ghost" asChild>
-          <Link to="/app/cancel">Cancel membership</Link>
-        </Button>
+        {entitlement.active && entitlement.state !== "ending" && (
+          <Button variant="ghost" onClick={cancel} className="text-destructive hover:bg-destructive/10">
+            Cancel membership
+          </Button>
+        )}
       </div>
     </AppScreen>
   );

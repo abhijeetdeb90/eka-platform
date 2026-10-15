@@ -11,8 +11,8 @@
 import React from "react";
 import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
-import ekaEmblemJpg from "@/assets/brand/eka-emblem.jpg";
-import ekaLogoFullJpg from "@/assets/brand/eka-logo-full.jpg";
+import ekaEmblemPng from "@/assets/brand/eka-emblem.png";
+import ekaLogoFullPng from "@/assets/brand/eka-official-logo.png";
 
 export type EkaLogoVariant = "standard" | "symbol" | "stacked" | "full";
 export type EkaLogoSize = "xs" | "sm" | "md" | "lg" | "xl";
@@ -78,14 +78,14 @@ export function EkaEmblem({
 
   return (
     <img
-      src={ekaEmblemJpg || "/brand/eka-emblem.jpg"}
+      src={ekaEmblemPng || "/brand/eka-emblem.png"}
       alt={alt}
       width={width || preset.height}
       height={height || preset.height}
       loading="eager"
       decoding="async"
       className={cn(
-        "object-contain shrink-0 select-none transition-transform duration-500 ease-out group-hover:scale-105 rounded-full",
+        "object-contain shrink-0 select-none transition-transform duration-500 ease-out group-hover:scale-105",
         !width && !height && preset.mark,
         className
       )}
@@ -107,7 +107,7 @@ export function EkaLogo({
   taglineClassName,
   betaClassName,
   withTagline = false,
-  taglineText = "Cultural Intelligence",
+  taglineText = "A Billion Stories — One Within. One With All.",
   withBeta = false,
   href,
   alt = "EKA — The World's Trusted Cultural Intelligence Layer",
@@ -118,7 +118,7 @@ export function EkaLogo({
   if (variant === "full") {
     const fullImg = (
       <img
-        src={ekaLogoFullJpg || "/brand/eka-logo-full.jpg"}
+        src={ekaLogoFullPng || "/brand/eka-official-logo.png"}
         alt={alt}
         width={width || (currentSize.height * 2.2)}
         height={height || currentSize.height}

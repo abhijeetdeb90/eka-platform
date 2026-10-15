@@ -135,6 +135,7 @@ import { Route as AuthenticatedAppRhythmRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAppSavedRouteImport } from './routes/_authenticated/app.saved'
 import { Route as AuthenticatedAppSearchRouteImport } from './routes/_authenticated/app.search'
 import { Route as AuthenticatedAppSettingsRouteImport } from './routes/_authenticated/app.settings'
+import { Route as AuthenticatedAppSubscriptionsRouteImport } from './routes/_authenticated/app.subscriptions'
 import { Route as AuthenticatedAppThemesRouteImport } from './routes/_authenticated/app.themes'
 import { Route as AuthenticatedAppWalletRouteImport } from './routes/_authenticated/app.wallet'
 import { Route as AuthenticatedAppWelcomeRouteImport } from './routes/_authenticated/app.welcome'
@@ -823,6 +824,12 @@ const AuthenticatedAppSettingsRoute =
     path: '/settings',
     getParentRoute: () => AuthenticatedAppRoute,
   } as any)
+const AuthenticatedAppSubscriptionsRoute =
+  AuthenticatedAppSubscriptionsRouteImport.update({
+    id: '/subscriptions',
+    path: '/subscriptions',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
 const AuthenticatedAppThemesRoute = AuthenticatedAppThemesRouteImport.update({
   id: '/themes',
   path: '/themes',
@@ -1177,6 +1184,7 @@ export interface FileRoutesByFullPath {
   '/app/saved': typeof AuthenticatedAppSavedRoute
   '/app/search': typeof AuthenticatedAppSearchRoute
   '/app/settings': typeof AuthenticatedAppSettingsRoute
+  '/app/subscriptions': typeof AuthenticatedAppSubscriptionsRoute
   '/app/themes': typeof AuthenticatedAppThemesRoute
   '/app/wallet': typeof AuthenticatedAppWalletRoute
   '/app/welcome': typeof AuthenticatedAppWelcomeRoute
@@ -1342,6 +1350,7 @@ export interface FileRoutesByTo {
   '/app/saved': typeof AuthenticatedAppSavedRoute
   '/app/search': typeof AuthenticatedAppSearchRoute
   '/app/settings': typeof AuthenticatedAppSettingsRoute
+  '/app/subscriptions': typeof AuthenticatedAppSubscriptionsRoute
   '/app/themes': typeof AuthenticatedAppThemesRoute
   '/app/wallet': typeof AuthenticatedAppWalletRoute
   '/app/welcome': typeof AuthenticatedAppWelcomeRoute
@@ -1512,6 +1521,7 @@ export interface FileRoutesById {
   '/_authenticated/app/saved': typeof AuthenticatedAppSavedRoute
   '/_authenticated/app/search': typeof AuthenticatedAppSearchRoute
   '/_authenticated/app/settings': typeof AuthenticatedAppSettingsRoute
+  '/_authenticated/app/subscriptions': typeof AuthenticatedAppSubscriptionsRoute
   '/_authenticated/app/themes': typeof AuthenticatedAppThemesRoute
   '/_authenticated/app/wallet': typeof AuthenticatedAppWalletRoute
   '/_authenticated/app/welcome': typeof AuthenticatedAppWelcomeRoute
@@ -1682,6 +1692,7 @@ export interface FileRouteTypes {
     | '/app/saved'
     | '/app/search'
     | '/app/settings'
+    | '/app/subscriptions'
     | '/app/themes'
     | '/app/wallet'
     | '/app/welcome'
@@ -1847,6 +1858,7 @@ export interface FileRouteTypes {
     | '/app/saved'
     | '/app/search'
     | '/app/settings'
+    | '/app/subscriptions'
     | '/app/themes'
     | '/app/wallet'
     | '/app/welcome'
@@ -2016,6 +2028,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/saved'
     | '/_authenticated/app/search'
     | '/_authenticated/app/settings'
+    | '/_authenticated/app/subscriptions'
     | '/_authenticated/app/themes'
     | '/_authenticated/app/wallet'
     | '/_authenticated/app/welcome'
@@ -3033,6 +3046,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppSettingsRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
+    '/_authenticated/app/subscriptions': {
+      id: '/_authenticated/app/subscriptions'
+      path: '/subscriptions'
+      fullPath: '/app/subscriptions'
+      preLoaderRoute: typeof AuthenticatedAppSubscriptionsRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
     '/_authenticated/app/themes': {
       id: '/_authenticated/app/themes'
       path: '/themes'
@@ -3371,6 +3391,7 @@ interface AuthenticatedAppRouteChildren {
   AuthenticatedAppSavedRoute: typeof AuthenticatedAppSavedRoute
   AuthenticatedAppSearchRoute: typeof AuthenticatedAppSearchRoute
   AuthenticatedAppSettingsRoute: typeof AuthenticatedAppSettingsRoute
+  AuthenticatedAppSubscriptionsRoute: typeof AuthenticatedAppSubscriptionsRoute
   AuthenticatedAppThemesRoute: typeof AuthenticatedAppThemesRoute
   AuthenticatedAppWalletRoute: typeof AuthenticatedAppWalletRoute
   AuthenticatedAppWelcomeRoute: typeof AuthenticatedAppWelcomeRoute
@@ -3423,6 +3444,7 @@ const AuthenticatedAppRouteChildren: AuthenticatedAppRouteChildren = {
   AuthenticatedAppSavedRoute: AuthenticatedAppSavedRoute,
   AuthenticatedAppSearchRoute: AuthenticatedAppSearchRoute,
   AuthenticatedAppSettingsRoute: AuthenticatedAppSettingsRoute,
+  AuthenticatedAppSubscriptionsRoute: AuthenticatedAppSubscriptionsRoute,
   AuthenticatedAppThemesRoute: AuthenticatedAppThemesRoute,
   AuthenticatedAppWalletRoute: AuthenticatedAppWalletRoute,
   AuthenticatedAppWelcomeRoute: AuthenticatedAppWelcomeRoute,

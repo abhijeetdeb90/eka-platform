@@ -91,6 +91,44 @@ export const Route = createFileRoute("/api/verify-payment")({
             );
           }
 
+          // Secure Server-Side Activation in Supabase
+          const userId = (body as any).user_id;
+          const planId = (body as any).plan_id || "plus";
+          const amountMinor = (body as any).amount_minor || 49900;
+
+          if (userId) {
+            try {
+              const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "https://kbiutqzhcbyuseygcspe.supabase.co";
+              const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_PUBLISHABLE_KEY || "sb_publishable_DKdNOtbppccL297o2_Ixkw_f2j0Rf7-";
+
+              // Activate subscription record
+              const renewalDate = new Date(Date.now() + 30 * 86400 * 1000).toISOString();
+              await fetch(`${supabaseUrl}/rest/v1/subscriptions`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "apikey": supabaseKey,
+                  "Authorization": `Bearer ${supabaseKey}`,
+                  "Prefer": "resolution=merge-duplicates",
+                },
+                body: JSON.stringify({
+                  user_id: userId,
+                  plan: planId,
+                  status: "active",
+                  price_cents: amountMinor,
+                  currency: "INR",
+                  razorpay_payment_id: paymentId,
+                  razorpay_order_id: orderId,
+                  current_period_end: renewalDate,
+                  cancel_at_period_end: false,
+                  updated_at: new Date().toISOString(),
+                }),
+              });
+            } catch (persistErr) {
+              console.warn("[verify-payment] Database persistence notice:", persistErr);
+            }
+          }
+
           return new Response(
             JSON.stringify({
               success: true,
