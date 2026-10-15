@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 import { createClient } from "@supabase/supabase-js";
 
-const MAX_IMAGES = 4;
+const MAX_IMAGES = 1; // The current posts schema stores one media URL per post.
 const MAX_BODY_LENGTH = 5000;
 
 const createPostSchema = z
@@ -144,73 +144,41 @@ export const Route = createFileRoute("/api/v1/posts")({
           }
         }
 
-        // Atomic Postgres RPC inserts the post and all media rows transactionally
-        const { data: postId, error: createError } = await supabase.rpc(
-          "create_post_with_media",
-          {
-            p_body: postInput.body,
-            p_visibility: postInput.visibility,
-            p_media: postInput.media.map((item) => ({
-              path: item.path,
-              media_type: item.mediaType,
-              alt_text: item.altText,
-            })),
-            p_topic: postInput.topic,
-            p_tradition: postInput.tradition || null,
-          },
-        );
+        // Persist only fields supported by the live posts schema.
+        const mediaPath = postInput.media[0]?.path;
+        const mediaUrl = mediaPath
+          ? `${SUPABASE_URL}/storage/v1/object/public/post-media/${mediaPath.split("/").map(encodeURIComponent).join("/")}`
+          : null;
+
+        const { data: createdPost, error: createError } = await supabase
+          .from("posts")
+          .insert({
+            author_id: user.id,
+            content: postInput.body,
+            topic: postInput.topic,
+            tradition: postInput.tradition || null,
+            visibility: postInput.visibility,
+            type: postInput.media[0]?.mediaType === "video" ? "video" : postInput.media.length ? "image" : "post",
+            status: "visible",
+            media_url: mediaUrl,
+          })
+          .select("id,created_at")
+          .single();
 
         if (createError) {
-          console.error("post_create_failed", {
-            code: createError.code,
-            message: createError.message,
-          });
-
-          // Fallback direct insert if RPC function is not yet migrated to the remote Supabase instance
-          const fallbackMediaUrl = postInput.media[0]?.path
-            ? `${SUPABASE_URL}/storage/v1/object/public/post-media/${postInput.media[0].path}`
-            : null;
-
-          const { data: fallbackPost, error: fallbackError } = await supabase
-            .from("posts")
-            .insert({
-              author_id: user.id,
-              content: postInput.body,
-              topic: postInput.topic,
-              tradition: postInput.tradition || null,
-              visibility: postInput.visibility,
-              type: postInput.media.length > 1 ? "carousel" : postInput.media[0]?.mediaType === "video" ? "video" : "post",
-              status: "visible",
-              media_url: fallbackMediaUrl,
-            })
-            .select("id")
-            .single();
-
-          if (fallbackError) {
-            return new Response(
-              JSON.stringify({ error: "Could not create post", details: fallbackError.message }),
-              { status: 500, headers: { "Content-Type": "application/json" } },
-            );
-          }
-
+          console.error("post_create_failed", { code: createError.code, message: createError.message });
           return new Response(
-            JSON.stringify({
-              post: {
-                id: fallbackPost.id,
-                body: postInput.body,
-                visibility: postInput.visibility,
-                topic: postInput.topic,
-                media: postInput.media,
-              },
-            }),
-            { status: 201, headers: { "Content-Type": "application/json" } },
+            JSON.stringify({ error: "Could not create post", details: createError.message }),
+            { status: 500, headers: { "Content-Type": "application/json" } },
           );
         }
 
         return new Response(
           JSON.stringify({
             post: {
-              id: postId,
+              id: createdPost.id,
+              created_at: createdPost.created_at,
+              author_id: user.id,
               body: postInput.body,
               visibility: postInput.visibility,
               topic: postInput.topic,
