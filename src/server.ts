@@ -26,7 +26,45 @@ async function getServerEntry(): Promise<ServerEntry> {
   return serverEntryPromise;
 }
 
-// Attach platform-wide enterprise security headers and request correlation ID
+/** Money routes that must never run without a Bearer token (edge gate). */
+const MONEY_API_PREFIXES = [
+  "/api/payouts",
+  "/api/payments",
+  "/api/create-order",
+  "/api/refunds",
+  "/api/subscriptions",
+  "/api/creator-earnings",
+  "/api/verify-payment",
+  "/api/finance",
+  "/api/reconciliation",
+] as const;
+
+function isMoneyApiPath(pathname: string): boolean {
+  return MONEY_API_PREFIXES.some(
+    (p) => pathname === p || pathname.startsWith(p + "/") || pathname.startsWith(p + "?"),
+  );
+}
+
+/** GET /api/subscriptions (plan listing) stays public. */
+function isPublicMoneyGet(pathname: string, method: string): boolean {
+  return method === "GET" && (pathname === "/api/subscriptions" || pathname.startsWith("/api/subscriptions/"));
+}
+
+function moneyRouteUnauthorized(requestId: string): Response {
+  const headers = new Headers(getStandardSecurityHeaders());
+  headers.set("content-type", "application/json");
+  headers.set("x-request-id", requestId);
+  headers.set("x-eka-auth-guard", "v1-server-entry-money-gate");
+  headers.set("cache-control", "no-store");
+  return new Response(
+    JSON.stringify({
+      error: "Unauthorized: Missing Authorization header",
+      guard: "v1-server-entry-money-gate",
+    }),
+    { status: 401, headers },
+  );
+}
+
 function applySecurityHeaders(response: Response, requestId: string): Response {
   const headers = new Headers(response.headers);
   const secHeaders = getStandardSecurityHeaders();
@@ -45,8 +83,6 @@ function applySecurityHeaders(response: Response, requestId: string): Response {
   });
 }
 
-// h3 swallows in-handler throws into a normal 500 Response with body
-// {"unhandled":true,"message":"HTTPError"} — try/catch alone never fires for those.
 async function normalizeCatastrophicSsrResponse(response: Response, requestId: string): Promise<Response> {
   if (response.status < 500) return applySecurityHeaders(response, requestId);
   const contentType = response.headers.get("content-type") ?? "";
@@ -84,6 +120,19 @@ export default {
       "127.0.0.1";
 
     try {
+      const url = new URL(request.url);
+      const pathname = url.pathname;
+      const method = request.method.toUpperCase();
+
+      // 0. Emergency money-route auth gate (runs before TanStack route handlers).
+      // Confirmed: route-file HARD-CLOSE was not what production executed for /api/payouts.
+      if (isMoneyApiPath(pathname) && !isPublicMoneyGet(pathname, method)) {
+        const authHeader = request.headers.get("Authorization");
+        if (!authHeader || !/^Bearer\s+\S+/i.test(authHeader)) {
+          return moneyRouteUnauthorized(requestId);
+        }
+      }
+
       // 1. Check if IP is in Security Quarantine
       const quarantineStatus = isEntityQuarantined({ ipAddress: clientIp });
       if (quarantineStatus.quarantined) {
@@ -133,7 +182,6 @@ export default {
       }
 
       // 3. Attack Signature Detection on URL & Query parameters
-      const url = new URL(request.url);
       const queryString = url.search;
       if (queryString) {
         const attackCheck = await detectApplicationAttacks({
