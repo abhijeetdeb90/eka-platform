@@ -1,8 +1,6 @@
-import { next } from "@vercel/edge";
-
 /**
- * Platform edge gate: money APIs require Authorization Bearer.
- * Runs before Nitro/TanStack route handlers on Vercel.
+ * Vercel Edge Middleware — money API auth gate.
+ * No framework dependency; returns 401 or continues (undefined).
  */
 const MONEY_PATHS = [
   "/api/payouts",
@@ -15,49 +13,42 @@ const MONEY_PATHS = [
   "/api/reconciliation",
 ];
 
-function isMoneyPath(pathname: string): boolean {
-  return MONEY_PATHS.some((p) => pathname === p || pathname.startsWith(p + "/"));
-}
-
-function isPublicGet(pathname: string, method: string): boolean {
-  if (method !== "GET") return false;
-  return pathname === "/api/subscriptions" || pathname.startsWith("/api/subscriptions/");
-}
-
 export const config = {
   matcher: ["/api/:path*"],
 };
 
-export default function middleware(request: Request): Response | ReturnType<typeof next> {
+export default function middleware(request: Request): Response | void {
   const url = new URL(request.url);
   const pathname = url.pathname;
   const method = request.method.toUpperCase();
 
-  // Subscriptions plan listing stays public (GET only)
-  if (pathname === "/api/subscriptions" || pathname.startsWith("/api/subscriptions/")) {
-    if (method === "GET") return next();
-    // POST and others require auth
+  // Public: list subscription plans
+  if (method === "GET" && (pathname === "/api/subscriptions" || pathname.startsWith("/api/subscriptions/"))) {
+    return;
   }
 
-  if (isMoneyPath(pathname) || pathname === "/api/subscriptions") {
-    const auth = request.headers.get("authorization");
-    if (!auth || !/^Bearer\s+\S+/i.test(auth)) {
-      return new Response(
-        JSON.stringify({
-          error: "Unauthorized: Missing Authorization header",
-          guard: "v1-vercel-edge-middleware",
-        }),
-        {
-          status: 401,
-          headers: {
-            "content-type": "application/json",
-            "cache-control": "no-store",
-            "x-eka-auth-guard": "v1-vercel-edge-middleware",
-          },
+  const needsAuth =
+    MONEY_PATHS.some((p) => pathname === p || pathname.startsWith(p + "/")) ||
+    pathname === "/api/subscriptions" ||
+    pathname.startsWith("/api/subscriptions/");
+
+  if (!needsAuth) return;
+
+  const auth = request.headers.get("authorization");
+  if (!auth || !/^Bearer\s+\S+/i.test(auth)) {
+    return new Response(
+      JSON.stringify({
+        error: "Unauthorized: Missing Authorization header",
+        guard: "v1-vercel-edge-middleware",
+      }),
+      {
+        status: 401,
+        headers: {
+          "content-type": "application/json",
+          "cache-control": "no-store",
+          "x-eka-auth-guard": "v1-vercel-edge-middleware",
         },
-      );
-    }
+      },
+    );
   }
-
-  return next();
 }
