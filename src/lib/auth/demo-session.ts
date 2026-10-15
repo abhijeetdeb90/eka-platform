@@ -56,6 +56,9 @@ export const DEMO_CREDENTIALS: Record<
  * Read active demo session from localStorage or cookie
  */
 export function getInvestorDemoSession(): InvestorDemoSession | null {
+  // Demo roles are unauthenticated local state and must never authorize production routes.
+  if (!import.meta.env.DEV) return null;
+
   if (typeof window !== "undefined") {
     try {
       const raw = window.localStorage.getItem(STORAGE_KEY);
@@ -101,6 +104,10 @@ export function isInvestorDemoActive(): boolean {
  * Start or switch an investor presentation demo session
  */
 export function startInvestorDemoSession(role: InvestorDemoRole): InvestorDemoSession {
+  if (!import.meta.env.DEV) {
+    throw new Error("Investor demo sessions are disabled outside development.");
+  }
+
   const creds = DEMO_CREDENTIALS[role];
   const session: InvestorDemoSession = {
     active: true,
