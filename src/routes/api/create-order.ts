@@ -47,7 +47,7 @@ export const Route = createFileRoute("/api/create-order")({
             plan === "plus" || plan === "monthly" || plan === "creator" ? PLUS_PRICE_PAISE :
             null;
 
-          if (expectedAmount === null) return json({ error: "Unsupported subscription plan." }, 400);
+          if (typeof plan !== "string" || expectedAmount === null) return json({ error: "Unsupported subscription plan." }, 400);
           if (Number(body.amount) !== expectedAmount) {
             return json({ error: "The requested amount does not match the selected EKA membership plan." }, 400);
           }
@@ -60,7 +60,7 @@ export const Route = createFileRoute("/api/create-order")({
             currency: "INR",
             receipt,
             notes: { user_id: auth.user.id, plan },
-          });
+          }) as unknown as { id: string; amount: number; currency: string; receipt: string | null; status: string };
 
           return json({
             order_id: order.id,
