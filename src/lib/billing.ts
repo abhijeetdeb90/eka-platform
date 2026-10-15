@@ -200,10 +200,6 @@ export async function fetchSubscription(): Promise<SubscriptionRow | null> {
   return (data as SubscriptionRow) ?? null;
 }
 
-function addDays(days: number) {
-  return new Date(Date.now() + days * 86_400_000).toISOString();
-}
-
 async function mutateMembership(action: string, extra: Record<string, unknown> = {}) {
   const { data, error } = await supabase.auth.getSession();
   const token = data.session?.access_token;
