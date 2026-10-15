@@ -118,7 +118,14 @@ export type AnalyticsEvent =
   | "flywheel_contributor_activated"
   | "flywheel_seeker_to_contributor"
   | "flywheel_creator_first_sale"
-  | "flywheel_repeat_purchase";
+  | "flywheel_repeat_purchase"
+  | "plan_change_initiated"
+  | "plan_change_completed"
+  | "membership_cancel_scheduled"
+  | "subscription_checkout_started"
+  | "subscription_checkout_success"
+  | "subscription_cancelled"
+  | "subscription_resumed";
 
 /** Returns whether the user has given affirmative consent for analytics tracking (DPDP Act compliance) */
 export function hasAnalyticsConsent(): boolean {
