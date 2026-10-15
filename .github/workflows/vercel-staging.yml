@@ -44,25 +44,29 @@ jobs:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || 'https://placeholder.supabase.co' }}
           VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY || 'placeholder-anon-key' }}
 
+      # Secrets are intentionally unavailable to pull_request workflows from forks
+      # and some dependency-update bots. Keep their build/quality checks, but only
+      # attempt authenticated Vercel preview deployment when credentials are available.
       - name: Verify Vercel deployment secrets
+        if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: |
-          missing=0
-          for name in VERCEL_TOKEN VERCEL_ORG_ID VERCEL_PROJECT_ID; do
-            if [ -z "${!name}" ]; then
-              echo "::error title=Missing GitHub Actions secret::$name is missing. Add it in Settings > Secrets and variables > Actions."
-              missing=1
-            fi
-          done
-          if [ "$missing" -ne 0 ]; then
-            exit 1
-          fi
+          set -eu
+          test -n "$VERCEL_TOKEN" || { echo "::error::VERCEL_TOKEN secret is missing for a trusted preview deployment"; exit 1; }
+          test -n "$VERCEL_ORG_ID" || { echo "::error::VERCEL_ORG_ID secret is missing for a trusted preview deployment"; exit 1; }
+          test -n "$VERCEL_PROJECT_ID" || { echo "::error::VERCEL_PROJECT_ID secret is missing for a trusted preview deployment"; exit 1; }
+
+      - name: Skip preview deploy for untrusted pull request
+        if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository }}
+        run: echo "::notice::Build and quality checks passed; authenticated preview deployment is skipped because GitHub does not expose repository secrets to this pull request."
 
       - name: Deploy Preview to Vercel
+        if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
         run: |
+          set -eu
           npx vercel pull --yes --environment=preview --token="$VERCEL_TOKEN"
           npx vercel deploy --prebuilt --token="$VERCEL_TOKEN"
         env:
