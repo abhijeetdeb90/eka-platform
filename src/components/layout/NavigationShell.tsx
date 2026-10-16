@@ -146,7 +146,6 @@ export function NavigationShell({
   rightRail,
   showFooter = false,
   hideHeader = false,
-  hideBottomNav = false,
   className,
   contentClassName,
   activeNavId,
@@ -420,56 +419,6 @@ export function NavigationShell({
       {/* OPTIONAL FOOTER */}
       {showFooter && <SiteFooter />}
 
-      {/* =========================================================================
-          FIXED BOTTOM MOBILE NAVIGATION BAR (WITH GLASS / TACTILE DOCK)
-      ========================================================================== */}
-      {!hideBottomNav && (
-        <nav
-          aria-label="Mobile Navigation Dock"
-          className="lg:hidden fixed bottom-0 inset-x-0 z-40 px-2 pb-[max(0.65rem,env(safe-area-inset-bottom))] pt-1.5 glass-header border-t border-border/70 shadow-[0_-8px_30px_rgba(0,0,0,0.12)]"
-        >
-          <div className="flex items-center justify-around max-w-md mx-auto relative">
-            {EKA_NAV_ITEMS.map((item) => {
-              const active = isNavActive(item);
-              const Icon = item.icon;
-
-              return (
-                <Link
-                  key={item.id}
-                  to={item.to}
-                  onClick={() => handleNavClick(item.to, item.label)}
-                  className={cn(
-                    "relative flex flex-col items-center justify-center py-1 px-1 sm:px-2 rounded-xl transition-colors select-none",
-                    active
-                      ? "text-terracotta font-medium"
-                      : "text-muted-foreground hover:text-foreground",
-                  )}
-                  aria-label={item.label}
-                >
-                  {/* Active Background Pill */}
-                  {active && (
-                    <motion.div
-                      layoutId="active-nav-tab"
-                      className="absolute inset-0 bg-terracotta/10 rounded-xl"
-                      transition={{ type: "spring", stiffness: 350, damping: 30 }}
-                    />
-                  )}
-
-                  <div className="relative z-10 flex flex-col items-center gap-0.5">
-                    <Icon className={cn("size-4.5", active ? "stroke-[2.2] text-terracotta" : "stroke-[1.7]")} />
-                    <span className="text-[10px] font-mono tracking-tight">{item.label}</span>
-                  </div>
-
-                  {/* Active Indicator Microdot */}
-                  {active && (
-                    <span className="absolute -bottom-1 size-1 rounded-full bg-terracotta" />
-                  )}
-                </Link>
-              );
-            })}
-          </div>
-        </nav>
-      )}
     </div>
   );
 }
