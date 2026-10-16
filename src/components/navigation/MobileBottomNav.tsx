@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 type NavItem = {
   label: string;
-  to: "/" | "/discover" | "/stories" | "/feed" | "/create" | "/ask" | "/my-eka" | "/auth";
+  to: "/" | "/app" | "/discover" | "/stories" | "/feed" | "/create" | "/ask" | "/my-eka" | "/auth";
   icon: typeof Compass;
   exact?: boolean;
 };
@@ -46,7 +46,7 @@ export function MobileBottomNav() {
   ];
   const memberItems: NavItem[] = [
     { label: "Discover", to: "/discover", icon: Compass },
-    { label: "Feed", to: "/feed", icon: Users },
+    { label: "Feed", to: "/app", icon: Users, exact: true },
     { label: "Create", to: "/create", icon: PlusCircle },
     { label: "Ask EKA", to: "/ask", icon: Radio },
     { label: "My EKA", to: "/my-eka", icon: UserRound },
