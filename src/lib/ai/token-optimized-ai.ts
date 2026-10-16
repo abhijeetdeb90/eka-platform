@@ -479,10 +479,15 @@ Provide a structured JSON object with the following exact keys:
       }
     }
   } catch (llmErr) {
-    console.warn("[Ask EKA Token Engine] LLM call failed, employing curated fallback:", llmErr);
+    console.error("[Ask EKA Token Engine] AI generation failed:", llmErr);
+    throw new Error("Ask EKA could not generate a response. Please try again later.");
   }
 
-  // Fallback defaults if LLM did not provide JSON
+  if (!structuredData || typeof structuredData.simpleAnswer !== "string" || !structuredData.simpleAnswer.trim()) {
+    throw new Error("Ask EKA received no valid generated answer. No curated fallback was substituted.");
+  }
+
+  // Only enrich a successfully generated answer with retrieved canonical metadata.
   const verificationLevel: TrustVerificationLevel =
     primaryCandidate.verificationLevel || "PRIMARY_SOURCE";
   const verificationMeta = getTrustVerificationMeta(verificationLevel);
