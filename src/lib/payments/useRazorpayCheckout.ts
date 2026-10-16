@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { toast } from "sonner";
+import { authenticatedFetch } from "@/lib/api/authenticated-fetch";
 
 export interface CheckoutOptions {
   amount: number; // in paise (e.g. 29900 = ₹299.00)
@@ -43,7 +44,9 @@ export function loadRazorpayScript(): Promise<boolean> {
       return;
     }
 
-    const existingScript = document.querySelector('script[src="https://checkout.razorpay.com/v1/checkout.js"]');
+    const existingScript = document.querySelector(
+      'script[src="https://checkout.razorpay.com/v1/checkout.js"]',
+    );
     if (existingScript) {
       existingScript.addEventListener("load", () => resolve(true));
       existingScript.addEventListener("error", () => resolve(false));
@@ -77,17 +80,17 @@ export function useRazorpayCheckout() {
       // 1. Ensure Razorpay checkout.js is loaded
       const isLoaded = await loadRazorpayScript();
       if (!isLoaded || !window.Razorpay) {
-        const msg = "Unable to load Razorpay payment interface. Please check your internet connection.";
+        const msg =
+          "Unable to load Razorpay payment interface. Please check your internet connection.";
         setError(msg);
         toast.error(msg);
         setLoading(false);
         return;
       }
 
-      // 2. Call backend /api/create-order
-      const orderRes = await fetch("/api/create-order", {
+      // 2. Call backend /api/create-order (requires signed-in Bearer session)
+      const orderRes = await authenticatedFetch("/api/create-order", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           amount: options.amount,
           currency: options.currency || "INR",
@@ -98,7 +101,13 @@ export function useRazorpayCheckout() {
 
       if (!orderRes.ok) {
         const errData = await orderRes.json().catch(() => ({}));
-        throw new Error(errData.error || `Order creation failed with status ${orderRes.status}`);
+        if (orderRes.status === 401) {
+          throw new Error("Sign in required before starting checkout.");
+        }
+        throw new Error(
+          (errData as { error?: string }).error ||
+            `Order creation failed with status ${orderRes.status}`,
+        );
       }
 
       const orderData = await orderRes.json();
@@ -110,7 +119,9 @@ export function useRazorpayCheckout() {
 
       const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY_ID;
       if (!razorpayKey) {
-        throw new Error("Razorpay Client Key (VITE_RAZORPAY_KEY_ID) is not configured in environment.");
+        throw new Error(
+          "Razorpay Client Key (VITE_RAZORPAY_KEY_ID) is not configured in environment.",
+        );
       }
 
       // 3. Configure Razorpay Standard Checkout modal
@@ -146,11 +157,10 @@ export function useRazorpayCheckout() {
           razorpay_signature: string;
         }) => {
           try {
-            // 4. Verify payment signature on backend
+            // 4. Verify payment signature on backend (Bearer required)
             toast.loading("Verifying payment authenticity...");
-            const verifyRes = await fetch("/api/verify-payment", {
+            const verifyRes = await authenticatedFetch("/api/verify-payment", {
               method: "POST",
-              headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
@@ -163,8 +173,10 @@ export function useRazorpayCheckout() {
 
             const verifyData = await verifyRes.json().catch(() => ({}));
 
-            if (!verifyRes.ok || !verifyData.success) {
-              throw new Error(verifyData.error || "Payment verification failed.");
+            if (!verifyRes.ok || !(verifyData as { success?: boolean }).success) {
+              throw new Error(
+                (verifyData as { error?: string }).error || "Payment verification failed.",
+              );
             }
 
             toast.dismiss();
@@ -175,7 +187,8 @@ export function useRazorpayCheckout() {
             }
           } catch (verificationError: any) {
             toast.dismiss();
-            const msg = verificationError.message || "Cryptographic payment verification failed.";
+            const msg =
+              verificationError.message || "Cryptographic payment verification failed.";
             setError(msg);
             toast.error(msg);
             if (options.onFailure) {
@@ -189,7 +202,6 @@ export function useRazorpayCheckout() {
 
       const rzpInstance = new window.Razorpay(rzpOptions);
 
-      // Handle failed payment event
       rzpInstance.on("payment.failed", (failedResponse: any) => {
         setLoading(false);
         const failureMsg =
