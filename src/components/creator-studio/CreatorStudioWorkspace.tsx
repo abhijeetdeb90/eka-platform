@@ -50,6 +50,7 @@ export function CreatorStudioWorkspace({ inAppLayout = false }: CreatorStudioWor
   const [dateRange, setDateRange] = useState<DateRangeFilter>("all");
   const [posts, setPosts] = useState<CreatorPostItem[]>([]);
   const [loadingPosts, setLoadingPosts] = useState(true);
+  const [viewTrackingAvailable, setViewTrackingAvailable] = useState(false);
   const [followerCount, setFollowerCount] = useState<number>(0);
   const [walletBalancePaise, setWalletBalancePaise] = useState<number>(0);
 
@@ -82,20 +83,26 @@ export function CreatorStudioWorkspace({ inAppLayout = false }: CreatorStudioWor
 
       const postIds = (rawPosts || []).map((p) => p.id);
 
-      // B. Fetch genuine views from post_views table
+      // B. Count views only when the post-view event source can be queried.
+      // A missing/unavailable table is not the same as zero views.
       const viewMap: Record<string, number> = {};
+      let hasPostViewTracking = false;
       if (postIds.length > 0) {
         const { data: viewsData, error: viewsError } = await supabase
           .from("post_views")
           .select("post_id, created_at")
           .in("post_id", postIds);
 
-        if (!viewsError && viewsData) {
+        if (viewsError) {
+          console.warn("Post view tracking is unavailable; view metrics will be omitted.");
+        } else if (viewsData) {
+          hasPostViewTracking = true;
           viewsData.forEach((v) => {
             viewMap[v.post_id] = (viewMap[v.post_id] || 0) + 1;
           });
         }
       }
+      setViewTrackingAvailable(hasPostViewTracking);
 
       // C. Fetch genuine saves from post_saves table
       const saveMap: Record<string, number> = {};
@@ -126,7 +133,7 @@ export function CreatorStudioWorkspace({ inAppLayout = false }: CreatorStudioWor
         updated_at: p.updated_at,
         like_count: p.like_count || 0,
         comment_count: p.comment_count || 0,
-        views_count: viewMap[p.id] || 0,
+        views_count: hasPostViewTracking ? (viewMap[p.id] || 0) : null,
         saves_count: saveMap[p.id] || 0,
       }));
 
@@ -187,8 +194,9 @@ export function CreatorStudioWorkspace({ inAppLayout = false }: CreatorStudioWor
 
   // Totals for metrics
   const totalViews = useMemo(() => {
+    if (!viewTrackingAvailable) return null;
     return filteredPosts.reduce((acc, p) => acc + (p.views_count || 0), 0);
-  }, [filteredPosts]);
+  }, [filteredPosts, viewTrackingAvailable]);
 
   const totalLikes = useMemo(() => {
     return filteredPosts.reduce((acc, p) => acc + (p.like_count || 0), 0);

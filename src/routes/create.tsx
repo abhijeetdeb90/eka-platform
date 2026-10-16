@@ -53,7 +53,7 @@ export const Route = createFileRoute("/create")({
   component: CreateArchivePage,
 });
 
-type ContributionKind = "post" | "carousel" | "video";
+type ContributionKind = "post" | "photo" | "video";
 
 function CreateArchivePage() {
   const navigate = useNavigate();
@@ -87,7 +87,7 @@ function CreateArchivePage() {
       return;
     }
 
-    if ((activeKind === "carousel" || activeKind === "video") && !file) {
+    if ((activeKind === "photo" || activeKind === "video") && !file) {
       toast.error(`Please provide a media file for your ${activeKind}`);
       return;
     }
@@ -249,10 +249,10 @@ function CreateArchivePage() {
               desc: "Share a cultural reflection",
             },
             {
-              id: "carousel" as const,
-              label: "Carousel",
+              id: "photo" as const,
+              label: "Photo",
               icon: ImageIcon,
-              desc: "Share multiple images",
+              desc: "Share one image",
             },
             {
               id: "video" as const,

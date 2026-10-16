@@ -25,7 +25,7 @@ export function useEkaPlusAccess() {
     staleTime: 30_000,
     queryFn: async (): Promise<EkaPlusAccessState> => {
       // Check dev preview tier (e.g. from tests or dev switcher)
-      if (typeof window !== "undefined") {
+      if (import.meta.env.DEV && typeof window !== "undefined") {
         const previewTier = localStorage.getItem("eka_user_tier_preview");
         if (previewTier === "free") {
           return {
@@ -44,6 +44,7 @@ export function useEkaPlusAccess() {
             isLoading: false,
             userId: "preview-plus-user",
             subscription: {
+              id: "preview-plus-subscription",
               plan: previewTier,
               status: "active",
               started_at: new Date().toISOString(),

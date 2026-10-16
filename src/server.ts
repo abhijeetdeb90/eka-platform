@@ -47,7 +47,7 @@ function isMoneyApiPath(pathname: string): boolean {
 
 /** GET /api/subscriptions (plan listing) stays public. */
 function isPublicMoneyGet(pathname: string, method: string): boolean {
-  return method === "GET" && (pathname === "/api/subscriptions" || pathname.startsWith("/api/subscriptions/"));
+  return method === "GET" && pathname === "/api/subscriptions";
 }
 
 function moneyRouteUnauthorized(requestId: string): Response {
@@ -123,6 +123,29 @@ export default {
       const url = new URL(request.url);
       const pathname = url.pathname;
       const method = request.method.toUpperCase();
+
+      // Fail closed: Vercel previews must never render app code or call APIs against production Supabase.
+      // The connected Vercel environment editor is currently unavailable, so allow only the known staging project.
+      const previewProjectId = process.env.SUPABASE_PROJECT_ID || process.env.VITE_SUPABASE_PROJECT_ID;
+      const serverSupabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "";
+      const clientSupabaseUrl = process.env.VITE_SUPABASE_URL || "";
+      const stagingProjectId = "xjotvcigjetmlpjcjytp";
+      const isIsolatedStagingPreview =
+        previewProjectId === stagingProjectId &&
+        serverSupabaseUrl.includes(`${stagingProjectId}.supabase.co`) &&
+        clientSupabaseUrl.includes(`${stagingProjectId}.supabase.co`);
+      if (process.env.VERCEL_ENV === "preview" && !isIsolatedStagingPreview) {
+        const headers = new Headers(getStandardSecurityHeaders());
+        headers.set("content-type", pathname.startsWith("/api/") ? "application/json" : "text/plain; charset=utf-8");
+        headers.set("cache-control", "no-store");
+        headers.set("x-eka-preview-safety", "blocked");
+        return new Response(
+          pathname.startsWith("/api/")
+            ? JSON.stringify({ error: "Preview is blocked until both server and client Supabase settings point to the staging project." })
+            : "EKA preview is paused until the Vercel preview environment is isolated to staging.",
+          { status: 503, headers },
+        );
+      }
 
       // 0. Emergency money-route auth gate (runs before TanStack route handlers).
       // Confirmed: route-file HARD-CLOSE was not what production executed for /api/payouts.

@@ -1,177 +1,200 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { createClient } from "@supabase/supabase-js";
+import Razorpay from "razorpay";
 import crypto from "node:crypto";
-import { requireServerAuth, resolveActingUserId } from "@/lib/auth/access-control";
+import { PLUS_ANNUAL_PAISE, PLUS_PRICE_PAISE } from "@/lib/constants/economics";
 
-/**
- * Backend Endpoint: Verify Razorpay Payment Signature
- * POST /api/verify-payment
- *
- * Requires authenticated Bearer token. Subscription activation is bound to
- * the authenticated user (admins may activate for another user_id).
- *
- * Algorithm: HMAC-SHA256(order_id + "|" + payment_id, KEY_SECRET)
- * Compares generated signature with razorpay_signature using timing-safe comparison.
- */
+const json = (body: unknown, status = 200) =>
+  new Response(JSON.stringify(body), {
+    status,
+    headers: { "Content-Type": "application/json", "Cache-Control": "no-store" },
+  });
+
 export const Route = createFileRoute("/api/verify-payment")({
   server: {
     handlers: {
       POST: async ({ request }) => {
         try {
-          const auth = await requireServerAuth(request);
-          if (!auth.ok) {
-            return new Response(
-              JSON.stringify({ success: false, error: auth.error }),
-              { status: auth.status, headers: { "Content-Type": "application/json" } },
-            );
-          }
+          const authHeader = request.headers.get("authorization") ?? "";
+          if (!authHeader.startsWith("Bearer ")) return json({ success: false, error: "Authentication required." }, 401);
 
+          const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+          const publishableKey =
+            process.env.SUPABASE_PUBLISHABLE_KEY ||
+            process.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
+            process.env.SUPABASE_ANON_KEY ||
+            process.env.VITE_SUPABASE_ANON_KEY;
+          if (!supabaseUrl || !publishableKey) return json({ success: false, error: "Supabase server auth is not configured." }, 503);
+
+          const token = authHeader.slice("Bearer ".length).trim();
+          const authClient = createClient(supabaseUrl, publishableKey, { auth: { persistSession: false } });
+          const { data: auth, error: authError } = await authClient.auth.getUser(token);
+          if (authError || !auth.user) return json({ success: false, error: "Your session is invalid or expired." }, 401);
+
+          const keyId = process.env.RAZORPAY_KEY_ID || process.env.VITE_RAZORPAY_KEY_ID;
           const keySecret = process.env.RAZORPAY_KEY_SECRET;
+          if (!keyId || !keySecret) return json({ success: false, error: "Razorpay credentials are not configured." }, 503);
 
-          if (!keySecret) {
-            return new Response(
-              JSON.stringify({
-                success: false,
-                error: "RAZORPAY_KEY_SECRET is not configured on the server.",
-              }),
-              { status: 500, headers: { "Content-Type": "application/json" } },
-            );
-          }
-
-          let body: {
-            razorpay_order_id?: string;
-            razorpay_payment_id?: string;
-            razorpay_signature?: string;
-            order_id?: string;
-            payment_id?: string;
-            user_id?: string;
-            plan_id?: string;
-            amount_minor?: number;
-          };
-
+          let body: { razorpay_order_id?: string; razorpay_payment_id?: string; razorpay_signature?: string };
           try {
             body = (await request.json()) as typeof body;
           } catch {
-            return new Response(
-              JSON.stringify({
-                success: false,
-                error: "Invalid JSON in request body.",
-              }),
-              { status: 400, headers: { "Content-Type": "application/json" } },
-            );
+            return json({ success: false, error: "Invalid JSON request body." }, 400);
           }
 
-          const orderId = body.razorpay_order_id || body.order_id;
-          const paymentId = body.razorpay_payment_id || body.payment_id;
+          const orderId = body.razorpay_order_id;
+          const paymentId = body.razorpay_payment_id;
           const signature = body.razorpay_signature;
-
           if (!orderId || !paymentId || !signature) {
-            const missing: string[] = [];
-            if (!orderId) missing.push("razorpay_order_id");
-            if (!paymentId) missing.push("razorpay_payment_id");
-            if (!signature) missing.push("razorpay_signature");
-
-            return new Response(
-              JSON.stringify({
-                success: false,
-                error: `Missing required payment verification fields: ${missing.join(", ")}`,
-              }),
-              { status: 400, headers: { "Content-Type": "application/json" } },
-            );
+            return json({ success: false, error: "Missing required Razorpay verification fields." }, 400);
           }
 
-          const payload = `${orderId}|${paymentId}`;
-          const generatedSignature = crypto
+          const expectedSignature = crypto
             .createHmac("sha256", keySecret)
-            .update(payload)
+            .update(`${orderId}|${paymentId}`)
             .digest("hex");
-
-          const a = Buffer.from(generatedSignature, "utf-8");
-          const b = Buffer.from(signature, "utf-8");
-          const isMatch = a.length === b.length && crypto.timingSafeEqual(a, b);
-
-          if (!isMatch) {
-            console.warn("[Razorpay Verification Failed]: Signature mismatch for order", orderId);
-            return new Response(
-              JSON.stringify({
-                success: false,
-                error: "Payment signature verification failed. Signature mismatch.",
-              }),
-              { status: 400, headers: { "Content-Type": "application/json" } },
-            );
+          const a = Buffer.from(expectedSignature, "utf8");
+          const b = Buffer.from(signature, "utf8");
+          if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) {
+            return json({ success: false, error: "Payment signature verification failed." }, 400);
           }
 
-          const target = resolveActingUserId(auth.userId, auth.roles, body.user_id);
-          if (!target.ok) {
-            return new Response(
-              JSON.stringify({ success: false, error: target.error }),
-              { status: target.status, headers: { "Content-Type": "application/json" } },
-            );
+          const razorpay = new Razorpay({ key_id: keyId, key_secret: keySecret });
+          const [order, payment] = await Promise.all([
+            razorpay.orders.fetch(orderId),
+            razorpay.payments.fetch(paymentId),
+          ]);
+          const planValue = order.notes?.plan;
+          if (
+            typeof planValue !== "string" ||
+            !["annual", "plus", "monthly", "creator"].includes(planValue)
+          ) {
+            return json({ success: false, error: "Order has an unsupported membership plan." }, 400);
+          }
+          const plan = planValue as "annual" | "plus" | "monthly" | "creator";
+          const expectedAmount =
+            plan === "annual" ? PLUS_ANNUAL_PAISE : PLUS_PRICE_PAISE;
+          if (order.notes?.user_id !== auth.user.id) return json({ success: false, error: "This order does not belong to the signed-in account." }, 403);
+          if (payment.order_id !== orderId || payment.amount !== expectedAmount || order.amount !== expectedAmount || payment.currency !== "INR") {
+            return json({ success: false, error: "The payment does not match the expected order amount or currency." }, 400);
+          }
+          if (payment.status !== "captured") {
+            return json({ success: false, error: "Payment is not captured yet. Membership has not been activated." }, 409);
           }
 
-          const planId = body.plan_id || "plus";
-          const amountMinor = body.amount_minor || 49900;
-
-          try {
-            const supabaseUrl =
-              process.env.SUPABASE_URL ||
-              process.env.VITE_SUPABASE_URL ||
-              "https://kbiutqzhcbyuseygcspe.supabase.co";
-            const supabaseKey =
-              process.env.SUPABASE_SERVICE_ROLE_KEY ||
-              process.env.SUPABASE_SECRET_KEY ||
-              process.env.SUPABASE_ANON_KEY ||
-              process.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
-              "";
-
-            if (!supabaseKey) {
-              console.warn("[verify-payment] No Supabase key available for persistence");
-            } else {
-              const renewalDate = new Date(Date.now() + 30 * 86400 * 1000).toISOString();
-              await fetch(`${supabaseUrl}/rest/v1/subscriptions`, {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  apikey: supabaseKey,
-                  Authorization: `Bearer ${supabaseKey}`,
-                  Prefer: "resolution=merge-duplicates",
-                },
-                body: JSON.stringify({
-                  user_id: target.userId,
-                  plan: planId,
-                  status: "active",
-                  price_cents: amountMinor,
-                  currency: "INR",
-                  razorpay_payment_id: paymentId,
-                  razorpay_order_id: orderId,
-                  current_period_end: renewalDate,
-                  cancel_at_period_end: false,
-                  updated_at: new Date().toISOString(),
-                }),
-              });
-            }
-          } catch (persistErr) {
-            console.warn("[verify-payment] Database persistence notice:", persistErr);
+          const serviceRoleKey = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+          if (!serviceRoleKey) {
+            console.error("[Razorpay verify-payment] SUPABASE_SECRET_KEY / SUPABASE_SERVICE_ROLE_KEY is not configured.");
+            return json({ success: false, error: "Payment was verified, but membership activation is not configured. Please contact support." }, 503);
           }
 
-          return new Response(
-            JSON.stringify({
-              success: true,
-              message: "Payment verified successfully.",
-              order_id: orderId,
-              payment_id: paymentId,
-              user_id: target.userId,
-            }),
-            { status: 200, headers: { "Content-Type": "application/json" } },
-          );
+          // Use the server-only admin client, which handles both legacy JWT service-role keys
+          // and current opaque Supabase secret keys without treating either as a browser token.
+          const { supabaseAdmin: admin } = await import("@/integrations/supabase/client.server");
+
+          // Tie provider payment to an order created by EKA for this authenticated user.
+          const { data: localOrder, error: localOrderError } = await admin
+            .from("orders")
+            .select("order_id, user_id, amount_minor, currency, status, purpose, notes")
+            .eq("order_id", orderId)
+            .maybeSingle();
+          if (localOrderError || !localOrder) {
+            console.error("[Razorpay verify-payment] Local order lookup failed:", localOrderError?.message || "Order not found");
+            return json({ success: false, error: "This checkout order is not registered with EKA." }, 409);
+          }
+          const localNotes = (localOrder.notes ?? {}) as Record<string, unknown>;
+          if (
+            localOrder.user_id !== auth.user.id ||
+            localOrder.purpose !== "subscription" ||
+            localOrder.amount_minor !== expectedAmount ||
+            localOrder.currency !== "INR" ||
+            localNotes.plan !== plan ||
+            localOrder.status === "EXPIRED"
+          ) {
+            return json({ success: false, error: "The EKA order does not match this account or membership plan." }, 403);
+          }
+
+          const now = new Date();
+          const periodDays = plan === "annual" ? 365 : 30;
+          const proposedPeriodEnd = new Date(now.getTime() + periodDays * 86_400_000).toISOString();
+          const { data: existingSubscription, error: existingSubscriptionError } = await admin
+            .from("subscriptions")
+            .select("provider_reference, current_period_end, started_at, status")
+            .eq("user_id", auth.user.id)
+            .eq("plan", plan)
+            .maybeSingle();
+          if (existingSubscriptionError) {
+            console.error("[Razorpay verify-payment] Existing subscription lookup failed:", existingSubscriptionError.message);
+            return json({ success: false, error: "Could not verify the current membership state." }, 500);
+          }
+          const sameVerifiedOrder =
+            existingSubscription?.provider_reference === orderId &&
+            existingSubscription?.status === "active";
+          const currentPeriodEnd =
+            sameVerifiedOrder && existingSubscription?.current_period_end
+              ? existingSubscription.current_period_end
+              : proposedPeriodEnd;
+          const startedAt =
+            sameVerifiedOrder && existingSubscription?.started_at
+              ? existingSubscription.started_at
+              : now.toISOString();
+
+          const paymentWrite = await admin.from("payments").upsert({
+            payment_id: paymentId,
+            order_id: orderId,
+            user_id: auth.user.id,
+            amount_minor: payment.amount,
+            currency: payment.currency,
+            status: "CAPTURED",
+            method: ["card", "netbanking", "wallet", "emi", "upi"].includes(payment.method || "") ? payment.method : "unknown",
+            razorpay_payment_id: paymentId,
+            razorpay_order_id: orderId,
+            razorpay_signature: signature,
+            captured_at: now.toISOString(),
+            metadata: { plan },
+            updated_at: now.toISOString(),
+          }, { onConflict: "payment_id" });
+          if (paymentWrite.error) {
+            console.error("[Razorpay verify-payment] Payment persistence failed:", paymentWrite.error.message);
+            return json({ success: false, error: "Payment was captured, but recording it failed. Please retry verification." }, 500);
+          }
+
+          const subscriptionWrite = await admin.from("subscriptions").upsert({
+            user_id: auth.user.id,
+            plan,
+            status: "active",
+            provider: "razorpay",
+            price_cents: payment.amount,
+            currency: "INR",
+            razorpay_payment_id: paymentId,
+            current_period_end: currentPeriodEnd,
+            expires_at: currentPeriodEnd,
+            provider_reference: orderId,
+            started_at: startedAt,
+            cancel_at_period_end: false,
+            canceled_at: null,
+            paused_until: null,
+            updated_at: now.toISOString(),
+          }, { onConflict: "user_id,plan" });
+          if (subscriptionWrite.error) {
+            console.error("[Razorpay verify-payment] Subscription persistence failed:", subscriptionWrite.error.message);
+            return json({ success: false, error: "Payment was captured, but membership activation failed. Please contact support." }, 500);
+          }
+
+          const orderUpdate = await admin
+            .from("orders")
+            .update({ status: "PAID", updated_at: now.toISOString() })
+            .eq("order_id", orderId)
+            .eq("user_id", auth.user.id);
+          if (orderUpdate.error) {
+            console.error("[Razorpay verify-payment] Local order completion failed:", orderUpdate.error.message);
+            return json({ success: false, error: "Membership was recorded, but the checkout receipt could not be finalized. Please retry verification." }, 500);
+          }
+
+          return json({ success: true, message: "Payment verified and membership activated.", order_id: orderId, payment_id: paymentId });
         } catch (error: any) {
-          console.error("[Razorpay verify-payment error]:", error);
-          return new Response(
-            JSON.stringify({
-              success: false,
-              error: error?.message || "Failed to verify payment.",
-            }),
-            { status: 500, headers: { "Content-Type": "application/json" } },
-          );
+          console.error("[Razorpay verify-payment error]:", error?.message || "Unknown error");
+          return json({ success: false, error: "Failed to verify payment with the payment provider." }, 500);
         }
       },
     },

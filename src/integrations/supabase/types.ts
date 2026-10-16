@@ -2923,6 +2923,126 @@ export type Database = {
           },
         ];
       };
+      orders: {
+        Row: {
+          amount_minor: number;
+          created_at: string;
+          currency: string;
+          customer_id: string | null;
+          id: string;
+          metadata: Json;
+          notes: Json;
+          order_id: string;
+          purpose: string;
+          razorpay_order_id: string | null;
+          receipt: string;
+          status: string;
+          updated_at: string;
+          user_id: string | null;
+        };
+        Insert: {
+          amount_minor: number;
+          created_at?: string;
+          currency?: string;
+          customer_id?: string | null;
+          id?: string;
+          metadata?: Json;
+          notes?: Json;
+          order_id: string;
+          purpose?: string;
+          razorpay_order_id?: string | null;
+          receipt: string;
+          status?: string;
+          updated_at?: string;
+          user_id?: string | null;
+        };
+        Update: {
+          amount_minor?: number;
+          created_at?: string;
+          currency?: string;
+          customer_id?: string | null;
+          id?: string;
+          metadata?: Json;
+          notes?: Json;
+          order_id?: string;
+          purpose?: string;
+          razorpay_order_id?: string | null;
+          receipt?: string;
+          status?: string;
+          updated_at?: string;
+          user_id?: string | null;
+        };
+        Relationships: [];
+      };
+      payments: {
+        Row: {
+          amount_minor: number;
+          captured_at: string | null;
+          created_at: string;
+          currency: string;
+          customer_id: string | null;
+          error_code: string | null;
+          error_description: string | null;
+          fee_minor: number;
+          id: string;
+          metadata: Json;
+          method: string;
+          order_id: string | null;
+          payment_id: string;
+          razorpay_order_id: string | null;
+          razorpay_payment_id: string | null;
+          razorpay_signature: string | null;
+          status: string;
+          tax_minor: number;
+          updated_at: string;
+          user_id: string | null;
+        };
+        Insert: {
+          amount_minor: number;
+          captured_at?: string | null;
+          created_at?: string;
+          currency?: string;
+          customer_id?: string | null;
+          error_code?: string | null;
+          error_description?: string | null;
+          fee_minor?: number;
+          id?: string;
+          metadata?: Json;
+          method?: string;
+          order_id?: string | null;
+          payment_id: string;
+          razorpay_order_id?: string | null;
+          razorpay_payment_id?: string | null;
+          razorpay_signature?: string | null;
+          status?: string;
+          tax_minor?: number;
+          updated_at?: string;
+          user_id?: string | null;
+        };
+        Update: {
+          amount_minor?: number;
+          captured_at?: string | null;
+          created_at?: string;
+          currency?: string;
+          customer_id?: string | null;
+          error_code?: string | null;
+          error_description?: string | null;
+          fee_minor?: number;
+          id?: string;
+          metadata?: Json;
+          method?: string;
+          order_id?: string | null;
+          payment_id?: string;
+          razorpay_order_id?: string | null;
+          razorpay_payment_id?: string | null;
+          razorpay_signature?: string | null;
+          status?: string;
+          tax_minor?: number;
+          updated_at?: string;
+          user_id?: string | null;
+        };
+        Relationships: [];
+      };
       posts: {
         Row: {
           author_id: string;
@@ -2941,6 +3061,7 @@ export type Database = {
           tradition: string | null;
           type: string;
           updated_at: string;
+          visibility: string;
         };
         Insert: {
           author_id: string;
@@ -2959,6 +3080,7 @@ export type Database = {
           tradition?: string | null;
           type?: string;
           updated_at?: string;
+          visibility?: string;
         };
         Update: {
           author_id?: string;
@@ -2977,6 +3099,7 @@ export type Database = {
           tradition?: string | null;
           type?: string;
           updated_at?: string;
+          visibility?: string;
         };
         Relationships: [
           {
@@ -3853,13 +3976,19 @@ export type Database = {
       };
       subscriptions: {
         Row: {
+          amount_minor: number | null;
           cancel_at_period_end: boolean;
           canceled_at: string | null;
+          cancelled_at: string | null;
           created_at: string;
           currency: string;
           current_period_end: string | null;
+          customer_id: string | null;
           expires_at: string | null;
+          failure_count: number | null;
           id: string;
+          latest_invoice_id: string | null;
+          paused_at: string | null;
           paused_until: string | null;
           plan: string;
           price_cents: number;
@@ -3868,19 +3997,34 @@ export type Database = {
           provider_price_id: string | null;
           provider_reference: string | null;
           provider_subscription_id: string | null;
+          razorpay_customer_id: string | null;
+          razorpay_payment_id: string | null;
+          razorpay_plan_id: string | null;
+          razorpay_subscription_id: string | null;
+          renewal_date: string | null;
+          resumed_at: string | null;
           retention_offer_applied: boolean;
+          short_url: string | null;
+          start_date: string | null;
           started_at: string;
           status: string;
+          updated_at: string;
           user_id: string;
         };
         Insert: {
+          amount_minor?: number | null;
           cancel_at_period_end?: boolean;
           canceled_at?: string | null;
+          cancelled_at?: string | null;
           created_at?: string;
           currency?: string;
           current_period_end?: string | null;
+          customer_id?: string | null;
           expires_at?: string | null;
+          failure_count?: number | null;
           id?: string;
+          latest_invoice_id?: string | null;
+          paused_at?: string | null;
           paused_until?: string | null;
           plan?: string;
           price_cents?: number;
@@ -3889,19 +4033,34 @@ export type Database = {
           provider_price_id?: string | null;
           provider_reference?: string | null;
           provider_subscription_id?: string | null;
+          razorpay_customer_id?: string | null;
+          razorpay_payment_id?: string | null;
+          razorpay_plan_id?: string | null;
+          razorpay_subscription_id?: string | null;
+          renewal_date?: string | null;
+          resumed_at?: string | null;
           retention_offer_applied?: boolean;
+          short_url?: string | null;
+          start_date?: string | null;
           started_at?: string;
           status?: string;
+          updated_at?: string;
           user_id: string;
         };
         Update: {
+          amount_minor?: number | null;
           cancel_at_period_end?: boolean;
           canceled_at?: string | null;
+          cancelled_at?: string | null;
           created_at?: string;
           currency?: string;
           current_period_end?: string | null;
+          customer_id?: string | null;
           expires_at?: string | null;
+          failure_count?: number | null;
           id?: string;
+          latest_invoice_id?: string | null;
+          paused_at?: string | null;
           paused_until?: string | null;
           plan?: string;
           price_cents?: number;
@@ -3910,9 +4069,18 @@ export type Database = {
           provider_price_id?: string | null;
           provider_reference?: string | null;
           provider_subscription_id?: string | null;
+          razorpay_customer_id?: string | null;
+          razorpay_payment_id?: string | null;
+          razorpay_plan_id?: string | null;
+          razorpay_subscription_id?: string | null;
+          renewal_date?: string | null;
+          resumed_at?: string | null;
           retention_offer_applied?: boolean;
+          short_url?: string | null;
+          start_date?: string | null;
           started_at?: string;
           status?: string;
+          updated_at?: string;
           user_id?: string;
         };
         Relationships: [];

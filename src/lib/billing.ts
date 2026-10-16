@@ -53,6 +53,7 @@ export function formatINR(cents: number) {
 }
 
 export type SubscriptionRow = {
+  id: string;
   plan: string;
   status: string;
   started_at: string | null;
@@ -64,6 +65,10 @@ export type SubscriptionRow = {
   retention_offer_applied: boolean | null;
   price_cents: number | null;
   currency: string | null;
+  provider?: string | null;
+  provider_reference?: string | null;
+  razorpay_payment_id?: string | null;
+  razorpay_subscription_id?: string | null;
 };
 
 export type Entitlement = {
@@ -88,10 +93,35 @@ export function entitlementFor(sub: SubscriptionRow | null | undefined): Entitle
       message: "No membership yet.",
     };
   }
+  const providerVerified =
+    sub.provider === "razorpay" &&
+    Boolean(sub.razorpay_payment_id || sub.razorpay_subscription_id || sub.provider_reference);
+  const serverTrialVerified = sub.status === "trialing" && sub.provider === "internal_trial";
+  if (!providerVerified && !serverTrialVerified) {
+    return {
+      active: false,
+      state: "none",
+      renewsOn: null,
+      daysToRenewal: null,
+      message: "Membership could not be verified by the payment provider. Complete checkout to activate EKA+.",
+    };
+  }
+
   const now = Date.now();
   const periodEnd = sub.current_period_end ? new Date(sub.current_period_end) : null;
   const pausedUntil = sub.paused_until ? new Date(sub.paused_until) : null;
   const days = periodEnd ? Math.ceil((periodEnd.getTime() - now) / 86_400_000) : null;
+
+  // Missing or expired validity windows never confer access, even when a stale row says "active".
+  if (!periodEnd || !Number.isFinite(periodEnd.getTime()) || periodEnd.getTime() < now) {
+    return {
+      active: false,
+      state: sub.status === "canceled" ? "canceled" : "none",
+      renewsOn: null,
+      daysToRenewal: null,
+      message: "Membership has expired or has no verifiable end date.",
+    };
+  }
 
   if (pausedUntil && pausedUntil.getTime() > now) {
     return {
@@ -104,11 +134,11 @@ export function entitlementFor(sub: SubscriptionRow | null | undefined): Entitle
   }
   if (sub.status === "past_due") {
     return {
-      active: true,
+      active: false,
       state: "past_due",
       renewsOn: periodEnd,
       daysToRenewal: days,
-      message: "A payment did not go through. Access stays on while we retry.",
+      message: "A payment needs attention. Paid access is paused until payment is verified.",
     };
   }
   if (sub.status === "canceled" && (!periodEnd || periodEnd.getTime() < now)) {
@@ -191,91 +221,57 @@ export async function fetchSubscription(): Promise<SubscriptionRow | null> {
   const { data } = await supabase
     .from("subscriptions")
     .select(
-      "plan, status, started_at, expires_at, cancel_at_period_end, current_period_end, canceled_at, paused_until, retention_offer_applied, price_cents, currency",
+      "id, plan, status, started_at, expires_at, cancel_at_period_end, current_period_end, canceled_at, paused_until, retention_offer_applied, price_cents, currency, provider, provider_reference, razorpay_payment_id, razorpay_subscription_id",
     )
     .eq("user_id", uid)
+    .order("updated_at", { ascending: false })
+    .limit(1)
     .maybeSingle();
   return (data as SubscriptionRow) ?? null;
 }
 
-function addDays(days: number) {
-  return new Date(Date.now() + days * 86_400_000).toISOString();
+async function mutateMembership(action: string, extra: Record<string, unknown> = {}) {
+  const { data, error } = await supabase.auth.getSession();
+  const token = data.session?.access_token;
+  if (error || !token) throw new Error("Please sign in again to manage your membership.");
+
+  const response = await fetch("/api/subscriptions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ action, ...extra }),
+  });
+  const result = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(result.error || "Membership update failed.");
+  return result;
 }
 
-/**
- * Local lifecycle write. When a billing provider is connected these same rows
- * are written by the webhook instead; the shape stays identical either way.
- */
-export async function setPlan(planId: PlanId) {
-  const uid = await currentUserId();
-  if (!uid) return;
-  const plan = planFor(planId);
-  await supabase.from("subscriptions").upsert(
-    {
-      user_id: uid,
-      plan: planId,
-      status: "trialing",
-      price_cents: plan.priceCents,
-      currency: plan.currency,
-      cancel_at_period_end: false,
-      canceled_at: null,
-      paused_until: null,
-      current_period_end: addDays(plan.periodDays),
-    },
-    { onConflict: "user_id,plan" },
-  );
+/** Membership activation is server-only and follows server-verified payment confirmation. */
+export async function setPlan(_planId: PlanId): Promise<void> {
+  throw new Error("Memberships can only be activated after server-verified payment.");
 }
 
 export async function scheduleCancellation() {
-  const uid = await currentUserId();
-  if (!uid) return;
-  await supabase
-    .from("subscriptions")
-    .update({ cancel_at_period_end: true, canceled_at: new Date().toISOString() })
-    .eq("user_id", uid);
+  const subscription = await fetchSubscription();
+  if (!subscription) throw new Error("No subscription was found for this account.");
+  return mutateMembership("cancel_subscription", {
+    subscription_id: subscription.id,
+    cancel_at_period_end: true,
+  });
 }
 
 export async function resumeMembership() {
-  const uid = await currentUserId();
-  if (!uid) return;
-  await supabase
-    .from("subscriptions")
-    .update({
-      cancel_at_period_end: false,
-      canceled_at: null,
-      paused_until: null,
-      status: "active",
-    })
-    .eq("user_id", uid);
+  const subscription = await fetchSubscription();
+  if (!subscription) throw new Error("No subscription was found for this account.");
+  return mutateMembership("resume_subscription", { subscription_id: subscription.id });
 }
 
-export async function pauseMembership(days: number) {
-  const uid = await currentUserId();
-  if (!uid) return;
-  await supabase
-    .from("subscriptions")
-    .update({
-      paused_until: addDays(days),
-      cancel_at_period_end: false,
-      canceled_at: null,
-      current_period_end: addDays(days + 30),
-      retention_offer_applied: true,
-    })
-    .eq("user_id", uid);
+export async function pauseMembership(_days: number): Promise<void> {
+  throw new Error("Subscription pause is unavailable until the server supports a defined pause duration.");
 }
 
-export async function applyDiscount(percent: number) {
-  const uid = await currentUserId();
-  if (!uid) return;
-  const sub = await fetchSubscription();
-  const base = sub?.price_cents ?? PLANS[0].priceCents;
-  await supabase
-    .from("subscriptions")
-    .update({
-      price_cents: Math.round(base * (1 - percent / 100)),
-      cancel_at_period_end: false,
-      canceled_at: null,
-      retention_offer_applied: true,
-    })
-    .eq("user_id", uid);
+export async function applyDiscount(_percent: number): Promise<void> {
+  throw new Error("Membership discounts require a server-authorized offer and cannot be applied from the client.");
 }
