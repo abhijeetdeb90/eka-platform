@@ -112,6 +112,17 @@ export function entitlementFor(sub: SubscriptionRow | null | undefined): Entitle
   const pausedUntil = sub.paused_until ? new Date(sub.paused_until) : null;
   const days = periodEnd ? Math.ceil((periodEnd.getTime() - now) / 86_400_000) : null;
 
+  // Missing or expired validity windows never confer access, even when a stale row says "active".
+  if (!periodEnd || !Number.isFinite(periodEnd.getTime()) || periodEnd.getTime() < now) {
+    return {
+      active: false,
+      state: sub.status === "canceled" ? "canceled" : "none",
+      renewsOn: null,
+      daysToRenewal: null,
+      message: "Membership has expired or has no verifiable end date.",
+    };
+  }
+
   if (pausedUntil && pausedUntil.getTime() > now) {
     return {
       active: false,
@@ -123,11 +134,11 @@ export function entitlementFor(sub: SubscriptionRow | null | undefined): Entitle
   }
   if (sub.status === "past_due") {
     return {
-      active: true,
+      active: false,
       state: "past_due",
       renewsOn: periodEnd,
       daysToRenewal: days,
-      message: "A payment did not go through. Access stays on while we retry.",
+      message: "A payment needs attention. Paid access is paused until payment is verified.",
     };
   }
   if (sub.status === "canceled" && (!periodEnd || periodEnd.getTime() < now)) {

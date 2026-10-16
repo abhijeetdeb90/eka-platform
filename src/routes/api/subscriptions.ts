@@ -167,19 +167,104 @@ export const Route = createFileRoute("/api/subscriptions")({
 
               if (action === "cancel_subscription") {
                 const cancelAtPeriodEnd = (body["cancel_at_period_end"] as boolean) ?? true;
-                const subscription = await subscriptionsService.cancelSubscription(
-                  subId,
-                  cancelAtPeriodEnd,
-                );
-                return json({ success: true, subscription });
+                if (!cancelAtPeriodEnd) {
+                  return json({ error: "Immediate cancellation requires the configured payment-provider workflow; no change was made." }, 409);
+                }
+                const targetUserId = typeof body["user_id"] === "string" ? body["user_id"] : auth.userId;
+                try {
+                  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+                  const { data: current, error: readError } = await supabaseAdmin
+                    .from("subscriptions")
+                    .select("id, user_id, status, current_period_end, provider, razorpay_subscription_id, cancel_at_period_end")
+                    .eq("id", subId)
+                    .eq("user_id", targetUserId)
+                    .maybeSingle();
+                  if (readError) {
+                    console.error("[Membership cancellation] Subscription lookup failed:", readError.message);
+                    return json({ error: "Membership state could not be loaded." }, 503);
+                  }
+                  if (!current) return json({ error: "Subscription not found for this account." }, 404);
+                  if (current.user_id !== auth.userId && !auth.roles.some((role) => ["admin", "super_admin", "founder"].includes(role))) {
+                    return json({ error: "Forbidden: cannot modify another user's subscription" }, 403);
+                  }
+                  if (current.razorpay_subscription_id) {
+                    return json({ error: "This is a recurring provider subscription. Cancel it through the provider workflow; no change was made." }, 409);
+                  }
+                  if (!current.current_period_end || new Date(current.current_period_end).getTime() <= Date.now()) {
+                    return json({ error: "This membership has already expired." }, 409);
+                  }
+                  const { data: updated, error: updateError } = await supabaseAdmin
+                    .from("subscriptions")
+                    .update({
+                      cancel_at_period_end: true,
+                      canceled_at: new Date().toISOString(),
+                      updated_at: new Date().toISOString(),
+                    })
+                    .eq("id", subId)
+                    .eq("user_id", targetUserId)
+                    .select("*")
+                    .maybeSingle();
+                  if (updateError || !updated) {
+                    console.error("[Membership cancellation] Subscription update failed:", updateError?.message || "No row updated");
+                    return json({ error: "Membership cancellation could not be saved." }, 503);
+                  }
+                  return json({ success: true, subscription: updated });
+                } catch (error) {
+                  console.error("[Membership cancellation] Server persistence unavailable:", error instanceof Error ? error.message : "Unknown error");
+                  return json({ error: "Membership management is not configured on the server." }, 503);
+                }
               }
               if (action === "pause_subscription") {
                 const subscription = await subscriptionsService.pauseSubscription(subId);
                 return json({ success: true, subscription });
               }
               if (action === "resume_subscription") {
-                const subscription = await subscriptionsService.resumeSubscription(subId);
-                return json({ success: true, subscription });
+                const targetUserId = typeof body["user_id"] === "string" ? body["user_id"] : auth.userId;
+                try {
+                  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+                  const { data: current, error: readError } = await supabaseAdmin
+                    .from("subscriptions")
+                    .select("id, user_id, status, current_period_end, provider, razorpay_subscription_id, cancel_at_period_end")
+                    .eq("id", subId)
+                    .eq("user_id", targetUserId)
+                    .maybeSingle();
+                  if (readError) {
+                    console.error("[Membership resume] Subscription lookup failed:", readError.message);
+                    return json({ error: "Membership state could not be loaded." }, 503);
+                  }
+                  if (!current) return json({ error: "Subscription not found for this account." }, 404);
+                  if (current.user_id !== auth.userId && !auth.roles.some((role) => ["admin", "super_admin", "founder"].includes(role))) {
+                    return json({ error: "Forbidden: cannot modify another user's subscription" }, 403);
+                  }
+                  if (current.razorpay_subscription_id) {
+                    return json({ error: "This is a recurring provider subscription. Resume it through the provider workflow; no change was made." }, 409);
+                  }
+                  if (!current.current_period_end || new Date(current.current_period_end).getTime() <= Date.now()) {
+                    return json({ error: "This membership has already expired." }, 409);
+                  }
+                  if (current.status !== "active") {
+                    return json({ error: "Only a currently active membership scheduled to end can be resumed." }, 409);
+                  }
+                  const { data: updated, error: updateError } = await supabaseAdmin
+                    .from("subscriptions")
+                    .update({
+                      cancel_at_period_end: false,
+                      canceled_at: null,
+                      updated_at: new Date().toISOString(),
+                    })
+                    .eq("id", subId)
+                    .eq("user_id", targetUserId)
+                    .select("*")
+                    .maybeSingle();
+                  if (updateError || !updated) {
+                    console.error("[Membership resume] Subscription update failed:", updateError?.message || "No row updated");
+                    return json({ error: "Membership resume could not be saved." }, 503);
+                  }
+                  return json({ success: true, subscription: updated });
+                } catch (error) {
+                  console.error("[Membership resume] Server persistence unavailable:", error instanceof Error ? error.message : "Unknown error");
+                  return json({ error: "Membership management is not configured on the server." }, 503);
+                }
               }
 
               const newPlanId = body["new_plan_id"] as string;
