@@ -190,7 +190,7 @@ function FeedPage() {
                   identity={post.author?.account_type || "Contributor"}
                   time={new Date(post.created_at).toLocaleDateString()}
                   location={post.tradition || undefined}
-                  verifiedHuman={!post.is_sample}
+                  verifiedHuman={false}
                   topic={post.topic || undefined}
                   content={
                     <div className="space-y-3">
