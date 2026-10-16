@@ -91,35 +91,10 @@ function AskEkaPage() {
   const [showCuratedMobile, setShowCuratedMobile] = useState<boolean>(!searchParams.q);
 
   // Active answer state
-  const [activeAnswer, setActiveAnswer] = useState<DisplayAnswer | null>(() => {
-    // Initial seed question
-    const defaultSeed = searchParams.q
-      ? BETA_ASK_QUESTIONS.find((item) =>
-          item.questionText.toLowerCase().includes((searchParams.q ?? "").toLowerCase())
-        ) || BETA_ASK_QUESTIONS[0]
-      : BETA_ASK_QUESTIONS[0];
+  const [activeAnswer, setActiveAnswer] = useState<DisplayAnswer | null>(null);
+  const [inquiryError, setInquiryError] = useState<string | null>(null);
 
-    if (!defaultSeed) return null;
-
-    const relatedItem = defaultSeed.relatedItemSlug
-      ? BETA_PLACES_OR_PRACTICES.filter((p) => p.slug === defaultSeed.relatedItemSlug)
-      : [];
-
-    return {
-      questionText: defaultSeed.questionText,
-      category: defaultSeed.category,
-      answerSummary: defaultSeed.answerSummary,
-      answerBody: defaultSeed.answerBody,
-      whyItMatters: "Grounded in living community continuity and documented historical lineages.",
-      culturalNuance: defaultSeed.contextNote,
-      visitorGuidance: defaultSeed.contextNote
-        ? "Visitors are encouraged to observe respectfully without disrupting ceremonial rhythms."
-        : undefined,
-      sourcesNote: defaultSeed.sourcesNote,
-      poweredBy: "EKA Curated Lineage Archives & Verified Citations",
-      relatedPlaces: relatedItem,
-    };
-  });
+  */
 
   // Handle inquiry submission with real AI engine and fallback
   const handlePerformInquiry = async (queryToRun: string) => {
@@ -127,6 +102,8 @@ function AskEkaPage() {
     if (!q) return;
 
     setIsSearching(true);
+    setInquiryError(null);
+    setActiveAnswer(null);
     setShowCuratedMobile(false); // Hide curated inquiries on mobile once user inquires
 
     try {
@@ -155,9 +132,9 @@ function AskEkaPage() {
             ? aiResult.communityPerspectives.join(" ")
             : undefined,
           visitorGuidance: "Observing with cultural humility: respect community photography rules, sacred footwear practices, and local guidance.",
-          sourcesNote: aiResult.sources?.map((s: any) => s.title || s.citation).join(" • ") || "EKA Canonical Knowledge Objects & Verified Literature",
+          sourcesNote: aiResult.sources?.map((s: any) => s.title || s.citation).filter(Boolean).join(" • ") || "No source citations were returned for this answer.",
           poweredBy: `${aiResult.poweredBy || "Google Gemini 2.5 Flash"} • Grounded in EKA Knowledge Graph`,
-          relatedPlaces: relatedPlaceMatches.length > 0 ? relatedPlaceMatches.slice(0, 2) : BETA_PLACES_OR_PRACTICES.slice(0, 2),
+          relatedPlaces: relatedPlaceMatches.length > 0 ? relatedPlaceMatches.slice(0, 2) : [],
           regionalVariations: aiResult.regionalVariations,
         });
       } else {
@@ -177,26 +154,15 @@ function AskEkaPage() {
           visitorGuidance: engineResult.aiExplanation.visitorGuidance,
           sourcesNote: engineResult.verifiedSources.map((s) => s.citationRef).join(" • "),
           poweredBy: engineResult.aiExplanation.poweredBy,
-          relatedPlaces: related.length > 0 ? related : BETA_PLACES_OR_PRACTICES.slice(0, 2),
+          relatedPlaces: related,
         });
       }
     } catch (err) {
       console.error("[Ask EKA] Inquiry error:", err);
-      // Fallback to closest seed item
-      const closest = BETA_ASK_QUESTIONS.find((item) =>
-        item.questionText.toLowerCase().includes(q.toLowerCase())
-      ) || BETA_ASK_QUESTIONS[0]!;
-
-      setActiveAnswer({
-        questionText: q,
-        category: closest.category,
-        answerSummary: closest.answerSummary,
-        answerBody: closest.answerBody,
-        whyItMatters: "Grounded in living community continuity and documented historical lineages.",
-        culturalNuance: closest.contextNote,
-        sourcesNote: closest.sourcesNote,
-        poweredBy: "EKA Curated Lineage Archives",
-      });
+      setActiveAnswer(null);
+      setInquiryError(
+        "EKA could not generate an answer right now. Please try again. We will not replace your question with sample content."
+      );
     } finally {
       setIsSearching(false);
     }
@@ -337,6 +303,15 @@ function AskEkaPage() {
                     <Loader2 className="size-5 text-[#C45C26] animate-spin" />
                   </div>
                 </div>
+              ) : inquiryError ? (
+                <div role="alert" className="rounded-2xl border border-amber-300 bg-white p-8 sm:p-10 text-center space-y-3">
+                  <AlertCircle className="size-7 text-[#C45C26] mx-auto" />
+                  <h3 className="font-serif text-xl font-medium text-[#1A1A1A]">Answer unavailable</h3>
+                  <p className="text-sm text-[#5C5C5C] max-w-lg mx-auto">{inquiryError}</p>
+                  <Button type="button" onClick={() => void handlePerformInquiry(inputText)} disabled={!inputText.trim()} className="bg-[#6E1B20] hover:bg-[#561519] text-white">
+                    Try again
+                  </Button>
+                </div>
               ) : activeAnswer ? (
                 <div className="rounded-2xl border border-[#E8E2D9] bg-white p-6 sm:p-8 space-y-6 shadow-xs">
                   {/* Category & AI Provenance Header */}
@@ -346,8 +321,8 @@ function AskEkaPage() {
                         {activeAnswer.category}
                       </span>
                       <span className="text-xs text-[#5C5C5C] flex items-center gap-1">
-                        <CheckCircle2 className="size-3.5 text-emerald-600" />
-                        Grounded Analysis
+                        <BookOpen className="size-3.5 text-[#C45C26]" />
+                        Answer generated for this inquiry
                       </span>
                     </div>
                     <span className="text-[11px] font-mono text-[#5C5C5C] bg-[#FAF7F2] px-2.5 py-1 rounded-md border border-[#E8E2D9]/80">
@@ -487,7 +462,7 @@ function AskEkaPage() {
                 </div>
               ) : (
                 <div className="rounded-2xl border border-dashed border-[#E8E2D9] bg-white p-12 text-center text-sm text-[#5C5C5C]">
-                  Type a question or pick an idea from the list to view a grounded cultural explanation.
+                  Ask a question to generate an answer. The examples are starting prompts, not pre-verified answers.
                 </div>
               )}
             </div>
@@ -496,9 +471,9 @@ function AskEkaPage() {
             <div className={`lg:col-span-4 order-2 lg:order-1 space-y-3 ${showCuratedMobile ? "block" : "hidden lg:block"}`}>
               <div className="flex items-center justify-between pb-1">
                 <span className="font-serif text-base font-medium text-[#1A1A1A]">
-                  Curated Inquiries ({BETA_ASK_QUESTIONS.length})
+                  Explore a starting point
                 </span>
-                <span className="text-xs text-[#5C5C5C]">Verified seed set</span>
+                <span className="text-xs text-[#5C5C5C]">Sample questions</span>
               </div>
 
               <div className="space-y-2.5">
@@ -529,9 +504,7 @@ function AskEkaPage() {
                       <p className="font-serif text-sm font-medium text-[#1A1A1A] leading-snug">
                         {q.questionText}
                       </p>
-                      <p className="text-xs text-[#5C5C5C] line-clamp-1 mt-1">
-                        {q.answerSummary}
-                      </p>
+                      <p className="text-xs text-[#5C5C5C] mt-1">Select to ask EKA for a fresh answer.</p>
                     </button>
                   );
                 })}
