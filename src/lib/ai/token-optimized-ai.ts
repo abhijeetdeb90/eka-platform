@@ -546,7 +546,7 @@ Provide a structured JSON object with the following exact keys:
     culturalContext: structuredData?.culturalContext || fallbackCulturalContext,
     regionalVariations: structuredData?.regionalVariations || fallbackVariations,
     communityPerspectives: structuredData?.communityPerspectives || fallbackPerspectives,
-    sources: structuredData?.sources || fallbackSources,
+    sources: fallbackSources, // Cite only sources actually retrieved from EKA's canonical knowledge object.
     youMightAlsoWonder: structuredData?.youMightAlsoWonder || fallbackCuriosities,
     whyItMatters: structuredData?.whyItMatters || "It connects deeply with human heritage and communal identity.",
     relatedStories: structuredData?.relatedStories || [
