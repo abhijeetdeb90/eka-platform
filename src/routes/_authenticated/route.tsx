@@ -10,7 +10,11 @@ export const Route = createFileRoute("/_authenticated")({
     }
 
     // Allow dev preview simulation (e.g. from tests or dev preview switcher)
-    if (localStorage.getItem("eka_user_tier_preview")) {
+    // Preview-tier simulation is development-only and accepts only known test tiers.
+    const previewTier = import.meta.env.DEV
+      ? localStorage.getItem("eka_user_tier_preview")
+      : null;
+    if (previewTier === "free" || previewTier === "plus" || previewTier === "creator") {
       return { user: { id: "00000000-0000-0000-0000-000000000099", email: "seeker@eka.earth" } };
     }
 
