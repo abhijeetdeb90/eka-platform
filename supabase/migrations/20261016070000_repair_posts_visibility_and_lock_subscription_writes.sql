@@ -4,6 +4,10 @@
 alter table public.posts
   add column if not exists visibility text not null default 'public';
 
+-- Billing code uses this field to order current subscription records.
+alter table public.subscriptions
+  add column if not exists updated_at timestamptz not null default now();
+
 do $$
 begin
   if not exists (

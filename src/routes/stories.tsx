@@ -1031,7 +1031,7 @@ function EkaStoriesPage() {
                 id={highlight.id}
                 title={highlight.title}
                 imageUrl={highlight.coverImage}
-                storyCount={highlight.storyCount}
+                storyCount={highlight.slides.length}
                 onClick={() => openHighlight(highlight)}
               />
             ))}

@@ -198,6 +198,8 @@ export function Composer({
         content: finalContent,
         topic: topic.trim() || null,
         media_url: mediaValue,
+        visibility: "public",
+        status: "visible",
         community_id: community || null,
       })
       .select("*")

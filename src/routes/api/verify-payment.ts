@@ -64,13 +64,16 @@ export const Route = createFileRoute("/api/verify-payment")({
             razorpay.orders.fetch(orderId),
             razorpay.payments.fetch(paymentId),
           ]);
-          const plan = order.notes?.plan;
+          const planValue = order.notes?.plan;
+          if (
+            typeof planValue !== "string" ||
+            !["annual", "plus", "monthly", "creator"].includes(planValue)
+          ) {
+            return json({ success: false, error: "Order has an unsupported membership plan." }, 400);
+          }
+          const plan = planValue as "annual" | "plus" | "monthly" | "creator";
           const expectedAmount =
-            plan === "annual" ? PLUS_ANNUAL_PAISE :
-            plan === "plus" || plan === "monthly" || plan === "creator" ? PLUS_PRICE_PAISE :
-            null;
-
-          if (expectedAmount === null) return json({ success: false, error: "Order has an unsupported membership plan." }, 400);
+            plan === "annual" ? PLUS_ANNUAL_PAISE : PLUS_PRICE_PAISE;
           if (order.notes?.user_id !== auth.user.id) return json({ success: false, error: "This order does not belong to the signed-in account." }, 403);
           if (payment.order_id !== orderId || payment.amount !== expectedAmount || order.amount !== expectedAmount || payment.currency !== "INR") {
             return json({ success: false, error: "The payment does not match the expected order amount or currency." }, 400);

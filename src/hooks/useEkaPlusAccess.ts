@@ -44,6 +44,7 @@ export function useEkaPlusAccess() {
             isLoading: false,
             userId: "preview-plus-user",
             subscription: {
+              id: "preview-plus-subscription",
               plan: previewTier,
               status: "active",
               started_at: new Date().toISOString(),
