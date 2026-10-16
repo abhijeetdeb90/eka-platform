@@ -1,123 +1,97 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { createClient } from "@supabase/supabase-js";
 import Razorpay from "razorpay";
-import { requireServerAuth } from "@/lib/auth/access-control";
+import { PLUS_ANNUAL_PAISE, PLUS_PRICE_PAISE } from "@/lib/constants/economics";
 
-/**
- * Backend Endpoint: Create Razorpay Order
- * POST /api/create-order
- *
- * Requires authenticated Bearer token. Order notes are stamped with the
- * authenticated user_id so downstream verification cannot be spoofed.
- *
- * Request: { amount (paise), currency?, receipt?, notes? }
- * Minimum amount: 100 paise (₹1)
- * Returns: { order_id, amount, currency, receipt }
- */
+const json = (body: unknown, status = 200) =>
+  new Response(JSON.stringify(body), {
+    status,
+    headers: { "Content-Type": "application/json", "Cache-Control": "no-store" },
+  });
+
 export const Route = createFileRoute("/api/create-order")({
   server: {
     handlers: {
       POST: async ({ request }) => {
         try {
-          const auth = await requireServerAuth(request);
-          if (!auth.ok) {
-            return new Response(JSON.stringify({ error: auth.error }), {
-              status: auth.status,
-              headers: { "Content-Type": "application/json" },
-            });
-          }
+          const authHeader = request.headers.get("authorization") ?? "";
+          if (!authHeader.startsWith("Bearer ")) return json({ error: "Authentication required." }, 401);
 
-          const keyId =
-            process.env.RAZORPAY_KEY_ID ||
-            process.env.VITE_RAZORPAY_KEY_ID;
+          const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+          const publishableKey =
+            process.env.SUPABASE_PUBLISHABLE_KEY ||
+            process.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
+            process.env.SUPABASE_ANON_KEY ||
+            process.env.VITE_SUPABASE_ANON_KEY;
+          if (!supabaseUrl || !publishableKey) return json({ error: "Supabase server auth is not configured." }, 503);
+
+          const token = authHeader.slice("Bearer ".length).trim();
+          const authClient = createClient(supabaseUrl, publishableKey, { auth: { persistSession: false } });
+          const { data: auth, error: authError } = await authClient.auth.getUser(token);
+          if (authError || !auth.user) return json({ error: "Your session is invalid or expired. Please sign in again." }, 401);
+
+          const keyId = process.env.RAZORPAY_KEY_ID || process.env.VITE_RAZORPAY_KEY_ID;
           const keySecret = process.env.RAZORPAY_KEY_SECRET;
+          if (!keyId || !keySecret) return json({ error: "Razorpay credentials are not configured." }, 503);
 
-          if (!keyId || !keySecret) {
-            return new Response(
-              JSON.stringify({
-                error: "Razorpay credentials not configured. Please set RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET.",
-              }),
-              { status: 503, headers: { "Content-Type": "application/json" } },
-            );
-          }
-
-          let body: {
-            amount?: number;
-            currency?: string;
-            receipt?: string;
-            notes?: Record<string, string>;
-          };
-
+          let body: { amount?: number; currency?: string; receipt?: string; notes?: Record<string, string> };
           try {
             body = (await request.json()) as typeof body;
           } catch {
-            return new Response(
-              JSON.stringify({ error: "Invalid JSON in request body." }),
-              { status: 400, headers: { "Content-Type": "application/json" } },
-            );
+            return json({ error: "Invalid JSON request body." }, 400);
           }
 
-          const amount = Number(body.amount);
-          if (!amount || isNaN(amount) || amount < 100) {
-            return new Response(
-              JSON.stringify({
-                error: "Invalid amount. Minimum amount is 100 paise (₹1.00).",
-              }),
-              { status: 400, headers: { "Content-Type": "application/json" } },
-            );
+          const plan = body.notes?.plan;
+          const expectedAmount =
+            plan === "annual" ? PLUS_ANNUAL_PAISE :
+            plan === "plus" || plan === "monthly" || plan === "creator" ? PLUS_PRICE_PAISE :
+            null;
+
+          if (typeof plan !== "string" || expectedAmount === null) return json({ error: "Unsupported subscription plan." }, 400);
+          if (Number(body.amount) !== expectedAmount) {
+            return json({ error: "The requested amount does not match the selected EKA membership plan." }, 400);
           }
+          if ((body.currency || "INR") !== "INR") return json({ error: "Only INR memberships are supported." }, 400);
 
-          const currency = body.currency || "INR";
-          const receipt =
-            body.receipt ||
-            `rcpt_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
-
-          const notes: Record<string, string> = {
-            ...(body.notes || {}),
-            eka_user_id: auth.userId,
-          };
-
-          const razorpay = new Razorpay({
-            key_id: keyId,
-            key_secret: keySecret,
-          });
-
+          const razorpay = new Razorpay({ key_id: keyId, key_secret: keySecret });
+          const receipt = body.receipt || `eka_${auth.user.id.slice(0, 8)}_${Date.now()}`;
           const order = await razorpay.orders.create({
-            amount: Math.round(amount),
-            currency,
+            amount: expectedAmount,
+            currency: "INR",
             receipt,
-            notes,
-          });
+            notes: { user_id: auth.user.id, plan },
+          }) as unknown as { id: string; amount: number; currency: string; receipt: string | null; status: string };
 
-          return new Response(
-            JSON.stringify({
-              order_id: order.id,
-              id: order.id,
-              amount: order.amount,
-              currency: order.currency,
-              receipt: order.receipt,
-              status: order.status,
-            }),
-            {
-              status: 200,
-              headers: { "Content-Type": "application/json" },
-            },
-          );
+          // Persist the EKA order before exposing checkout. payments.order_id references this record.
+          const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+          const { error: orderSaveError } = await supabaseAdmin.from("orders").insert({
+            order_id: order.id,
+            user_id: auth.user.id,
+            amount_minor: expectedAmount,
+            currency: "INR",
+            receipt: order.receipt || receipt,
+            razorpay_order_id: order.id,
+            status: "CREATED",
+            purpose: "subscription",
+            notes: { user_id: auth.user.id, plan },
+            metadata: { provider: "razorpay", checkout_version: "eka-plus-v1" },
+          });
+          if (orderSaveError) {
+            console.error("[Razorpay create-order] Local order persistence failed:", orderSaveError.message);
+            return json({ error: "Could not safely record the checkout order. Please retry." }, 503);
+          }
+
+          return json({
+            order_id: order.id,
+            id: order.id,
+            amount: order.amount,
+            currency: order.currency,
+            receipt: order.receipt,
+            status: order.status,
+          });
         } catch (error: any) {
-          console.error("[Razorpay create-order error]:", error);
-          const statusCode = error?.statusCode || 500;
-          return new Response(
-            JSON.stringify({
-              error:
-                error?.error?.description ||
-                error?.message ||
-                "Failed to create Razorpay order.",
-              details: error?.error || error,
-            }),
-            {
-              status: statusCode === 401 ? 401 : 500,
-              headers: { "Content-Type": "application/json" },
-            },
-          );
+          console.error("[Razorpay create-order error]:", error?.message || "Unknown error");
+          return json({ error: error?.error?.description || "Failed to create Razorpay order." }, 500);
         }
       },
     },

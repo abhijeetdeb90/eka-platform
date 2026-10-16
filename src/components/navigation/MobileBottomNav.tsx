@@ -1,61 +1,81 @@
-// ==============================================================================
-// EKA BETA MOBILE BOTTOM NAV
-// ==============================================================================
-// Simple clean mobile nav: Home · Discover · Ask EKA · Join
-// ==============================================================================
-
+import { useEffect, useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Home, Compass, Film, Radio, PlusCircle, User } from "lucide-react";
-import { useProfile } from "@/hooks/useProfile";
+import { Compass, Film, House, PlusCircle, Radio, UserRound, Users } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+
+type NavItem = {
+  label: string;
+  to: "/" | "/discover" | "/stories" | "/feed" | "/create" | "/ask" | "/my-eka" | "/auth";
+  icon: typeof Compass;
+  exact?: boolean;
+};
 
 export function MobileBottomNav() {
   const routerState = useRouterState();
   const currentPath = routerState.location.pathname;
-  const { data: profile } = useProfile();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Do not show on admin or internal routes
+  useEffect(() => {
+    let active = true;
+    void supabase.auth.getSession().then(({ data }) => {
+      if (active) setIsAuthenticated(Boolean(data.session));
+    });
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsAuthenticated(Boolean(session));
+    });
+    return () => {
+      active = false;
+      authListener.subscription.unsubscribe();
+    };
+  }, []);
+
   if (
     currentPath.startsWith("/founder-admin") ||
     currentPath.startsWith("/brands-enterprise") ||
     currentPath.startsWith("/enterprise") ||
     currentPath.startsWith("/ops") ||
     currentPath.startsWith("/admin")
-  ) {
-    return null;
-  }
+  ) return null;
 
-  const items = [
-    { label: "Home", to: "/", exact: true, icon: Home },
-    { label: "Explore", to: "/discover", icon: Compass },
+  const publicItems: NavItem[] = [
+    { label: "Home", to: "/", icon: House, exact: true },
+    { label: "Discover", to: "/discover", icon: Compass },
+    { label: "Stories", to: "/stories", icon: Film },
+    { label: "Ask EKA", to: "/ask", icon: Radio },
+    { label: "Sign in", to: "/auth", icon: UserRound },
+  ];
+  const memberItems: NavItem[] = [
+    { label: "Discover", to: "/discover", icon: Compass },
+    { label: "Feed", to: "/feed", icon: Users },
     { label: "Create", to: "/create", icon: PlusCircle },
     { label: "Ask EKA", to: "/ask", icon: Radio },
-    { label: profile ? "Profile" : "Sign In", to: "/my-eka", icon: User },
+    { label: "My EKA", to: "/my-eka", icon: UserRound },
   ];
+  const items = isAuthenticated ? memberItems : publicItems;
+  const isActive = (item: NavItem) =>
+    item.exact
+      ? currentPath === item.to
+      : currentPath === item.to || currentPath.startsWith(item.to + "/");
 
   return (
     <nav
-      aria-label="Mobile Navigation"
-      className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-[#E8E2D9] shadow-sm"
+      aria-label="Primary mobile navigation"
+      className="md:hidden fixed inset-x-0 bottom-0 z-40 border-t border-[#E9E2DA] bg-white/95 shadow-[0_-4px_16px_rgba(38,24,20,0.04)] backdrop-blur-md"
+      style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
-      <div
-        className="flex items-center justify-between max-w-md mx-auto px-2 py-1.5"
-        style={{ paddingBottom: "max(0.5rem, env(safe-area-inset-bottom))" }}
-      >
+      <div className="mx-auto flex w-full max-w-lg items-stretch justify-around px-1 pt-1.5 pb-1">
         {items.map((item) => {
-          const active = item.exact
-            ? currentPath === item.to
-            : currentPath.startsWith(item.to);
+          const active = isActive(item);
           const Icon = item.icon;
           return (
             <Link
               key={item.to}
               to={item.to}
-              className={`flex flex-col items-center gap-0.5 py-1 px-2 text-[10px] font-medium transition-colors ${
-                active ? "text-[#C45C26] font-semibold" : "text-[#5C5C5C] hover:text-[#1A1A1A]"
-              }`}
+              aria-current={active ? "page" : undefined}
+              className={`flex min-h-12 min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-lg px-1 text-[10px] font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#6B2D2D] ${active ? "text-[#6B2D2D]" : "text-[#6E6966] hover:text-[#2B2422]"}`}
             >
-              <Icon className="size-5" />
-              <span className="truncate max-w-[50px]">{item.label}</span>
+              <Icon aria-hidden="true" className={`size-5 shrink-0 ${active ? "stroke-[2.25]" : "stroke-[1.8]"}`} />
+              <span className="max-w-full truncate">{item.label}</span>
             </Link>
           );
         })}

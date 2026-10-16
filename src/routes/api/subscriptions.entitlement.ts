@@ -2,128 +2,83 @@ import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 
-/**
- * Server-Side Endpoint: Verify EKA+ Subscription Entitlement
- * GET /api/subscriptions/entitlement
- * 
- * Cryptographically verifies user's Bearer token and checks the Supabase database
- * for an active, unexpired subscription row.
- */
 export const Route = createFileRoute("/api/subscriptions/entitlement")({
   server: {
     handlers: {
       GET: async ({ request }) => {
-        try {
-          const authHeader = request.headers.get("authorization") || request.headers.get("Authorization");
-          if (!authHeader || !authHeader.startsWith("Bearer ")) {
-            return new Response(
-              JSON.stringify({
-                isEntitled: false,
-                reason: "Unauthenticated. No Bearer token provided.",
-              }),
-              { status: 401, headers: { "Content-Type": "application/json" } }
-            );
-          }
+        const json = (body: unknown, status = 200) =>
+          new Response(JSON.stringify(body), {
+            status,
+            headers: { "Content-Type": "application/json", "Cache-Control": "no-store" },
+          });
 
-          const token = authHeader.replace("Bearer ", "").trim();
-          const supabaseUrl =
-            process.env.SUPABASE_URL ||
-            process.env.VITE_SUPABASE_URL ||
-            "https://kbiutqzhcbyuseygcspe.supabase.co";
+        try {
+          const header = request.headers.get("authorization") || request.headers.get("Authorization");
+          if (!header?.startsWith("Bearer ")) return json({ isEntitled: false, reason: "Sign in required." }, 401);
+
+          const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
           const publishableKey =
             process.env.SUPABASE_PUBLISHABLE_KEY ||
             process.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
-            "sb_publishable_DKdNOtbppccL297o2_Ixkw_f2j0Rf7-";
+            process.env.SUPABASE_ANON_KEY ||
+            process.env.VITE_SUPABASE_ANON_KEY;
+          if (!supabaseUrl || !publishableKey) {
+            return json({ isEntitled: false, reason: "Membership verification is not configured." }, 503);
+          }
 
+          const token = header.slice("Bearer ".length).trim();
           const client = createClient<Database>(supabaseUrl, publishableKey, {
-            global: {
-              headers: { Authorization: `Bearer ${token}` },
-            },
-            auth: { persistSession: false },
+            global: { headers: { Authorization: `Bearer ${token}` } },
+            auth: { persistSession: false, autoRefreshToken: false },
           });
+          const { data: auth, error: authError } = await client.auth.getUser(token);
+          if (authError || !auth.user) return json({ isEntitled: false, reason: "Session is invalid or expired." }, 401);
 
-          const { data: userData, error: userError } = await client.auth.getUser(token);
-          if (userError || !userData?.user) {
-            return new Response(
-              JSON.stringify({
-                isEntitled: false,
-                reason: "Invalid or expired authorization token.",
-              }),
-              { status: 401, headers: { "Content-Type": "application/json" } }
-            );
-          }
-
-          const userId = userData.user.id;
-
-          // Query subscriptions for this verified user
-          const { data: sub, error: subError } = await client
+          const { data: records, error } = await client
             .from("subscriptions")
-            .select("plan, status, current_period_end, paused_until, cancel_at_period_end")
-            .eq("user_id", userId)
-            .maybeSingle();
+            .select("plan, status, current_period_end, paused_until, cancel_at_period_end, provider, provider_reference, razorpay_payment_id, updated_at")
+            .eq("user_id", auth.user.id)
+            .order("updated_at", { ascending: false })
+            .limit(5);
 
-          if (subError) {
-            console.error("[Entitlement Check DB Error]:", subError);
-          }
-
-          if (!sub) {
-            return new Response(
-              JSON.stringify({
-                isEntitled: false,
-                userId,
-                plan: "free",
-                status: "none",
-              }),
-              { status: 200, headers: { "Content-Type": "application/json" } }
-            );
+          if (error) {
+            console.error("[Entitlement Check DB Error]:", error.message);
+            return json({ isEntitled: false, reason: "Membership could not be verified." }, 503);
           }
 
           const now = Date.now();
-          const periodEnd = sub.current_period_end ? new Date(sub.current_period_end).getTime() : null;
-          const pausedUntil = sub.paused_until ? new Date(sub.paused_until).getTime() : null;
-
-          // Is paused?
-          if (pausedUntil && pausedUntil > now) {
-            return new Response(
-              JSON.stringify({
-                isEntitled: false,
-                userId,
-                plan: sub.plan,
-                status: "paused",
-                paused_until: sub.paused_until,
-              }),
-              { status: 200, headers: { "Content-Type": "application/json" } }
+          const validPlans = new Set(["plus", "creator", "annual", "monthly"]);
+          const entitledRecord = (records || []).find((sub) => {
+            const end = sub.current_period_end ? new Date(sub.current_period_end).getTime() : null;
+            const pausedUntil = sub.paused_until ? new Date(sub.paused_until).getTime() : null;
+            const providerVerified =
+              sub.status === "active" &&
+              sub.provider === "razorpay" &&
+              Boolean(sub.razorpay_payment_id || sub.provider_reference);
+            const trustedTrial = sub.status === "trialing" && sub.provider === "internal_trial";
+            return (
+              validPlans.has(sub.plan) &&
+              (providerVerified || trustedTrial) &&
+              end !== null &&
+              Number.isFinite(end) &&
+              end >= now &&
+              !(pausedUntil && pausedUntil > now)
             );
-          }
+          });
 
-          // Active or trialing status
-          const isActiveStatus = sub.status === "active" || sub.status === "trialing" || sub.status === "past_due";
-          const isNotExpired = !periodEnd || periodEnd >= now;
-          const isEntitledPlan =
-            sub.plan === "plus" || sub.plan === "creator" || sub.plan === "annual" || sub.plan === "monthly";
+          if (!entitledRecord) return json({ isEntitled: false, userId: auth.user.id, plan: "free", status: "none" });
 
-          const isEntitled = Boolean(isActiveStatus && isNotExpired && isEntitledPlan);
-
-          return new Response(
-            JSON.stringify({
-              isEntitled,
-              userId,
-              plan: sub.plan,
-              status: sub.status,
-              current_period_end: sub.current_period_end,
-              cancel_at_period_end: sub.cancel_at_period_end,
-            }),
-            { status: 200, headers: { "Content-Type": "application/json" } }
-          );
-        } catch (err: any) {
-          console.error("[Entitlement check exception]:", err);
-          return new Response(
-            JSON.stringify({
-              isEntitled: false,
-              error: err.message || "Failed to verify entitlement.",
-            }),
-            { status: 500, headers: { "Content-Type": "application/json" } }
-          );
+          return json({
+            isEntitled: true,
+            userId: auth.user.id,
+            plan: entitledRecord.plan,
+            status: entitledRecord.status,
+            current_period_end: entitledRecord.current_period_end,
+            cancel_at_period_end: entitledRecord.cancel_at_period_end,
+          });
+        } catch (error) {
+          console.error("[Entitlement check exception]:", error instanceof Error ? error.message : "Unknown error");
+          return json({ isEntitled: false, reason: "Could not verify membership." }, 500);
         }
       },
     },
