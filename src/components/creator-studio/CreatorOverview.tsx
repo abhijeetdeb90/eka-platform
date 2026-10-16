@@ -42,14 +42,14 @@ export interface CreatorPostItem {
   format?: string;
   language?: string | null;
   location_label?: string | null;
-  views_count?: number;
+  views_count?: number | null;
   saves_count?: number;
 }
 
 interface CreatorOverviewProps {
   posts: CreatorPostItem[];
   followerCount: number;
-  viewsCount: number;
+  viewsCount: number | null;
   likesCount: number;
   commentsCount: number;
   savesCount: number;
@@ -160,9 +160,9 @@ export function CreatorOverview({
             <Eye className="size-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold font-display text-primary">{viewsCount.toLocaleString()}</div>
+            <div className="text-3xl font-bold font-display text-primary">{viewsCount === null ? "—" : viewsCount.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground mt-1">
-              {viewsCount === 0 ? "Real post reads & plays" : "Authentic database views logged"}
+              {viewsCount === null ? "View tracking unavailable" : viewsCount === 0 ? "No views recorded yet" : "Authentic database views logged"}
             </p>
           </CardContent>
         </Card>
@@ -280,7 +280,7 @@ export function CreatorOverview({
                     <div className="flex items-center gap-3 text-xs shrink-0 text-muted-foreground">
                       <span className="flex items-center gap-1" title="Views">
                         <Eye className="size-3.5 text-primary" />
-                        <span>{post.views_count ?? 0}</span>
+                        <span>{post.views_count == null ? "—" : post.views_count.toLocaleString()}</span>
                       </span>
                       <span className="flex items-center gap-1" title="Likes">
                         <Heart className="size-3.5 text-rose-500" />
