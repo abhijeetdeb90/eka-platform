@@ -47,7 +47,7 @@ function isMoneyApiPath(pathname: string): boolean {
 
 /** GET /api/subscriptions (plan listing) stays public. */
 function isPublicMoneyGet(pathname: string, method: string): boolean {
-  return method === "GET" && (pathname === "/api/subscriptions" || pathname.startsWith("/api/subscriptions/"));
+  return method === "GET" && pathname === "/api/subscriptions";
 }
 
 function moneyRouteUnauthorized(requestId: string): Response {

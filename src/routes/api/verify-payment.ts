@@ -79,13 +79,15 @@ export const Route = createFileRoute("/api/verify-payment")({
             return json({ success: false, error: "Payment is not captured yet. Membership has not been activated." }, 409);
           }
 
-          const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+          const serviceRoleKey = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
           if (!serviceRoleKey) {
-            console.error("[Razorpay verify-payment] SUPABASE_SERVICE_ROLE_KEY is not configured.");
+            console.error("[Razorpay verify-payment] SUPABASE_SECRET_KEY / SUPABASE_SERVICE_ROLE_KEY is not configured.");
             return json({ success: false, error: "Payment was verified, but membership activation is not configured. Please contact support." }, 503);
           }
 
-          const admin = createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false } });
+          // Use the server-only admin client, which handles both legacy JWT service-role keys
+          // and current opaque Supabase secret keys without treating either as a browser token.
+          const { supabaseAdmin: admin } = await import("@/integrations/supabase/client.server");
 
           // Tie provider payment to an order created by EKA for this authenticated user.
           const { data: localOrder, error: localOrderError } = await admin
