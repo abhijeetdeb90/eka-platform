@@ -296,7 +296,7 @@ function detectIntentAndRetrieve(query: string, explicitSlug?: string): Retrieva
     }));
   }
 
-  return [{ entity: CANONICAL_KNOWLEDGE_OBJECTS[0]!, relevanceScore: 50 }];
+  return []; // Never attach an unrelated cultural record to an unmatched question.
 }
 
 function compressKnowledgeObjectForPrompt(obj: EkaKnowledgeObject, tokenBudget: number): string {
@@ -369,6 +369,9 @@ export async function askEkaTokenOptimized(
   // Step 1: Retrieval with strict token budget (target: 20k, hard max: 50k)
   const targetBudget = options.maxTokenBudget || TOKEN_LIMITS.NORMAL_QUERY_TARGET_MAX;
   const candidates = detectIntentAndRetrieve(cleanQuery, options.explicitSlug);
+  if (candidates.length === 0) {
+    throw new Error("EKA could not find a relevant record in its current cultural knowledge index. Try a more specific place, practice, craft, tradition, or community.");
+  }
   const primaryCandidate = candidates[0]!.entity;
 
   // Step 2: Context Compression
@@ -479,10 +482,15 @@ Provide a structured JSON object with the following exact keys:
       }
     }
   } catch (llmErr) {
-    console.warn("[Ask EKA Token Engine] LLM call failed, employing curated fallback:", llmErr);
+    console.error("[Ask EKA Token Engine] AI generation failed:", llmErr);
+    throw new Error("Ask EKA could not generate a response. Please try again later.");
   }
 
-  // Fallback defaults if LLM did not provide JSON
+  if (!structuredData || typeof structuredData.simpleAnswer !== "string" || !structuredData.simpleAnswer.trim()) {
+    throw new Error("Ask EKA received no valid generated answer. No curated fallback was substituted.");
+  }
+
+  // Only enrich a successfully generated answer with retrieved canonical metadata.
   const verificationLevel: TrustVerificationLevel =
     primaryCandidate.verificationLevel || "PRIMARY_SOURCE";
   const verificationMeta = getTrustVerificationMeta(verificationLevel);
@@ -541,7 +549,7 @@ Provide a structured JSON object with the following exact keys:
     culturalContext: structuredData?.culturalContext || fallbackCulturalContext,
     regionalVariations: structuredData?.regionalVariations || fallbackVariations,
     communityPerspectives: structuredData?.communityPerspectives || fallbackPerspectives,
-    sources: structuredData?.sources || fallbackSources,
+    sources: fallbackSources, // Cite only sources actually retrieved from EKA's canonical knowledge object.
     youMightAlsoWonder: structuredData?.youMightAlsoWonder || fallbackCuriosities,
     whyItMatters: structuredData?.whyItMatters || "It connects deeply with human heritage and communal identity.",
     relatedStories: structuredData?.relatedStories || [
