@@ -37,17 +37,32 @@ jobs:
       - name: TypeScript Quality Gate
         run: npx tsc --noEmit
 
-      - name: Verify staging Supabase build target
-        if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+      - name: Evaluate isolated staging deployment configuration
+        id: preview_config
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: |
           set -eu
-          test -n "$VITE_SUPABASE_URL" || { echo "::error::VITE_SUPABASE_URL is required for a trusted preview build"; exit 1; }
-          test "$VITE_SUPABASE_URL" = "https://xjotvcigjetmlpjcjytp.supabase.co" || { echo "::error::Preview builds must target EKA-Staging, never production Supabase"; exit 1; }
-          test -n "$VITE_SUPABASE_PUBLISHABLE_KEY" || { echo "::error::VITE_SUPABASE_PUBLISHABLE_KEY is required for a trusted preview build"; exit 1; }
-          test "$VITE_SUPABASE_PUBLISHABLE_KEY" != "placeholder-anon-key" || { echo "::error::Placeholder Supabase keys cannot be deployed"; exit 1; }
+          reason=""
+          if [ "$VITE_SUPABASE_URL" != "https://xjotvcigjetmlpjcjytp.supabase.co" ]; then
+            reason="VITE_SUPABASE_URL must target the EKA-Staging project"
+          elif [ -z "$VITE_SUPABASE_PUBLISHABLE_KEY" ] || [ "$VITE_SUPABASE_PUBLISHABLE_KEY" = "placeholder-anon-key" ]; then
+            reason="VITE_SUPABASE_PUBLISHABLE_KEY is missing or is a placeholder"
+          elif [ -z "$VERCEL_TOKEN" ] || [ -z "$VERCEL_ORG_ID" ] || [ -z "$VERCEL_PROJECT_ID" ]; then
+            reason="Vercel deployment secrets are missing"
+          fi
+
+          if [ -n "$reason" ]; then
+            echo "deploy_enabled=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Preview deployment intentionally skipped: $reason. Build and CI checks will still run; no deployment was created."
+          else
+            echo "deploy_enabled=true" >> "$GITHUB_OUTPUT"
+            echo "::notice::Staging Supabase target and Vercel deployment credentials are configured."
+          fi
 
       - name: Build Staging Preview
         run: npm run build
@@ -59,24 +74,12 @@ jobs:
       # Secrets are intentionally unavailable to pull_request workflows from forks
       # and some dependency-update bots. Keep their build/quality checks, but only
       # attempt authenticated Vercel preview deployment when credentials are available.
-      - name: Verify Vercel deployment secrets
-        if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-        run: |
-          set -eu
-          test -n "$VERCEL_TOKEN" || { echo "::error::VERCEL_TOKEN secret is missing for a trusted preview deployment"; exit 1; }
-          test -n "$VERCEL_ORG_ID" || { echo "::error::VERCEL_ORG_ID secret is missing for a trusted preview deployment"; exit 1; }
-          test -n "$VERCEL_PROJECT_ID" || { echo "::error::VERCEL_PROJECT_ID secret is missing for a trusted preview deployment"; exit 1; }
-
       - name: Skip preview deploy for untrusted pull request
         if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository }}
         run: echo "::notice::Build and quality checks passed; authenticated preview deployment is skipped because GitHub does not expose repository secrets to this pull request."
 
       - name: Deploy Preview to Vercel
-        if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+        if: ${{ steps.preview_config.outputs.deploy_enabled == 'true' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
         run: |
           set -eu
           npx vercel pull --yes --environment=preview --token="$VERCEL_TOKEN"
