@@ -55,7 +55,6 @@ function FeedPage() {
           author:profiles(id, display_name, account_type, avatar_url)
         `)
         .eq("status", "visible")
-        .eq("visibility", "public")
         .order("created_at", { ascending: false })
         .limit(20);
       
