@@ -20,7 +20,7 @@ import { timeAgo } from "@/lib/eka";
 interface PerformanceAnalyticsProps {
   posts: CreatorPostItem[];
   followerCount: number;
-  viewsCount: number;
+  viewsCount: number | null;
   likesCount: number;
   commentsCount: number;
   savesCount: number;
@@ -48,7 +48,9 @@ export function PerformanceAnalytics({
   const published = posts.filter((p) => p.status === "visible");
   const totalEngagement = likesCount + commentsCount + savesCount;
   const overallEngagementRate =
-    viewsCount > 0 ? ((totalEngagement / viewsCount) * 100).toFixed(1) : "0.0";
+    viewsCount !== null && viewsCount > 0
+      ? ((totalEngagement / viewsCount) * 100).toFixed(1)
+      : null;
 
   // Calculate engagement rate for individual posts
   const postAnalytics = published.map((post) => {
@@ -141,8 +143,8 @@ export function PerformanceAnalytics({
             <Eye className="size-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold font-display text-primary">{viewsCount.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground mt-1">Recorded post view events</p>
+            <div className="text-3xl font-bold font-display text-primary">{viewsCount === null ? "—" : viewsCount.toLocaleString()}</div>
+            <p className="text-xs text-muted-foreground mt-1">{viewsCount === null ? "View tracking unavailable" : "Recorded post view events"}</p>
           </CardContent>
         </Card>
 
@@ -154,7 +156,7 @@ export function PerformanceAnalytics({
             <TrendingUp className="size-4 text-emerald-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold font-display text-foreground">{overallEngagementRate}%</div>
+            <div className="text-3xl font-bold font-display text-foreground">{overallEngagementRate === null ? "—" : `${overallEngagementRate}%`}</div>
             <p className="text-xs text-muted-foreground mt-1">Interactions per recorded view</p>
           </CardContent>
         </Card>
@@ -283,7 +285,7 @@ export function PerformanceAnalytics({
                         </Badge>
                       </td>
                       <td className="py-3 px-3 font-display font-medium text-primary">
-                        {views.toLocaleString()}
+                        {post.views_count == null ? "—" : views.toLocaleString()}
                       </td>
                       <td className="py-3 px-3 font-display">{likes.toLocaleString()}</td>
                       <td className="py-3 px-3 font-display">{comments.toLocaleString()}</td>
