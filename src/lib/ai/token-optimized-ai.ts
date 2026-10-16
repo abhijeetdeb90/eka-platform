@@ -296,7 +296,7 @@ function detectIntentAndRetrieve(query: string, explicitSlug?: string): Retrieva
     }));
   }
 
-  return [{ entity: CANONICAL_KNOWLEDGE_OBJECTS[0]!, relevanceScore: 50 }];
+  return []; // Never attach an unrelated cultural record to an unmatched question.
 }
 
 function compressKnowledgeObjectForPrompt(obj: EkaKnowledgeObject, tokenBudget: number): string {
@@ -369,6 +369,9 @@ export async function askEkaTokenOptimized(
   // Step 1: Retrieval with strict token budget (target: 20k, hard max: 50k)
   const targetBudget = options.maxTokenBudget || TOKEN_LIMITS.NORMAL_QUERY_TARGET_MAX;
   const candidates = detectIntentAndRetrieve(cleanQuery, options.explicitSlug);
+  if (candidates.length === 0) {
+    throw new Error("EKA could not find a relevant record in its current cultural knowledge index. Try a more specific place, practice, craft, tradition, or community.");
+  }
   const primaryCandidate = candidates[0]!.entity;
 
   // Step 2: Context Compression
