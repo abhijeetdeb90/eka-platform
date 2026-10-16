@@ -41,7 +41,6 @@ import {
   type PlaceOrPractice,
 } from "@/data/beta-seed-data";
 import { getAiAnswerServer } from "@/lib/ai/ask-eka.server";
-import { askEkaCulturalEngine } from "@/lib/cultural-intelligence/ask-eka-engine";
 
 export const Route = createFileRoute("/ask")({
   validateSearch: (search: Record<string, unknown>): { q?: string; mode?: string } => ({
@@ -90,113 +89,46 @@ function AskEkaPage() {
   const [isPending, startTransition] = useTransition();
   const [showCuratedMobile, setShowCuratedMobile] = useState<boolean>(!searchParams.q);
 
-  // Active answer state
-  const [activeAnswer, setActiveAnswer] = useState<DisplayAnswer | null>(() => {
-    // Initial seed question
-    const defaultSeed = searchParams.q
-      ? BETA_ASK_QUESTIONS.find((item) =>
-          item.questionText.toLowerCase().includes((searchParams.q ?? "").toLowerCase())
-        ) || BETA_ASK_QUESTIONS[0]
-      : BETA_ASK_QUESTIONS[0];
+  // No answer is shown until the server returns a real response.
+  const [activeAnswer, setActiveAnswer] = useState<DisplayAnswer | null>(null);
+  const [inquiryError, setInquiryError] = useState<string | null>(null);
 
-    if (!defaultSeed) return null;
-
-    const relatedItem = defaultSeed.relatedItemSlug
-      ? BETA_PLACES_OR_PRACTICES.filter((p) => p.slug === defaultSeed.relatedItemSlug)
-      : [];
-
-    return {
-      questionText: defaultSeed.questionText,
-      category: defaultSeed.category,
-      answerSummary: defaultSeed.answerSummary,
-      answerBody: defaultSeed.answerBody,
-      whyItMatters: "Grounded in living community continuity and documented historical lineages.",
-      culturalNuance: defaultSeed.contextNote,
-      visitorGuidance: defaultSeed.contextNote
-        ? "Visitors are encouraged to observe respectfully without disrupting ceremonial rhythms."
-        : undefined,
-      sourcesNote: defaultSeed.sourcesNote,
-      poweredBy: "EKA Curated Lineage Archives & Verified Citations",
-      relatedPlaces: relatedItem,
-    };
-  });
-
-  // Handle inquiry submission with real AI engine and fallback
+  // Ask the server-backed AI. Never substitute a canned answer when generation fails.
   const handlePerformInquiry = async (queryToRun: string) => {
     const q = queryToRun.trim();
     if (!q) return;
-
     setIsSearching(true);
-    setShowCuratedMobile(false); // Hide curated inquiries on mobile once user inquires
-
+    setInquiryError(null);
+    setActiveAnswer(null);
+    setShowCuratedMobile(false);
     try {
-      // 1. Try server-side TanStack Start function (uses Gemini directly with secure server env)
-      let aiResult: any = null;
-      try {
-        aiResult = await getAiAnswerServer({ data: { query: q } });
-      } catch (serverErr) {
-        console.warn("[Ask EKA] Server function error, evaluating local engine fallback:", serverErr);
+      const aiResult = await getAiAnswerServer({ data: { query: q } });
+      if (!aiResult || typeof aiResult.simpleAnswer !== "string" || !aiResult.simpleAnswer.trim()) {
+        throw new Error("The AI service returned no usable answer.");
       }
-
-      if (aiResult && aiResult.simpleAnswer) {
-        // Map rich structured AI answer
-        const relatedPlaceMatches = BETA_PLACES_OR_PRACTICES.filter((p) => {
-          const combined = `${p.title} ${p.regionOrState} ${p.summary} ${p.subCategory || ""}`.toLowerCase();
-          return q.toLowerCase().split(/\s+/).some((token) => token.length > 3 && combined.includes(token));
-        });
-
-        setActiveAnswer({
-          questionText: q,
-          category: aiResult.primaryEntity?.category || "Cultural Inquiry",
-          answerSummary: aiResult.simpleAnswer,
-          answerBody: aiResult.culturalContext || aiResult.simpleAnswer,
-          whyItMatters: aiResult.whyItMatters,
-          culturalNuance: Array.isArray(aiResult.communityPerspectives)
-            ? aiResult.communityPerspectives.join(" ")
-            : undefined,
-          visitorGuidance: "Observing with cultural humility: respect community photography rules, sacred footwear practices, and local guidance.",
-          sourcesNote: aiResult.sources?.map((s: any) => s.title || s.citation).join(" • ") || "EKA Canonical Knowledge Objects & Verified Literature",
-          poweredBy: `${aiResult.poweredBy || "Google Gemini 2.5 Flash"} • Grounded in EKA Knowledge Graph`,
-          relatedPlaces: relatedPlaceMatches.length > 0 ? relatedPlaceMatches.slice(0, 2) : BETA_PLACES_OR_PRACTICES.slice(0, 2),
-          regionalVariations: aiResult.regionalVariations,
-        });
-      } else {
-        // 2. Fall back to EKA Cultural Intelligence Engine
-        const engineResult = await askEkaCulturalEngine(q);
-        const related = BETA_PLACES_OR_PRACTICES.filter(
-          (p) => p.slug === (engineResult.matchedObject?.slug ?? "") || p.regionOrState.includes(engineResult.matchedObject?.region ?? "")
-        );
-
-        setActiveAnswer({
-          questionText: q,
-          category: engineResult.matchedObject?.category || "Living Lineage",
-          answerSummary: engineResult.aiExplanation.summary,
-          answerBody: engineResult.aiExplanation.deepExplanation,
-          whyItMatters: engineResult.matchedObject ? `Rooted in ${engineResult.matchedObject.origin.philosophicalRoot}. Historically practiced in ${engineResult.matchedObject.region}.` : "Grounded in EKA cultural knowledge and verified sources.",
-          culturalNuance: engineResult.aiExplanation.culturalNuance,
-          visitorGuidance: engineResult.aiExplanation.visitorGuidance,
-          sourcesNote: engineResult.verifiedSources.map((s) => s.citationRef).join(" • "),
-          poweredBy: engineResult.aiExplanation.poweredBy,
-          relatedPlaces: related.length > 0 ? related : BETA_PLACES_OR_PRACTICES.slice(0, 2),
-        });
-      }
-    } catch (err) {
-      console.error("[Ask EKA] Inquiry error:", err);
-      // Fallback to closest seed item
-      const closest = BETA_ASK_QUESTIONS.find((item) =>
-        item.questionText.toLowerCase().includes(q.toLowerCase())
-      ) || BETA_ASK_QUESTIONS[0]!;
-
+      const relatedPlaceMatches = BETA_PLACES_OR_PRACTICES.filter((p) => {
+        const combined = (p.title + " " + p.regionOrState + " " + p.summary + " " + (p.subCategory || "")).toLowerCase();
+        return q.toLowerCase().split(/\s+/).some((token) => token.length > 3 && combined.includes(token));
+      });
+      const sourceLabels = Array.isArray(aiResult.sources)
+        ? aiResult.sources.map((source: { title?: string; citation?: string }) => source.title || source.citation).filter(Boolean)
+        : [];
       setActiveAnswer({
         questionText: q,
-        category: closest.category,
-        answerSummary: closest.answerSummary,
-        answerBody: closest.answerBody,
-        whyItMatters: "Grounded in living community continuity and documented historical lineages.",
-        culturalNuance: closest.contextNote,
-        sourcesNote: closest.sourcesNote,
-        poweredBy: "EKA Curated Lineage Archives",
+        category: aiResult.primaryEntity?.category || "Cultural inquiry",
+        answerSummary: aiResult.simpleAnswer,
+        answerBody: aiResult.culturalContext || aiResult.simpleAnswer,
+        whyItMatters: aiResult.whyItMatters,
+        culturalNuance: Array.isArray(aiResult.communityPerspectives) ? aiResult.communityPerspectives.join(" ") : undefined,
+        visitorGuidance: undefined,
+        sourcesNote: sourceLabels.length > 0 ? sourceLabels.join(" • ") : "No source references were returned for this answer. Treat it as an AI-generated starting point, not a verified citation.",
+        poweredBy: aiResult.poweredBy || "EKA AI",
+        relatedPlaces: relatedPlaceMatches.slice(0, 2),
+        regionalVariations: aiResult.regionalVariations,
       });
+    } catch (err) {
+      console.error("[Ask EKA] Inquiry error:", err);
+      setInquiryError("Ask EKA could not generate an answer right now. Please try again shortly. No sample answer has been substituted.");
     } finally {
       setIsSearching(false);
     }
@@ -337,6 +269,17 @@ function AskEkaPage() {
                     <Loader2 className="size-5 text-[#C45C26] animate-spin" />
                   </div>
                 </div>
+              ) : inquiryError ? (
+                <div role="alert" className="rounded-2xl border border-amber-200 bg-white p-6 sm:p-8 space-y-3">
+                  <div className="flex items-center gap-2 text-[#6E1B20] font-medium">
+                    <AlertCircle className="size-5" />
+                    <h3>Answer unavailable</h3>
+                  </div>
+                  <p className="text-sm text-[#5C5C5C] leading-relaxed">{inquiryError}</p>
+                  <Button type="button" variant="outline" onClick={() => void handlePerformInquiry(inputText)} disabled={!inputText.trim()}>
+                    <RefreshCw className="size-4 mr-2" /> Try again
+                  </Button>
+                </div>
               ) : activeAnswer ? (
                 <div className="rounded-2xl border border-[#E8E2D9] bg-white p-6 sm:p-8 space-y-6 shadow-xs">
                   {/* Category & AI Provenance Header */}
@@ -346,8 +289,8 @@ function AskEkaPage() {
                         {activeAnswer.category}
                       </span>
                       <span className="text-xs text-[#5C5C5C] flex items-center gap-1">
-                        <CheckCircle2 className="size-3.5 text-emerald-600" />
-                        Grounded Analysis
+                        <Sparkles className="size-3.5 text-[#C45C26]" />
+                        AI-generated synthesis
                       </span>
                     </div>
                     <span className="text-[11px] font-mono text-[#5C5C5C] bg-[#FAF7F2] px-2.5 py-1 rounded-md border border-[#E8E2D9]/80">
@@ -487,7 +430,7 @@ function AskEkaPage() {
                 </div>
               ) : (
                 <div className="rounded-2xl border border-dashed border-[#E8E2D9] bg-white p-12 text-center text-sm text-[#5C5C5C]">
-                  Type a question or pick an idea from the list to view a grounded cultural explanation.
+                  Ask a question to generate a fresh response. Suggested questions are starting points; answers are generated when you submit them.
                 </div>
               )}
             </div>
@@ -496,9 +439,9 @@ function AskEkaPage() {
             <div className={`lg:col-span-4 order-2 lg:order-1 space-y-3 ${showCuratedMobile ? "block" : "hidden lg:block"}`}>
               <div className="flex items-center justify-between pb-1">
                 <span className="font-serif text-base font-medium text-[#1A1A1A]">
-                  Curated Inquiries ({BETA_ASK_QUESTIONS.length})
+                  Explore sample questions
                 </span>
-                <span className="text-xs text-[#5C5C5C]">Verified seed set</span>
+                <span className="text-xs text-[#5C5C5C]">Tap to ask AI</span>
               </div>
 
               <div className="space-y-2.5">
@@ -529,9 +472,7 @@ function AskEkaPage() {
                       <p className="font-serif text-sm font-medium text-[#1A1A1A] leading-snug">
                         {q.questionText}
                       </p>
-                      <p className="text-xs text-[#5C5C5C] line-clamp-1 mt-1">
-                        {q.answerSummary}
-                      </p>
+                      <p className="text-xs text-[#C45C26] line-clamp-1 mt-1">Ask EKA to explore this question →</p>
                     </button>
                   );
                 })}
